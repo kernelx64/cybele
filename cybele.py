@@ -2643,7 +2643,7 @@ def main():
 				random.shuffle(all_oldtech)
 				oldtechs_random = all_oldtech[:3]
 				oldtech_names = ", ".join(oldtechs_random)
-				print ("Here are some old_tech_terms i have in knowledge : " + oldtech_names + ".\n")
+				print ("Here are some old Tech terms i have in knowledge : " + oldtech_names + ".\n")
 
 			elif question.find('constellations')!=-1:
 				constelattionx = list(core['constelattion'])
