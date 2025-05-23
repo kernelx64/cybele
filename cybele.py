@@ -410,7 +410,7 @@ def internet_onoff():
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
 	if internet_onoff() == True:
-		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=0fEWazbBhdVtVHxJhtQQgv5uFzq4Y4IHG8i2Auu9K2I")
+		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
@@ -433,7 +433,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	conn = None
 	if internet_onoff() == True:
-		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=0fEWazbBhdVtVHxJhtQQgv5uFzq4Y4IHG8i2Auu9K2I")
+		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
