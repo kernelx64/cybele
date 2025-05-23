@@ -66,7 +66,7 @@ days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 iknow_pun = {"i know": "you know","you know": "i know"}
-cybchk = int(str(ord("\x0f")) + str(ord("\x1c")));chkauth = sum(ord(char) for char in _author_)
+cybchk = int(str(ord('_')) + str(ord("$")));chkauth = sum(ord(char) for char in _author_ for char in _title_)
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 _poigps_=[39.4487,-8.0376,0,0,0];shift=int(_poigps_[0]+6);gamescore=[-1,0,0]
 
