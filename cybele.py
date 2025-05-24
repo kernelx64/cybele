@@ -12,7 +12,7 @@ lon = -8.4265
 # static global cybele variables
 version = '0.9 βeta'
 _title_ = 'Cybele'
-_pcnode_ = ['ASUSK','TUMBLEWEED']
+_pcnode_ = ['LAPTOP','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️'
 _active_ = '01.08.2024'
 _revise_ = '24.05.2025'
