@@ -2810,7 +2810,7 @@ def main():
 
 		elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "planet")
-		elif any(word in question for word in core['question_words']) and any(word in question for word in list(oldtech_terms.keys())) and not "version" in question:
+		elif any(word in question for word in core['question_words']) and any(word in question for word in core["old_tech_term"])) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "old term and word" )
 		elif any(word in question for word in core['question_words']) and any(word in question for word in core['constelattion']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "constellations")
