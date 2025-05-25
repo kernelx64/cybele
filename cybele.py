@@ -1096,7 +1096,7 @@ help = {
 	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
 	"help dangerous asteroids": "Usage <dangerous asteroid> \nDisplays basic information about the dangerous asteroid \nex: 2011md\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
-	"help days till": "Usage: days till <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
+	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
@@ -1105,6 +1105,7 @@ help = {
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
+	"help hashfile": "Usage: hashfile <filename> | hashfile <filename1> <<path to> <filename2>. \nMake the SHA1 hash for the given filename or filenames.\nex: hashfile cybele.py \n    hashfile cybele.py /home/user/filename1 \n    hashfile cybele.py c:/users/downloads/file2 \n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a shot explanation and examples for the typed linux command.\n",
@@ -1932,7 +1933,21 @@ def days_to_event(event):
 			birthday = date(year=nextyear, month=5, day=4)
 			days_left = days_until(birthday)
 		else:
+			try:
+				datetime.strptime(event, "%d.%m.%Y")
+			except ValueError:
+				pass
+			try:
+				datetime.strptime(event, "%d/%m/%Y")
+			except ValueError:
+				pass
+			try:
+				datetime.strptime(event, "%d-%m-%Y")
+			except ValueError:
+				pass
 			days_left = 0
+		userdate = date(year=int(event[6:]), month=int(event[3:5]), day=int(event[0:2]))
+		days_left = days_until(userdate)
 	return days_left
 
 #-------------------------------------------------
@@ -2408,17 +2423,33 @@ def kdecode(emessage, shift):
     return dek_msg
 
 #-------------------------------------------------
-def ksha():
-	khash = []
-	filename = ['askardb.db' , 'cybele.db']
-	for sha1file in range(len(filename)):
-		with open(filename[sha1file],"rb") as f:
-			bytes = f.read()
-		readable_hash = hashlib.sha1(bytes).hexdigest();
-		khash.append(filename[sha1file].upper())
-		khash.append(readable_hash)
-	return khash
-
+def ksha(files, chunk_size=4096):
+	results = []
+	if not isinstance(files, list):
+		print(f"{random.choice(messages['trouble_msg'])} Internal error. The data is not a tuple! -'{type(files)}'\n")	
+	for file_path in files:
+		sha1_hash = None
+		if not os.path.exists(file_path):
+			print(f"{random.choice(messages['trouble_msg'])} File not found at '{file_path}'\n")
+		elif not os.path.isfile(file_path):
+			print(f"{random.choice(messages['trouble_msg'])} '{file_path}' is not a file.\n")
+		else:
+			try:
+				hasher = hashlib.sha1()
+				with open(file_path, 'rb') as f:
+					while True:
+						chunk = f.read(chunk_size)
+						if not chunk:
+							break
+						hasher.update(chunk)
+				sha1_hash = hasher.hexdigest()
+			except IOError as e:
+				print(f"{random.choice(messages['trouble_msg'])} Error reading file '{file_path}': {e}\n")
+			except Exception as e:
+				print(f"{random.choice(messages['trouble_msg'])} An unexpected error occurred: {e}\n")
+		results.append((file_path, sha1_hash))
+	return tuple(results)
+	
 #-------------------------------------------------
 def yoda_speak(sentence):
 
@@ -2713,17 +2744,20 @@ def main():
 			print ("Actualy based on my offline knowledge i know " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
-			subevent = " ".join(question.split()[2:])
-			eventdays = days_to_event(subevent.replace(" ",""))
-			if eventdays != 0:
-				if subevent == "birthday" or subevent == "my birthday":
-					select_creator = random.choice(["my creator", _auth1r_, "my creator "+_auth1r_])
-					print ('To yours i dont know, doing my privacy limitations but to the ' + select_creator + ' are '+ eventdays +' days.\n')
-				elif eventdays != 0:
-					print ("%s left for %s\n" % (eventdays, subevent.title()))
-			else:
-				short_no = ["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"]
-				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(short_no) + "\n")
+			if len(question.split()[2:]) == 0:
+				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? \n")
+			else:					
+				subevent = " ".join(question.split()[2:])
+				eventdays = days_to_event(subevent.replace(" ",""))
+				if eventdays != 0:
+					if subevent == "birthday" or subevent == "my birthday":
+						select_creator = random.choice(["my creator", _auth1r_, "my creator "+_auth1r_])
+						print ('To yours i dont know, doing my privacy limitations but to the ' + select_creator + ' are '+ eventdays +' days.\n')
+					elif eventdays != 0:
+						print ("%s left for %s\n" % (eventdays, subevent.title()))
+				else:
+					short_no = ["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"]
+					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(short_no) + "\n")				
 
 		elif question[0:15] == 'difference from' or question[0:8] == 'age calc':
 			try:
@@ -3423,6 +3457,21 @@ def main():
 				print (random.choice(messages['trouble_msg']) + " Incorrect usage parameter. Use: " + question.split()[0] + " " + question.split()[1] + " <number>.\n")
 			else:
 				multiplication_table(int(xtablenum[0]))
+
+		elif question[0:8] == "hashfile":
+			hashparam = question.split()[1:]
+			if len(hashparam) == 0:
+				print(f"Usage: hashfile <filename1> or [<path and filename2> ...]\n")
+			else:
+				hashfiles = question.split()[1:]
+				hashresults = ksha(hashfiles)
+				print ("")
+				if hashresults:
+					for i in range(len(hashresults)):
+						print ("[SHA1] " + hashresults[i][0] + ": " + hashresults[i][1])
+					print("")
+				else:
+					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
 
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
