@@ -13,7 +13,7 @@ lon = -8.4265
 version = '0.9 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️⌘'
 _active_ = '01.08.2024'
 _revise_ = '24.05.2025'
 _author_ = 'Adelino Saldanha'
@@ -959,8 +959,7 @@ others = [
 	"week","outdated words","what number is this week","show core","what century are we in","century","view askard <id>",
 	"show askard <id>","list askard <id start> to <id end>","achk askard <id>","leap year","make a sentence","make a phrase",
 	"people in space","do you speak","tvshows is he watching","your fav tvshows","seek <topic>","find <topic>","infostar <star name>",
-	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me dangerous asteroids",
-	"show me asteroids dangerous","show me constellations","show me all constellations","show me dangerous asteroids detailed",
+	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands"
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was vorian created",
 	"play game constelattions","play game capitals","when did vorian went online","difference from <date>"
@@ -970,7 +969,7 @@ maincommands = [
 	"bye","exit","quit","do you know anything about","know anything on","find","seek","what can i ask you","how many linux commands you know",
 	"what can you anwser","what do you know","what can you do","what do you do","what you can do","adelino quote","what is",
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
-	"show me some linux commands","astronomy questions","questions of astronomy","dangerous asteroids detailed","days till","days for","days to",
+	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to",
 	"difference from","age calc","what do you know about","astronomy","asteroid","constelations","universe","can you","vorian created",
 	"visualize periodic table","show periodic table","distance from","orbit","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
@@ -1096,12 +1095,12 @@ help = {
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
-	"help dangerous asteroids": "Usage <dangerous asteroid> \nDisplays basic information about the dangerous asteroid \nex: 2011md\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
@@ -1123,9 +1122,10 @@ help = {
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help say": "Usage: say <number> \nSay in full a number. \nex: say 45 \n    say in full 45 \n    longhand 45\n",
+	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names/constellations or all/asteroids names/dangerous asteroids or detailed/old tech words> \nReturn the values or data for the required subject.\n",
+	"help show me": "Usage: show me <star names|all/constellations|asteroids names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star \nex: Polaris (knowed by north star)\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for the actual year season\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
@@ -1139,7 +1139,6 @@ core["old_tech_term"] = old_tech_terms_list
 #----------------------------------------------------------------------
 if _cybid_ == True:
 	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
-	help.update({"help exit": "Usage: <exit> <quit> <:x> <:q> <x:> <q:> \nCommand to quit Cybele if you are using cmd or terminal in your OS and not an online platform.\nex: exit\n    x:\n"})
 core['help'] = list(help.keys())
 checksum = shift
 
@@ -2292,7 +2291,7 @@ def cybele_math_game():
 
 #-------------------------------------------------
 #-------------------------------------------------
-def mandb(dbname,dbtask,dbbegin,dbend):
+def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
 	if dbname == 'askardb':
 		dbname = 'askardb'
@@ -2318,13 +2317,14 @@ def mandb(dbname,dbtask,dbbegin,dbend):
 		if dbname == 'askardb':
 			filter = "SELECT ask_id, askard FROM askard_db WHERE askard LIKE '%"+str(dbend)+"%'"
 			nchar = _spchar_[9:10]
-		elif dbname == 'astrogl':
+		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
 			filter = "SELECT glossary, designation FROM astronomy_glossary WHERE designation LIKE '%"+str(dbend)+"%'"
 			nchar = _spchar_[0:1]
 			dbname = 'astronomy glossary'
-		elif dbname == 'oldtech':
-			filter = "SELECT old_term, designation FROM oldtech_term WHERE designation LIKE '%"+str(dbend)+"%'"
+		elif dbname == 'cybele'and dbtable == 'oldtech':
+			filter = "SELECT oldterm, designation FROM oldtech WHERE designation LIKE '%"+str(dbend)+"%'"
 			nchar = _spchar_[7:8]
+			dbname = 'old tech'
 		else:
 			print ('Well done ' + _auth1r_ +'!. The code has a error. Fix it, you morone!')
 		
@@ -2342,7 +2342,7 @@ def mandb(dbname,dbtask,dbbegin,dbend):
 				#print(" | ".join(output_line))
 				print(", ".join(output_line))
 		else:
-			print (f'No {_spchar_[9:10]} askards found containing the substring {_spchar_[2:3]}{dbend}{_spchar_[3:4]} in the database.')
+			print (f'No {nchar} {dbname} that contain the substring {_spchar_[2:3]}{dbend}{_spchar_[3:4]}.')
 				
 	if dbtask == 'view':
 		if dbname == 'askardb':
@@ -2580,7 +2580,7 @@ def main():
 		elif _cybid_ == True and any(word in question for word in addcomm):
 			cybext.EXTmod(question)
 
-		elif question == 'extdir' or question == 'ext' and _cybid_ == True:
+		elif question == 'list extcom' or question == 'extcom' and _cybid_ == True:
 			print ("List of the available commands by" + _cyext_ + "\n")
 			quicklist(addcomm,"")
 			print ("")
@@ -2661,11 +2661,6 @@ def main():
 				asteroid_names = ", ".join(asteroids_random)
 				print ("Here are some asteroids i have in knowledge : " + asteroid_names + ".\n")
 
-			elif 'dangerous' in question:
-				dangerous_asteroids = [asteroid for asteroid, data in asteroids_list.items() if data["type"] == "dangerous asteroid"]
-				dangerous = ", ".join(dangerous_asteroids)
-				print ("Here are some dangerous asteroids i have in knowledge : " + dangerous.title() + ".\n")
-
 			elif 'old' in question or 'tech' in question:
 				all_oldtech = core["old_tech_term"]
 				random.shuffle(all_oldtech)
@@ -2719,17 +2714,6 @@ def main():
 				for term in astro_random_keys:
 					astro_qa += " "+_spchar_[1:2] + term + "?\n"
 				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
-
-		elif question[-28:] == 'dangerous asteroids detailed':
-			print ('\nTop 10 Potentially Hazardous Asteroids (PHAs)')
-			print ('This list is based on current knowledge and could change as new information becomes available. \nThe risk posed by any asteroid is constantly evaluated by scientists.')
-			print ('Determining the exact order of risk for these asteroids is complex and involves numerous factors. \nThis list is presented in no particular order.\n')
-			dangerous_asteroids = []
-			for asteroid, data in asteroids_list.items():
-				if data["type"] == "dangerous asteroid":
-					dangerous_asteroids.append({"name": asteroid,"description": data["description"]})
-			for asteroid in dangerous_asteroids:
-				print(" [ %s ]: %s\n" % (asteroid['name'], asteroid['description']))
 
 		elif question[0:8] == 'how many' and question.find('glossary')!=-1 or question.find('astronomy terms')!=-1 or question.find('anwser')!=-1:
 			print ("I can tell you the meaning of " + str(len(astronomy_glossary)) + " Astronomy glossary terms." + "\n")
@@ -3201,7 +3185,7 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search askard <word>\n')
 			else:
-				mandb('askardb','search',0,getparam[2])
+				mandb('askardb','askardb_db','search',0,getparam[2])
 				print ("")
 		
 		elif question[0:11] == 'view askard':
@@ -3209,15 +3193,20 @@ def main():
 			if len(getparam) != 3 or getparam[2].isnumeric() != True:
 				print ('The correct usage is <view> ' + _spchar_[9:10] + ' askard <id>\n')
 			else:
-				mandb('askardb','view',getparam[2],0)
+				mandb('askardb','askard_db','view',getparam[2],0)
 				print ("")
+		
+		elif question[0:8] == 'fun fact':
+			mandb('cybele','funfacts','view',0,0)
+		elif question[0:10] == 'nice thing':
+			mandb('cybele','nicething','view',0,0)
 		
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('askardb','list',0,0)
+				mandb('askardb','askardb_db','list',0,0)
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
-				mandb('askardb','list',getparam[2], getparam[3] )
+				mandb('askardb','askardb_db','list',getparam[2], getparam[3] )
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
@@ -3226,7 +3215,7 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search astronomy <word>\n')
 			else:
-				mandb('astrogl','search',0,getparam[2])
+				mandb('cybele','astronomy_glossary','search',0,getparam[2])
 				print ("")
 
 		elif question[0:14] == 'search oldtech':
@@ -3234,27 +3223,27 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search oldtech <word>\n')
 			else:
-				mandb('oldtech','search',0,getparam[2])
+				mandb('cybele','oldtech','search',0,getparam[2])
 				print ("")
 
 		elif question[0:12] == 'list oldtech':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('oldtech','list',0,0)
+				mandb('cybele','oldtech','list',0,0)
 			elif len(getparam) == 4:
-				mandb('oldtech','list',getparam[2], getparam[3] )
+				mandb('cybele','oldtech','list',getparam[2], getparam[3] )
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
-				
+		
 		elif question[0:10] == 'first last' or question[0:6] == 'limits':
 				getparam = question.split()
 				if len(getparam) == 3:
 					if getparam[2] == "askard":
-						mandb('askardb','limits',0,0)
+						mandb('askardb','','limits',0,0)
 					elif getparam[2] == "astronomy":
-						mandb('astrogl','limits',0,0)
+						mandb('astrogl','','limits',0,0)
 					elif getparam[2] == "oldtech":
-						mandb('oldtech','limits',0,0)
+						mandb('oldtech','','limits',0,0)
 				else:
 					print ('The correct usage is <first last <askard/astronomy/oldtech>> to show the first and last askard ID in the database.\n')
 		
@@ -3501,6 +3490,7 @@ if __name__ == "__main__":
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
 		globals().clear()
 	except SystemExit as e:
+		#if e.code = 0: 	#increment error codes to show the last error message here and header on code
 		globals().clear()
 	except KeyboardInterrupt:
 		print ("")
