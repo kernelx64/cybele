@@ -55,20 +55,20 @@ except ImportError as err:
 				try:
 					subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
 					print(f"{' '*3}'{module_name}' installed successfully. Please restart {_title_}")
-					sys.exit()
+					sys.exit(0)
 				except subprocess.CalledProcessError as e:
 					print(f"{' '*3}Error installing the module. Try installing it manually: pip install " + module_name)
-					sys.exit()
+					sys.exit(0)
 				break
 			elif install_choice == 'n':
 				print(f"{' '*3}Cannot execute properly. Exiting.")
-				sys.exit()
+				sys.exit(0)
 			else:
 				print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
 	else:
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 		print(f"{' '*3}I cannot execute properly. Exiting.")
-		sys.exit()
+		sys.exit(0)
 
 node_name = platform.node()
 if node_name:
@@ -470,7 +470,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit()
+			exit(0)
 	try:
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")
@@ -493,7 +493,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit()
+			exit(0)
 	
 	try:
 		cursor = conn.cursor()
@@ -2310,7 +2310,7 @@ def mandb(dbname,dbtask,dbbegin,dbend):
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit()
+			sys.exit(0)
 	
 	zdb = []
 
@@ -2406,7 +2406,8 @@ def chkpy():
 	if major < 3 or (major == 3 and minor < 10):
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-		sys.exit(1)  # Exit with an error code
+		return False
+	return True	
 
 #-------------------------------------------------
 def kdecode(emessage, shift):
@@ -2526,18 +2527,19 @@ def main():
 	wms = random.choice(core['intromsg']);ta=True
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
-	chkpy()
+	if chkpy() != True:
+		sys.exit(0)
 	#----------------------------
 	if chkauth!=cybchk:
 		print(kolor['DARK_RED'] + "\n " +_spchar_[1:2] + chr(32) + _title_ + kolor['OFF'] + ": " + hex(chkauth) + " - " + kdecode(chkcyb, checksum))	
-		exit()	
+		sys.exit(0)
 	#----------------------------
 	if chkcoor(lat,lon) == True:
 		_poigps_=[lat,lon,0,0,0]
 	else:
 		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + mmodname)
-		exit()	
+		sys.exit(0)
 	#----------------------------
 	drawart('art_cybele')
 	print("\n"+kolor[('DARK_YELLOW')]+wms+"\n\n"+kolor['BLUE']+"I am "+kolor['DARK_RED']+_title_+kolor['RED']+_spchar_[0:1]+kolor['BLUE']+" a "+website['home'][8:] + _cyext_ +kolor['OFF']+"\n")
@@ -2799,6 +2801,9 @@ def main():
 
 		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
 			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
+
+		elif any(word in question for word in core['question_words']) and "you born" in question:
+			print ("I borned from the code of my predecessor, Zorie, in early 2023 and I was officially actived " + str(days_till_today.days) + " days ago with an updated in " + _revise_ + ", so you better do the math!\n")
 
 		elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "planet")
@@ -3494,6 +3499,8 @@ if __name__ == "__main__":
 			if main() == False:
 				break
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
+		globals().clear()
+	except SystemExit as e:
 		globals().clear()
 	except KeyboardInterrupt:
 		print ("")
