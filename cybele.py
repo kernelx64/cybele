@@ -214,7 +214,8 @@ core = {
 	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later."],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
-	"share":	["sharing about","sharing links"],			
+	"share":	["sharing about","sharing links"],
+	"sayconvert":	["say","longhand"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -984,7 +985,8 @@ maincommands = [
 	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
-	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence"
+	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
+	"when vorian was created","vorian created","when vorian went online"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1108,7 +1110,7 @@ help = {
 	"help hashfile": "Usage: hashfile <filename> | hashfile <filename1> <<path to> <filename2>. \nMake the SHA1 hash for the given filename or filenames.\nex: hashfile cybele.py \n    hashfile cybele.py /home/user/filename1 \n    hashfile cybele.py c:/users/downloads/file2 \n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
-	"help linux command": "Usage: <linux command> \nShows the Syntax a shot explanation and examples for the typed linux command.\n",
+	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
@@ -1120,6 +1122,7 @@ help = {
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help say": "Usage: say <number> \nSay in full a number. \nex: say 45 \n    say in full 45 \n    longhand 45\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
 	"help show me": "Usage: show me <star names/constellations or all/asteroids names/dangerous asteroids or detailed/old tech words> \nReturn the values or data for the required subject.\n",
@@ -1449,9 +1452,6 @@ def get_question():
 		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
 		question = qt.lower()
 	try:
-		if float(qt):
-			print(convert_to_words(int(qt))+"\n")
-			qt = ''
 		if str(qt):
 			return qt.lower()
 	except ValueError:
@@ -2541,8 +2541,6 @@ def main():
 	#----------------------------
 	drawart('art_cybele')
 	print("\n"+kolor[('DARK_YELLOW')]+wms+"\n\n"+kolor['BLUE']+"I am "+kolor['DARK_RED']+_title_+kolor['RED']+_spchar_[0:1]+kolor['BLUE']+" a "+website['home'][8:] + _cyext_ +kolor['OFF']+"\n")
-	#----------------------------
-	#days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 	#-----------------------------
 	while True:
 		#-------------------------
@@ -2569,7 +2567,6 @@ def main():
 			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
 			for tvshow, link in webshare.items():
 				print(" > " + str(tvshow.upper()))
-				#print(" "+_spchar_[10:11] +" "+kdecode(str(link),shift))
 				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
 				if netchk == True:
 					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
@@ -2585,6 +2582,13 @@ def main():
 			print ("List of the available commands by" + _cyext_ + "\n")
 			quicklist(addcomm,"")
 			print ("")
+		
+		elif any(word in question for word in core['sayconvert']):
+			convert_number = question.split()[-1:][0]
+			if not convert_number.isdigit():
+				print (f"{" ".join(question.split()[1:]).title()}. \n")
+			else:
+				print (f"{convert_to_words(int(convert_number)).capitalize()}. \n")
 
 		elif question[0:26] == 'do you know anything about' or question[0:16] == 'know anything on' or question[0:4] == 'find' or question[0:4] == 'seek':
 			if question[0:4] == 'seek' or question[0:4] == 'find':
@@ -2793,18 +2797,17 @@ def main():
 			else:
 				print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
 
-		# days_until() gives' incorrect days in vorian online time. Verify. for next version
 		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
 			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
 
-		#elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
-		#	print (random.choice(list(messages['magic_anwser'])) % "planet")
-		#elif any(word in question for word in core['question_words']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
-		#	print (random.choice(list(messages['magic_anwser'])) % "old term and word" )
-		#elif any(word in question for word in core['question_words']) and any(word in question for word in core['constelattion']) and not "version" in question:
-		#	print (random.choice(list(messages['magic_anwser'])) % "constellations")
-		#elif any(word in question for word in core['question_words']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
-		#	print (random.choice(list(messages['magic_anwser'])) % "astronomy term")
+		elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
+			print (random.choice(list(messages['magic_anwser'])) % "planet")
+		elif any(word in question for word in core['question_words']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
+			print (random.choice(list(messages['magic_anwser'])) % "old term and word" )
+		elif any(word in question for word in core['question_words']) and any(word in question for word in core['constelattion']) and not "version" in question:
+			print (random.choice(list(messages['magic_anwser'])) % "constellations")
+		elif any(word in question for word in core['question_words']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
+			print (random.choice(list(messages['magic_anwser'])) % "astronomy term")
 
 		elif question[-14:] == 'periodic table':
 			tablesentence = [["I think you ment ","Don't you ment "],"< visualize | show > periodic table ?!\n"]
