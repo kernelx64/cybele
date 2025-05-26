@@ -1607,6 +1607,9 @@ def find_word_in_dicts(word, core):
 				print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
 				print ("")
 
+			elif list_name == 'linuxexcmd':
+				print ("exemplo....")
+
 			elif list_name == 'coded':
 				print ("Python is a programmer language wich i was builted (coded).")
 				for i in range(len(art_py)):
@@ -2575,7 +2578,7 @@ def main():
 		elif any(word in question for word in core['sayconvert']):
 			convert_number = question.split()[-1:][0]
 			if not convert_number.isdigit():
-				print (f"{" ".join(question.split()[1:]).title()}. \n")
+				print (f"""{" ".join(question.split()[1:]).title()}.\n""")
 			else:
 				print (f"{convert_to_words(int(convert_number)).capitalize()}. \n")
 
@@ -3472,7 +3475,7 @@ def main():
 		
 		elif question == "cybele uptime":
 			print(f"My uptime is: {get_uptime()}\n")
-		
+			
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 2:
