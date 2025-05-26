@@ -13,9 +13,9 @@ lon = -8.4265
 version = '0.9 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧'
 _active_ = '01.08.2024'
-_revise_ = '24.05.2025'
+_revise_ = '26.05.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -1601,7 +1601,7 @@ def find_word_in_dicts(word, core):
 				print( '%s\n' % (dbsearch))
 
 			elif list_name == 'linuxcmd':		
-				print ("<"+word.lower()+">" + " is a console linux command. Here some help about'it:\n")
+				print ("<"+word.lower()+">" + " is a console " + _spchar_[16:17] + " linux command. Here some help about'it:\n")
 				print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
 				print ("Explanation: " + str(linux_commands[word]['explanation']))
 				print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
