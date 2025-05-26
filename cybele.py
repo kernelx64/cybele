@@ -13,7 +13,7 @@ lon = -8.4265
 version = '0.9 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️⌘'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆'
 _active_ = '01.08.2024'
 _revise_ = '24.05.2025'
 _author_ = 'Adelino Saldanha'
@@ -36,6 +36,7 @@ try:
 	import sqlitecloud
 	import requests
 	import json,html,urllib
+	import csv,io
 	from bs4 import BeautifulSoup
 	from platform import python_version
 	from time import gmtime, strftime, sleep
@@ -70,6 +71,8 @@ except ImportError as err:
 		print(f"{' '*3}I cannot execute properly. Exiting.")
 		sys.exit(0)
 
+_utime_ = datetime.now()
+script_start_time = datetime.now()
 node_name = platform.node()
 if node_name:
 	sysos = platform.system()
@@ -314,7 +317,13 @@ messages = {
 					"I'm ready to hit the reset button and start fresh. Happy New Year!", "I'm not sure what's ahead, but I'm bringing snacks. Happy New Year!",
 					"New year, new you. Let's make it count!", "Believe in yourself and great things will happen. Happy New Year!",
 					"Let's turn our dreams into reality. Happy New Year!", "It's a new chapter. Write a good one.","Here's to a brighter future!"],
-
+	
+	"nicefun_msg":	["You've reached your daily limit! Please check back tomorrow for more.","That's all for today! Your daily allowance will reset at midnight.",
+					"Looks like you've enjoyed your fill for today. Come back tomorrow for fresh content!","Daily limit reached. New content will be available after your local midnight.",
+					"You've hit your daily quota! We'll have more for you tomorrow.","All out for today! We're saving some good stuff for you for tomorrow.",
+					"Thanks for engaging! You've reached your daily maximum. See you tomorrow!","Oops, you've exhausted your daily supply! More will be ready for you soon.",
+					"Time for a break! Your daily limit has been met. Enjoy the rest of your day and return tomorrow.","Your daily dose is complete! Look forward to more when the clock strikes midnight."],
+		
 	"notchristmas":	["Wow, you're really getting a head start on the holiday season!","I'm still recovering... Maybe you can lend me your time machine?",
 					"Merry Christmas to you too! Just kidding, it's "+month_name+"!.","Thanks for the early holiday cheer.",
 					"I'll try to save it for later.","Is this a new kind of time travel?","I'm definitely not ready for snow and eggnog yet.",
@@ -422,6 +431,17 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 #------------------------------------------------------------
 factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
 
+#------------------------------------------------------------------
+# Init-process
+def print_statusline(msg: str):
+    last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
+    print(' ' * last_msg_length, end='\r')
+    print(msg, end='\r')
+    sys.stdout.flush()
+    setattr(print_statusline, 'last_msg', msg)
+
+print_statusline(f"\nLoading ...")
+
 #----------------------------------------------------
 def chkcoor(lat, lon):
     try:
@@ -452,18 +472,11 @@ def internet_onoff():
 	except requests.exceptions.RequestException as e:
 		return False
 
-#-------------------------------------------------
-def querydb(conn, query): 
-	cursor = conn.cursor()
-	cursor.execute(query)
-	results = cursor.fetchall()
-	return results
-
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
 	if internet_onoff() == True:
-		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
@@ -473,9 +486,14 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			exit(0)
 	try:
 		cursor = conn.cursor()
-		cursor.execute(f"SELECT {column_name} FROM {table_name}")
+		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
 		result = [row[0] for row in cursor.fetchall()]
-		return result
+		return result 
+	except sqlitecloud.exceptions.SQLiteCloudOperationalError as e:
+		print_statusline(f"")
+		error_message = f"SQLiteCloud Database error {e} \n{' '*12}I cannot execute properly. Exiting."
+		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {error_message}")
+		exit(0)
 	except sqlite3.Error as e:
 		return []
 	finally:
@@ -486,7 +504,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	conn = None
 	if internet_onoff() == True:
-		conn = conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
@@ -508,7 +526,28 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	finally:
 		if conn:
 			conn.close()
-			
+
+#-------------------------------------------------
+def records_number(dbfile, dbtable):
+	conn = None
+	try:
+		conn = sqlite3.connect(dbfile + ".db")
+		cursor = conn.cursor()
+		cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{dbtable}';")
+		if cursor.fetchone() is None:
+		    print(f"Error: Table '{dbtable}' does not exist in database '{dbfile}'.")
+		    return
+		cursor.execute(f"SELECT COUNT(*) FROM {dbtable}")
+		total_records = cursor.fetchone()[0]
+	except sqlite3.Error as e:
+		print(f"An SQLite error occurred: {e}")
+	except Exception as e:
+		print(f"An unexpected error occurred: {e}")
+	finally:
+		if conn:
+			conn.close()
+		return dbtable, total_records
+
 #------------------------------------------------------------
 db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
 db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
@@ -794,84 +833,24 @@ qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
 core["qa-astro"] = list(qa_astro)
 
 #----------------------------------------------------------------------
-linux_commands = {
-	"ls": {"syntax": "ls [OPTIONS] [FILE]...","explanation": "Lists information about files and directories.","examples": ["ls", "ls -l", "ls -a /home/user"]},
-	"cd": {"syntax": "cd [DIRECTORY]","explanation": "Changes the current working directory.","examples": ["cd", "cd documents", "cd .."]},
-	"pwd": {"syntax": "pwd","explanation": "Prints the name of the current working directory.","examples": ["pwd"]},
-	"mkdir": {"syntax": "mkdir [OPTIONS] DIRECTORY...","explanation": "Creates the DIRECTORY(ies).","examples": ["mkdir new_folder", "mkdir -p path/to/new_folder"]},
-	"rm": {"syntax": "rm [OPTIONS] FILE...","explanation": "Removes (deletes) files or directories.","examples": ["rm file.txt", "rm -r directory"]},
-	"cp": {"syntax": "cp [OPTIONS] SOURCE DEST","explanation": "Copies SOURCE to DEST.","examples": ["cp file1.txt file2.txt", "cp -r directory1 directory2"]},
-	"mv": {"syntax": "mv [OPTIONS] SOURCE DEST","explanation": "Moves (renames) SOURCE to DEST.","examples": ["mv old_name.txt new_name.txt", "mv file.txt /tmp"]},
-	"cat": {"syntax": "cat [FILE]...","explanation": "Concatenate FILE(s) to standard output.","examples": ["cat file.txt", "cat file1.txt file2.txt"]},
-	"echo": {"syntax": "echo [STRING]...","explanation": "Display a line of text.","examples": ["echo Hello World", "echo $HOME"]},
-	"touch": {"syntax": "touch [FILE]","explanation": "Modify an existing file's timestamp","examples": ["touch file.txt", "touch -c -t YYDDHHMM file.txt","touch -m file.txt"]},
-	"rmdir": {"syntax": "rmdir [DIRECTORY]","explanation": "Remove directory or delete an empty directory","examples": ["rmdir [directory name]"]},
-	"locate": {"syntax": "locate [FILENAME]","explanation": "Simple Linux tool for finding a file. The result maybe is inaccurate if the database is not updated.","examples": ["locate file.txt"]},
-	"find": {"syntax": "find [PATH...] [EXPRESSION]","explanation": "Search for files in a directory hierarchy.","examples": ["find . -name '*.txt'", "find / -size +100M"]},
-	"grep": {"syntax": "grep [OPTIONS] PATTERN [FILE]...","explanation": "Print lines that match patterns.","examples": ["grep 'hello' file.txt", "grep -r 'world' /home/user"]},
-	"head": {"syntax": "head [OPTIONS] [FILE]...","explanation": "Output the first part of files.","examples": ["head file.txt", "head -n 10 log.txt"]},
-	"tail": {"syntax": "tail [OPTIONS] [FILE]...","explanation": "Output the last part of files.","examples": ["tail file.txt", "tail -f log.txt"]},
-	"less": {"syntax": "less [FILE]...","explanation": "Pager program for viewing plain text files.","examples": ["less file.txt", "less long_log.txt"]},
-	"more": {"syntax": "more [FILE]...","explanation": "File perusal filter for CRT viewing.","examples": ["more file.txt"]},
-	"chmod": {"syntax": "chmod [OPTIONS] MODE FILE...","explanation": "Change file mode bits.","examples": ["chmod +x script.sh", "chmod 755 directory"]},
-	"chown": {"syntax": "chown [OPTIONS] [OWNER][:[GROUP]] FILE...","explanation": "Change file ownership.","examples": ["chown user file.txt", "chown root:root directory"]},
-	"chgrp": {"syntax": "chgrp [OPTIONS] GROUP FILE...","explanation": "Change group ownership.","examples": ["chgrp users file.txt"]},
-	"df": {"syntax": "df [OPTIONS] [FILE]...","explanation": "Report file system disk space usage.","examples": ["df", "df -h"]},
-	"du": {"syntax": "du [OPTIONS] [FILE]...","explanation": "Estimate file space usage.","examples": ["du", "du -sh directory"]},
-	"mount": {"syntax": "mount [-l] [-t TYPE] [-o OPTIONS] DEVICE DIRECTORY","explanation": "Mount a filesystem.","examples": ["mount /dev/sdb1 /mnt", "mount -t vfat /dev/sdc1 /media/usb"]},
-	"umount": {"syntax": "umount [-l] [-f] [-v] DEVICE | DIRECTORY","explanation": "Unmount a filesystem.","examples": ["umount /mnt", "umount /dev/sdb1"]},
-	"ps": {"syntax": "ps [OPTIONS]","explanation": "Report a snapshot of the current processes.","examples": ["ps aux", "ps -ef"]},
-	"top": {"syntax": "top [OPTIONS]","explanation": "Display Linux tasks.","examples": ["top"]},
-	"htop": {"syntax": "htop [OPTIONS]","explanation": "Interactive process viewer.","examples": ["htop"]},
-	"kill": {"syntax": "kill [OPTIONS] [PID]...","explanation": "Terminate a process by sending it a signal.","examples": ["kill 1234", "kill -9 5678"]},
-	"killall": {"syntax": "killall [OPTIONS] NAME...","explanation": "Kill processes by name.","examples": ["killall firefox"]},
-	"systemctl": {"syntax": "systemctl [OPTIONS...] COMMAND [UNIT...]","explanation": "Control the systemd system and service manager.","examples": ["systemctl start apache2", "systemctl status sshd"]},
-	"journalctl": {"syntax": "journalctl [OPTIONS]","explanation": "Query the systemd journal.","examples": ["journalctl -u apache2", "journalctl -b"]},
-	"ifconfig": {"syntax": "ifconfig [INTERFACE]","explanation": "Configure a network interface.","examples": ["ifconfig eth0", "ifconfig wlan0 up"]},
-	"ip": {"syntax": "ip [OPTIONS] OBJECT {COMMAND | help}","explanation": "show / manipulate routing, devices, policy routing and tunnels.","examples": ["ip addr show", "ip route add default via 192.168.1.1"]},
-	"ssh": {"syntax": "ssh [OPTIONS] [USER@]HOSTNAME [COMMAND]","explanation": "Open a secure shell (SSH) client.","examples": ["ssh user@example.com", "ssh -p 2222 user@remotehost"]},
-	"scp": {"syntax": "scp [OPTIONS] [[USER@]HOST1:]FILE1 ... [[USER@]HOST2:]FILE2","explanation": "Secure copy (remote file copy program).","examples": ["scp localfile.txt user@remote.com:/home/user", "scp user@remote.com:/home/user/remotefile.txt ."]},
-	"tar": {"syntax": "tar [OPTIONS] [FILE]...","explanation": "Tape ARchive.","examples": ["tar -cvf archive.tar directory", "tar -xvf archive.tar"]},
-	"gzip": {"syntax": "gzip [OPTIONS] [FILE]...","explanation": "Compress or uncompress FILEs (by default, compress in place).","examples": ["gzip file.txt", "gzip -d file.txt.gz"]},
-	"gunzip": {"syntax": "gunzip [OPTIONS] [FILE]...","explanation": "Decompress files compressed by gzip.","examples": ["gunzip file.txt.gz"]},
-	"zip": {"syntax": "zip [OPTIONS] ZIPFILE [FILE]...","explanation": "Package and compress (archive) files.","examples": ["zip archive.zip file1.txt file2.txt"]},
-	"unzip": {"syntax": "unzip [OPTIONS] ZIPFILE","explanation": "Extract compressed files in a ZIP archive.","examples": ["unzip archive.zip", "unzip -d extracted archive.zip"]},
-	"apt-get": {"syntax": "apt-get [OPTIONS] COMMAND","explanation": "APT package handling utility -- command-line interface.","examples": ["sudo apt-get update", "sudo apt-get install <package_name>"]},
-	"apt": {"syntax": "apt [OPTIONS] COMMAND","explanation": "command-line interface for package management.","examples": ["sudo apt update", "sudo apt install <package_name>"]},
-	"yum": {"syntax": "yum [OPTIONS] COMMAND [PACKAGE...]","explanation": "Yellowdog Updater, Modified.","examples": ["sudo yum update", "sudo yum install <package_name>"]},
-	"dnf": {"syntax": "dnf [OPTIONS] COMMAND [PACKAGE...]","explanation": "DNF package manager.","examples": ["sudo dnf update", "sudo dnf install <package_name>"]},
-	"rpm": {"syntax": "rpm [OPTIONS] [PACKAGE_FILE...]","explanation": "RPM Package Manager.","examples": ["sudo rpm -i package.rpm", "sudo rpm -Uvh package.rpm"]},
-	"dpkg": {"syntax": "dpkg [OPTIONS] action package-file...","explanation": "package manager for Debian.","examples": ["sudo dpkg -i package.deb", "sudo dpkg -r <package_name>"]},
-	"zypper": {"syntax": "zypper [OPTIONS] package-file...","explanation": "package manager for openSUSE.","examples": ["sudo zypper install <package_name>"]},
-	"useradd": {"syntax": "useradd [OPTIONS] LOGIN","explanation": "Create a new user or update default new user information.","examples": ["sudo useradd newuser"]},
-	"userdel": {"syntax": "userdel [OPTIONS] LOGIN","explanation": "Delete a user account and related files.","examples": ["sudo userdel olduser"]},
-	"passwd": {"syntax": "passwd [USER]","explanation": "Change a user's password.","examples": ["passwd", "sudo passwd anotheruser"]},
-	"groupadd": {"syntax": "groupadd [OPTIONS] GROUP","explanation": "Create a new group.","examples": ["sudo groupadd newgroup"]},
-	"groupdel": {"syntax": "groupdel GROUP","explanation": "Delete a group.","examples": ["sudo groupdel oldgroup"]},
-	"usermod": {"syntax": "usermod [OPTIONS] LOGIN","explanation": "Modify a user account.","examples": ["sudo usermod -aG wheel username"]},
-	"chmod": {"syntax": "chmod [OPTIONS] MODE FILE...","explanation": "Change file mode bits.","examples": ["chmod 755 script.sh"]},
-	"chown": {"syntax": "chown [OPTIONS] [OWNER][:[GROUP]] FILE...","explanation": "Change file ownership.","examples": ["chown user:group file.txt"]},
-	"history": {"syntax": "history [n]","explanation": "Display or manipulate the history list.","examples": ["history", "history 10"]},
-	"alias": {"syntax": "alias [name[='value'] ...]","explanation": "Define or display aliases.","examples": ["alias ll='ls -l'", "alias"]},
-	"unalias": {"syntax": "unalias [-a] name [name ...]","explanation": "Remove alias definitions.","examples": ["unalias ll", "unalias -a"]},
-	"date": {"syntax": "date [OPTION]... [+FORMAT]","explanation": "Print or set the system date and time.","examples": ["date", "date '+%Y-%m-%d %H:%M:%S'"]},
-	"cal": {"syntax": "cal [[month] year]","explanation": "Display a calendar.","examples": ["cal", "cal 10 2023"]},
-	"df": {"syntax": "df [OPTION]... [FILE]...","explanation": "Report file system disk space usage.","examples": ["df -h"]},
-	"free": {"syntax": "free [OPTION]...","explanation": "Display amount of free and used memory in the system.","examples": ["free -m", "free -h"]},
-	"uname": {"syntax": "uname [OPTION]...","explanation": "Print certain system information.","examples": ["uname -a", "uname -r"]},
-	"whoami": {"syntax": "whoami","explanation": "Print the current effective user name.","examples": ["whoami"]},
-	"w": {"syntax": "w [OPTION]... [USER]","explanation": "Show who is logged on and what they are doing.","examples": ["w", "w user"]},
-	"uptime": {"syntax": "uptime","explanation": "Tell how long the system has been running.","examples": ["uptime"]},
-	"hostname": {"syntax": "hostname [OPTION]... [HOSTNAME]","explanation": "Show or set the system's host name.","examples": ["hostname", "hostname new-hostname"]},
-	"id": {"syntax": "id [OPTION]... [USER]","explanation": "Print real and effective user and group IDs.","examples": ["id", "id user"]},
-	"man": {"syntax": "man [OPTIONS] [SECTION] NAME ...","explanation": "An interface to the system's reference manuals.","examples": ["man ls", "man 5 passwd"]},
-	"info": {"syntax": "info [OPTION]... [MENUITEM]... [NODE]...","explanation": "Read Info documents.","examples": ["info ls", "info coreutils 'ls invocation'"]},
-	"whatis": {"syntax": "whatis [OPTION]... NAME...","explanation": "Display one-line manual page descriptions.","examples": ["whatis ls"]},
-	"whereis": {"syntax": "whereis [OPTION]... [-BMS] [-f] [-u] [directory ...] [-bms] [-F file ...] [-k keyword ...]","explanation": "locate the binary, source, and manual page files for a command.","examples": ["whereis bash"]
-}}
+linux_commands = {}
+cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
+syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
+explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
+examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
 
+for i in range(len(cmd_names)):
+	cmd_name = cmd_names[i]
+	syntax = syntaxes[i]
+	explanation = explanations[i]
+	examples = examples_str_list[i].split(';') if examples_str_list[i] else []
+	linux_commands[cmd_name] = {
+		"syntax": syntax,
+		"explanation": explanation,
+		"examples": examples
+		}
 #----------------------------------------------------------------------
-core["linuxcmd"] = list(linux_commands.keys())
+core["linuxcmd"] = list(linux_commands)
 
 #----------------------------------------------------------------------
 questions = [
@@ -985,7 +964,7 @@ maincommands = [
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when vorian was created","vorian created","when vorian went online"
+	"when vorian was created","vorian created","when vorian went online","cybele uptime"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1034,67 +1013,15 @@ core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 if _cybid_ == True:
 	for i in range(len(addcomm)):
 		others.append(addcomm[i])
+
 #----------------------------------------------------------
-season_activities = [
-	["spring", ["Seek out the first spring flowers.","Go on a picnic or do in the park.","Plant a garden.","Watch for wildlife.",
-			"Create a wind sock, kite, pinwheel for catch the wind. Learning all about the wind.","Join a sports team.","Try a new sport.",
-			"Start read a book or 'the book'.","Ride your bike","See the cherry blossoms.","Take a hike.","Go for skydive.",
-			"Go camping (even if it’s in your backyard!).","Start some seeds.","Play some Futbol outdoors.","Borrow a book from the library.",
-			"U-pick strawberries.","Host a garage sale.","Go for a picnic","Learn how to whistle with a blade of grass",
-			"Go to the farmers' market (or volunteer there).","Climb a tree.","Go on a nature scavenger hunt.","Go on a horse or horseback riding.",
-			"Feed the ducks at a pond.","Host or do an Easter egg hunt.","Go bird watching.","Participate in a neighborhood/stream spring clean-up.",
-			"Go geo-caching.","Lay down on a field of fresh or dry grass looking at the sky and playing with the shapes of the clouds.",
-			"Collect beach shells in the beach/sea and transform them into art or decoration for your home.","Stay connected with nature",
-			"Put your bare feet on the ground (without holding your phone) and spent a few moments connecting with nature.",
-			"Breath deeply, listen to the birds, and feel the grass beneath your feet.","Take care of your diet.",
-			"Lazing arround, really resting, doing what relaxes you and what you like most.",
-			"Go or take the kids to visit an educational farm","Foraging: Nettles.","Foraging: Cherry blossoms.","Foraging: Elderberry flowers.",
-			"Indoor: Do a little spring cleaning.","Indoor: Tune up your bike.","Indoor: Take your spring/summer wardrobe out of storage.",
-			"Indoor: Wash/mend/assess what needs a little TLC.","Indoor: Gather items to create a ready-to-go picnic basket.",
-			"Indoor: Plan your garden.","Indoor: Start seeds.","Indoor: Watch Oscar-winning movies."]],
-	["summer", ["Go swimming.","Go hiking.","Go camping (even if it’s in your backyard!).","Go surfing.","Go kitesurfing.",
-			"Have a barbecue.","Watch the sunset from the top of the hill.","Stargazing.","Swim in a lake.","Go fishing.","Go camping.",
-			"Try Skydive.","Go kayaking or canoeing.","Have some lessons : surfing/kitesurfing/kayaking.","Start read a book or 'the book'.",
-			"Play tennis.","Feel the sun on your back.","U-pick Berries freezing.","Lavender field.","Cocktail party.","Bow & Arrow.",
-			"Enjoy an Ice Cream or the Ice Cream Truck.","Boat or go sailing.","Enjoy Waterfalls.","Tulips.","Sleep under the stars.",
-			"Look for treasure at a garage sale.","Try bodyboarding or surfing.","Backpacking.","Outdoor concerts.","Swimming under the stars or at night.",
-			"Collect beach shells in the beach/sea and transform them into art or decoration for your home.","Take care of your diet",
-			"Tubing.","Rafting.","Visit a national park.","Paddleboarding.","Seek out birds and butterflies or try some birdwatching.",
-			"Put your bare feet on the ground (without holding your phone) and spent a few moments connecting with nature.",
-			"Take the kids or go visit an educational farm.","Rent a motorhome or a bike and just go or on a road trip.",
-			"Lay down on a field of fresh or dry grass looking at the sky and playing with the shapes of the clouds.",
-			"Lazing arround, really resting, doing what relaxes you and what you like most.",
-			"Foraging: Blueberries.","Foraging: Rhubarb.","Foraging: Sage.","Foraging: Rosehip.","Indoor: Dehydrating.","Indoor: Canning.",
-			"Indoor: Flower pounding.","Indoor: Natural dyeing."]],
-	["autumn", ["Go apple picking.","Go pumpkin carving.","Go leaf peeping.","Get lost in a corn maze.","Have a hayride.",
-			"Go to a pumpkin patch.","Harvesting chestnuts.","Visit a petting zoo.","Attend a fall festival.","Have a fall picnic.",
-			"Plant spring bulbs in your garden.","Attend the last farmers' market.","Watch the leaves turn.","Make a bonfire.",
-			"Make s'mores.","Having some lessons : surfing/kitesurfing/kayaking.","Start read a book or 'the book'.","Borrow a book from the library.",
-			"Climb a tree.","Buy a new notebook.","Plant in your garden for next spring.","Run a race.","Drink by the fireplace.","Stay connected with nature",
-			"Attend a fall festival.","Take a ghost tour or visit an old cemetery.","Grab a blanket and go stargazing.",
-			"Lay down on a field of fresh or dry grass looking at the sky and playing with the shapes of the clouds.",
-			"Lazing arround, really resting, doing what relaxes you and what you like most.",
-			"Foraging: Elderberries.","Foraging: Apples.","Foraging: Matsutake.","Foraging: Chanterelles.","Foraging: Leaves.",
-			"Foraging: Flowers.","Indoor: Make a wreath.","Indoor: Make candles.","Indoor: Knit a simple hat or a cozy sweater.",
-			"Indoor: Declutter.","Indoor: Take warm clothes out of storage.","Indoor: Read a gripping story.","Indoor: Waterproof coats and condition shoes.",
-			"Indoor: Watch spooky movies.","Indoor: Host a Friendsgiving meal."]],
-	["winter", ["Go skiing.","Go snowboarding.","Go ice skating.","Sledding.","Have a snowball fight.","Ice skating.","Snowshoeing.",
-			"Bonfire.","Polar Bear Plunge.","Visit a Local Market.","Build a Snowman.","Have a Game Night.","Have a Movie Night.",
-			"Watch a Sports Game.","Try an Indoor Workout.","Knit.","Winter Hike.","Make a Wreath.","Make Your Own Ornaments.",
-			"Have a Snowball Fight.","Plan a Vacation or plan your next.","Volunteer.","Join (or Start) a Book Club.","Start read a book or 'the book'.",
-			"Watch a Play.","Go to The Ballet.","Play that board game even if it's against yourself.","Christmas lights.","Go for an ice cream.",
-			"Take a trip in Polar Explorer Icebreaker Cruise.","Go visit or stay the Lapland Icehotel, Sweden.","Go ice fishing.",
-			"Lazing arround, really resting, doing what relaxes you and what you like most.",
-			"Foraging: Pine cones.","Foraging: Branches.","Foraging: Acorns.","Foraging: Chesnuts.","Indoor: Puzzles.","Indoor: Ornaments.",
-			"Indoor: Movies / Tv Shows marathons.","Indoor: Music watching the weather thru a window."]]
-]
-#------------------------------------------------------------
 help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
+	"help cybele uptime": "Usage <cybele uptime> \nDisplay information about how long the cybele has been running.\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
@@ -1102,6 +1029,7 @@ help = {
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
+	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
@@ -1110,9 +1038,11 @@ help = {
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
+	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
+	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
@@ -1121,13 +1051,12 @@ help = {
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
-	"help say": "Usage: say <number> \nSay in full a number. \nex: say 45 \n    say in full 45 \n    longhand 45\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
 	"help show me": "Usage: show me <star names|all/constellations|asteroids names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
-	"help star": "Usage <star name> \nDisplays basic information about the star \nex: Polaris (knowed by north star)\n",
-	"help today activity": "Usage <today activity> \nDisplays a activity for the actual year season\n",
+	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
+	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
@@ -1173,7 +1102,6 @@ def copy2clipboard(text):
 
 #----------------------------------------------------------
 class Sun:
-
 	def __init__(self, tz, lat, long):  # default Amsterdam
 		self.lat = lat
 		self.long = long
@@ -1400,7 +1328,6 @@ def drawart(artname):
 		randomcolor = ['RED','BLACK','DARK_MAGENTA','DARK_GREEN']
 		artcor = kolor[random.choice(randomcolor)]
 		art = art_cybele
-	#print ('\n')
 	for i in range(len(art)):
 		res = ''.join(map(chr, art[i]))
 		if i == 5 and artname == 'art_cybele':
@@ -1599,6 +1526,16 @@ def days_until(what_date):
 	output = str(days_until)
 	return output
 
+#------------------------------------------------------------
+def get_uptime():
+    current_time = datetime.now()
+    time_difference: timedelta = current_time - script_start_time 
+    total_seconds = time_difference.total_seconds()
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    return f"{hours}h {minutes}m {seconds}s"
+	
 #-------------------------------------------------------
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
@@ -1663,7 +1600,7 @@ def find_word_in_dicts(word, core):
 				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 				print( '%s\n' % (dbsearch))
 
-			elif list_name == 'linuxcmd':
+			elif list_name == 'linuxcmd':		
 				print ("<"+word.lower()+">" + " is a console linux command. Here some help about'it:\n")
 				print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
 				print ("Explanation: " + str(linux_commands[word]['explanation']))
@@ -1813,7 +1750,6 @@ def find_unit_factor(cfactors, unit):
 
 #--------------------------------------------
 def get_current_century():
-
 	current_year = date.today().isocalendar()[0]
 	century = current_year // 100 + 1 if current_year % 100 == 0 else current_year // 100
 	ordinal = ("st", "nd", "rd")[min(century % 100 % 10 - 1, 2)] if century % 100 not in (11, 12, 13) else "th"
@@ -1829,7 +1765,6 @@ def quicklist(list, delimiter):
 
 #-----------------------------------------------
 def link_status(url):
-
 	try:
 		with urllib.request.urlopen(url) as response:
 			response.read()
@@ -1841,7 +1776,6 @@ def link_status(url):
 
 #-----------------------------------------------
 def people_in_space():
-
 	try:
 		import json
 		import urllib.request
@@ -1860,7 +1794,6 @@ def people_in_space():
 
 #-------------------------------------------------
 def where_is_iss():
-
 	try:
 		import json
 		import urllib.request
@@ -1880,7 +1813,6 @@ def where_is_iss():
 
 #--------------------------------------------------
 def get_star_info(star_name):
-
 	try:
 		import urllib.parse
 		import urllib.request
@@ -1910,14 +1842,12 @@ def days_to_units(num_days):
 	minutes = num_days * 24 * 60
 	hours = num_days * 24
 	seconds = num_days * 24 * 60 * 60
-
 	return minutes, hours, seconds
 
 #-------------------------------------------------
 def days_to_event(event):
-
 	if not event:
-		print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What?!\n")
+		print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
 	else:
 		if event == 'christmas':
 			thisyear = date.today().year
@@ -2061,7 +1991,6 @@ def planet_orbit_info(planet_name):
 		"uranus": "Ice Giant",
 		"neptune": "Ice Giant"
 	}
-
 	orbit_types = {
 		"mercury": "Elliptical",
 		"venus": "Nearly Circular",
@@ -2199,30 +2128,61 @@ def cybele_play_quiz(quizdata,game):
 			print ("Incorrect, " + correct.title() + ". Let's proceed.\n")
 	print ("")
 
-#---------------------------------------------
-def random_delay():
-	minutes = random.randint(0, 59)
-	seconds = minutes * 60
-	sleep(seconds)
-
 #-------------------------------------------------------------------
 def random_season_activity():
 	now = date.today()
 	month = now.month
+
 	if 3 <= month <= 5:  # Spring (March, April, May)
 		season = "spring"
 	elif 6 <= month <= 8:  # Summer (June, July, August)
 		season = "summer"
-	elif 9 <= month <= 11:  # Autumn (September, October, November)
+	elif 9 <= month <= 11: # Autumn (September, October, November)
 		season = "autumn"
 	else:  # Winter (December, January, February)
 		season = "winter"
-	for season_data in season_activities:
-		if season_data[0] == season:
-			activities = season_data[1]
+
+	conn = None
+	try:
+		if internet_onoff():
+			conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		else:
+			db_filename = "cybele.db"
+			if os.path.isfile(db_filename):
+				conn = sqlite3.connect(db_filename)
+			else:
+				modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n    I cannot execute properly. Exiting."
+				print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
+				sys.exit(0)
+
+		cursor = conn.cursor()
+        
+		cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='season_activities';")
+		if cursor.fetchone() is None:
+			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'season activities' does not exist in the database.")
+			return
+
+		cursor.execute(f"SELECT {season} FROM season_activities ORDER BY RANDOM() LIMIT 1")
+		result = cursor.fetchone()
+
+		if result:
+			activities_str = result[0]
+			activities = [activity.strip() for activity in activities_str.split(',')]
 			activitie = "It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
-			return activitie
-	return None
+			print(activitie)
+		else:
+			return f"No activities found for {season} in the database."
+
+	except ImportError:
+		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'sqlitecloud' library is not installed or accessible. Please install it to use the online database.")
+	except sqlite3.OperationalError as e:
+		if "no such table" in str(e).lower():
+			print(f"{random.choice(messages['trouble_msg'])} Database operational error: {e}. This option is not available.")
+	except sqlite3.Error as e:
+		print(f"{random.choice(messages['trouble_msg'])} Database incompatibility. This option is not available. \nDetails: {e}")
+	finally:
+		if conn:
+			conn.close()
 
 #-------------------------------------------------
 def periodic_show( element ):
@@ -2293,18 +2253,11 @@ def cybele_math_game():
 #-------------------------------------------------
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
-	if dbname == 'askardb':
-		dbname = 'askardb'
-	elif dbname == 'astrogl':
-		dbname = 'cybele'
-	elif dbname == 'oldtech':
-		dbname = 'cybele'
-
 	if internet_onoff() == True:
 		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/"+dbname+".sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		db_filename = dbname + ".db"
-		if os.path.isfile (db_filename) == True :
+		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
@@ -2312,6 +2265,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			sys.exit(0)
 	
 	zdb = []
+	filter = ""
 
 	if dbtask == 'search':
 		if dbname == 'askardb':
@@ -2338,27 +2292,48 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				items_per_line = 5
 			for i in range(0, len(results), items_per_line):
 				line = results[i:i + items_per_line]
-				output_line = [str(row[0]) for row in line] # Extract and convert ask_id to string
-				#print(" | ".join(output_line))
+				output_line = [str(row[0]) for row in line]
 				print(", ".join(output_line))
 		else:
 			print (f'No {nchar} {dbname} that contain the substring {_spchar_[2:3]}{dbend}{_spchar_[3:4]}.')
 				
 	if dbtask == 'view':
+		cursor = None
 		if dbname == 'askardb':
 			filter = "SELECT ask_id="+str(dbbegin)+", askard from askard_db"
+		elif dbname == 'cybele':
+			if dbtable == 'funfacts':
+				filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
+			elif dbtable == 'nicethings':	
+				filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
+			else:
+				print ("option view none of dbtables with conditions... Fix'it")
 		
-		cursor = conn.execute(filter)
-		for row in cursor:
-			if row[0] == 1:
-				zdb.append (dbbegin)
-				zdb.append (row[1])		
-		if len(zdb) > 0:
-			print("\n > " + zdb[1])
-		else:
-			print ("There is no '" + str(dbbegin) + "' in the " + ".".join(handle_mandb.split(".")[:-1]) +" database!")
-			print ("")
-			
+		if dbname == 'askardb':
+			conn = sqlite3.connect(dbname + ".db")
+			cursor = conn.execute(filter)
+			for row in cursor:
+				if row[0] == 1:
+					zdb.append (dbbegin)
+					zdb.append (row[1])		
+			if len(zdb) > 0:
+				print(f"\n > {zdb[1]}")
+			else:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
+		
+		elif dbname == 'cybele':
+			cursor = conn.execute(filter)
+			if dbtable == 'funfacts':
+				nchar = _spchar_[13:14]
+			elif dbtable == 'nicethings':	
+				nchar = _spchar_[14:15]
+			if cursor:
+				row = cursor.fetchone()
+				if row:
+					print(f"\n {nchar} {str(row[0])}\n")
+				else:
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
+		
 	if dbtask == 'list':
 		if dbname == 'askardb':
 			if dbbegin == 0 and dbend == 0:
@@ -2382,23 +2357,49 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		if dbname == 'askardb':
 			filter = "SELECT min(ask_id) , max(ask_id) FROM askard_db"
 			titvar = "askard ID"
-		elif dbname == 'cybele':
+		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
 			filter = "SELECT min(glossary) , max(glossary) FROM astronomy_glossary"
 			titvar = "astronomy glossary term"
-		elif dbname == 'cybele':
+		elif dbname == 'cybele' and dbtable == 'oldtech':
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
 			titvar = "old tech terminology" 
 		cursor = conn.execute(filter)
 		for row in cursor:
 			print ("The first "+ titvar +" in the database file is '" + str(row[0]) + "' and the last is '" + str(row[1]) + "'.\n")
 	conn.close()
-	
-	if dbtask == 'nxtable':
-		cursor = conn.cursor()
-		cursor.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
-		count = cursor.fetchone()[0]
-		print (count)
 
+#-------------------------------------------------
+def get_cmdlinux(command_name):
+    
+	conn = None
+	try:
+		conn = sqlite3.connect('cybele.db')
+		cursor = conn.cursor()
+		query = "SELECT cmd_name, syntax, explanation, examples FROM linux_commands WHERE cmd_name = ?"
+		cursor.execute(query, (command_name,))
+		row = cursor.fetchone()
+		if row:
+			cmd_name, syntax, explanation, examples_str = row
+
+			# Convert the examples string back into a list if it was stored as '; '-separated values
+			examples_list = examples_str.split('; ') if examples_str else []
+
+			return {
+				"cmd_name": cmd_name,
+				"syntax": syntax,
+				"explanation": explanation,
+				"examples": examples_list
+			}
+		else:
+			return None
+
+	except sqlite3.Error as e:
+		print(f"Database error: {e}")
+		return None
+	finally:
+		if conn:
+			conn.close()
+			
 #-------------------------------------------------
 def chkpy():  
 	major = sys.version_info.major
@@ -2504,27 +2505,11 @@ def findme(input_string, item_list):
 	return matches #if matches else True
 
 #-------------------------------------------------
-def decompact(data, flength=2):
-    value_data = ""
-    for i in range(0, len(data), flength):
-        hx = data[i:i+flength]
-        value_data += chr(int(hx, 16))
-    return value_data
-
-#------------------------------------------------------------------
-# Init-process
-def print_statusline(msg: str):
-    last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
-    print(' ' * last_msg_length, end='\r')
-    print(msg, end='\r')
-    sys.stdout.flush()
-    setattr(print_statusline, 'last_msg', msg)
-	
-#-------------------------------------------------
 #-------------------------------------------------
 def main():	
 	global aboutyou, days
-	wms = random.choice(core['intromsg']);ta=True
+	wms = random.choice(core['intromsg'])
+	tdctl=0;ncctl=0;ffctl=0
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	if chkpy() != True:
@@ -2540,6 +2525,8 @@ def main():
 		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + mmodname)
 		sys.exit(0)
+	#----------------------------
+	print_statusline(f"")
 	#----------------------------
 	drawart('art_cybele')
 	print("\n"+kolor[('DARK_YELLOW')]+wms+"\n\n"+kolor['BLUE']+"I am "+kolor['DARK_RED']+_title_+kolor['RED']+_spchar_[0:1]+kolor['BLUE']+" a "+website['home'][8:] + _cyext_ +kolor['OFF']+"\n")
@@ -3197,10 +3184,19 @@ def main():
 				print ("")
 		
 		elif question[0:8] == 'fun fact':
-			mandb('cybele','funfacts','view',0,0)
+			if ffctl >= 3:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['nicefun_msg'])}\n")
+			else:
+				mandb('cybele','funfacts','view',0,0)
+				ffctl = ffctl + 1
+				
 		elif question[0:10] == 'nice thing':
-			mandb('cybele','nicething','view',0,0)
-		
+			if ncctl >= 3:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
+			else:
+				mandb('cybele','nicethings','view',0,0)
+				ncctl = ncctl + 1
+				
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
@@ -3235,17 +3231,21 @@ def main():
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
 		
-		elif question[0:10] == 'first last' or question[0:6] == 'limits':
-				getparam = question.split()
-				if len(getparam) == 3:
-					if getparam[2] == "askard":
-						mandb('askardb','','limits',0,0)
-					elif getparam[2] == "astronomy":
-						mandb('astrogl','','limits',0,0)
-					elif getparam[2] == "oldtech":
-						mandb('oldtech','','limits',0,0)
-				else:
-					print ('The correct usage is <first last <askard/astronomy/oldtech>> to show the first and last askard ID in the database.\n')
+		elif question[0:6] == 'limits':
+			getparam = question.split()
+			if len(getparam) == 2:
+				if getparam[1] == "askard":
+					mandb('askardb','','limits',0,0)
+				elif getparam[1] == "astronomy":
+					mandb('cybele','astronomy_glossary','limits',0,0)
+				elif getparam[1] == "oldtech":
+					mandb('cybele','oldtech','limits',0,0)
+			else:
+				print ('The correct usage is <limits <askard|astronomy|oldtech>> to show the first and last record in the database.\n')
+		
+		elif question[0:10] == 'db records':
+			nrecords = records_number("askardb","askard_db")
+			print(f"Total records in table '{nrecords[0]}': {nrecords[1]}")
 		
 		elif question.find('current')!=-1 and question.find('century')!=-1:
 			current_century = get_current_century()
@@ -3359,12 +3359,12 @@ def main():
 					else:
 						print( random.choice(messages['nostar_message']) + "cybele.star #" + star_name + " have empty data!\n")
 
-		elif question == 'today activity':
-			if ta == True:
-				print (random_season_activity())
-				ta = False
+		elif question == 'today activity':		
+			if tdctl >= 3:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
 			else:
-				print (random.choice(messages['activity_msg']) + "\n")
+				random_season_activity()
+				tdctl = tdctl + 1
 
 		elif _cybid_ == True and question == 'extcybele' or question == 'extver' or question == 'extdir':
 			print ( kolor['RED'] + " 〉 Cybele external Library Module by AS" + kolor['OFF'])
@@ -3469,7 +3469,10 @@ def main():
 					print("")
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
-
+		
+		elif question == "cybele uptime":
+			print(f"My uptime is: {get_uptime()}\n")
+		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 2:
@@ -3482,6 +3485,7 @@ def main():
 			answer = find_answer(question,questions)
 			print(answer)
 
+#-------------------------------------------------
 if __name__ == "__main__":
 	try:
 		while True:
