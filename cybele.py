@@ -36,6 +36,10 @@ try:
 	import sqlitecloud
 	import requests
 	import json,html,urllib
+<<<<<<< HEAD
+=======
+	import csv,io
+>>>>>>> cdb4b147526a330ea1f9144217dc1825c0a0f691
 	from bs4 import BeautifulSoup
 	from platform import python_version
 	from time import gmtime, strftime, sleep
@@ -2098,6 +2102,15 @@ def random_season_activity():
 				sys.exit(0)
 
 		cursor = conn.cursor()
+<<<<<<< HEAD
+=======
+        
+		cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='season_activities';")
+		if cursor.fetchone() is None:
+			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'season activities' does not exist in the database.")
+			return
+
+>>>>>>> cdb4b147526a330ea1f9144217dc1825c0a0f691
 		cursor.execute(f"SELECT {season} FROM season_activities ORDER BY RANDOM() LIMIT 1")
 		result = cursor.fetchone()
 
