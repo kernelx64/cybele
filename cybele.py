@@ -104,7 +104,7 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}
+iknow_pun = {"i know": "you know","you know": "i know"};conn=None
 cybchk = int(str(ord('_')) + str(ord("$")));chkauth = sum(ord(char) for char in _author_ for char in _title_)
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
@@ -455,6 +455,7 @@ help = {
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
+	"help fav tvshows": "Usage: <fav tvshows> \nCommand to show all Vorin (www.adelinosaldanha.site/tvshows) nTOP list.\nex: show your fav tvshows\n    favorite tvshows\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
@@ -735,176 +736,6 @@ asteroids_list = {
 	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
 	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
 }
-#----------------------------------------------------
-def chkcoor(lat, lon):
-    try:
-        lat_val = float(lat)
-        if not (-90 <= lat_val <= 90):
-            return False
-    except (ValueError, TypeError):
-        return False
-    try:
-        lon_val = float(lon)
-        if not (-180 <= lon_val <= 180):
-            return False
-    except (ValueError, TypeError):
-        return False
-    return True
-
-#------------------------------------------------------------
-def internet_onoff():
-
-	try:
-		import requests
-		response = requests.get("https://www.google.com", timeout=5)
-		response.raise_for_status()
-		return True
-	except ImportError:
-		print("\n\033[1;31m 〉 " + _title_ + "\033[0;0m" + ": Error loadind standard Python module.\n   I cannot perform this task correctly.")
-		return False
-	except requests.exceptions.RequestException as e:
-		return False
-
-#--------------------------------------------------------
-def fetch_fromdbfile(db_filename, table_name, column_name):
-	conn = None
-	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
-	else:
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-	try:
-		cursor = conn.cursor()
-		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
-		result = [row[0] for row in cursor.fetchall()]
-		return result 
-	except sqlitecloud.exceptions.SQLiteCloudOperationalError as e:
-		print_statusline(f"")
-		error_message = f"SQLiteCloud Database error {e} \n{' '*12}I cannot execute properly. Exiting."
-		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {error_message}")
-		exit(0)
-	except sqlite3.Error as e:
-		return []
-	finally:
-		if conn:
-			conn.close()
-			
-#------------------------------------------------------------
-def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
-	conn = None
-	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
-	else:
-		if os.path.isfile (db_filename) == True:
-			conn = sqlite3.connect(db_filename)
-		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-	
-	try:
-		cursor = conn.cursor()
-		cursor.execute(f"SELECT {column_to_fetch} FROM {table_name} WHERE {search_column} = ?", (record,))
-		result = cursor.fetchone()
-		if result:
-			return result[0]
-		else:
-			return None
-	except sqlite3.Error as e:
-		return None
-	finally:
-		if conn:
-			conn.close()
-
-#-------------------------------------------------
-def records_number(dbfile, dbtable):
-	conn = None
-	try:
-		conn = sqlite3.connect(dbfile + ".db")
-		cursor = conn.cursor()
-		cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{dbtable}';")
-		if cursor.fetchone() is None:
-		    print(f"Error: Table '{dbtable}' does not exist in database '{dbfile}'.")
-		    return
-		cursor.execute(f"SELECT COUNT(*) FROM {dbtable}")
-		total_records = cursor.fetchone()[0]
-	except sqlite3.Error as e:
-		print(f"An SQLite error occurred: {e}")
-	except Exception as e:
-		print(f"An unexpected error occurred: {e}")
-	finally:
-		if conn:
-			conn.close()
-		return dbtable, total_records
-
-#--------------------------------------------------------------
-core["star name"] = [key.lower() for key in stars_dict.keys()]
-
-#--------------------------------------------------------------
-astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
-core["astronomy glossary"] = list(astronomy_glossary)
-
-#----------------------------------------------------
-core["constelattion"] = list(constellations_dict.keys())
-
-#------------------------------------------------------------
-db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
-db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
-db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
-ncountries = {
-    country.lower(): {"capital": capital, "population": population}
-    for country, capital, population in zip(db_country, db_capital, db_population)
-}
-core['country'] = list(ncountries.keys())
-core['capital'] = [country["capital"] for country in ncountries.values()]
-
-#----------------------------------------------------
-core["asteroid"] = list(asteroids_list.keys())
-
-#----------------------------------------------------
-ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
-ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
-climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
-core["climate dictionary term"] = list(climate_dictionary.keys())
-core["climate dictionary"] = list(climate_dictionary.values())
-
-#----------------------------------------------------------------------
-meaning_term = fetch_fromdbfile("cybele.db", "meanings", "term")
-core["word meaning"] = list(meaning_term)
-
-#----------------------------------------------------------------------
-qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
-core["qa-astro"] = list(qa_astro)
-
-#----------------------------------------------------------------------
-core['help'] = list(help.keys())
-
-#----------------------------------------------------------------------
-linux_commands = {}
-cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
-syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
-explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
-examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
-
-for i in range(len(cmd_names)):
-	if cmd_names[i] not in [key[5:] for key in help.keys()]:
-		cmd_name = cmd_names[i]
-		syntax = syntaxes[i]
-		explanation = explanations[i]
-		examples = examples_str_list[i].split(';') if examples_str_list[i] else []
-		linux_commands[cmd_name] = {
-			"syntax": syntax,
-			"explanation": explanation,
-			"examples": examples
-			}
-
-#----------------------------------------------------------------------
-core["linuxcmd"] = list(linux_commands)
-
 #----------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -1058,6 +889,179 @@ periodic_table_pt = [
 " 7 Fr Ra Ac Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og"," "*67,
 "         Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu","         Th Pa U  Np Pu Am Cm Bk Cf Es Fm Md No Lr",
 ]
+#----------------------------------------------------
+def chkcoor(lat, lon):
+    try:
+        lat_val = float(lat)
+        if not (-90 <= lat_val <= 90):
+            return False
+    except (ValueError, TypeError):
+        return False
+    try:
+        lon_val = float(lon)
+        if not (-180 <= lon_val <= 180):
+            return False
+    except (ValueError, TypeError):
+        return False
+    return True
+
+#------------------------------------------------------------
+def internet_onoff():
+
+	try:
+		import requests
+		response = requests.get("https://www.google.com", timeout=5)
+		response.raise_for_status()
+		return True
+	except ImportError:
+		print("\n\033[1;31m 〉 " + _title_ + "\033[0;0m" + ": Error loadind standard Python module.\n   I cannot perform this task correctly.")
+		return False
+	except requests.exceptions.RequestException as e:
+		return False
+
+#--------------------------------------------------------
+def fetch_fromdbfile(db_filename, table_name, column_name):
+	conn = None
+	if internet_onoff() == True:
+		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+	else:
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+		else:
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			exit(0)
+	try:
+		cursor = conn.cursor()
+		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
+		result = [row[0] for row in cursor.fetchall()]
+		return result 
+	except sqlitecloud.exceptions.SQLiteCloudOperationalError as e:
+		print_statusline(f"")
+		error_message = f"SQLiteCloud Database error {e} \n{' '*12}I cannot execute properly. Exiting."
+		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {error_message}")
+		exit(0)
+	except sqlite3.Error as e:
+		return []
+	finally:
+		if conn:
+			conn.close()
+			
+#------------------------------------------------------------
+def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
+	
+	conn = None
+	if internet_onoff() == True:
+		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+	else:
+		if os.path.isfile (db_filename) == True:
+			conn = sqlite3.connect(db_filename)
+		else:
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			exit(0)
+	
+	try:
+		cursor = conn.cursor()
+		cursor.execute(f"SELECT {column_to_fetch} FROM {table_name} WHERE {search_column} = ?", (record,))
+		result = cursor.fetchone()
+		if result:
+			return result[0]
+		else:
+			return None
+	except sqlite3.Error as e:
+		return None
+	finally:
+		if conn:
+			conn.close()
+
+#-------------------------------------------------
+def records_number(dbfile, dbtable):
+	
+	conn = None
+	try:
+		conn = sqlite3.connect(dbfile + ".db")
+		cursor = conn.cursor()
+		cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{dbtable}';")
+		if cursor.fetchone() is None:
+		    print(f"Error: Table '{dbtable}' does not exist in database '{dbfile}'.")
+		    return
+		cursor.execute(f"SELECT COUNT(*) FROM {dbtable}")
+		total_records = cursor.fetchone()[0]
+	except sqlite3.Error as e:
+		print(f"An SQLite error occurred: {e}")
+	except Exception as e:
+		print(f"An unexpected error occurred: {e}")
+	finally:
+		if conn:
+			conn.close()
+		return dbtable, total_records
+
+#--------------------------------------------------------------
+core["star name"] = [key.lower() for key in stars_dict.keys()]
+
+#--------------------------------------------------------------
+astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
+core["astronomy glossary"] = list(astronomy_glossary)
+
+#----------------------------------------------------
+core["constelattion"] = list(constellations_dict.keys())
+
+#------------------------------------------------------------
+db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
+db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
+db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
+ncountries = {
+    country.lower(): {"capital": capital, "population": population}
+    for country, capital, population in zip(db_country, db_capital, db_population)
+}
+core['country'] = list(ncountries.keys())
+core['capital'] = [country["capital"] for country in ncountries.values()]
+
+#----------------------------------------------------
+core["asteroid"] = list(asteroids_list.keys())
+
+#----------------------------------------------------
+ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
+ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
+climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
+core["climate dictionary term"] = list(climate_dictionary.keys())
+core["climate dictionary"] = list(climate_dictionary.values())
+
+#----------------------------------------------------------------------
+meaning_term = fetch_fromdbfile("cybele.db", "meanings", "term")
+core["word meaning"] = list(meaning_term)
+
+#----------------------------------------------------------------------
+qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
+core["qa-astro"] = list(qa_astro)
+
+#----------------------------------------------------------------------
+core['help'] = list(help.keys())
+
+#----------------------------------------------------------------------
+linux_commands = {}
+cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
+syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
+explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
+examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
+
+for i in range(len(cmd_names)):
+	if cmd_names[i] not in [key[5:] for key in help.keys()]:
+		cmd_name = cmd_names[i]
+		syntax = syntaxes[i]
+		explanation = explanations[i]
+		examples = examples_str_list[i].split(';') if examples_str_list[i] else []
+		linux_commands[cmd_name] = {
+			"syntax": syntax,
+			"explanation": explanation,
+			"examples": examples
+			}
+
+#----------------------------------------------------------------------
+core["linuxcmd"] = list(linux_commands)
+
+
 #----------------------------------------------------------
 core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
@@ -2138,9 +2142,9 @@ def cybele_play_quiz(quizdata,game):
 
 #-------------------------------------------------------------------
 def random_season_activity():
+	
 	now = date.today()
 	month = now.month
-
 	if 3 <= month <= 5:  # Spring (March, April, May)
 		season = "spring"
 	elif 6 <= month <= 8:  # Summer (June, July, August)
@@ -2163,13 +2167,8 @@ def random_season_activity():
 				print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
 				sys.exit(0)
 
-		cursor = conn.cursor()
-        
+		cursor = conn.cursor()   
 		cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='season_activities';")
-		if cursor.fetchone() is None:
-			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'season activities' does not exist in the database.")
-			return
-
 		cursor.execute(f"SELECT {season} FROM season_activities ORDER BY RANDOM() LIMIT 1")
 		result = cursor.fetchone()
 
@@ -2260,7 +2259,7 @@ def cybele_math_game():
 #-------------------------------------------------
 #-------------------------------------------------
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
-
+	
 	if internet_onoff() == True:
 		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/"+dbname+".sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
@@ -2378,7 +2377,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
 #-------------------------------------------------
 def get_cmdlinux(command_name):
-    
+	
 	conn = None
 	try:
 		conn = sqlite3.connect('cybele.db')
@@ -3071,9 +3070,14 @@ def main():
 			else:
 				storage = "offline [database files]"
 			if node_name:
-				print('   Device : ' + platform.node() + '|' + _cyext_[0:4].replace(" ",""))
+				device_output = f'   Device : {platform.node()}'
+				if _cybid_:
+					device_output += f'|{_cyext_[0:4].replace(" ","")}'
+					print(device_output)
+				else:
+					print(device_output)
 			else:
-			  print ('  Device : unidentified device')
+				print('    Device : unidentified device')				
 			print('     Name : ' + _title_)
 			print('  Version : ' +version)
 			print('  Revised : ' +_revise_)
