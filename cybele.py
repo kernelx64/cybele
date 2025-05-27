@@ -1025,6 +1025,7 @@ help = {
 	"help cybele uptime": "Usage <cybele uptime> \nDisplay information about how long the cybele has been running.\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
+	"help diagnostics": "Usage: diagnostics|show core \nDescribe the status of the runnning Cybele device.\nex: diagnostics \n    show core\n",
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
