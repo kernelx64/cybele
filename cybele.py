@@ -881,7 +881,6 @@ qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
 core["qa-astro"] = list(qa_astro)
 
 #----------------------------------------------------------------------
-help_cybele = [key[5:] for key in help.keys()] 
 core['help'] = list(help.keys())
 
 #----------------------------------------------------------------------
@@ -892,7 +891,7 @@ explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
 examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
 
 for i in range(len(cmd_names)):
-	if cmd_names[i] not in help_cybele:
+	if cmd_names[i] not in [key[5:] for key in help.keys()]:
 		cmd_name = cmd_names[i]
 		syntax = syntaxes[i]
 		explanation = explanations[i]
@@ -902,7 +901,7 @@ for i in range(len(cmd_names)):
 			"explanation": explanation,
 			"examples": examples
 			}
-del help_cybele
+
 #----------------------------------------------------------------------
 core["linuxcmd"] = list(linux_commands)
 
@@ -2924,17 +2923,16 @@ def main():
 
 		elif question == 's.o' or question == 'operating system' or question == 'system':
 			if sysos == 'Linux':
-				#nuptime = os.system('uptime')
-				print ("This is the " + sysos + " Operating System (OS). ")
+				nuptime = os.system('uptime')
+				print (f"This is the {sysos} Operating System (OS) active at {str(uptime)}.")
 			elif sysos == 'Windows':
-				print ("I am behing executed in " + sysos + "Operating System (OS).\n")
+				print (f"I am behing executed in {sysos} Operating System (OS).\n")
 			else:
-				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
+				print (f"Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
 			if 'help' in core and isinstance(core['help'], list):
 				print("Here are the topics ordered alphabetically for better help about.\nJust type help <topic>\n")
-				#future increment use : help_cybele
 				nhelp = [key[5:] for key in core['help']]
 				nhelp.sort()
 				for i in range(len(nhelp)):
@@ -2942,7 +2940,7 @@ def main():
 				del nhelp
 				print ("")
 			else:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _auth1r_ + "'s code is too powerful for me!\n")
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} My programming seems to have a glitch. {_auth1r_}'s code is too powerful for me!\n")
 
 		elif question == "time" or question == "what time it is" or question == 'clock time':
 			print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
