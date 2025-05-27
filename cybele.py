@@ -108,6 +108,7 @@ cybchk = int(str(ord('_')) + str(ord("$")));chkauth = sum(ord(char) for char in 
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities']
+stars_dict = {}
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -924,14 +925,12 @@ def make_intextdb():
 		sys.exit(0)
 	else:
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
-		
 
-		#----------------------------------------------------
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
 		constelations = list(fetch_fromdbfile("cybele.db", "stars", "constelation"))
 
-		stars_dict = {}
+		global stars_dict = {}
 		for name, hr, const in zip(star_names, hr_numbers, constelations):
 			stars_dict[name] = [hr, const]
 
@@ -939,8 +938,8 @@ def make_intextdb():
 		meaning = list(fetch_fromdbfile("cybele.db", "constelations", "meaning"))
 		abbr = list(fetch_fromdbfile("cybele.db", "constelations", "abbr"))
 
-		constellations_dict = {}
-		constellations_abbr = {}
+		global constellations_dict = {}
+		global constellations_abbr = {}
 		for constelation, meaning, abbr in zip(constelation, meaning, abbr):
 			constellations_dict[constelation] = meaning, abbr
 			constellations_abbr[abbr] = constelation
@@ -948,7 +947,7 @@ def make_intextdb():
 		db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
 		db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
 		db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
-		ncountries = {
+		global ncountries = {
 			country.lower(): {"capital": capital, "population": population}
 			for country, capital, population in zip(db_country, db_capital, db_population)
 		}
@@ -959,7 +958,7 @@ def make_intextdb():
 		meaning_term = fetch_fromdbfile("cybele.db", "meanings", "term")
 		qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
 		
-		linux_commands = {}
+		global linux_commands = {}
 		cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
 		syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
 		explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
