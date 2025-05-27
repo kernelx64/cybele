@@ -87,6 +87,16 @@ if node_name:
 		except ImportError:
 			_cybid_ = False
 
+#------------------------------------------------------------------
+# Init-process
+def print_statusline(msg: str):
+    last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
+    print(' ' * last_msg_length, end='\r')
+    print(msg, end='\r')
+    sys.stdout.flush()
+    setattr(print_statusline, 'last_msg', msg)
+
+print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n    Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n    Xqbmbgz."
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
@@ -430,17 +440,301 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 #------------------------------------------------------------
 factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
 
-#------------------------------------------------------------------
-# Init-process
-def print_statusline(msg: str):
-    last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
-    print(' ' * last_msg_length, end='\r')
-    print(msg, end='\r')
-    sys.stdout.flush()
-    setattr(print_statusline, 'last_msg', msg)
+#----------------------------------------------------------
+help = {
+	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
+	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
+	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
+	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
+	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
+	"help cybele uptime": "Usage <cybele uptime> \nDisplay information about how long the cybele has been running.\n",
+	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
+	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
+	"help diagnostics": "Usage: diagnostics|show core \nDescribe the status of the runnning Cybele device.\nex: diagnostics \n    show core\n",
+	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
+	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
+	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
+	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
+	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
+	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
+	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
+	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
+	"help hashfile": "Usage: hashfile <filename> | hashfile <filename1> <<path to> <filename2>. \nMake the SHA1 hash for the given filename or filenames.\nex: hashfile cybele.py \n    hashfile cybele.py /home/user/filename1 \n    hashfile cybele.py c:/users/downloads/file2 \n",
+	"help help": "Usage: help \nDisplay this help screen. Display the help for individuals cybele commands. \nex: help \n",
+	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
+	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
+	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
+	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
+	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
+	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
+	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
+	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
+	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
+	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
+	"help presence": "Usage: presence <service> \nShow's the direct link for "+_auth1r_+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
+	"help planet": "Usage: <name of the planet> typed directly\nReturns some offline basic information about the planet name typed.\n",
+	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
+	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
+	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
+	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
+	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
+	"help show me": "Usage: show me <star names|all/constellations|asteroids names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
+	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
+	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
+	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
+	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
+	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
+}
+#----------------------------------------------------
+stars_dict = {
+	"Acamar": ["HR 897","Eri"],"Achernar": ["HR 472","Eri"],"Achird": ["HR 219","Cas"],"Acrab": ["HR 5984","Sco"],
+	"Acrux": ["HR 4730","Cru"],"Acubens": ["HR 3572","Cnc"],"Adhafera": ["HR 4031","Leo"],"Adhara": ["HR 2618","CMa"],
+	"Adhil": ["HR 390","And"],"Ain": ["HR 1409","Tau"],"Ainalrami": ["HR 7116","Sgr"],"Aladfar": ["HR 7298","Lyr"],
+	"Albaldah": ["HR 7264","Sgr"],"Albali": ["HR 7950","Aqr"],"Albireo": ["HR 7417","Cyg"],"Alchiba": ["HR 4623","Crv"],
+	"Alcor": ["HR 5062","UMa"],"Alcyone": ["HR 1165","Tau"],"Aldebaran": ["HR 1457","Tau"],"Alderamin": ["HR 8162","Cep"],
+	"Aldhanab": ["HR 8353","Gru"],"Aldhibah": ["HR 6396","Dra"],"Aldulfin": ["HR 7852","Del"],"Alfirk": ["HR 8238","Cep"],
+	"Algedi": ["HR 7754","Cap"],"Algenib":["HR 39","Peg"],"Algieba": ["HR 4057","Leo"],"Algol": ["HR 936","Per"],
+	"Algorab":["HR 4757","Crv"],"Alhena":["HR 2421","Gem"],"Alioth":["HR 4905","UMa"],"Aljanah":["HR 7949","Cyg"],
+	"Alkaid": ["HR 5191","UMa"],"Alkalurops":["HR 5733","Boo"],"Alkaphrah": ["HR 3594","UMa"],"Alkarab": ["HR 8905", "Peg"],
+    "Alkes": ["HR 4287", "Crt"],"Almaaz": ["HR 1605", "Aur"],"Almach": ["HR 603", "And"],"Alnair": ["HR 8425", "Gru"],
+	"Alnasl": ["HR 6746", "Sgr"],"Alnilam": ["HR 1903", "Ori"],"Alnitak": ["HR 1948", "Ori"],"Alniyat": ["HR 6084", "Sco"],
+    "Alphard": ["HR 3748", "Hya"],"Alphecca": ["HR 5793", "CrB"],"Alpheratz": ["HR 15", "And"],"Alpherg": ["HR 437", "Psc"],
+    "Alrakis": ["HR 6370", "Dra"],"Alrescha": ["HR 596", "Psc"],"Alruba": ["HR 6618", "Dra"],"Alsafi": ["HR 7462", "Dra"],
+    "Alsciaukat": ["HR 3275", "Lyn"],"Alsephina": ["HR 3485", "Vel"],"Alshain": ["HR 7602", "Aql"],"Alshat": ["HR 7773", "Cap"],
+    "Altair": ["HR 7557", "Aql"],"Altais": ["HR 7310", "Dra"],"Alterf": ["HR 3773", "Leo"],"Aludra": ["HR 2827", "CMa"],
+    "Alula Australis": ["HR 4375", "UMa"],"Alula Borealis": ["HR 4377", "UMa"],"Alya": ["HR 7141", "Ser"],
+    "Alzirr": ["HR 2484", "Gem"],"Ancha": ["HR 8499", "Aqr"],"Angetenar": ["HR 850", "Eri"],"Ankaa": ["HR 99", "Phe"],
+    "Anser": ["HR 7405", "Vul"],"Antares": ["HR 6134", "Sco"],"Arcturus": ["HR 5340", "Boo"],"Arkab Posterior": ["HR 7343", "Sgr"],
+    "Arkab Prior": ["HR 7337", "Sgr"],"Arneb": ["HR 1865", "Lep"],"Ascella": ["HR 7194", "Sgr"],"Asellus Australis": ["HR 3461", "Cnc"],
+    "Asellus Borealis": ["HR 3449", "Cnc"],"Ashlesha": ["HR 3482", "Hya"],"Aspidiske": ["HR 3699", "Car"],"Asterope": ["HR 1151", "Tau"],
+    "Athebyne": ["HR 6132", "Dra"],"Atik": ["HR 1131", "Per"],"Atlas": ["HR 1178", "Tau"],"Atria": ["HR 6217", "TrA"],
+    "Avior": ["HR 3307", "Car"],"Azelfafage": ["HR 8301", "Cyg"],"Azha": ["HR 874", "Eri"],"Azmidi": ["HR 3045", "Pup"],
+    "Barnard's Star": ["GJ 699", "Oph"],"Baten Kaitos": ["HR 539", "Cet"],"Beemim": ["HR 1393", "Eri"],"Beid": ["HR 1298", "Eri"],
+    "Bellatrix": ["HR 1790", "Ori"],"Betelgeuse": ["HR 2061", "Ori"],"Bharani": ["HR 838", "Ari"],"Biham": ["HR 8450", "Peg"],
+    "Botein": ["HR 951", "Ari"],"Brachium": ["HR 5603", "Lib"],"Bunda": ["HR 8264", "Aqr"],"Canopus": ["HR 2326", "Car"],
+    "Capella": ["HR 1708", "Aur"],"Caph": ["HR 21", "Cas"],"Castor": ["HR 2891", "Gem"],"Castula": ["HR 265", "Cas"],
+    "Cebalrai": ["HR 6603", "Oph"],"Celaeno": ["HR 1140", "Tau"],"Cervantes": ["HR 6585", "Ara"],"Chalawan": ["HR 4277", "UMa"],
+    "Chamukuy": ["HR 1412", "Tau"],"Chara": ["HR 4785", "CVn"],"Chertan": ["HR 4359", "Leo"],"Copernicus": ["HR 3522", "Cnc"],
+    "Cor Caroli": ["HR 4915", "CVn"],"Cujam": ["HR 6117", "Her"],"Cursa": ["HR 1666", "Eri"],"Dabih": ["HR 7776", "Cap"],
+    "Dalim": ["HR 963", "For"],"Deneb Algedi": ["HR 8322", "Cap"],"Deneb": ["HR 7924", "Cyg"],"Denebola": ["HR 4534", "Leo"],
+    "Diadem": ["HR 4968", "Com"],"Diphda": ["HR 188", "Cet"],"Dschubba": ["HR 5953", "Sco"],"Dubhe": ["HR 4301", "UMa"],
+    "Dziban": ["HR 6636", "Dra"],"Edasich": ["HR 5744", "Dra"],"Electra": ["HR 1142", "Tau"],"Elgafar": ["HR 5409", "Vir"],
+    "Elkurud": ["HR 2177", "Col"],"Elnath": ["HR 1791", "Tau"],"Eltanin": ["HR 6705", "Dra"],"Enif": ["HR 8308", "Peg"],
+    "Errai": ["HR 8974", "Cep"],"Fafnir": ["HR 6945", "Dra"],"Fang": ["HR 5944", "Sco"],"Fawaris": ["HR 7528", "Cyg"],
+    "Felis": ["HR 3923", "Hya"],"Fomalhaut": ["HR 8728", "PsA"],"Fulu": ["HR 153", "Cas"],"Fumalsamakah": ["HR 8773", "Psc"],
+    "Furud": ["HR 2282", "CMa"],"Fuyue": ["HR 6630", "Sco"],"Gacrux": ["HR 4763", "Cru"],"Giausar": ["HR 4434", "Dra"],
+    "Gienah": ["HR 4662", "Crv"],"Ginan": ["HR 4700", "Cru"],"Gomeisa": ["HR 2845", "CMi"],"Grumium": ["HR 6688", "Dra"],
+    "Hadar": ["HR 5267", "Cen"],"Haedus": ["HR 1641", "Aur"], "Hamal": ["HR 617", "Ari"],"Hassaleh": ["HR 1577", "Aur"],
+    "Hatysa": ["HR 1899", "Ori"],"Helvetios": ["HR 8729", "Peg"],"Heze": ["HR 5107", "Vir"],"Homam": ["HR 8634", "Peg"],
+    "Iklil": ["HR 5928", "Sco"],"Intercrus": ["HR 3743", "UMa"],"Izar": ["HR 5506", "Boo"],"Jabbah": ["HR 6027", "Sco"],
+    "Jishui": ["HR 2930", "Gem"],"Kaffaljidhma": ["HR 804", "Cet"],"Kang": ["HR 5315", "Vir"],"Kaus Australis": ["HR 6879", "Sgr"],
+    "Kaus Borealis": ["HR 6913", "Sgr"],"Kaus Media": ["HR 6859", "Sgr"],"Keid": ["HR 1325", "Eri"],"Khambalia": ["HR 5359", "Vir"],
+    "Kitalpha": ["HR 8131", "Equ"],"Kochab": ["HR 5563", "UMi"],"Kornephoros": ["HR 6148", "Her"],"Kraz": ["HR 4786", "Crv"],
+    "Kurhah": ["HR 8417", "Cep"],"Larawag": ["HR 6241", "Sco"],"Lesath": ["HR 6508", "Sco"],"Libertas": ["HR 7595", "Aql"],
+    "Lich": ["PSR B1257+12", "Vir"],"Lilii Borea": ["HR 824", "Ari"],"Maasym": ["HR 6526", "Her"],"Mahasim": ["HR 2095", "Aur"],
+    "Maia": ["HR 1149", "Tau"],"Marfik": ["HR 6149", "Oph"],"Markab": ["HR 8781", "Peg"],"Markeb": ["HR 3734", "Vel"],
+    "Marsic": ["HR 6008", "Her"],"Matar": ["HR 8650", "Peg"],"Mebsuta": ["HR 2473", "Gem"],"Megrez": ["HR 4660", "UMa"],
+    "Meissa": ["HR 1879", "Ori"],"Mekbuda": ["HR 2650", "Gem"],"Meleph": ["HR 3429", "Cnc"],"Menkalinan": ["HR 2088", "Aur"],
+    "Menkar": ["HR 911", "Cet"],"Menkent": ["HR 5288", "Cen"],"Menkib": ["HR 1228", "Per"],"Merak": ["HR 4295", "UMa"],
+    "Merga": ["HR 5533", "Boo"],"Meridiana": ["HR 7254", "CrA"],"Merope": ["HR 1156", "Tau"],"Mesarthim": ["HR 546", "Ari"],
+    "Miaplacidus": ["HR 3685", "Car"],"Mimosa": ["HR 4853", "Cru"],"Minchir": ["HR 3418", "Hya"],"Minelauva": ["HR 4910", "Vir"],
+    "Mintaka": ["HR 1852", "Ori"],"Mira": ["HR 681", "Cet"],"Mirach": ["HR 337", "And"],"Miram": ["HR 834", "Per"],
+    "Mirfak": ["HR 1017", "Per"],"Mirzam": ["HR 2294", "CMa"],"Misam": ["HR 941", "Per"],"Mizar": ["HR 5054", "UMa"],
+    "Mothallah": ["HR 544", "Tri"],"Muliphein": ["HR 2657", "CMa"],"Muphrid": ["HR 5235", "Boo"],"Muscida": ["HR 3323", "UMa"],
+    "Musica": ["HR 8030", "Del"],"Nahn": ["HR 3627", "Cnc"],"Naos": ["HR 3165", "Pup"],"Nashira": ["HR 8278", "Cap"],
+    "Nekkar": ["HR 5602", "Boo"],"Nembus": ["HR 464", "And"],"Nihal": ["HR 1829", "Lep"],"Nunki": ["HR 7121", "Sgr"],
+    "North Star": ["HR 424", "UMi"],"Nusakan": ["HR 5747", "CrB"],"Ogma": ["HD 149026", "Her"],"Okab": ["HR 7235", "Aql"],"Peacock": ["HR 7790", "Pav"],
+    "Phact": ["HR 1956", "Col"],"Phecda": ["HR 4554", "UMa"],"Pherkad": ["HR 5735", "UMi"],"Piautos": ["HR 3268", "Cnc"],
+    "Pipirima": ["HR 6252", "Sco"],"Pleione": ["HR 1180", "Tau"],"Polaris Australis": ["HR 7228", "Oct"],
+    "Polaris": ["HR 424", "UMi"],"Polis": ["HR 6812", "Sgr"],"Pollux": ["HR 2990", "Gem"],"Porrima": ["HR 4825", "Vir"],
+    "Praecipua": ["HR 4247", "LMi"],"Prima Hyadum": ["HR 1346", "Tau"],"Procyon": ["HR 2943", "CMi"],"Propus": ["HR 2216", "Gem"],
+    "Proxima Centauri": ["GJ 551", "Cen"],"Ran": ["HR 1084", "Eri"],"Rasalas": ["HR 3905", "Leo"],"Rasalgethi": ["HR 6406", "Her"],
+    "Rasalhague": ["HR 6556", "Oph"],"Rastaban": ["HR 6536", "Dra"],"Regulus": ["HR 3982", "Leo"],"Revati": ["HR 361", "Psc"],
+    "Rigel": ["HR 1713", "Ori"],"Rigil Kentaurus": ["HR 5459", "Cen"],"Rotanev": ["HR 7882", "Del"],"Ruchbah": ["HR 403", "Cas"],
+    "Rukbat": ["HR 7348", "Sgr"],"Sabik": ["HR 6378", "Oph"],"Saclateni": ["HR 1612", "Aur"],"Sadachbia": ["HR 8518", "Aqr"],
+    "Sadalbari": ["HR 8684", "Peg"],"Sadalmelik": ["HR 8414", "Aqr"],"Sadalsuud": ["HR 8232", "Aqr"],"Sadr": ["HR 7796", "Cyg"],
+    "Saiph": ["HR 2004", "Ori"],"Salm": ["HR 8880", "Peg"],"Sargas": ["HR 6553", "Sco"],"Sarin": ["HR 6410", "Her"],
+    "Sceptrum": ["HR 1481", "Eri"],"Scheat": ["HR 8775", "Peg"],"Schedar": ["HR 168", "Cas"],"Secunda Hyadum": ["HR 1373", "Tau"],
+    "Segin": ["HR 0542", "Cas"],"Seginus": ["HR 5435", "Boo"],"Sham": ["HR 7479", "Sge"],"Shaula": ["HR 6527", "Sco"],
+	"Sheliak": ["HR 7106", "Lyr"],"Sheratan": ["HR 553", "Ari"],"Sirius": ["HR 2491", "CMa"],"Situla": ["HR 8610", "Aqr"],
+	"Skat": ["HR 8709", "Aqr"],"Spica": ["HR 5056", "Vir"],"Sualocin": ["HR 7906", "Del"],"Subra": ["HR 3852", "Leo2"],
+    "Suhail": ["HR 3634", "Vel"],"Sulafat": ["HR 7178", "Lyr"],"Syrma": ["HR 5338", "Vir"],"Tabit": ["HR 1543", "Ori"],
+    "Taiyangshou": ["HR 4518", "UMa"],"Taiyi": ["HR 4916", "Dra"],"Talitha": ["HR 3569", "UMa"],"Tania Australis": ["HR 4069", "UMa"],
+    "Tania Borealis": ["HR 4033", "UMa"],"Tarazed": ["HR 7525", "Aql"],"Tarf": ["HR 3249", "Cnc"],"Taygeta": ["HR 1145", "Tau"],
+    "Tegmine": ["HR 3208", "Cnc"],"Tejat": ["HR 2286", "Gem"],"Terebellum": ["HR 7597", "Sgr"],"Theemin": ["HR 1464", "Eri"],
+	"Thuban": ["HR 5291", "Dra"],"Tiaki": ["HR 8636", "Gru"],"Tianguan": ["HR 1910", "Tau"],"Tianyi": ["HR 4863", "Dra"],
+    "Titawin": ["HR 458", "And"],"Tonatiuh": ["HR 4609", "Cam"],"Torcular": ["HR 510", "Psc"],"Tureis": ["HR 3185", "Pup"],
+    "Ukdah": ["HR 3845", "Hya"],"Unukalhai": ["HR 5854", "Ser"],"Unurgunite": ["HR 2646", "CMa"],"Vega": ["HR 7001", "Lyr"],
+    "Veritate": ["HR 8930", "And"],"Vindemiatrix": ["HR 4932", "Vir"],"Wasat": ["HR 2777", "Gem"],"Wazn": ["HR 2040", "Col"],
+    "Wezen": ["HR 2693", "CMa"],"Wurren": ["HR 338", "Phe"],"Xamidimura": ["HR 6247", "Sco"],"Xuange": ["HR 5351", "Boo"],
+    "Yed Posterior": ["HR 6075", "Oph"],"Yed Prior": ["HR 6056", "Oph"],"Yildun": ["HR 6789", "UMi"],"Zaniah": ["HR 4689", "Vir"],
+    "Zaurak": ["HR 1231", "Eri"],"Zavijava": ["HR 4540", "Vir"],"Zhang": ["HR 3903", "Hya"],"Zibal": ["HR 984", "Eri"],
+    "Zosma": ["HR 4357", "Leo"],"Zubenelgenubi": ["HR 5531", "Lib"],"Zubenelhakrabi": ["HR 5787", "Lib"],"Zubeneschamali": ["HR 5685", "Lib"],
+}
+#----------------------------------------------------
+orbit_regime = {
+	"geo": "Geostationary Orbit           \n i < 25°, 35586 km < hp < 35986 km, 35586 km < ha < 35986 km",
+	"igo": "Inclined Geosynchronous Orbit \n 37948 km < a < 46380 km, e < 0.25, 25° < i < 180°",
+	"ego": "Extended Geostationary Orbit  \n 37948 km < a < 46380 km, e < 0.25, i < 25°",
+	"nso": "Navigation Satellites Orbit   \n 50° < i < 70°, 18100 km < hp < 24300 km, 18100 km < ha < 24300 km",
+	"gto": "GEO Transfer Orbit            \n i < 90°, hp < 2000 km, 31570 km < ha < 40002 km",
+	"meo": "Medium Earth Orbit            \n 2000 km < hp < 31570 km, 2000 km < ha < 31570 km",
+	"gho": "GEO-superGEO Crossing Orbits  \n 31570 km < hp < 40002 km, ha > 40002 km",
+	"leo": "Low Earth Orbit               \n hp < 2000 km, ha < 2000 km",
+	"hao": "High Altitude Earth Orbit     \n hp > 40002 km, ha > 40002 km",
+	"mgo": "MEO-GEO Crossing Orbits       \n 2000 km < hp < 31570 km, 31570 km < ha < 40002 km",
+	"heo": "Highly Eccentric Earth Orbit  \n hp < 31570 km, ha > 40002 km",
+	"lmo": "LEO-MEO Crossing Orbits       \n hp < 2000 km, 2000 km < ha < 31570 km",
+	"sso": "Sun-synchronous orbit         \n i = 98°, hp < 600 km, < ha < 800 km",
+}
+#----------------------------------------------------
+planet_data = {
+	"mercury": {"orbital_period": 0.24,"semi_major_axis": 0.39,"orbital_eccentricity": 0.21,"orbital_inclination": 7.00,
+	"rotation_period": 58.65,"axial_tilt": 0.03,"mass": 3.3011e23,
+	"atmosphere": "Virtually no atmosphere. Trace amounts of hydrogen, helium, and oxygen.",
+	"moons": "No moons.","rings": "No rings.","temperature": "167°C (333°F) day, -180°C (-292°F) night"
+	},
+	"venus": {"orbital_period": 0.62,"semi_major_axis": 0.72,"orbital_eccentricity": 0.007,"orbital_inclination": 3.39,
+	"rotation_period": 243.02,"axial_tilt": 177.36,"mass": 4.8675e24,
+	"atmosphere": "Primarily carbon dioxide (96.5%), with nitrogen, argon, and trace amounts of other gases.",
+	"moons": "No moons.","rings": "No rings.","temperature": "462°C (864°F)"
+	},
+	"earth": {"orbital_period": 1.00,"semi_major_axis": 1.00,"orbital_eccentricity": 0.017,"orbital_inclination": 0.00,
+	"rotation_period": 24.00,"axial_tilt": 23.44,"mass": 5.9722e24,
+	"atmosphere": "Primarily nitrogen (78%) and oxygen (21%), with argon and trace gases.",
+	"moons": "One moon: Moon","rings": "No rings.","temperature": "15°C (59°F)"
+	},
+  	"mars": {"orbital_period": 1.88,"semi_major_axis": 1.52,"orbital_eccentricity": 0.093,"orbital_inclination": 1.85,
+	"rotation_period": 01.03,"axial_tilt": 25.19,"mass": 6.4171e23,
+	"atmosphere": "Primarily carbon dioxide (95%), with nitrogen, argon, and trace amounts of oxygen and water vapor.",
+	"moons": "Two moons: Phobos and Deimos.","rings": "No rings.","temperature": "-63°C (-81°F)"
+	},
+  	"jupiter": {"orbital_period": 11.86,"semi_major_axis": 5.20,"orbital_eccentricity": 0.048,"orbital_inclination": 1.31,
+	"rotation_period": 0.41,"axial_tilt": 3.13,"mass": 1.8981e27,
+	"atmosphere": "Primarily hydrogen and helium, with methane, ammonia, and trace amounts of other gases.",
+	"moons": "Over 80 moons, with the four largest being Io, Europa, Ganymede, and Callisto.",
+	"rings": "Prominent ring system composed mainly of ice particles.","temperature": "-145°C (-229°F)"
+	},
+  	"saturn": {"orbital_period": 29.46,"semi_major_axis": 9.54,"orbital_eccentricity": 0.056,"orbital_inclination": 2.49,
+	"rotation_period": 0.43,"axial_tilt": 26.73,"mass": 5.6834e26,
+	"atmosphere": "Primarily hydrogen and helium, with methane and ammonia.",
+	"moons": "Over 80 moons, with the largest being Titan.",
+	"rings": "Extensive and complex ring system composed mostly of ice particles.","temperature": "-185°C (-299°F)"
+	},
+  	"uranus": {"orbital_period": 84.01,"semi_major_axis": 19.18,"orbital_eccentricity": 0.046,"orbital_inclination": 0.77,
+	"rotation_period": -0.72,"axial_tilt": 97.77,"mass": 8.6810e25,
+	"atmosphere": "Primarily hydrogen and helium, with methane giving it its BLUE color.",
+	"moons": "Over 27 moons, with the largest being Titania and Oberon.",
+	"rings": "Faint ring system composed of dark particles.","temperature": "-195°C (-319°F)"
+	},
+  	"neptune": {"orbital_period": 164.81,"semi_major_axis": 30.06,"orbital_eccentricity": 0.009,"orbital_inclination": 1.77,
+	"rotation_period": 0.67,"axial_tilt": 28.32,"mass": 1.0243e26,
+	"atmosphere": "Primarily hydrogen and helium, with methane and ammonia.",
+	"moons": "Over 14 moons, with the largest being Triton.",
+	"rings": "Faint ring system composed of ice particles.","temperature": "-200°C (-328°F)"
+	},
+	"pluto": {"orbital_period": 248.09,"semi_major_axis": 39.48,"orbital_eccentricity": 0.2488,"orbital_inclination": 17.14,
+	"rotation_period": -6.387,"axial_tilt": 122.53,"mass": 1.30900e22,
+	"atmosphere": "Thin atmosphere composed primarily of nitrogen, with methane and carbon monoxide.",
+	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
+	}
+}
 
-print_statusline(f"\nLoading ...")
+#----------------------------------------------------
+constellations_dict = {
+	"andromeda": "Princess of Ethiopia","antlia": "Air pump","apus": "Bird of Paradise","aquarius": "Water bearer",
+	"aquila": "Eagle","ara": "Altar","aries": "Ram","auriga": "Charioteer","bootes": "Herdsman",
+	"caelum": "Graving tool","camelopardalis": "Giraffe","cancer": "Crab","canes venatici": "Hunting dogs",
+	"canis major": "Big dog","canis minor": "Little dog","capricornus": "Sea goat","carina": "Keel of Argonauts' ship",
+	"cassiopeia": "Queen of Ethiopia","centaurus": "Centaur","cepheus": "King of Ethiopia","cetus": "Sea monster (whale)",
+	"chamaeleon": "Chameleon","circinus": "Compasses","columba": "Dove","coma berenices": "Berenice's hair",
+	"corona australis": "Southern crown","corona borealis": "Northern crown","corvus": "Crow","crater": "Cup",
+	"crux": "Cross (southern)","cygnus": "Swan","delphinus": "Porpoise","dorado": "Swordfish","draco": "Dragon",
+	"equuleus": "Little horse","eridanus": "River","fornax": "Furnace","gemini": "Twins","grus": "Crane",
+	"hercules": "Hercules, son of Zeus","horologium": "Clock","hydra": "Sea serpent","hydrus": "Water snake","indus": "Indian",
+	"lacerta": "Lizard","lion": "Leo","leo Minor": "Little lion","lepus": "Hare","libra": "Balance","lupus": "Wolf",
+	"lynx": "Lynx","lyra": "Lyre or harp","mensa": "Table mountain","microscopium": "Microscope","monoceros": "Unicorn",
+	"musca": "Fly","norma": "Carpenter's Level","octans": "Octant","ophiuchus": "Holder of serpent","orion": "Orion, the hunter",
+	"pavo": "Peacock","pegasus": "Pegasus, the winged horse","perseus": "Perseus, hero who saved Andromeda",
+	"phoenix": "Phoenix","pictor": "Easel","pisces": "Fishes","piscis austrinus": "Southern fish","puppis": "Stern of the Argonauts' ship",
+	"pyxis": "Compass on the Argonauts' ship","reticulum": "Net","sagitta": "Arrow","sagittarius": "Archer","scorpius": "Scorpion",
+	"sculptor": "Sculptor's tools","scutum": "Shield","serpens": "Serpent","sextans": "Sextant","taurus": "Bull",
+	"telescopium": "Telescope","triangulum": "Triangle","triangulum australe": "Southern triangle","tucana": "Toucan",
+	"ursa major": "Big bear","ursa minor": "Little bear","vela": "Sail of the Argonauts' ship","virgo": "Virgin",
+	"volans": "Flying fish","vulpecula": "Fox"
+}
+#---------------------------------------------------------
+constellations_abbr = {
+	"And": "Andromeda","Ant": "Antlia","Apus": "Apodis","Aqr": "Aquarius","Aql": "Aquila",
+	"Ara": "Arae","Ari": "Aries","Aur": "Auriga","Boo": "Bootes","Cae": "Caelum","Cam": "Camelopardalis",
+	"Cnr": "Cancer","CVn": "Canes Venatici","CMa": "Canis Major","CMi": "Canis Minor","Cap": "Capricornus","Car": "Carina",
+	"Cas": "Cassiopeia","Cen": "Centaurus","Cep": "Cepheus","Cet": "Cetus","Cha": "Chamaeleon","Cir": "Circinus",
+	"Col": "Columba","Com": "Coma Berenices","CrA": "Corona Australis","CrB": "Corona Borealis","Crv": "Corvus",
+	"Crt": "Crater","Cru": "Crux","Cyh": "Cygnus","Del": "Delphinus","Dor": "Dorado","Dra": "Draco",
+	"Equ": "Equuleus","Eri": "Eridanus","For": "Fornax","Gem": "Gemini","Gru": "Grus","Her": "Hercules",
+	"Hor": "Horologium","Hya": "Hydra","Hyi": "Hydrus","Ind": "Indus","Lac": "Lacerta","Leo": "Leonis",
+	"LMi": "Leo Minor","Lep": "Lepus","Lib": "Libra","Lup": "Lupus","Lyn": "Lynx","Lyr": "Lyra",
+	"Men": "Mensa","Mic": "Microscopium","Mon": "Monoceros","Mus": "Musca","Nor": "Norma","Oct": "Octans",
+	"Oph": "Ophiuchus","Ori": "Orion","Pav": "Pavo","Peg": "Pegasus","Per": "Perseus","Phe": "Phoenix",
+	"Pic": "Pictor","Psc": "Pisces","PsA": "Piscis Austrinus","Pup": "Puppis","Pyx": "Pyxis","Ret": "Reticulum",
+	"Sge": "Sagitta","Sgr": "Sagittarius","Sco": "Scorpius","Scl": "Sculptor","Sct": "Scutum","Ser": "Serpens",
+	"Sex": "Sextans","Tau": "Taurus","Tel": "Telescopium","Tri": "Triangulum","TrA": "Triangulum Australe","Tuc": "Tucana",
+	"UMa": "Ursa Major","UMi": "Ursa Minor","Vel": "Vela","Vir": "Virgo","Vol": "Volans","Vul": "Vulpecula"
+}
 
+#---------------------------------------------------------
+asteroids_list = {
+	"65 cybele": {"type": "minor planet", "dimensions":237.26, "description": "65 Cybele is one of the largest asteroids in the Solar System. Its located in the outer asteroid belt. It is thought to be a emnant primordial body."},
+	"ceres": {"type": "dwarf planet", "dimensions":939.4, "description": "Largest asteroid, potential water ice"},
+    "vesta": {"type": "asteroid", "dimensions":525.4, "description": "Brightest asteroid visible to the naked eye. Second-largest, differentiated structure"},
+    "pallas": {"type": "asteroid", "dimensions":545, "description": "Third-largest, unusual orbit"},
+    "bennu": {"type": "dangerous asteroid", "dimentions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
+    "ryugu": {"type": "asteroid", "dimensions":0.9, "description": "Carbon-rich, explored by Hayabusa2"},
+    "itokawa": {"type": "asteroid", "dimensions":0.33, "description": "Small, S-type, explored by Hayabusa"},
+    "eros": {"type": "asteroid", "dimensions":16.84, "description": "Near-Earth asteroid, extensively studied"},
+    "gaspra": {"type": "asteroid", "dimensions":12.2, "description": "First asteroid imaged close-up"},
+    "ida": {"type": "asteroid", "dimensions":32, "description": "Has a moon (Dactyl)"},
+    "juno": {"type": "asteroid", "dimensions":246.596, "description": "One of the largest main-belt asteroids"},
+    "hebe": {"type": "asteroid", "dimensions":185.18, "description": "One of the most massive asteroids"},
+    "iris": {"type": "asteroid", "dimensions":199.83, "description": "One of the brightest asteroids"},
+    "flora": {"type": "asteroid", "dimensions":147.491, "description": "Largest asteroid in the Flora family"},
+    "metis": {"type": "asteroid", "dimensions":190, "description": "Innermost asteroid in the asteroid belt"},
+    "hygiea": {"type": "asteroid", "dimensions":407.12, "description": "Fourth-largest asteroid"},
+    "interamnia": {"type": "asteroid", "dimensions":306.313, "description": "One of the most massive asteroids"},
+    "europa": {"type": "asteroid", "dimensions":303.918, "description": "Large asteroid with high albedo"},
+	"apophis": {"type": "dangerous asteroid", "dimensions": 0.37, "description": "Potentially hazardous asteroid, close Earth approach in 2029"},
+    "1950 da": {"type": "asteroid", "dimensions": 1.1, "description": "Potentially hazardous asteroid, high risk of Earth impact in 2880"},
+	"psyche": {"type": "metal-rich asteroid", "dimensions": 220, "description": "Potentially iron-nickel core of a protoplanet"},
+	#-----------------------------------------------------------------
+	"thetis": {"type": "main-belt asteroid", "dimensions": 84.899, "description": "A typical main-belt asteroid"},
+	"melpomene": {"type": "main-belt asteroid", "dimensions": 139.594, "description": "A typical main-belt asteroid"},
+	"fortuna": {"type": "main-belt asteroid", "dimensions": 200, "description": "A large main-belt asteroid"},
+	"massalia": {"type": "main-belt asteroid", "dimensions": 135.680, "description": "A typical main-belt asteroid"},
+	"lutetia": {"type": "main-belt asteroid", "dimensions": 95.76, "description": "A large main-belt asteroid"},
+	"kalliope": {"type": "main-belt asteroid", "dimensions": 167.536, "description": "A large main-belt asteroid"},
+	"thalia": {"type": "main-belt asteroid", "dimensions": 107.53, "description": "A typical main-belt asteroid"},
+	"themis": {"type": "main-belt asteroid", "dimensions": 198, "description": "A large main-belt asteroid"},
+	"phocaea": {"type": "main-belt asteroid", "dimensions": 61.054, "description": "A smaller main-belt asteroid"},
+	"proserpina": {"type": "main-belt asteroid", "dimensions": 94.80, "description": "A typical main-belt asteroid"},
+	"euterpe": {"type": "main-belt asteroid", "dimensions": 96, "description": "A typical main-belt asteroid"},
+	"bellona": {"type": "main-belt asteroid", "dimensions": 120.90, "description": "A typical main-belt asteroid"},
+	"amphitrite": {"type": "main-belt asteroid", "dimensions": 189.559, "description": "A large main-belt asteroid"},
+	"urania": {"type": "main-belt asteroid", "dimensions": 92.787, "description": "A typical main-belt asteroid"},
+	"euphrosyne": {"type": "main-belt asteroid", "dimensions": 267.080, "description": "A very large main-belt asteroid"},
+	"pomona": {"type": "main-belt asteroid", "dimensions": 80.76, "description": "A typical main-belt asteroid"},
+	"1950 da": {"type": "dangerous asteroid", "dimensions": 1.1, "description": "This asteroid has a relatively high probability of impact in the distant future, making it a subject of ongoing study."},
+	"4179 toutatis": {"type": "dangerous asteroid", "dimensions": 5.2, "description": "This asteroid is quite large and has had close approaches to Earth in the past, making it a potential concern."},
+	"2007 tu24": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid made a relatively close approach to Earth in 2007, highlighting the need for continued monitoring of near-Earth objects."},
+	"99942 apophis": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid was once considered a significant threat but subsequent observations have reduced the risk. It's still monitored closely."},
+	"2010 al30": {"type": "dangerous asteroid", "dimensions": 15, "description": "This asteroid made a very close approach to Earth in 2010, emphasizing the need for early detection of these objects."},
+	"2011 md": {"type": "dangerous asteroid", "dimensions": 7, "description": "This small asteroid made an exceptionally close Earth flyby in 2011, highlighting the potential for unexpected encounters."},
+	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
+	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
+}
 #----------------------------------------------------
 def chkcoor(lat, lon):
     try:
@@ -547,6 +841,16 @@ def records_number(dbfile, dbtable):
 			conn.close()
 		return dbtable, total_records
 
+#--------------------------------------------------------------
+core["star name"] = [key.lower() for key in stars_dict.keys()]
+
+#--------------------------------------------------------------
+astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
+core["astronomy glossary"] = list(astronomy_glossary)
+
+#----------------------------------------------------
+core["constelattion"] = list(constellations_dict.keys())
+
 #------------------------------------------------------------
 db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
 db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
@@ -558,262 +862,6 @@ ncountries = {
 core['country'] = list(ncountries.keys())
 core['capital'] = [country["capital"] for country in ncountries.values()]
 
-#----------------------------------------------------
-stars_dict = {
-	"Acamar": ["HR 897","Eri"],"Achernar": ["HR 472","Eri"],"Achird": ["HR 219","Cas"],"Acrab": ["HR 5984","Sco"],
-	"Acrux": ["HR 4730","Cru"],"Acubens": ["HR 3572","Cnc"],"Adhafera": ["HR 4031","Leo"],"Adhara": ["HR 2618","CMa"],
-	"Adhil": ["HR 390","And"],"Ain": ["HR 1409","Tau"],"Ainalrami": ["HR 7116","Sgr"],"Aladfar": ["HR 7298","Lyr"],
-	"Albaldah": ["HR 7264","Sgr"],"Albali": ["HR 7950","Aqr"],"Albireo": ["HR 7417","Cyg"],"Alchiba": ["HR 4623","Crv"],
-	"Alcor": ["HR 5062","UMa"],"Alcyone": ["HR 1165","Tau"],"Aldebaran": ["HR 1457","Tau"],"Alderamin": ["HR 8162","Cep"],
-	"Aldhanab": ["HR 8353","Gru"],"Aldhibah": ["HR 6396","Dra"],"Aldulfin": ["HR 7852","Del"],"Alfirk": ["HR 8238","Cep"],
-	"Algedi": ["HR 7754","Cap"],"Algenib":["HR 39","Peg"],"Algieba": ["HR 4057","Leo"],"Algol": ["HR 936","Per"],
-	"Algorab":["HR 4757","Crv"],"Alhena":["HR 2421","Gem"],"Alioth":["HR 4905","UMa"],"Aljanah":["HR 7949","Cyg"],
-	"Alkaid": ["HR 5191","UMa"],"Alkalurops":["HR 5733","Boo"],"Alkaphrah": ["HR 3594","UMa"],"Alkarab": ["HR 8905", "Peg"],
-    "Alkes": ["HR 4287", "Crt"],"Almaaz": ["HR 1605", "Aur"],"Almach": ["HR 603", "And"],"Alnair": ["HR 8425", "Gru"],
-	"Alnasl": ["HR 6746", "Sgr"],"Alnilam": ["HR 1903", "Ori"],"Alnitak": ["HR 1948", "Ori"],"Alniyat": ["HR 6084", "Sco"],
-    "Alphard": ["HR 3748", "Hya"],"Alphecca": ["HR 5793", "CrB"],"Alpheratz": ["HR 15", "And"],"Alpherg": ["HR 437", "Psc"],
-    "Alrakis": ["HR 6370", "Dra"],"Alrescha": ["HR 596", "Psc"],"Alruba": ["HR 6618", "Dra"],"Alsafi": ["HR 7462", "Dra"],
-    "Alsciaukat": ["HR 3275", "Lyn"],"Alsephina": ["HR 3485", "Vel"],"Alshain": ["HR 7602", "Aql"],"Alshat": ["HR 7773", "Cap"],
-    "Altair": ["HR 7557", "Aql"],"Altais": ["HR 7310", "Dra"],"Alterf": ["HR 3773", "Leo"],"Aludra": ["HR 2827", "CMa"],
-    "Alula Australis": ["HR 4375", "UMa"],"Alula Borealis": ["HR 4377", "UMa"],"Alya": ["HR 7141", "Ser"],
-    "Alzirr": ["HR 2484", "Gem"],"Ancha": ["HR 8499", "Aqr"],"Angetenar": ["HR 850", "Eri"],"Ankaa": ["HR 99", "Phe"],
-    "Anser": ["HR 7405", "Vul"],"Antares": ["HR 6134", "Sco"],"Arcturus": ["HR 5340", "Boo"],"Arkab Posterior": ["HR 7343", "Sgr"],
-    "Arkab Prior": ["HR 7337", "Sgr"],"Arneb": ["HR 1865", "Lep"],"Ascella": ["HR 7194", "Sgr"],"Asellus Australis": ["HR 3461", "Cnc"],
-    "Asellus Borealis": ["HR 3449", "Cnc"],"Ashlesha": ["HR 3482", "Hya"],"Aspidiske": ["HR 3699", "Car"],"Asterope": ["HR 1151", "Tau"],
-    "Athebyne": ["HR 6132", "Dra"],"Atik": ["HR 1131", "Per"],"Atlas": ["HR 1178", "Tau"],"Atria": ["HR 6217", "TrA"],
-    "Avior": ["HR 3307", "Car"],"Azelfafage": ["HR 8301", "Cyg"],"Azha": ["HR 874", "Eri"],"Azmidi": ["HR 3045", "Pup"],
-    "Barnard's Star": ["GJ 699", "Oph"],"Baten Kaitos": ["HR 539", "Cet"],"Beemim": ["HR 1393", "Eri"],"Beid": ["HR 1298", "Eri"],
-    "Bellatrix": ["HR 1790", "Ori"],"Betelgeuse": ["HR 2061", "Ori"],"Bharani": ["HR 838", "Ari"],"Biham": ["HR 8450", "Peg"],
-    "Botein": ["HR 951", "Ari"],"Brachium": ["HR 5603", "Lib"],"Bunda": ["HR 8264", "Aqr"],"Canopus": ["HR 2326", "Car"],
-    "Capella": ["HR 1708", "Aur"],"Caph": ["HR 21", "Cas"],"Castor": ["HR 2891", "Gem"],"Castula": ["HR 265", "Cas"],
-    "Cebalrai": ["HR 6603", "Oph"],"Celaeno": ["HR 1140", "Tau"],"Cervantes": ["HR 6585", "Ara"],"Chalawan": ["HR 4277", "UMa"],
-    "Chamukuy": ["HR 1412", "Tau"],"Chara": ["HR 4785", "CVn"],"Chertan": ["HR 4359", "Leo"],"Copernicus": ["HR 3522", "Cnc"],
-    "Cor Caroli": ["HR 4915", "CVn"],"Cujam": ["HR 6117", "Her"],"Cursa": ["HR 1666", "Eri"],"Dabih": ["HR 7776", "Cap"],
-    "Dalim": ["HR 963", "For"],"Deneb Algedi": ["HR 8322", "Cap"],"Deneb": ["HR 7924", "Cyg"],"Denebola": ["HR 4534", "Leo"],
-    "Diadem": ["HR 4968", "Com"],"Diphda": ["HR 188", "Cet"],"Dschubba": ["HR 5953", "Sco"],"Dubhe": ["HR 4301", "UMa"],
-    "Dziban": ["HR 6636", "Dra"],"Edasich": ["HR 5744", "Dra"],"Electra": ["HR 1142", "Tau"],"Elgafar": ["HR 5409", "Vir"],
-    "Elkurud": ["HR 2177", "Col"],"Elnath": ["HR 1791", "Tau"],"Eltanin": ["HR 6705", "Dra"],"Enif": ["HR 8308", "Peg"],
-    "Errai": ["HR 8974", "Cep"],"Fafnir": ["HR 6945", "Dra"],"Fang": ["HR 5944", "Sco"],"Fawaris": ["HR 7528", "Cyg"],
-    "Felis": ["HR 3923", "Hya"],"Fomalhaut": ["HR 8728", "PsA"],"Fulu": ["HR 153", "Cas"],"Fumalsamakah": ["HR 8773", "Psc"],
-    "Furud": ["HR 2282", "CMa"],"Fuyue": ["HR 6630", "Sco"],"Gacrux": ["HR 4763", "Cru"],"Giausar": ["HR 4434", "Dra"],
-    "Gienah": ["HR 4662", "Crv"],"Ginan": ["HR 4700", "Cru"],"Gomeisa": ["HR 2845", "CMi"],"Grumium": ["HR 6688", "Dra"],
-    "Hadar": ["HR 5267", "Cen"],"Haedus": ["HR 1641", "Aur"], "Hamal": ["HR 617", "Ari"],"Hassaleh": ["HR 1577", "Aur"],
-    "Hatysa": ["HR 1899", "Ori"],"Helvetios": ["HR 8729", "Peg"],"Heze": ["HR 5107", "Vir"],"Homam": ["HR 8634", "Peg"],
-    "Iklil": ["HR 5928", "Sco"],"Intercrus": ["HR 3743", "UMa"],"Izar": ["HR 5506", "Boo"],"Jabbah": ["HR 6027", "Sco"],
-    "Jishui": ["HR 2930", "Gem"],"Kaffaljidhma": ["HR 804", "Cet"],"Kang": ["HR 5315", "Vir"],"Kaus Australis": ["HR 6879", "Sgr"],
-    "Kaus Borealis": ["HR 6913", "Sgr"],"Kaus Media": ["HR 6859", "Sgr"],"Keid": ["HR 1325", "Eri"],"Khambalia": ["HR 5359", "Vir"],
-    "Kitalpha": ["HR 8131", "Equ"],"Kochab": ["HR 5563", "UMi"],"Kornephoros": ["HR 6148", "Her"],"Kraz": ["HR 4786", "Crv"],
-    "Kurhah": ["HR 8417", "Cep"],"Larawag": ["HR 6241", "Sco"],"Lesath": ["HR 6508", "Sco"],"Libertas": ["HR 7595", "Aql"],
-    "Lich": ["PSR B1257+12", "Vir"],"Lilii Borea": ["HR 824", "Ari"],"Maasym": ["HR 6526", "Her"],"Mahasim": ["HR 2095", "Aur"],
-    "Maia": ["HR 1149", "Tau"],"Marfik": ["HR 6149", "Oph"],"Markab": ["HR 8781", "Peg"],"Markeb": ["HR 3734", "Vel"],
-    "Marsic": ["HR 6008", "Her"],"Matar": ["HR 8650", "Peg"],"Mebsuta": ["HR 2473", "Gem"],"Megrez": ["HR 4660", "UMa"],
-    "Meissa": ["HR 1879", "Ori"],"Mekbuda": ["HR 2650", "Gem"],"Meleph": ["HR 3429", "Cnc"],"Menkalinan": ["HR 2088", "Aur"],
-    "Menkar": ["HR 911", "Cet"],"Menkent": ["HR 5288", "Cen"],"Menkib": ["HR 1228", "Per"],"Merak": ["HR 4295", "UMa"],
-    "Merga": ["HR 5533", "Boo"],"Meridiana": ["HR 7254", "CrA"],"Merope": ["HR 1156", "Tau"],"Mesarthim": ["HR 546", "Ari"],
-    "Miaplacidus": ["HR 3685", "Car"],"Mimosa": ["HR 4853", "Cru"],"Minchir": ["HR 3418", "Hya"],"Minelauva": ["HR 4910", "Vir"],
-    "Mintaka": ["HR 1852", "Ori"],"Mira": ["HR 681", "Cet"],"Mirach": ["HR 337", "And"],"Miram": ["HR 834", "Per"],
-    "Mirfak": ["HR 1017", "Per"],"Mirzam": ["HR 2294", "CMa"],"Misam": ["HR 941", "Per"],"Mizar": ["HR 5054", "UMa"],
-    "Mothallah": ["HR 544", "Tri"],"Muliphein": ["HR 2657", "CMa"],"Muphrid": ["HR 5235", "Boo"],"Muscida": ["HR 3323", "UMa"],
-    "Musica": ["HR 8030", "Del"],"Nahn": ["HR 3627", "Cnc"],"Naos": ["HR 3165", "Pup"],"Nashira": ["HR 8278", "Cap"],
-    "Nekkar": ["HR 5602", "Boo"],"Nembus": ["HR 464", "And"],"Nihal": ["HR 1829", "Lep"],"Nunki": ["HR 7121", "Sgr"],
-    "North Star": ["HR 424", "UMi"],"Nusakan": ["HR 5747", "CrB"],"Ogma": ["HD 149026", "Her"],"Okab": ["HR 7235", "Aql"],"Peacock": ["HR 7790", "Pav"],
-    "Phact": ["HR 1956", "Col"],"Phecda": ["HR 4554", "UMa"],"Pherkad": ["HR 5735", "UMi"],"Piautos": ["HR 3268", "Cnc"],
-    "Pipirima": ["HR 6252", "Sco"],"Pleione": ["HR 1180", "Tau"],"Polaris Australis": ["HR 7228", "Oct"],
-    "Polaris": ["HR 424", "UMi"],"Polis": ["HR 6812", "Sgr"],"Pollux": ["HR 2990", "Gem"],"Porrima": ["HR 4825", "Vir"],
-    "Praecipua": ["HR 4247", "LMi"],"Prima Hyadum": ["HR 1346", "Tau"],"Procyon": ["HR 2943", "CMi"],"Propus": ["HR 2216", "Gem"],
-    "Proxima Centauri": ["GJ 551", "Cen"],"Ran": ["HR 1084", "Eri"],"Rasalas": ["HR 3905", "Leo"],"Rasalgethi": ["HR 6406", "Her"],
-    "Rasalhague": ["HR 6556", "Oph"],"Rastaban": ["HR 6536", "Dra"],"Regulus": ["HR 3982", "Leo"],"Revati": ["HR 361", "Psc"],
-    "Rigel": ["HR 1713", "Ori"],"Rigil Kentaurus": ["HR 5459", "Cen"],"Rotanev": ["HR 7882", "Del"],"Ruchbah": ["HR 403", "Cas"],
-    "Rukbat": ["HR 7348", "Sgr"],"Sabik": ["HR 6378", "Oph"],"Saclateni": ["HR 1612", "Aur"],"Sadachbia": ["HR 8518", "Aqr"],
-    "Sadalbari": ["HR 8684", "Peg"],"Sadalmelik": ["HR 8414", "Aqr"],"Sadalsuud": ["HR 8232", "Aqr"],"Sadr": ["HR 7796", "Cyg"],
-    "Saiph": ["HR 2004", "Ori"],"Salm": ["HR 8880", "Peg"],"Sargas": ["HR 6553", "Sco"],"Sarin": ["HR 6410", "Her"],
-    "Sceptrum": ["HR 1481", "Eri"],"Scheat": ["HR 8775", "Peg"],"Schedar": ["HR 168", "Cas"],"Secunda Hyadum": ["HR 1373", "Tau"],
-    "Segin": ["HR 0542", "Cas"],"Seginus": ["HR 5435", "Boo"],"Sham": ["HR 7479", "Sge"],"Shaula": ["HR 6527", "Sco"],
-	"Sheliak": ["HR 7106", "Lyr"],"Sheratan": ["HR 553", "Ari"],"Sirius": ["HR 2491", "CMa"],"Situla": ["HR 8610", "Aqr"],
-	"Skat": ["HR 8709", "Aqr"],"Spica": ["HR 5056", "Vir"],"Sualocin": ["HR 7906", "Del"],"Subra": ["HR 3852", "Leo2"],
-    "Suhail": ["HR 3634", "Vel"],"Sulafat": ["HR 7178", "Lyr"],"Syrma": ["HR 5338", "Vir"],"Tabit": ["HR 1543", "Ori"],
-    "Taiyangshou": ["HR 4518", "UMa"],"Taiyi": ["HR 4916", "Dra"],"Talitha": ["HR 3569", "UMa"],"Tania Australis": ["HR 4069", "UMa"],
-    "Tania Borealis": ["HR 4033", "UMa"],"Tarazed": ["HR 7525", "Aql"],"Tarf": ["HR 3249", "Cnc"],"Taygeta": ["HR 1145", "Tau"],
-    "Tegmine": ["HR 3208", "Cnc"],"Tejat": ["HR 2286", "Gem"],"Terebellum": ["HR 7597", "Sgr"],"Theemin": ["HR 1464", "Eri"],
-	"Thuban": ["HR 5291", "Dra"],"Tiaki": ["HR 8636", "Gru"],"Tianguan": ["HR 1910", "Tau"],"Tianyi": ["HR 4863", "Dra"],
-    "Titawin": ["HR 458", "And"],"Tonatiuh": ["HR 4609", "Cam"],"Torcular": ["HR 510", "Psc"],"Tureis": ["HR 3185", "Pup"],
-    "Ukdah": ["HR 3845", "Hya"],"Unukalhai": ["HR 5854", "Ser"],"Unurgunite": ["HR 2646", "CMa"],"Vega": ["HR 7001", "Lyr"],
-    "Veritate": ["HR 8930", "And"],"Vindemiatrix": ["HR 4932", "Vir"],"Wasat": ["HR 2777", "Gem"],"Wazn": ["HR 2040", "Col"],
-    "Wezen": ["HR 2693", "CMa"],"Wurren": ["HR 338", "Phe"],"Xamidimura": ["HR 6247", "Sco"],"Xuange": ["HR 5351", "Boo"],
-    "Yed Posterior": ["HR 6075", "Oph"],"Yed Prior": ["HR 6056", "Oph"],"Yildun": ["HR 6789", "UMi"],"Zaniah": ["HR 4689", "Vir"],
-    "Zaurak": ["HR 1231", "Eri"],"Zavijava": ["HR 4540", "Vir"],"Zhang": ["HR 3903", "Hya"],"Zibal": ["HR 984", "Eri"],
-    "Zosma": ["HR 4357", "Leo"],"Zubenelgenubi": ["HR 5531", "Lib"],"Zubenelhakrabi": ["HR 5787", "Lib"],"Zubeneschamali": ["HR 5685", "Lib"],
-}
-#--------------------------------------------------------------
-core["star name"] = [key.lower() for key in stars_dict.keys()]
-
-#--------------------------------------------------------------
-astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
-core["astronomy glossary"] = list(astronomy_glossary)
-
-#----------------------------------------------------
-orbit_regime = {
-	"geo": "Geostationary Orbit           \n i < 25°, 35586 km < hp < 35986 km, 35586 km < ha < 35986 km",
-	"igo": "Inclined Geosynchronous Orbit \n 37948 km < a < 46380 km, e < 0.25, 25° < i < 180°",
-	"ego": "Extended Geostationary Orbit  \n 37948 km < a < 46380 km, e < 0.25, i < 25°",
-	"nso": "Navigation Satellites Orbit   \n 50° < i < 70°, 18100 km < hp < 24300 km, 18100 km < ha < 24300 km",
-	"gto": "GEO Transfer Orbit            \n i < 90°, hp < 2000 km, 31570 km < ha < 40002 km",
-	"meo": "Medium Earth Orbit            \n 2000 km < hp < 31570 km, 2000 km < ha < 31570 km",
-	"gho": "GEO-superGEO Crossing Orbits  \n 31570 km < hp < 40002 km, ha > 40002 km",
-	"leo": "Low Earth Orbit               \n hp < 2000 km, ha < 2000 km",
-	"hao": "High Altitude Earth Orbit     \n hp > 40002 km, ha > 40002 km",
-	"mgo": "MEO-GEO Crossing Orbits       \n 2000 km < hp < 31570 km, 31570 km < ha < 40002 km",
-	"heo": "Highly Eccentric Earth Orbit  \n hp < 31570 km, ha > 40002 km",
-	"lmo": "LEO-MEO Crossing Orbits       \n hp < 2000 km, 2000 km < ha < 31570 km",
-	"sso": "Sun-synchronous orbit         \n i = 98°, hp < 600 km, < ha < 800 km",
-}
-#----------------------------------------------------
-planet_data = {
-	"mercury": {"orbital_period": 0.24,"semi_major_axis": 0.39,"orbital_eccentricity": 0.21,"orbital_inclination": 7.00,
-	"rotation_period": 58.65,"axial_tilt": 0.03,"mass": 3.3011e23,
-	"atmosphere": "Virtually no atmosphere. Trace amounts of hydrogen, helium, and oxygen.",
-	"moons": "No moons.","rings": "No rings.","temperature": "167°C (333°F) day, -180°C (-292°F) night"
-	},
-	"venus": {"orbital_period": 0.62,"semi_major_axis": 0.72,"orbital_eccentricity": 0.007,"orbital_inclination": 3.39,
-	"rotation_period": 243.02,"axial_tilt": 177.36,"mass": 4.8675e24,
-	"atmosphere": "Primarily carbon dioxide (96.5%), with nitrogen, argon, and trace amounts of other gases.",
-	"moons": "No moons.","rings": "No rings.","temperature": "462°C (864°F)"
-	},
-	"earth": {"orbital_period": 1.00,"semi_major_axis": 1.00,"orbital_eccentricity": 0.017,"orbital_inclination": 0.00,
-	"rotation_period": 24.00,"axial_tilt": 23.44,"mass": 5.9722e24,
-	"atmosphere": "Primarily nitrogen (78%) and oxygen (21%), with argon and trace gases.",
-	"moons": "One moon: Moon","rings": "No rings.","temperature": "15°C (59°F)"
-	},
-  	"mars": {"orbital_period": 1.88,"semi_major_axis": 1.52,"orbital_eccentricity": 0.093,"orbital_inclination": 1.85,
-	"rotation_period": 01.03,"axial_tilt": 25.19,"mass": 6.4171e23,
-	"atmosphere": "Primarily carbon dioxide (95%), with nitrogen, argon, and trace amounts of oxygen and water vapor.",
-	"moons": "Two moons: Phobos and Deimos.","rings": "No rings.","temperature": "-63°C (-81°F)"
-	},
-  	"jupiter": {"orbital_period": 11.86,"semi_major_axis": 5.20,"orbital_eccentricity": 0.048,"orbital_inclination": 1.31,
-	"rotation_period": 0.41,"axial_tilt": 3.13,"mass": 1.8981e27,
-	"atmosphere": "Primarily hydrogen and helium, with methane, ammonia, and trace amounts of other gases.",
-	"moons": "Over 80 moons, with the four largest being Io, Europa, Ganymede, and Callisto.",
-	"rings": "Prominent ring system composed mainly of ice particles.","temperature": "-145°C (-229°F)"
-	},
-  	"saturn": {"orbital_period": 29.46,"semi_major_axis": 9.54,"orbital_eccentricity": 0.056,"orbital_inclination": 2.49,
-	"rotation_period": 0.43,"axial_tilt": 26.73,"mass": 5.6834e26,
-	"atmosphere": "Primarily hydrogen and helium, with methane and ammonia.",
-	"moons": "Over 80 moons, with the largest being Titan.",
-	"rings": "Extensive and complex ring system composed mostly of ice particles.","temperature": "-185°C (-299°F)"
-	},
-  	"uranus": {"orbital_period": 84.01,"semi_major_axis": 19.18,"orbital_eccentricity": 0.046,"orbital_inclination": 0.77,
-	"rotation_period": -0.72,"axial_tilt": 97.77,"mass": 8.6810e25,
-	"atmosphere": "Primarily hydrogen and helium, with methane giving it its BLUE color.",
-	"moons": "Over 27 moons, with the largest being Titania and Oberon.",
-	"rings": "Faint ring system composed of dark particles.","temperature": "-195°C (-319°F)"
-	},
-  	"neptune": {"orbital_period": 164.81,"semi_major_axis": 30.06,"orbital_eccentricity": 0.009,"orbital_inclination": 1.77,
-	"rotation_period": 0.67,"axial_tilt": 28.32,"mass": 1.0243e26,
-	"atmosphere": "Primarily hydrogen and helium, with methane and ammonia.",
-	"moons": "Over 14 moons, with the largest being Triton.",
-	"rings": "Faint ring system composed of ice particles.","temperature": "-200°C (-328°F)"
-	},
-	"pluto": {"orbital_period": 248.09,"semi_major_axis": 39.48,"orbital_eccentricity": 0.2488,"orbital_inclination": 17.14,
-	"rotation_period": -6.387,"axial_tilt": 122.53,"mass": 1.30900e22,
-	"atmosphere": "Thin atmosphere composed primarily of nitrogen, with methane and carbon monoxide.",
-	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
-	}
-}
-
-#----------------------------------------------------
-constellations_dict = {
-	"andromeda": "Princess of Ethiopia","antlia": "Air pump","apus": "Bird of Paradise","aquarius": "Water bearer",
-	"aquila": "Eagle","ara": "Altar","aries": "Ram","auriga": "Charioteer","bootes": "Herdsman",
-	"caelum": "Graving tool","camelopardalis": "Giraffe","cancer": "Crab","canes venatici": "Hunting dogs",
-	"canis major": "Big dog","canis minor": "Little dog","capricornus": "Sea goat","carina": "Keel of Argonauts' ship",
-	"cassiopeia": "Queen of Ethiopia","centaurus": "Centaur","cepheus": "King of Ethiopia","cetus": "Sea monster (whale)",
-	"chamaeleon": "Chameleon","circinus": "Compasses","columba": "Dove","coma berenices": "Berenice's hair",
-	"corona australis": "Southern crown","corona borealis": "Northern crown","corvus": "Crow","crater": "Cup",
-	"crux": "Cross (southern)","cygnus": "Swan","delphinus": "Porpoise","dorado": "Swordfish","draco": "Dragon",
-	"equuleus": "Little horse","eridanus": "River","fornax": "Furnace","gemini": "Twins","grus": "Crane",
-	"hercules": "Hercules, son of Zeus","horologium": "Clock","hydra": "Sea serpent","hydrus": "Water snake","indus": "Indian",
-	"lacerta": "Lizard","lion": "Leo","leo Minor": "Little lion","lepus": "Hare","libra": "Balance","lupus": "Wolf",
-	"lynx": "Lynx","lyra": "Lyre or harp","mensa": "Table mountain","microscopium": "Microscope","monoceros": "Unicorn",
-	"musca": "Fly","norma": "Carpenter's Level","octans": "Octant","ophiuchus": "Holder of serpent","orion": "Orion, the hunter",
-	"pavo": "Peacock","pegasus": "Pegasus, the winged horse","perseus": "Perseus, hero who saved Andromeda",
-	"phoenix": "Phoenix","pictor": "Easel","pisces": "Fishes","piscis austrinus": "Southern fish","puppis": "Stern of the Argonauts' ship",
-	"pyxis": "Compass on the Argonauts' ship","reticulum": "Net","sagitta": "Arrow","sagittarius": "Archer","scorpius": "Scorpion",
-	"sculptor": "Sculptor's tools","scutum": "Shield","serpens": "Serpent","sextans": "Sextant","taurus": "Bull",
-	"telescopium": "Telescope","triangulum": "Triangle","triangulum australe": "Southern triangle","tucana": "Toucan",
-	"ursa major": "Big bear","ursa minor": "Little bear","vela": "Sail of the Argonauts' ship","virgo": "Virgin",
-	"volans": "Flying fish","vulpecula": "Fox"
-}
-#----------------------------------------------------
-core["constelattion"] = list(constellations_dict.keys())
-
-#---------------------------------------------------------
-constellations_abbr = {
-	"And": "Andromeda","Ant": "Antlia","Apus": "Apodis","Aqr": "Aquarius","Aql": "Aquila",
-	"Ara": "Arae","Ari": "Aries","Aur": "Auriga","Boo": "Bootes","Cae": "Caelum","Cam": "Camelopardalis",
-	"Cnr": "Cancer","CVn": "Canes Venatici","CMa": "Canis Major","CMi": "Canis Minor","Cap": "Capricornus","Car": "Carina",
-	"Cas": "Cassiopeia","Cen": "Centaurus","Cep": "Cepheus","Cet": "Cetus","Cha": "Chamaeleon","Cir": "Circinus",
-	"Col": "Columba","Com": "Coma Berenices","CrA": "Corona Australis","CrB": "Corona Borealis","Crv": "Corvus",
-	"Crt": "Crater","Cru": "Crux","Cyh": "Cygnus","Del": "Delphinus","Dor": "Dorado","Dra": "Draco",
-	"Equ": "Equuleus","Eri": "Eridanus","For": "Fornax","Gem": "Gemini","Gru": "Grus","Her": "Hercules",
-	"Hor": "Horologium","Hya": "Hydra","Hyi": "Hydrus","Ind": "Indus","Lac": "Lacerta","Leo": "Leonis",
-	"LMi": "Leo Minor","Lep": "Lepus","Lib": "Libra","Lup": "Lupus","Lyn": "Lynx","Lyr": "Lyra",
-	"Men": "Mensa","Mic": "Microscopium","Mon": "Monoceros","Mus": "Musca","Nor": "Norma","Oct": "Octans",
-	"Oph": "Ophiuchus","Ori": "Orion","Pav": "Pavo","Peg": "Pegasus","Per": "Perseus","Phe": "Phoenix",
-	"Pic": "Pictor","Psc": "Pisces","PsA": "Piscis Austrinus","Pup": "Puppis","Pyx": "Pyxis","Ret": "Reticulum",
-	"Sge": "Sagitta","Sgr": "Sagittarius","Sco": "Scorpius","Scl": "Sculptor","Sct": "Scutum","Ser": "Serpens",
-	"Sex": "Sextans","Tau": "Taurus","Tel": "Telescopium","Tri": "Triangulum","TrA": "Triangulum Australe","Tuc": "Tucana",
-	"UMa": "Ursa Major","UMi": "Ursa Minor","Vel": "Vela","Vir": "Virgo","Vol": "Volans","Vul": "Vulpecula"
-}
-
-#---------------------------------------------------------
-asteroids_list = {
-	"65 cybele": {"type": "minor planet", "dimensions":237.26, "description": "65 Cybele is one of the largest asteroids in the Solar System. Its located in the outer asteroid belt. It is thought to be a emnant primordial body."},
-	"ceres": {"type": "dwarf planet", "dimensions":939.4, "description": "Largest asteroid, potential water ice"},
-    "vesta": {"type": "asteroid", "dimensions":525.4, "description": "Brightest asteroid visible to the naked eye. Second-largest, differentiated structure"},
-    "pallas": {"type": "asteroid", "dimensions":545, "description": "Third-largest, unusual orbit"},
-    "bennu": {"type": "dangerous asteroid", "dimentions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
-    "ryugu": {"type": "asteroid", "dimensions":0.9, "description": "Carbon-rich, explored by Hayabusa2"},
-    "itokawa": {"type": "asteroid", "dimensions":0.33, "description": "Small, S-type, explored by Hayabusa"},
-    "eros": {"type": "asteroid", "dimensions":16.84, "description": "Near-Earth asteroid, extensively studied"},
-    "gaspra": {"type": "asteroid", "dimensions":12.2, "description": "First asteroid imaged close-up"},
-    "ida": {"type": "asteroid", "dimensions":32, "description": "Has a moon (Dactyl)"},
-    "juno": {"type": "asteroid", "dimensions":246.596, "description": "One of the largest main-belt asteroids"},
-    "hebe": {"type": "asteroid", "dimensions":185.18, "description": "One of the most massive asteroids"},
-    "iris": {"type": "asteroid", "dimensions":199.83, "description": "One of the brightest asteroids"},
-    "flora": {"type": "asteroid", "dimensions":147.491, "description": "Largest asteroid in the Flora family"},
-    "metis": {"type": "asteroid", "dimensions":190, "description": "Innermost asteroid in the asteroid belt"},
-    "hygiea": {"type": "asteroid", "dimensions":407.12, "description": "Fourth-largest asteroid"},
-    "interamnia": {"type": "asteroid", "dimensions":306.313, "description": "One of the most massive asteroids"},
-    "europa": {"type": "asteroid", "dimensions":303.918, "description": "Large asteroid with high albedo"},
-	"apophis": {"type": "dangerous asteroid", "dimensions": 0.37, "description": "Potentially hazardous asteroid, close Earth approach in 2029"},
-    "1950 da": {"type": "asteroid", "dimensions": 1.1, "description": "Potentially hazardous asteroid, high risk of Earth impact in 2880"},
-	"psyche": {"type": "metal-rich asteroid", "dimensions": 220, "description": "Potentially iron-nickel core of a protoplanet"},
-	#-----------------------------------------------------------------
-	"thetis": {"type": "main-belt asteroid", "dimensions": 84.899, "description": "A typical main-belt asteroid"},
-	"melpomene": {"type": "main-belt asteroid", "dimensions": 139.594, "description": "A typical main-belt asteroid"},
-	"fortuna": {"type": "main-belt asteroid", "dimensions": 200, "description": "A large main-belt asteroid"},
-	"massalia": {"type": "main-belt asteroid", "dimensions": 135.680, "description": "A typical main-belt asteroid"},
-	"lutetia": {"type": "main-belt asteroid", "dimensions": 95.76, "description": "A large main-belt asteroid"},
-	"kalliope": {"type": "main-belt asteroid", "dimensions": 167.536, "description": "A large main-belt asteroid"},
-	"thalia": {"type": "main-belt asteroid", "dimensions": 107.53, "description": "A typical main-belt asteroid"},
-	"themis": {"type": "main-belt asteroid", "dimensions": 198, "description": "A large main-belt asteroid"},
-	"phocaea": {"type": "main-belt asteroid", "dimensions": 61.054, "description": "A smaller main-belt asteroid"},
-	"proserpina": {"type": "main-belt asteroid", "dimensions": 94.80, "description": "A typical main-belt asteroid"},
-	"euterpe": {"type": "main-belt asteroid", "dimensions": 96, "description": "A typical main-belt asteroid"},
-	"bellona": {"type": "main-belt asteroid", "dimensions": 120.90, "description": "A typical main-belt asteroid"},
-	"amphitrite": {"type": "main-belt asteroid", "dimensions": 189.559, "description": "A large main-belt asteroid"},
-	"urania": {"type": "main-belt asteroid", "dimensions": 92.787, "description": "A typical main-belt asteroid"},
-	"euphrosyne": {"type": "main-belt asteroid", "dimensions": 267.080, "description": "A very large main-belt asteroid"},
-	"pomona": {"type": "main-belt asteroid", "dimensions": 80.76, "description": "A typical main-belt asteroid"},
-	"1950 da": {"type": "dangerous asteroid", "dimensions": 1.1, "description": "This asteroid has a relatively high probability of impact in the distant future, making it a subject of ongoing study."},
-	"4179 toutatis": {"type": "dangerous asteroid", "dimensions": 5.2, "description": "This asteroid is quite large and has had close approaches to Earth in the past, making it a potential concern."},
-	"2007 tu24": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid made a relatively close approach to Earth in 2007, highlighting the need for continued monitoring of near-Earth objects."},
-	"99942 apophis": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid was once considered a significant threat but subsequent observations have reduced the risk. It's still monitored closely."},
-	"2010 al30": {"type": "dangerous asteroid", "dimensions": 15, "description": "This asteroid made a very close approach to Earth in 2010, emphasizing the need for early detection of these objects."},
-	"2011 md": {"type": "dangerous asteroid", "dimensions": 7, "description": "This small asteroid made an exceptionally close Earth flyby in 2011, highlighting the potential for unexpected encounters."},
-	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
-	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
-}
 #----------------------------------------------------
 core["asteroid"] = list(asteroids_list.keys())
 
@@ -1015,54 +1063,6 @@ if _cybid_ == True:
 	for i in range(len(addcomm)):
 		others.append(addcomm[i])
 
-#----------------------------------------------------------
-help = {
-	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
-	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
-	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
-	"help cybele uptime": "Usage <cybele uptime> \nDisplay information about how long the cybele has been running.\n",
-	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
-	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
-	"help diagnostics": "Usage: diagnostics|show core \nDescribe the status of the runnning Cybele device.\nex: diagnostics \n    show core\n",
-	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
-	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
-	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
-	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
-	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
-	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
-	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
-	"help hashfile": "Usage: hashfile <filename> | hashfile <filename1> <<path to> <filename2>. \nMake the SHA1 hash for the given filename or filenames.\nex: hashfile cybele.py \n    hashfile cybele.py /home/user/filename1 \n    hashfile cybele.py c:/users/downloads/file2 \n",
-	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
-	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
-	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
-	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
-	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
-	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
-	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
-	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
-	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
-	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
-	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
-	"help presence": "Usage: presence <service> \nShow's the direct link for "+_auth1r_+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
-	"help planet": "Usage: <name of the planet> typed directly\nReturns some offline basic information about the planet name typed.\n",
-	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
-	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
-	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
-	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
-	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
-	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|all/constellations|asteroids names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
-	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
-	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
-	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
-	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
-	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
-}
 #----------------------------------------------------------------------
 old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
 core["old_tech_term"] = old_tech_terms_list
