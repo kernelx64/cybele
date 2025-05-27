@@ -2106,7 +2106,7 @@ def random_season_activity():
 			if activities_str is not None:
 				activities = [activity.strip() for activity in activities_str.split(',')]
 				
-				activitie = "\n  " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
+				activitie = "\n " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
 				print(activitie)
 			else:
 				print(f"No activities found for {season} in the database (or the value is NULL).")
