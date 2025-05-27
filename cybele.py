@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧'
 _active_ = '01.08.2024'
-_revise_ = '26.05.2025'
+_revise_ = '27.05.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -36,6 +36,7 @@ try:
 	import sqlitecloud
 	import requests
 	import json,html,urllib
+	import io,csv
 	from bs4 import BeautifulSoup
 	from platform import python_version
 	from time import gmtime, strftime, sleep
@@ -437,7 +438,7 @@ weather_season_condiction = {
 topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","asteroids","constelations","information about stars","distance of planets and from the sun",
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
-		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python",
+		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","tv shows",
 		"astronomy questions","difference from <date>","age calc <from date>","Show you the meaning of some words or terms","generate pwd"]
 
 #----------------------------------------------------------
@@ -488,92 +489,6 @@ help = {
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
-}
-#----------------------------------------------------
-stars_dict = {
-	"Acamar": ["HR 897","Eri"],"Achernar": ["HR 472","Eri"],"Achird": ["HR 219","Cas"],"Acrab": ["HR 5984","Sco"],
-	"Acrux": ["HR 4730","Cru"],"Acubens": ["HR 3572","Cnc"],"Adhafera": ["HR 4031","Leo"],"Adhara": ["HR 2618","CMa"],
-	"Adhil": ["HR 390","And"],"Ain": ["HR 1409","Tau"],"Ainalrami": ["HR 7116","Sgr"],"Aladfar": ["HR 7298","Lyr"],
-	"Albaldah": ["HR 7264","Sgr"],"Albali": ["HR 7950","Aqr"],"Albireo": ["HR 7417","Cyg"],"Alchiba": ["HR 4623","Crv"],
-	"Alcor": ["HR 5062","UMa"],"Alcyone": ["HR 1165","Tau"],"Aldebaran": ["HR 1457","Tau"],"Alderamin": ["HR 8162","Cep"],
-	"Aldhanab": ["HR 8353","Gru"],"Aldhibah": ["HR 6396","Dra"],"Aldulfin": ["HR 7852","Del"],"Alfirk": ["HR 8238","Cep"],
-	"Algedi": ["HR 7754","Cap"],"Algenib":["HR 39","Peg"],"Algieba": ["HR 4057","Leo"],"Algol": ["HR 936","Per"],
-	"Algorab":["HR 4757","Crv"],"Alhena":["HR 2421","Gem"],"Alioth":["HR 4905","UMa"],"Aljanah":["HR 7949","Cyg"],
-	"Alkaid": ["HR 5191","UMa"],"Alkalurops":["HR 5733","Boo"],"Alkaphrah": ["HR 3594","UMa"],"Alkarab": ["HR 8905", "Peg"],
-    "Alkes": ["HR 4287", "Crt"],"Almaaz": ["HR 1605", "Aur"],"Almach": ["HR 603", "And"],"Alnair": ["HR 8425", "Gru"],
-	"Alnasl": ["HR 6746", "Sgr"],"Alnilam": ["HR 1903", "Ori"],"Alnitak": ["HR 1948", "Ori"],"Alniyat": ["HR 6084", "Sco"],
-    "Alphard": ["HR 3748", "Hya"],"Alphecca": ["HR 5793", "CrB"],"Alpheratz": ["HR 15", "And"],"Alpherg": ["HR 437", "Psc"],
-    "Alrakis": ["HR 6370", "Dra"],"Alrescha": ["HR 596", "Psc"],"Alruba": ["HR 6618", "Dra"],"Alsafi": ["HR 7462", "Dra"],
-    "Alsciaukat": ["HR 3275", "Lyn"],"Alsephina": ["HR 3485", "Vel"],"Alshain": ["HR 7602", "Aql"],"Alshat": ["HR 7773", "Cap"],
-    "Altair": ["HR 7557", "Aql"],"Altais": ["HR 7310", "Dra"],"Alterf": ["HR 3773", "Leo"],"Aludra": ["HR 2827", "CMa"],
-    "Alula Australis": ["HR 4375", "UMa"],"Alula Borealis": ["HR 4377", "UMa"],"Alya": ["HR 7141", "Ser"],
-    "Alzirr": ["HR 2484", "Gem"],"Ancha": ["HR 8499", "Aqr"],"Angetenar": ["HR 850", "Eri"],"Ankaa": ["HR 99", "Phe"],
-    "Anser": ["HR 7405", "Vul"],"Antares": ["HR 6134", "Sco"],"Arcturus": ["HR 5340", "Boo"],"Arkab Posterior": ["HR 7343", "Sgr"],
-    "Arkab Prior": ["HR 7337", "Sgr"],"Arneb": ["HR 1865", "Lep"],"Ascella": ["HR 7194", "Sgr"],"Asellus Australis": ["HR 3461", "Cnc"],
-    "Asellus Borealis": ["HR 3449", "Cnc"],"Ashlesha": ["HR 3482", "Hya"],"Aspidiske": ["HR 3699", "Car"],"Asterope": ["HR 1151", "Tau"],
-    "Athebyne": ["HR 6132", "Dra"],"Atik": ["HR 1131", "Per"],"Atlas": ["HR 1178", "Tau"],"Atria": ["HR 6217", "TrA"],
-    "Avior": ["HR 3307", "Car"],"Azelfafage": ["HR 8301", "Cyg"],"Azha": ["HR 874", "Eri"],"Azmidi": ["HR 3045", "Pup"],
-    "Barnard's Star": ["GJ 699", "Oph"],"Baten Kaitos": ["HR 539", "Cet"],"Beemim": ["HR 1393", "Eri"],"Beid": ["HR 1298", "Eri"],
-    "Bellatrix": ["HR 1790", "Ori"],"Betelgeuse": ["HR 2061", "Ori"],"Bharani": ["HR 838", "Ari"],"Biham": ["HR 8450", "Peg"],
-    "Botein": ["HR 951", "Ari"],"Brachium": ["HR 5603", "Lib"],"Bunda": ["HR 8264", "Aqr"],"Canopus": ["HR 2326", "Car"],
-    "Capella": ["HR 1708", "Aur"],"Caph": ["HR 21", "Cas"],"Castor": ["HR 2891", "Gem"],"Castula": ["HR 265", "Cas"],
-    "Cebalrai": ["HR 6603", "Oph"],"Celaeno": ["HR 1140", "Tau"],"Cervantes": ["HR 6585", "Ara"],"Chalawan": ["HR 4277", "UMa"],
-    "Chamukuy": ["HR 1412", "Tau"],"Chara": ["HR 4785", "CVn"],"Chertan": ["HR 4359", "Leo"],"Copernicus": ["HR 3522", "Cnc"],
-    "Cor Caroli": ["HR 4915", "CVn"],"Cujam": ["HR 6117", "Her"],"Cursa": ["HR 1666", "Eri"],"Dabih": ["HR 7776", "Cap"],
-    "Dalim": ["HR 963", "For"],"Deneb Algedi": ["HR 8322", "Cap"],"Deneb": ["HR 7924", "Cyg"],"Denebola": ["HR 4534", "Leo"],
-    "Diadem": ["HR 4968", "Com"],"Diphda": ["HR 188", "Cet"],"Dschubba": ["HR 5953", "Sco"],"Dubhe": ["HR 4301", "UMa"],
-    "Dziban": ["HR 6636", "Dra"],"Edasich": ["HR 5744", "Dra"],"Electra": ["HR 1142", "Tau"],"Elgafar": ["HR 5409", "Vir"],
-    "Elkurud": ["HR 2177", "Col"],"Elnath": ["HR 1791", "Tau"],"Eltanin": ["HR 6705", "Dra"],"Enif": ["HR 8308", "Peg"],
-    "Errai": ["HR 8974", "Cep"],"Fafnir": ["HR 6945", "Dra"],"Fang": ["HR 5944", "Sco"],"Fawaris": ["HR 7528", "Cyg"],
-    "Felis": ["HR 3923", "Hya"],"Fomalhaut": ["HR 8728", "PsA"],"Fulu": ["HR 153", "Cas"],"Fumalsamakah": ["HR 8773", "Psc"],
-    "Furud": ["HR 2282", "CMa"],"Fuyue": ["HR 6630", "Sco"],"Gacrux": ["HR 4763", "Cru"],"Giausar": ["HR 4434", "Dra"],
-    "Gienah": ["HR 4662", "Crv"],"Ginan": ["HR 4700", "Cru"],"Gomeisa": ["HR 2845", "CMi"],"Grumium": ["HR 6688", "Dra"],
-    "Hadar": ["HR 5267", "Cen"],"Haedus": ["HR 1641", "Aur"], "Hamal": ["HR 617", "Ari"],"Hassaleh": ["HR 1577", "Aur"],
-    "Hatysa": ["HR 1899", "Ori"],"Helvetios": ["HR 8729", "Peg"],"Heze": ["HR 5107", "Vir"],"Homam": ["HR 8634", "Peg"],
-    "Iklil": ["HR 5928", "Sco"],"Intercrus": ["HR 3743", "UMa"],"Izar": ["HR 5506", "Boo"],"Jabbah": ["HR 6027", "Sco"],
-    "Jishui": ["HR 2930", "Gem"],"Kaffaljidhma": ["HR 804", "Cet"],"Kang": ["HR 5315", "Vir"],"Kaus Australis": ["HR 6879", "Sgr"],
-    "Kaus Borealis": ["HR 6913", "Sgr"],"Kaus Media": ["HR 6859", "Sgr"],"Keid": ["HR 1325", "Eri"],"Khambalia": ["HR 5359", "Vir"],
-    "Kitalpha": ["HR 8131", "Equ"],"Kochab": ["HR 5563", "UMi"],"Kornephoros": ["HR 6148", "Her"],"Kraz": ["HR 4786", "Crv"],
-    "Kurhah": ["HR 8417", "Cep"],"Larawag": ["HR 6241", "Sco"],"Lesath": ["HR 6508", "Sco"],"Libertas": ["HR 7595", "Aql"],
-    "Lich": ["PSR B1257+12", "Vir"],"Lilii Borea": ["HR 824", "Ari"],"Maasym": ["HR 6526", "Her"],"Mahasim": ["HR 2095", "Aur"],
-    "Maia": ["HR 1149", "Tau"],"Marfik": ["HR 6149", "Oph"],"Markab": ["HR 8781", "Peg"],"Markeb": ["HR 3734", "Vel"],
-    "Marsic": ["HR 6008", "Her"],"Matar": ["HR 8650", "Peg"],"Mebsuta": ["HR 2473", "Gem"],"Megrez": ["HR 4660", "UMa"],
-    "Meissa": ["HR 1879", "Ori"],"Mekbuda": ["HR 2650", "Gem"],"Meleph": ["HR 3429", "Cnc"],"Menkalinan": ["HR 2088", "Aur"],
-    "Menkar": ["HR 911", "Cet"],"Menkent": ["HR 5288", "Cen"],"Menkib": ["HR 1228", "Per"],"Merak": ["HR 4295", "UMa"],
-    "Merga": ["HR 5533", "Boo"],"Meridiana": ["HR 7254", "CrA"],"Merope": ["HR 1156", "Tau"],"Mesarthim": ["HR 546", "Ari"],
-    "Miaplacidus": ["HR 3685", "Car"],"Mimosa": ["HR 4853", "Cru"],"Minchir": ["HR 3418", "Hya"],"Minelauva": ["HR 4910", "Vir"],
-    "Mintaka": ["HR 1852", "Ori"],"Mira": ["HR 681", "Cet"],"Mirach": ["HR 337", "And"],"Miram": ["HR 834", "Per"],
-    "Mirfak": ["HR 1017", "Per"],"Mirzam": ["HR 2294", "CMa"],"Misam": ["HR 941", "Per"],"Mizar": ["HR 5054", "UMa"],
-    "Mothallah": ["HR 544", "Tri"],"Muliphein": ["HR 2657", "CMa"],"Muphrid": ["HR 5235", "Boo"],"Muscida": ["HR 3323", "UMa"],
-    "Musica": ["HR 8030", "Del"],"Nahn": ["HR 3627", "Cnc"],"Naos": ["HR 3165", "Pup"],"Nashira": ["HR 8278", "Cap"],
-    "Nekkar": ["HR 5602", "Boo"],"Nembus": ["HR 464", "And"],"Nihal": ["HR 1829", "Lep"],"Nunki": ["HR 7121", "Sgr"],
-    "North Star": ["HR 424", "UMi"],"Nusakan": ["HR 5747", "CrB"],"Ogma": ["HD 149026", "Her"],"Okab": ["HR 7235", "Aql"],"Peacock": ["HR 7790", "Pav"],
-    "Phact": ["HR 1956", "Col"],"Phecda": ["HR 4554", "UMa"],"Pherkad": ["HR 5735", "UMi"],"Piautos": ["HR 3268", "Cnc"],
-    "Pipirima": ["HR 6252", "Sco"],"Pleione": ["HR 1180", "Tau"],"Polaris Australis": ["HR 7228", "Oct"],
-    "Polaris": ["HR 424", "UMi"],"Polis": ["HR 6812", "Sgr"],"Pollux": ["HR 2990", "Gem"],"Porrima": ["HR 4825", "Vir"],
-    "Praecipua": ["HR 4247", "LMi"],"Prima Hyadum": ["HR 1346", "Tau"],"Procyon": ["HR 2943", "CMi"],"Propus": ["HR 2216", "Gem"],
-    "Proxima Centauri": ["GJ 551", "Cen"],"Ran": ["HR 1084", "Eri"],"Rasalas": ["HR 3905", "Leo"],"Rasalgethi": ["HR 6406", "Her"],
-    "Rasalhague": ["HR 6556", "Oph"],"Rastaban": ["HR 6536", "Dra"],"Regulus": ["HR 3982", "Leo"],"Revati": ["HR 361", "Psc"],
-    "Rigel": ["HR 1713", "Ori"],"Rigil Kentaurus": ["HR 5459", "Cen"],"Rotanev": ["HR 7882", "Del"],"Ruchbah": ["HR 403", "Cas"],
-    "Rukbat": ["HR 7348", "Sgr"],"Sabik": ["HR 6378", "Oph"],"Saclateni": ["HR 1612", "Aur"],"Sadachbia": ["HR 8518", "Aqr"],
-    "Sadalbari": ["HR 8684", "Peg"],"Sadalmelik": ["HR 8414", "Aqr"],"Sadalsuud": ["HR 8232", "Aqr"],"Sadr": ["HR 7796", "Cyg"],
-    "Saiph": ["HR 2004", "Ori"],"Salm": ["HR 8880", "Peg"],"Sargas": ["HR 6553", "Sco"],"Sarin": ["HR 6410", "Her"],
-    "Sceptrum": ["HR 1481", "Eri"],"Scheat": ["HR 8775", "Peg"],"Schedar": ["HR 168", "Cas"],"Secunda Hyadum": ["HR 1373", "Tau"],
-    "Segin": ["HR 0542", "Cas"],"Seginus": ["HR 5435", "Boo"],"Sham": ["HR 7479", "Sge"],"Shaula": ["HR 6527", "Sco"],
-	"Sheliak": ["HR 7106", "Lyr"],"Sheratan": ["HR 553", "Ari"],"Sirius": ["HR 2491", "CMa"],"Situla": ["HR 8610", "Aqr"],
-	"Skat": ["HR 8709", "Aqr"],"Spica": ["HR 5056", "Vir"],"Sualocin": ["HR 7906", "Del"],"Subra": ["HR 3852", "Leo2"],
-    "Suhail": ["HR 3634", "Vel"],"Sulafat": ["HR 7178", "Lyr"],"Syrma": ["HR 5338", "Vir"],"Tabit": ["HR 1543", "Ori"],
-    "Taiyangshou": ["HR 4518", "UMa"],"Taiyi": ["HR 4916", "Dra"],"Talitha": ["HR 3569", "UMa"],"Tania Australis": ["HR 4069", "UMa"],
-    "Tania Borealis": ["HR 4033", "UMa"],"Tarazed": ["HR 7525", "Aql"],"Tarf": ["HR 3249", "Cnc"],"Taygeta": ["HR 1145", "Tau"],
-    "Tegmine": ["HR 3208", "Cnc"],"Tejat": ["HR 2286", "Gem"],"Terebellum": ["HR 7597", "Sgr"],"Theemin": ["HR 1464", "Eri"],
-	"Thuban": ["HR 5291", "Dra"],"Tiaki": ["HR 8636", "Gru"],"Tianguan": ["HR 1910", "Tau"],"Tianyi": ["HR 4863", "Dra"],
-    "Titawin": ["HR 458", "And"],"Tonatiuh": ["HR 4609", "Cam"],"Torcular": ["HR 510", "Psc"],"Tureis": ["HR 3185", "Pup"],
-    "Ukdah": ["HR 3845", "Hya"],"Unukalhai": ["HR 5854", "Ser"],"Unurgunite": ["HR 2646", "CMa"],"Vega": ["HR 7001", "Lyr"],
-    "Veritate": ["HR 8930", "And"],"Vindemiatrix": ["HR 4932", "Vir"],"Wasat": ["HR 2777", "Gem"],"Wazn": ["HR 2040", "Col"],
-    "Wezen": ["HR 2693", "CMa"],"Wurren": ["HR 338", "Phe"],"Xamidimura": ["HR 6247", "Sco"],"Xuange": ["HR 5351", "Boo"],
-    "Yed Posterior": ["HR 6075", "Oph"],"Yed Prior": ["HR 6056", "Oph"],"Yildun": ["HR 6789", "UMi"],"Zaniah": ["HR 4689", "Vir"],
-    "Zaurak": ["HR 1231", "Eri"],"Zavijava": ["HR 4540", "Vir"],"Zhang": ["HR 3903", "Hya"],"Zibal": ["HR 984", "Eri"],
-    "Zosma": ["HR 4357", "Leo"],"Zubenelgenubi": ["HR 5531", "Lib"],"Zubenelhakrabi": ["HR 5787", "Lib"],"Zubeneschamali": ["HR 5685", "Lib"],
 }
 #----------------------------------------------------
 orbit_regime = {
@@ -643,49 +558,6 @@ planet_data = {
 	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
 	}
 }
-
-#----------------------------------------------------
-constellations_dict = {
-	"andromeda": "Princess of Ethiopia","antlia": "Air pump","apus": "Bird of Paradise","aquarius": "Water bearer",
-	"aquila": "Eagle","ara": "Altar","aries": "Ram","auriga": "Charioteer","bootes": "Herdsman",
-	"caelum": "Graving tool","camelopardalis": "Giraffe","cancer": "Crab","canes venatici": "Hunting dogs",
-	"canis major": "Big dog","canis minor": "Little dog","capricornus": "Sea goat","carina": "Keel of Argonauts' ship",
-	"cassiopeia": "Queen of Ethiopia","centaurus": "Centaur","cepheus": "King of Ethiopia","cetus": "Sea monster (whale)",
-	"chamaeleon": "Chameleon","circinus": "Compasses","columba": "Dove","coma berenices": "Berenice's hair",
-	"corona australis": "Southern crown","corona borealis": "Northern crown","corvus": "Crow","crater": "Cup",
-	"crux": "Cross (southern)","cygnus": "Swan","delphinus": "Porpoise","dorado": "Swordfish","draco": "Dragon",
-	"equuleus": "Little horse","eridanus": "River","fornax": "Furnace","gemini": "Twins","grus": "Crane",
-	"hercules": "Hercules, son of Zeus","horologium": "Clock","hydra": "Sea serpent","hydrus": "Water snake","indus": "Indian",
-	"lacerta": "Lizard","lion": "Leo","leo Minor": "Little lion","lepus": "Hare","libra": "Balance","lupus": "Wolf",
-	"lynx": "Lynx","lyra": "Lyre or harp","mensa": "Table mountain","microscopium": "Microscope","monoceros": "Unicorn",
-	"musca": "Fly","norma": "Carpenter's Level","octans": "Octant","ophiuchus": "Holder of serpent","orion": "Orion, the hunter",
-	"pavo": "Peacock","pegasus": "Pegasus, the winged horse","perseus": "Perseus, hero who saved Andromeda",
-	"phoenix": "Phoenix","pictor": "Easel","pisces": "Fishes","piscis austrinus": "Southern fish","puppis": "Stern of the Argonauts' ship",
-	"pyxis": "Compass on the Argonauts' ship","reticulum": "Net","sagitta": "Arrow","sagittarius": "Archer","scorpius": "Scorpion",
-	"sculptor": "Sculptor's tools","scutum": "Shield","serpens": "Serpent","sextans": "Sextant","taurus": "Bull",
-	"telescopium": "Telescope","triangulum": "Triangle","triangulum australe": "Southern triangle","tucana": "Toucan",
-	"ursa major": "Big bear","ursa minor": "Little bear","vela": "Sail of the Argonauts' ship","virgo": "Virgin",
-	"volans": "Flying fish","vulpecula": "Fox"
-}
-#---------------------------------------------------------
-constellations_abbr = {
-	"And": "Andromeda","Ant": "Antlia","Apus": "Apodis","Aqr": "Aquarius","Aql": "Aquila",
-	"Ara": "Arae","Ari": "Aries","Aur": "Auriga","Boo": "Bootes","Cae": "Caelum","Cam": "Camelopardalis",
-	"Cnr": "Cancer","CVn": "Canes Venatici","CMa": "Canis Major","CMi": "Canis Minor","Cap": "Capricornus","Car": "Carina",
-	"Cas": "Cassiopeia","Cen": "Centaurus","Cep": "Cepheus","Cet": "Cetus","Cha": "Chamaeleon","Cir": "Circinus",
-	"Col": "Columba","Com": "Coma Berenices","CrA": "Corona Australis","CrB": "Corona Borealis","Crv": "Corvus",
-	"Crt": "Crater","Cru": "Crux","Cyh": "Cygnus","Del": "Delphinus","Dor": "Dorado","Dra": "Draco",
-	"Equ": "Equuleus","Eri": "Eridanus","For": "Fornax","Gem": "Gemini","Gru": "Grus","Her": "Hercules",
-	"Hor": "Horologium","Hya": "Hydra","Hyi": "Hydrus","Ind": "Indus","Lac": "Lacerta","Leo": "Leonis",
-	"LMi": "Leo Minor","Lep": "Lepus","Lib": "Libra","Lup": "Lupus","Lyn": "Lynx","Lyr": "Lyra",
-	"Men": "Mensa","Mic": "Microscopium","Mon": "Monoceros","Mus": "Musca","Nor": "Norma","Oct": "Octans",
-	"Oph": "Ophiuchus","Ori": "Orion","Pav": "Pavo","Peg": "Pegasus","Per": "Perseus","Phe": "Phoenix",
-	"Pic": "Pictor","Psc": "Pisces","PsA": "Piscis Austrinus","Pup": "Puppis","Pyx": "Pyxis","Ret": "Reticulum",
-	"Sge": "Sagitta","Sgr": "Sagittarius","Sco": "Scorpius","Scl": "Sculptor","Sct": "Scutum","Ser": "Serpens",
-	"Sex": "Sextans","Tau": "Taurus","Tel": "Telescopium","Tri": "Triangulum","TrA": "Triangulum Australe","Tuc": "Tucana",
-	"UMa": "Ursa Major","UMi": "Ursa Minor","Vel": "Vela","Vir": "Virgo","Vol": "Volans","Vul": "Vulpecula"
-}
-
 #---------------------------------------------------------
 asteroids_list = {
 	"65 cybele": {"type": "minor planet", "dimensions":237.26, "description": "65 Cybele is one of the largest asteroids in the Solar System. Its located in the outer asteroid belt. It is thought to be a emnant primordial body."},
@@ -1005,13 +877,31 @@ if internet_onoff() == True:
 	help.update({"help fav tvshows": "Usage: <fav tvshows> \nCommand to show all Vorin (www.adelinosaldanha.site/tvshows) nTOP list.\nex: show your fav tvshows\n    favorite tvshows\n"})
 
 #--------------------------------------------------------------
-core["star name"] = [key.lower() for key in stars_dict.keys()]
-
-#--------------------------------------------------------------
 astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 core["astronomy glossary"] = list(astronomy_glossary)
 
 #----------------------------------------------------
+star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
+hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
+constelations = list(fetch_fromdbfile("cybele.db", "stars", "constelation"))
+
+stars_dict = {}
+for name, hr, const in zip(star_names, hr_numbers, constelations):
+    stars_dict[name] = [hr, const]
+#--------------------------------------------------------------
+core["star name"] = [key.lower() for key in stars_dict.keys()]
+
+#--------------------------------------------------------------
+constelation = list(fetch_fromdbfile("cybele.db", "constelations", "constelation"))
+meaning = list(fetch_fromdbfile("cybele.db", "constelations", "meaning"))
+abbr = list(fetch_fromdbfile("cybele.db", "constelations", "abbr"))
+
+constellations_dict = {}
+constellations_abbr = {}
+for constelation, meaning, abbr in zip(constelation, meaning, abbr):
+	constellations_dict[constelation] = meaning, abbr
+	constellations_abbr[abbr] = constelation
+#------------------------------------------------------------	
 core["constelattion"] = list(constellations_dict.keys())
 
 #------------------------------------------------------------
@@ -1698,7 +1588,7 @@ def find_word_in_dicts(word, core):
 				random.shuffle(messages['creative matter'])
 				creative_random_anwser = random.choice(messages['creative matter'])
 				print( creative_random_anwser % (word.title(), list_name.capitalize()))
-				print (word.capitalize() + ' have the designation of ' + constellation_anwser + '\n')
+				print (word.capitalize() + ' have the designation of ' + constellation_anwser[0] + ' and the abreviation ' + constellation_anwser[1] +'\n')
 
 			elif list_name == "element symbol":
 				periodic_show(word)
