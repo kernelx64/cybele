@@ -36,7 +36,6 @@ try:
 	import sqlitecloud
 	import requests
 	import json,html,urllib
-	import csv,io
 	from bs4 import BeautifulSoup
 	from platform import python_version
 	from time import gmtime, strftime, sleep
@@ -558,6 +557,7 @@ ncountries = {
 }
 core['country'] = list(ncountries.keys())
 core['capital'] = [country["capital"] for country in ncountries.values()]
+
 #----------------------------------------------------
 stars_dict = {
 	"Acamar": ["HR 897","Eri"],"Achernar": ["HR 472","Eri"],"Achird": ["HR 219","Cas"],"Acrab": ["HR 5984","Sco"],
@@ -840,15 +840,16 @@ explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
 examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
 
 for i in range(len(cmd_names)):
-	cmd_name = cmd_names[i]
-	syntax = syntaxes[i]
-	explanation = explanations[i]
-	examples = examples_str_list[i].split(';') if examples_str_list[i] else []
-	linux_commands[cmd_name] = {
-		"syntax": syntax,
-		"explanation": explanation,
-		"examples": examples
-		}
+	if cmd_names[i] != "help":
+		cmd_name = cmd_names[i]
+		syntax = syntaxes[i]
+		explanation = explanations[i]
+		examples = examples_str_list[i].split(';') if examples_str_list[i] else []
+		linux_commands[cmd_name] = {
+			"syntax": syntax,
+			"explanation": explanation,
+			"examples": examples
+			}
 #----------------------------------------------------------------------
 core["linuxcmd"] = list(linux_commands)
 
@@ -2527,7 +2528,7 @@ def main():
 	else:
 		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + mmodname)
-		sys.exit(0)
+		sys.exit(0)	
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
@@ -3475,7 +3476,7 @@ def main():
 		
 		elif question == "cybele uptime":
 			print(f"My uptime is: {get_uptime()}\n")
-			
+	
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 2:
