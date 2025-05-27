@@ -13,7 +13,7 @@ lon = -8.4265
 version = '0.9 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯'
 _active_ = '01.08.2024'
 _revise_ = '27.05.2025'
 _author_ = 'Adelino Saldanha'
@@ -36,7 +36,6 @@ try:
 	import sqlitecloud
 	import requests
 	import json,html,urllib
-	import csv,io
 	from bs4 import BeautifulSoup
 	from platform import python_version
 	from time import gmtime, strftime, sleep
@@ -2099,25 +2098,21 @@ def random_season_activity():
 				sys.exit(0)
 
 		cursor = conn.cursor()
-        
-		cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='season_activities';")
-		if cursor.fetchone() is None:
-			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'season activities' does not exist in the database.")
-			return
-
 		cursor.execute(f"SELECT {season} FROM season_activities ORDER BY RANDOM() LIMIT 1")
 		result = cursor.fetchone()
 
 		if result:
 			activities_str = result[0]
-			activities = [activity.strip() for activity in activities_str.split(',')]
-			activitie = "It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
-			print(activitie)
+			if activities_str is not None:
+				activities = [activity.strip() for activity in activities_str.split(',')]
+				
+				activitie = "\n  " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
+				print(activitie)
+			else:
+				print(f"No activities found for {season} in the database (or the value is NULL).")
 		else:
 			return f"No activities found for {season} in the database."
 
-	except ImportError:
-		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: Error: The 'sqlitecloud' library is not installed or accessible. Please install it to use the online database.")
 	except sqlite3.OperationalError as e:
 		if "no such table" in str(e).lower():
 			print(f"{random.choice(messages['trouble_msg'])} Database operational error: {e}. This option is not available.")
