@@ -230,6 +230,9 @@ core = {
 	"sayconvert":	["say","longhand"],
 	"coded":	["py","python","python art"]
 }
+#------------------------------------------------------------
+factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
+
 #-------------------------------------------------------------
 messages = {
 	"activity_msg":	["We're serving up one year's worth of seasonal shenanigans, daily!","One year of seasons, squeezed into a single day. Time travel? Sort of.",
@@ -436,9 +439,6 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python",
 		"astronomy questions","difference from <date>","age calc <from date>","Show you the meaning of some words or terms","generate pwd"]
-
-#------------------------------------------------------------
-factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
 
 #----------------------------------------------------------
 help = {
@@ -881,6 +881,10 @@ qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
 core["qa-astro"] = list(qa_astro)
 
 #----------------------------------------------------------------------
+help_cybele = [key[5:] for key in help.keys()] 
+core['help'] = list(help.keys())
+
+#----------------------------------------------------------------------
 linux_commands = {}
 cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
 syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
@@ -888,7 +892,7 @@ explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
 examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
 
 for i in range(len(cmd_names)):
-	if cmd_names[i] != "help":
+	if cmd_names[i] not in help_cybele:
 		cmd_name = cmd_names[i]
 		syntax = syntaxes[i]
 		explanation = explanations[i]
@@ -898,6 +902,7 @@ for i in range(len(cmd_names)):
 			"explanation": explanation,
 			"examples": examples
 			}
+del help_cybele
 #----------------------------------------------------------------------
 core["linuxcmd"] = list(linux_commands)
 
@@ -1070,7 +1075,6 @@ core["old_tech_term"] = old_tech_terms_list
 #----------------------------------------------------------------------
 if _cybid_ == True:
 	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
-core['help'] = list(help.keys())
 checksum = shift
 
 #------------------------------------------------------------
@@ -2930,6 +2934,7 @@ def main():
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
 			if 'help' in core and isinstance(core['help'], list):
 				print("Here are the topics ordered alphabetically for better help about.\nJust type help <topic>\n")
+				#future increment use : help_cybele
 				nhelp = [key[5:] for key in core['help']]
 				nhelp.sort()
 				for i in range(len(nhelp)):
