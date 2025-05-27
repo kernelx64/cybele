@@ -454,8 +454,7 @@ help = {
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
-	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help fav tvshows": "Usage: <fav tvshows> \nCommand to show all Vorin (www.adelinosaldanha.site/tvshows) nTOP list.\nex: show your fav tvshows\n    favorite tvshows\n",
+	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",	
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
@@ -997,6 +996,14 @@ def records_number(dbfile, dbtable):
 			conn.close()
 		return dbtable, total_records
 
+#----------------------------------------------------------------------
+if _cybid_ == True:
+	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
+	for i in range(len(addcomm)):
+		others.append(addcomm[i])
+if internet_onoff() == True:
+	help.update({"help fav tvshows": "Usage: <fav tvshows> \nCommand to show all Vorin (www.adelinosaldanha.site/tvshows) nTOP list.\nex: show your fav tvshows\n    favorite tvshows\n"})
+
 #--------------------------------------------------------------
 core["star name"] = [key.lower() for key in stars_dict.keys()]
 
@@ -1061,24 +1068,13 @@ for i in range(len(cmd_names)):
 #----------------------------------------------------------------------
 core["linuxcmd"] = list(linux_commands)
 
-
 #----------------------------------------------------------
 core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 
-#----------------------------------------------------------
-if _cybid_ == True:
-	for i in range(len(addcomm)):
-		others.append(addcomm[i])
-
 #----------------------------------------------------------------------
 old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
 core["old_tech_term"] = old_tech_terms_list
-
-#----------------------------------------------------------------------
-if _cybid_ == True:
-	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
-checksum = shift
 
 #------------------------------------------------------------
 def phonetic_alphabet(word2nato):
@@ -2517,13 +2513,13 @@ def main():
 	global aboutyou, days
 	wms = random.choice(core['intromsg'])
 	tdctl=0;ncctl=0;ffctl=0
-	aboutyou = kdecode(aboutyou, checksum)
+	aboutyou = kdecode(aboutyou, shift)
 	#----------------------------
 	if chkpy() != True:
 		sys.exit(0)
 	#----------------------------
 	if chkauth!=cybchk:
-		print(kolor['DARK_RED'] + "\n " +_spchar_[1:2] + chr(32) + _title_ + kolor['OFF'] + ": " + hex(chkauth) + " - " + kdecode(chkcyb, checksum))	
+		print(kolor['DARK_RED'] + "\n " +_spchar_[1:2] + chr(32) + _title_ + kolor['OFF'] + ": " + hex(chkauth) + " - " + kdecode(chkcyb, shift))	
 		sys.exit(0)
 	#----------------------------
 	if chkcoor(lat,lon) == True:
