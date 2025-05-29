@@ -3320,7 +3320,7 @@ def main():
 			print('     Name : ' + _title_)
 			print('  Version : ' +version)
 			print('  Revised : ' +_revise_)
-			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D")
+			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
 			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(old_tech_terms_list)) + "|M" + str(len(core["word meaning"])))
 			print('    Linux : ' + str(len(linux_commands)))
 			print('    Astro : ' + "G"+str(len(core["astronomy glossary"])) + "|A" +  str(len(core["asteroid"])) + "|C" +  str(len(core["constelattion"])) + "|S" +  str(len(core["star name"])))
