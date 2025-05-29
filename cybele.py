@@ -771,7 +771,7 @@ def check_tables(tables_names):
 #------------------------------------------------------------
 def make_intextdb():
 	#global cybelecode, midbcounter
-	global midbcounter
+	global midbcounter, ncountries, constellations_dict
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
@@ -2767,6 +2767,7 @@ def main():
 		print(f"\n{kolor['DARK_RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
 		sys.exit(0)
 	#----------------------------
+	#----------------------------
 	if chkpy() != True:
 		sys.exit(0)
 	#----------------------------
@@ -2777,6 +2778,10 @@ def main():
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
+	
+	#print (constelattions)
+	#exit()
+	
 	#-----------------------------
 	while True:
 		#-------------------------
@@ -3581,7 +3586,7 @@ def main():
 				cybele_play_quiz(wcountry,1)
 				del wcountry
 			if question.find("constellations")!=-1:
-				cybele_play_quiz(constellations_dict,2)
+				cybele_play_quiz(constellations_abbr,2)
 			if question.find("elements")!=-1:
 				cybele_play_quiz(periodic_elements,3)
 
