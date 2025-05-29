@@ -3502,7 +3502,7 @@ def main():
 			else:
 				print ('The correct usage is <list stars> from <search letters> to <search letters>.\n')
 			
-		elif question[0:18] == 'list constellations':
+		elif question[0:19] == 'list constellations':
 			getparam = question.split()
 			if len(getparam) == 2:
 				print (f"{creative_random_anwser()} Here he is the list of constellations i have in knowledge.")
