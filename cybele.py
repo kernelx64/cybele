@@ -476,9 +476,9 @@ help = {
 	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
-	"help list constelations": "Usage: <list constelations> | list constelations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constelations in the database or from a <start> to a <end>.\nex: list constelations\n    list constelations t u\n",
+	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
-	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constelations in the database from a <start> to a <end>.\nex: list stars t u\n",
+	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
@@ -770,12 +770,13 @@ def check_tables(tables_names):
 
 #------------------------------------------------------------
 def make_intextdb():
-	global cybelecode, midbcounter
+	#global cybelecode, midbcounter
+	global midbcounter
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
 		print_statusline(f"Handling databases ...")
-		cybelecode = fetch_fromdbfile("cybele.db", "config", "code")
+		#cybelecode = fetch_fromdbfile("cybele.db", "config", "code")
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
@@ -959,7 +960,7 @@ maincommands = [
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constelations"
+	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -3012,7 +3013,7 @@ def main():
 			print ("I can tell you about " + str(len(core['asteroid'])) + " asteroids. Only the most basic information.")
 			print ("I think is gonna be a "+ _title_ +" version with a connection to the JPL SSD or datastro.eu"  + "\n")
 
-		elif question[0:22] == 'what do you know about' and question.find('constelations')!=-1 or question.endswith('?'):
+		elif question[0:22] == 'what do you know about' and question.find('constellations')!=-1 or question.endswith('?'):
 			print ("I can tell you about " + str(len(constellations_dict)) + " constelations.\n ")
 
 		elif question[0:22] == 'what do you know about' and question.find('the')!=-1 and question.find('universe')!=-1 or question.endswith('?'):
@@ -3245,8 +3246,10 @@ def main():
 				print( random.choice(messages['earlier_nyear']) + "\n")
 
 		elif question == 'what is your version' or question == '#version':
+			global cybelecode
+			cybelecode = ksha([_title_+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
-			_chkcid_ = cybelecode[0] if cybelecode else 'Not verified'
+			_chkcid_ = cybelecode if cybelecode else 'Not verified'
 			nversion = f"I am {_title_} {_chkwww_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nmy unique id is '{_chkcid_}'."
 			
 			print (nversion + "\n")
@@ -3499,13 +3502,13 @@ def main():
 			else:
 				print ('The correct usage is <list stars> from <search letters> to <search letters>.\n')
 			
-		elif question[0:18] == 'list constelations':
+		elif question[0:18] == 'list constellations':
 			getparam = question.split()
 			if len(getparam) == 2:
-				print (f"{creative_random_anwser()} Here he is the list of constelations i have in knowledge.")
+				print (f"{creative_random_anwser()} Here he is the list of constellations i have in knowledge.")
 				mandb('cybele','constelations','list',0,0)
 			elif len(getparam) == 4:
-				print (f"{creative_random_anwser()} Here he is the list of constelations from '{getparam[2]}' to '{getparam[3]}' i have in knowledge.")
+				print (f"{creative_random_anwser()} Here he is the list of constellations from '{getparam[2]}' to '{getparam[3]}' i have in knowledge.")
 				mandb('cybele','constelations','list',getparam[2], getparam[3] )
 		
 		elif question[0:6] == 'limits':
