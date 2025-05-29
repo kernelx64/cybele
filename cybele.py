@@ -496,7 +496,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|all/constellations|asteroids names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
+	"help show me": "Usage: show me <star names|all/constellations|asteroids|quote  names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
@@ -3781,7 +3781,7 @@ def main():
 		elif question == 'testing':
 			print ('Development testing propose code...\n')
 			xn = fetch_fromdbfile("cybele.db", "config", "code")
-			print (xn)
+			print (xn[0])
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
