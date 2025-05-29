@@ -2768,10 +2768,6 @@ def main():
 	#----------------------------
 	if chkpy() != True:
 		sys.exit(0)
-	if ksha([_title_+chr(46)+chr(112)+chr(121)])[0][1]!=cybelecode[0]:
-		print_statusline(f"")
-		print(f"\n{kolor['DARK_RED']} {_spchar_[1:2]}{_title_}{kolor['OFF']}: {cybelecode[0][-8:]} - {kdecode(chkcyb, checksum)}")	
-		sys.exit(0)
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
