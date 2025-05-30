@@ -3222,8 +3222,7 @@ def main():
 
 		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
 			dt = date.today()
-			if dt.day >= 20 and dt.day <= 26:
-			#if (str(dt)[5:]) == '12-25':
+			if dt.month == 12 and dt.day >= 20 and dt.day <= 26:
 				print ("Merry Christmas to you too!\nI hope you have a wonderful holiday season filled with joy, care and love.\n")
 				print ("You should take a look at the page, only available around Christmas:\n" + " 〉 "+ website['home'] + "/merrychristmas")
 				print ("A litle present for you...\n 〉 ")
