@@ -38,7 +38,6 @@ try:
 	import holidays
 	import quote
 	import locale
-	import turtle
 	import pycountry
 	from bs4 import BeautifulSoup
 	from random_word import RandomWords
@@ -2486,267 +2485,169 @@ def country_holidays():
 	
 #----------------------------------------------------------------
 #----------------------------------------------------------------
-def merry_christmas():
-    import turtle
-    bg = turtle.Screen()
-    bg.bgcolor("dark blue")
-    ornament_list = ["light blue", "maroon", "purple", "silver", "white", "yellow", "magenta"]
+def set_cursor_pos(row, col):
+    return f"\033[{row};{col}H"
 
-    def draw_circle(turtle_obj, color, size, x, y):
-        turtle_obj.penup()
-        turtle_obj.color(color)
-        turtle_obj.fillcolor(color)
-        turtle_obj.goto(x, y)
-        turtle_obj.pendown()
-        turtle_obj.begin_fill()
-        turtle_obj.circle(size)
-        turtle_obj.end_fill()
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-    tina = turtle.Turtle()
-    tina.shape("turtle")
-    tina.speed(100)
+def create_firework_explosion(x, y, max_radius, characters):
+ 
+    try:
+        canvas_width, canvas_height = os.get_terminal_size()
+    except OSError:
+        canvas_width, canvas_height = 80, 24 # Fallback if size cannot be determined
 
-    # Draw the base of the tree (first green triangle)
-    tina.penup()
-    tina.goto(0, 0)
-    tina.color("green")
-    tina.begin_fill()
-    tina.fillcolor("green")
-    tina.pensize(8)
-    tina.pendown()
-    tina.goto(100, 0)
-    tina.penup()
-    tina.end_fill()
+    explosion_color = random.choice([k for k in kolor.keys() if k != 'OFF']) # Pick a random color, not 'OFF'
 
-    # Draw the main part of the tree
-    tina.goto(100, 0)
-    tina.pendown()
-    tina.color("green")
-    tina.begin_fill()
-    tina.fillcolor("green")
-    tina.goto(0, 75)
-    tina.goto(-100, 0)
-    tina.forward(100)
-    tina.goto(125, -65)
-    tina.goto(-125, -65)
-    tina.goto(0, 0)
-    tina.penup()
-    tina.end_fill()
+    for radius in range(1, max_radius + 1):
+        # Create a temporary canvas for this frame of the explosion
+        # This allows us to build the frame and then print it efficiently
+        frame_canvas = [[' ' for _ in range(canvas_width)] for _ in range(canvas_height)]
 
-    # Draw the top part of the tree
-    tina.goto(0, 75)
-    tina.pendown()
-    tina.color("green")
-    tina.begin_fill()
-    tina.fillcolor("green")
-    tina.goto(50, 75)
-    tina.goto(0, 120)
-    tina.goto(-50, 75)
-    tina.goto(0, 75)
-    tina.penup()
-    tina.end_fill()
+        # Populate the frame_canvas with explosion particles for the current radius
+        for i in range(canvas_height):
+            for j in range(canvas_width):
+                # Calculate distance from the explosion center
+                dist = ((j - x)**2 + (i - y)**2)**0.5
+                # Draw particles within the current radius ring
+                if radius - 1 <= dist < radius:
+                    if 0 <= i < canvas_height and 0 <= j < canvas_width:
+                        frame_canvas[i][j] = random.choice(characters)
 
-    # Draw the tree trunk
-    tina.goto(0, -90)
-    tina.pendown()
-    tina.color("brown")
-    tina.begin_fill()
-    tina.fillcolor("brown")
-    tina.goto(20, -90)
-    tina.left(90)
-    tina.forward(20)
-    tina.left(90)
-    tina.forward(40)
-    tina.left(90)
-    tina.forward(20)
-    tina.left(90)
-    tina.forward(20)
-    tina.penup()
-    tina.end_fill()
+        clear_screen()
 
-    # Draw ornaments
-    for i in range(18):
-        tina.penup()
-        x = random.randint(-75, 75)
-        y = random.randint(-65, 120)
-        size = random.randint(1, 10)
-        colors = (random.choice(ornament_list))
-        tina.goto(x, y)
-        tina.pendown()
-        draw_circle(tina, colors, size, x, y)
-        tina.penup()
+        # Print the current frame of the explosion
+        for row_idx, row_chars in enumerate(frame_canvas):
+            # Move cursor to the start of this row before printing
+            print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
+        
+        # Flush output to ensure frame is displayed immediately
+        import sys
+        sys.stdout.flush()
+        sleep(0.08) # Speed of the explosion expansion
 
-    tina.goto(250, -250)
+def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
+	kolor = {
+		'RED': "\033[91m",
+		'GREEN': "\033[92m",
+		'YELLOW': "\033[93m",
+		'BLUE': "\033[94m",
+		'MAGENTA': "\033[95m",
+		'CYAN': "\033[96m",
+		'WHITE': "\033[97m",
+		'DARK_YELLOW': "\033[33m",
+		'OFF': "\033[0m",
+	}
 
-    # Write text on animation
-    text = turtle.Turtle()
-    text.hideturtle()
-    text.color("red")
-    text.penup()
-    text.sety(145)
-    text.write("Merry Christmas", font=("Trattatello", 32, "bold"), align="center")
-    text.color("white")
-    text.sety(-165)
-    text.write("from cybele the python script.", font=("Arial", 18), align="center")
+	CLEAR_SCREEN = "\033[2J"
+	HOME_CURSOR = "\033[H"
+	HIDE_CURSOR = "\033[?25l"
+	SHOW_CURSOR = "\033[?25h"
 
-    turtle.done()
+	explosion_chars = ['*', '+', 'o', '.', '@', '#', '!', '^']
+    
+	try:
+		term_width, term_height = os.get_terminal_size()
+	except OSError:
+		term_width, term_height = 80, 24
+
+	print(f"Prepare for the ASCII fireworks show!{kolor['OFF']}")
+	print(HIDE_CURSOR, end="")
+	sleep(2.0)
+	clear_screen()
+
+	try:
+		for _ in range(num_fireworks):
+			# Random starting position for the firework (rocket path)
+			# Ensure rocket starts near the bottom
+			start_x = random.randint(int(term_width * 0.1), int(term_width * 0.9))
+			start_y = term_height - 2 # Start 2 rows from the bottom
+
+			# Random explosion height for this firework
+			explosion_y = random.randint(int(term_height * 0.2), int(term_height * 0.6)) # Explode in upper-middle
+            
+			# Simulate rocket ascent
+			random_color = random.choice([k for k in kolor.keys() if k != 'OFF'])
+			rocket_char = '↟'
+
+			for y_coord in range(start_y, explosion_y, -1):
+				clear_screen() # Clear screen for each rocket frame
+				# Draw the rocket at its current position
+				# Row is y_coord, Column is start_x
+				print(f"{set_cursor_pos(y_coord, start_x)}{kolor[random_color]}{rocket_char}{kolor['OFF']}", end="")
+				import sys
+				sys.stdout.flush() # Ensure rocket is drawn immediately
+				sleep(0.08) # Speed of the rocket ascent
+
+			# Clear the rocket after ascent
+			clear_screen()
+
+			# Explosion!
+			max_explosion_radius = random.randint(min(8, term_height // 4), min(15, term_height // 2))
+			create_firework_explosion(start_x, explosion_y, max_explosion_radius, explosion_chars)
+			print(kolor['OFF'], end="") 
+			sleep(delay_between_fireworks)
+			clear_screen()
+
+	except KeyboardInterrupt:
+		pass 
+
+	finally:
+		print(kolor['OFF'])
+		clear_screen()
+		print(f"{HOME_CURSOR}ASCII Fireworks show ended! Hope you enjoyed the retro vibe! {SHOW_CURSOR}\n")
+
 #----------------------------------------------------------------
 #----------------------------------------------------------------
-def fireworks_display():
-	import turtle
-	now = date.today()
-	current_year = now.year
+def draw_christmas_tree():
 	
-	wn = turtle.Screen()
-	wn.setup(width=600, height=600)
-	wn.tracer(0)
-
-	t = turtle.Turtle()
-	t.speed(0)
-	t.hideturtle()
-
-	# controls the main loop
-	playing = True
-
-	def stop_playing():
-		nonlocal playing
-		playing = False
-
-	# Listen for 'q' and 'Escape' key presses
-	wn.listen()
-	wn.onkeypress(stop_playing, "q")
-	wn.onkeypress(stop_playing, "Escape")
-
-	def pen(color):
-		t.color(color)
-
-	def move():
-		t.pu()
-		x = random.randint(-165, 165)
-		y = random.randint(-165, 165)
-		t.goto(x, y)
-		t.pd()
-
-	def sky(colour):
-		wn.bgcolor(colour)
-
-	def message():
-		text = turtle.Turtle()
-		text.color("yellow")
-		text.hideturtle()
-		text.write("Happy New Year "+ str(current_year), font=("Trattatello", 26, "bold"), align="center")
-		text.goto(0, -200)
-
-	def firework(size):
-		for num in range(20):
-			t.fd(size)
-			t.rt(180 - (360 / 20))
-
-	C_BRIGHT_MIN = 0x10
-	C_BRIGHT_MAX = 0xef
-	F_SIZE_MIN = 15
-	F_SIZE_MAX = 200
-	FIREWORK_PER_CLEAR = 2
-
-	sky('#10102a')
-	message()
-
-	while playing:
-		color_r = hex(random.randint(C_BRIGHT_MIN, C_BRIGHT_MAX))[2:]
-		color_g = hex(random.randint(C_BRIGHT_MIN, C_BRIGHT_MAX))[2:]
-		color_b = hex(random.randint(C_BRIGHT_MIN, C_BRIGHT_MAX))[2:]
-		pen('#' + color_r + color_g + color_b)
-
-		for i in range(FIREWORK_PER_CLEAR):
-			move()
-			firework(random.randint(F_SIZE_MIN, F_SIZE_MAX))
-
-		wn.update()
-		t.clear()
-		sleep(.120)
-
-	playing = False
-	print("Stoped admire the Fireworks display!\n")
-	
-#-------------------------------------------------
-#-------------------------------------------------
-def view_solarsystem():
-	# --- Code by AI (gemini) ---
-	import turtle
-	screen = turtle.Screen()
-	screen.setup(width=600, height=600) # Set up screen dimensions
-	screen.bgcolor("black") # Black background for space
-	screen.tracer(0) # Turn off screen updates for smoother animation
-
-	# --- Sun ---
-	sun = turtle.Turtle()
-	sun.shape("circle")
-	sun.color("yellow")
-	sun.shapesize(stretch_wid=3, stretch_len=3) # Make the sun larger
-	sun.penup() # Don't draw when moving
-	sun.goto(0, 0) # Center the sun
-
-	# --- Planet Class ---
-	class Planet(turtle.Turtle):
-		def __init__(self, name, color, radius, speed, start_angle=0):
-			super().__init__()
-			self.name = name
-			self.color(color)
-			self.shape("circle")
-			self.shapesize(stretch_wid=0.8, stretch_len=0.8) # Default planet size
-			self.penup()
-			self.radius = radius # Distance from the sun
-			self.speed = speed # How fast it orbits
-			self.angle = math.radians(start_angle) # Current angle in radians
-
-			# Create a separate turtle for the name
-			self.name_turtle = turtle.Turtle()
-			self.name_turtle.penup()
-			self.name_turtle.hideturtle()
-			self.name_turtle.color("white")
-
-		def move(self):
-			# Calculate new position based on angle and radius
-			x = self.radius * math.cos(self.angle)
-			y = self.radius * math.sin(self.angle)
-			self.goto(x, y)
-
-			# Update the angle for the next frame
-			self.angle += self.speed
-
-			# Move the name turtle to follow the planet
-			self.name_turtle.goto(x, y - 20) # Offset name slightly below planet
-			self.name_turtle.clear() # Clear previous name
-			self.name_turtle.write(self.name, align="center", font=("Arial", 9, "normal"))
-
-	# --- Create Planets ---
-	# Planet(name, color, radius, speed)
-	# Radius is the distance from the sun. Speed is how much the angle changes per frame.
-	planets = [
-		Planet("Mercury", "gray", 60, 0.05),
-		Planet("Venus", "orange", 90, 0.03),
-		Planet("Earth", "blue", 120, 0.02),
-		Planet("Mars", "red", 160, 0.015),
-		Planet("Jupiter", "brown", 220, 0.01),
-		Planet("Saturn", "gold", 280, 0.008),
-		Planet("Uranus", "lightblue", 330, 0.005),
-		Planet("Neptune", "darkblue", 380, 0.003)
-	]
-		
-	# --- Animation Loop ---
-	def animate():
-		if screen.cv: # screen.cv is the underlying Tkinter canvas object
-			for planet in planets:
-				planet.move()
-			screen.update() # Update the screen after all planets have moved
-			screen.ontimer(animate, 20) # Call animate again after 20 milliseconds
+	tree = [
+	[32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,32,32,44,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,95,47,94,92,95,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,60,32,32,32,32,32,62,9,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,47,46,45,46,92,32,32,32,32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,96,47,38,92,96,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,42,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,44,64,46,42,59,64,44,9,9,9,9,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,47,95,111,46,73,32,37,95,92,32,32,32,32,42,9,9,32,32,32,32,32,32,32,32],
+	[32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,40,96,39,45,45,58,111,40,95,64,59,9,9,9,9,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,47,96,59,45,45,46,44,95,95,32,96,39,41,32,32,32,32,32,32,32,32,32,32,32,32,42,32,32,32],
+	[32,32,32,32,32,32,32,42,32,32,32,32,40,96,39,45,45,41,95,64,32,59,111,32,37,39,40,41,92,32,32,32,32,32,32,42,9,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,47,96,59,45,45,46,95,96,39,39,45,45,46,95,79,39,64,59,9,9,9,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,47,38,42,44,40,41,126,111,96,59,45,46,44,95,32,96,34,34,96,41,9,9,32,32,32,32],
+	[42,32,32,32,32,32,32,32,32,32,32,47,96,44,64,32,59,43,38,32,40,41,32,111,42,96,59,45,39,59,92,9,9,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,40,96,34,34,45,45,46,44,95,48,32,43,37,32,64,39,32,38,40,41,92,9,9,32,32,32],
+	[32,32,32,32,32,32,32,32,32,47,45,46,44,95,32,32,32,32,96,96,39,39,45,45,46,46,46,46,45,39,96,41,32,32,42,9,32,32,32,32],
+	[32,32,32,32,32,42,32,32,32,47,64,37,59,111,96,58,59,39,45,45,44,46,95,95,32,32,32,95,95,46,39,92,9,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,59,42,44,38,40,41,59,32,64,32,37,32,38,94,59,126,96,42,96,111,59,64,40,41,59,32,32,32,32,32,42,32,32,32],
+	[32,32,32,32,32,32,32,32,32,47,40,41,59,32,111,94,126,59,32,38,32,40,41,46,111,64,42,38,96,59,38,37,79,92,9,9,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,33,96,33,61,33,61,61,33,33,61,61,44,44,44,46,44,61,33,61,61,33,61,61,61,33,96,9,32,32,32],
+	[32,32,32,32,32,95,95,46,45,45,45,45,45,46,40,92,45,39,39,35,35,35,35,35,45,45,45,46,46,46,95,95,95,46,46,46,45,45,45,45,46,32],
+	[32,32,32,32,39,96,32,32,32,32,32,32,32,32,32,92,41,95,96,35,35,35,35,35,96,9,9,9,32,32,32,32,32,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,46,45,45,39,32,39,41,9,9,9,9,9,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,111,40,32,32,41,95,45,92,9,9,9,9,9,9,32,32,32],
+	[32,32,32,32,32,32,32,32,32,32,32,32,96,34,34,32,96,32,96,9,9,9,9,9,9]
+]
+	#tree_width = len(tree)
+	#terminal_width = 80
+	#left_padding = (terminal_width - tree_width) // 2
+	randomcolor = ['RED','DARK_YELLOW','GREEN','BLUE','CYAN','MAGENTA']
+	for i in range(len(tree)):
+		res = ''.join(map(chr, tree[i]))
+		if i <= 4:
+			artcor = kolor['YELLOW']
+		elif i >= 19:
+			artcor = kolor['WHITE']
 		else:
-			for planet in planets:
-				if planet.name_turtle.screen: # Check if the name turtle's screen is active
-					planet.name_turtle.clear()
-					
-	animate()
-	turtle.done() # This starts the Tkinter event loop
+			artcor = kolor[random.choice(randomcolor)]
+		print (f"{" "*5} {artcor} {str(res)}")
+
+	merry_christmas_message = (
+		kolor['RED'] + "  MERRY" +
+		kolor['GREEN'] + " CHRISTMAS!" +
+		kolor['OFF']
+	)
+	print(" "*27 + merry_christmas_message)
 	
 #-------------------------------------------------
 #-------------------------------------------------
@@ -2778,10 +2679,6 @@ def main():
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
-	
-	#print (constelattions)
-	#exit()
-	
 	#-----------------------------
 	while True:
 		#-------------------------
@@ -3222,12 +3119,11 @@ def main():
 
 		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
 			dt = date.today()
-			if dt.month == 12 and dt.day >= 20 and dt.day <= 26:
+			if dt.month == 5 and dt.day >= 22 and dt.day <= 25:
 				print ("Merry Christmas to you too!\nI hope you have a wonderful holiday season filled with joy, care and love.\n")
 				print ("You should take a look at the page, only available around Christmas:\n" + " 〉 "+ website['home'] + "/merrychristmas")
 				print ("A litle present for you...\n 〉 ")
-				merry_christmas()
-				print ("")
+				draw_christmas_tree()
 			else:
 				# Use the weather_season_condiction() or get_the_season() to play with "i'm definitely not ready for the cold and snow"
 				if _cybid_ == True:
@@ -3242,8 +3138,7 @@ def main():
 			if (str(dt)[5:]) == '12-31' or (str(dt)[5:]) == '01-01' and datetime.now().hour <= 3 :
 				random.shuffle(messages['newyear_msg'])
 				print (f"{random.choice(messages['newyear_msg'])} \nEnjoy the Fireworks ...")
-				fireworks_display()
-				turtle.Terminator
+				main_fireworks()
 			else:
 				random.shuffle(messages['earlier_nyear'])
 				print( random.choice(messages['earlier_nyear']) + "\n")
