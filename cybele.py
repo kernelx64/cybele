@@ -3240,7 +3240,6 @@ def main():
 
 		elif question.find('happy new year')!=-1:
 			dt = date.today()
-			print (time)
 			if (str(dt)[5:]) == '12-31' or (str(dt)[5:]) == '01-01' and datetime.now().hour <= 3 :
 				random.shuffle(messages['newyear_msg'])
 				print (f"{random.choice(messages['newyear_msg'])} \nEnjoy the Fireworks ...")
