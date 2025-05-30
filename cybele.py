@@ -490,7 +490,7 @@ help = {
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
 	"help presence": "Usage: presence <service> \nShow's the direct link for "+_auth1r_+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
-	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
+	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
@@ -2050,7 +2050,7 @@ def cybele_play_quiz(quizdata,game):
 	gamescore[0] = 0
 	gamescore[2] = 0
 	getout = ['stop','quit']
-	extquiz = ['Country','Capital','Constellation','Designation','Periodic Table Elements','Symbol']
+	extquiz = ['Country','Capital','Constellation','Abbreviation','Periodic Table Elements','Symbol']
 	if game == 1:
 		whatquiz = 0
 		gamescore[1] = 1
