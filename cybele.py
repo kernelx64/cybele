@@ -500,7 +500,7 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
-	"help view solar system": "Usage: view solar system \nView the graphical representation of the solar system.\nex: view solar system\n",
+	#"help view solar system": "Usage: view solar system \nView the graphical representation of the solar system.\nex: view solar system\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
@@ -3667,9 +3667,9 @@ def main():
 			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
 			print (f"{website['trails']}\n")
 		
-		elif question == 'view solar system':
-			view_solarsystem()
-			return True
+		#elif question == 'view solar system':
+		#	view_solarsystem()
+		#	return True
 		
 		elif question == 'testing':
 			print ('Development testing propose code...\n')
