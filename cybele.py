@@ -500,7 +500,7 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
-	#"help view solar system": "Usage: view solar system \nView the graphical representation of the solar system.\nex: view solar system\n",
+	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
@@ -2649,6 +2649,101 @@ def draw_christmas_tree():
 	)
 	print(" "*27 + merry_christmas_message)
 	
+
+#-------------------------------------------------
+#-------------------------------------------------
+def ascii_horiz_solar_system(width=80):
+	if width < 60:
+		print (f"{random.choice(messages['trouble_short'])} Width is very small. Output might be distorted.\n")
+		width = 60 
+
+	COLOR_RESET = "\033[0m"
+	COLOR_YELLOW = "\033[33m"  # Sun
+	COLOR_GRAY = "\033[37m"    # Mercury, Path
+	COLOR_ORANGE = "\033[38;5;208m" # Venus (a more specific orange)
+	COLOR_BLUE = "\033[34m"    # Earth
+	COLOR_RED = "\033[31m"     # Mars
+	COLOR_LIGHT_BROWN = "\033[38;5;94m" # Jupiter (lighter brown)
+	COLOR_BROWN = "\033[38;5;130m" # Saturn
+	COLOR_CYAN = "\033[36m"    # Uranus
+	COLOR_DARK_BLUE = "\033[38;5;20m" # Neptune (darker blue)
+
+	solar_line_chars = [' ' for _ in range(width)]
+	solar_line_colors = ['' for _ in range(width)]
+	
+	sun_pos_frac = 0.02
+	mercury_pos_frac = 0.10
+	venus_pos_frac = 0.18
+	earth_pos_frac = 0.28
+	mars_pos_frac = 0.36
+	jupiter_pos_frac = 0.50
+	saturn_pos_frac = 0.65
+	uranus_pos_frac = 0.80
+	neptune_pos_frac = 0.95
+
+	sun_x = int(width * sun_pos_frac)
+	mercury_x = int(width * mercury_pos_frac)
+	venus_x = int(width * venus_pos_frac)
+	earth_x = int(width * earth_pos_frac)
+	mars_x = int(width * mars_pos_frac)
+	jupiter_x = int(width * jupiter_pos_frac)
+	saturn_x = int(width * saturn_pos_frac)
+	uranus_x = int(width * uranus_pos_frac)
+	neptune_x = int(width * neptune_pos_frac)
+
+	solar_line_chars[sun_x] = '#'
+	solar_line_colors[sun_x] = COLOR_YELLOW
+	if sun_x + 1 < width:
+		solar_line_chars[sun_x + 1] = '#'
+		solar_line_colors[sun_x + 1] = COLOR_YELLOW
+
+	solar_line_chars[mercury_x] = '.'
+	solar_line_colors[mercury_x] = COLOR_GRAY
+	solar_line_chars[venus_x] = 'o'
+	solar_line_colors[venus_x] = COLOR_ORANGE
+	solar_line_chars[earth_x] = 'E'
+	solar_line_colors[earth_x] = COLOR_BLUE
+	solar_line_chars[mars_x] = 'm'
+	solar_line_colors[mars_x] = COLOR_RED
+	solar_line_chars[jupiter_x] = '@'
+	solar_line_colors[jupiter_x] = COLOR_LIGHT_BROWN
+	if saturn_x - 1 >= 0:
+		solar_line_chars[saturn_x - 1] = '='
+		solar_line_colors[saturn_x - 1] = COLOR_BROWN
+	solar_line_chars[saturn_x] = '&'
+	solar_line_colors[saturn_x] = COLOR_BROWN
+	if saturn_x + 1 < width:
+		solar_line_chars[saturn_x + 1] = '='
+		solar_line_colors[saturn_x + 1] = COLOR_BROWN
+	solar_line_chars[uranus_x] = '*'
+	solar_line_colors[uranus_x] = COLOR_CYAN
+	solar_line_chars[neptune_x] = 'N'
+	solar_line_colors[neptune_x] = COLOR_DARK_BLUE
+
+	for i in range(sun_x + 2, width):
+		if solar_line_chars[i] == ' ':
+			solar_line_chars[i] = '-'
+			solar_line_colors[i] = COLOR_GRAY
+
+	colored_output = []
+	current_color = COLOR_RESET
+	for i in range(width):
+		if solar_line_colors[i] and solar_line_colors[i] != current_color:
+			colored_output.append(solar_line_colors[i])
+			current_color = solar_line_colors[i]
+		elif not solar_line_colors[i] and current_color != COLOR_RESET: # Reset if no specific color
+			colored_output.append(COLOR_RESET)
+			current_color = COLOR_RESET
+
+		colored_output.append(solar_line_chars[i])
+	
+	print("\n")
+	colored_output.append(COLOR_RESET)
+	print("".join(colored_output))
+	print("\n  ASCII Solar System (Small Scale Horizontal)")
+	print(f"  {COLOR_YELLOW}# Sun{COLOR_RESET}   {COLOR_GRAY}. Mer{COLOR_RESET}   {COLOR_ORANGE}o Ven{COLOR_RESET}   {COLOR_BLUE}E Ear{COLOR_RESET}   {COLOR_RED}m Mar{COLOR_RESET}   {COLOR_LIGHT_BROWN}@ Jup{COLOR_RESET}   {COLOR_BROWN}=&={COLOR_RESET} Sat   {COLOR_CYAN}* Ura{COLOR_RESET}   {COLOR_DARK_BLUE}N Nep{COLOR_RESET}")
+	print ("")
+
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
@@ -3667,9 +3762,9 @@ def main():
 			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
 			print (f"{website['trails']}\n")
 		
-		#elif question == 'view solar system':
-		#	view_solarsystem()
-		#	return True
+		elif question == 'view solar system':
+			ascii_horiz_solar_system(width=80)
+			print ("")
 		
 		elif question == 'testing':
 			print ('Development testing propose code...\n')
