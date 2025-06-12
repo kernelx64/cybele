@@ -13,7 +13,7 @@ lon = -8.4265
 version = '1.0 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯❝❞'
 _active_ = '01.08.2024'
 _revise_ = '31.05.2025'
 _author_ = 'Adelino Saldanha'
@@ -2363,11 +2363,15 @@ def get_cmdlinux(command_name):
 			conn.close()
 			
 #-------------------------------------------------
-def chkpy():  
+def chkpy():
+	print_statusline(f"")
 	major = sys.version_info.major
 	minor = sys.version_info.minor
-	if major < 3 or (major == 3 and minor < 10):
+	if minor > 13:
+		modname = f"With this higher Python version you only can work localy. Download the databases. \n   I cannot execute properly. Exiting."
+	else:
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
+	if major < 3 or major == 3 and minor < 10 or minor > 12:
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	return True	
@@ -2652,7 +2656,7 @@ def draw_christmas_tree():
 
 #-------------------------------------------------
 #-------------------------------------------------
-def ascii_horiz_solar_system(width=80):
+def ascii_horiz_solar_system(width):
 	if width < 60:
 		print (f"{random.choice(messages['trouble_short'])} Width is very small. Output might be distorted.\n")
 		width = 60 
@@ -2747,6 +2751,9 @@ def ascii_horiz_solar_system(width=80):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
+	if chkpy() != True:
+		sys.exit(0)
+	#----------------------------	
 	check_tables(tables)
 	make_intextdb()
 	#----------------------------
@@ -2763,9 +2770,6 @@ def main():
 		print(f"\n{kolor['DARK_RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
 		sys.exit(0)
 	#----------------------------
-	#----------------------------
-	if chkpy() != True:
-		sys.exit(0)
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
@@ -3763,7 +3767,8 @@ def main():
 			print (f"{website['trails']}\n")
 		
 		elif question == 'view solar system':
-			ascii_horiz_solar_system(width=80)
+			terminal_width, terminal_height = os.get_terminal_size()
+			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
 		
 		elif question == 'testing':
