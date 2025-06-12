@@ -2640,9 +2640,7 @@ def draw_christmas_tree():
 	[32,32,32,32,32,32,32,32,32,32,111,40,32,32,41,95,45,92,9,9,9,9,9,9,32,32,32],
 	[32,32,32,32,32,32,32,32,32,32,32,32,96,34,34,32,96,32,96,9,9,9,9,9,9]
 ]
-	#tree_width = len(tree)
-	#terminal_width = 80
-	#left_padding = (terminal_width - tree_width) // 2
+
 	randomcolor = ['RED','DARK_YELLOW','GREEN','BLUE','CYAN','MAGENTA']
 	for i in range(len(tree)):
 		res = ''.join(map(chr, tree[i]))
@@ -2652,7 +2650,7 @@ def draw_christmas_tree():
 			artcor = kolor['WHITE']
 		else:
 			artcor = kolor[random.choice(randomcolor)]
-		print (f"{" "*5} {artcor} {str(res)}")
+		print (f"{' '*5} {artcor} {str(res)}")
 
 	merry_christmas_message = (
 		kolor['RED'] + "  MERRY" +
