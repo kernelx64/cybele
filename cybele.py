@@ -114,6 +114,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities']
+pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -2365,14 +2366,14 @@ def get_cmdlinux(command_name):
 #-------------------------------------------------
 def chkpy():
 	print_statusline(f"")
-	major = sys.version_info.major
-	minor = sys.version_info.minor
-	micro = sys.version_info.micro		
-	if major < 3 or major == 3 and minor < 10 or minor > 13 :
+	#major = sys.version_info.major
+	#minor = sys.version_info.minor
+	#micro = sys.version_info.micro
+	if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
-	elif major == 3 and minor == 13 and micro == 4:
+	elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
 		modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
@@ -3318,6 +3319,7 @@ def main():
 			print('     Name : ' + _title_)
 			print('  Version : ' +version)
 			print('  Revised : ' +_revise_)
+			print('   Python : ' + str(pyver[0]) + "." + str(pyver[1]) + "." + str(pyver[2]))
 			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
 			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(old_tech_terms_list)) + "|M" + str(len(core["word meaning"])))
 			print('    Linux : ' + str(len(linux_commands)))
