@@ -2367,11 +2367,13 @@ def chkpy():
 	print_statusline(f"")
 	major = sys.version_info.major
 	minor = sys.version_info.minor
-	if minor > 13:
-		modname = f"With this higher Python version you only can work localy. Download the databases. \n   I cannot execute properly. Exiting."
-	else:
+	micro = sys.version_info.micro		
+	if major < 3 or major == 3 and minor < 10 or minor > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
-	if major < 3 or major == 3 and minor < 10 or minor > 12:
+		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		return False
+	elif major == 3 and minor == 13 and micro == 4:
+		modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	return True	
