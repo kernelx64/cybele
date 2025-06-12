@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯❝❞'
 _active_ = '01.08.2024'
-_revise_ = '31.05.2025'
+_revise_ = '12.06.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -76,6 +76,16 @@ except ImportError as err:
 		print(f"{' '*3}I cannot execute properly. Exiting.")
 		sys.exit(0)
 
+pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
+if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
+	modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
+	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+	sys.exit(1)
+elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
+	modname = f"This specific version is known to have issues with SSL/SQLite. \n   Work localy downloading the databases or download Python v{pyver[0]}.{pyver[1]}.{pyver[2]+1}. \n   I cannot execute properly. Exiting."
+	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+	sys.exit(1)
+
 start_time = datetime.now()
 node_name = platform.node()
 country_code = locale.getlocale()
@@ -114,7 +124,6 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities']
-pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -2365,10 +2374,6 @@ def get_cmdlinux(command_name):
 			
 #-------------------------------------------------
 def chkpy():
-	print_statusline(f"")
-	#major = sys.version_info.major
-	#minor = sys.version_info.minor
-	#micro = sys.version_info.micro
 	if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -2754,9 +2759,7 @@ def ascii_horiz_solar_system(width):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	if chkpy() != True:
-		sys.exit(0)
-	#----------------------------	
+	#----------------------------
 	check_tables(tables)
 	make_intextdb()
 	#----------------------------
