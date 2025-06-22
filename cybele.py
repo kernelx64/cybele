@@ -2044,7 +2044,7 @@ def get_the_season():
 	d = today.day
 	md = m + d
 	s = -1
-
+	
 	if lat >= 0:
 		# Northern Hemisphere
 		if ((md >= 301) and (md <= 531)):
@@ -2077,42 +2077,63 @@ def get_the_season():
 	return current_season, other_seasons
 
 #--------------------------------------------------
-def starting_season():
-	system_date = datetime.now()
-	year = system_date.year
+def special_dates(date_to_check):
+    global lat
+    annual_special_dates = {
+        (1, 1): "New Year's Day.",
+		(1, 20): "World Day of Social Justice.",
+        (2, 14): "Valentine's Day.",
+		(3, 14): "Pi Day (mathematical constant π≈3.14)",
+		(3, 20): "International Day of Happiness.",
+		(4, 1): "April Fools' Day.",
+		(4, 22): "Earth Day.",
+		(5, 15): "International Day of Families.",
+		(5, 17): "International Internet Day.",
+		(6, 5): "World Environment Day.",
+		(6, 8): "World Oceans Day.",
+		(7, 30): "International Day of Friendship.",
+		(8, 1): "General celebration of the World Wide Web's existence and impact.",
+		(8, 6): "World Wide Web Launch Day (or First Website Day.)",
+		(8, 23): "Internaut Day – Celebrates the moment the World Wide Web was opened to the public.",
+		(9, 15): "International Day of Democracy.",
+		(10, 1): "International Day of Older Persons.",
+		(10, 10): "World Mental Health Day.",
+		(10, 24): "United Nations Day.",
+		(10, 29): "Internet Day | Commemoration of the first message sent on ARPANET.",
+		(10, 31): "Halloween.",
+		(11, 10): "World Science Day for Peace and Development.",
+		(11, 16): "International Day for Tolerance",
+		(11, 20): "Universal Children's Day.",
+		(12, 3): "International Day of Persons with Disabilities",
+		(12, 9): "Vorian's Launch day.",
+		(12, 10): "Human Rights Day",
+		(12, 25): "Christmas Day."
+    }
+    seasons = ("🌻 Spring", "☀️ Summer", "🍁 Autumn", "❄️ Winter")
+    month_day_key = (date_to_check.month, date_to_check.day)
 
-	spring_equinox_nh = datetime(year, 3, 20, 9, 1)    # March 20, 09:01 UTC
-	summer_solstice_nh = datetime(year, 6, 21, 2, 42)  # June 21, 02:42 UTC
-	autumn_equinox_nh = datetime(year, 9, 22, 18, 19)  # Sept 22, 18:19 UTC
-	winter_solstice_nh = datetime(year, 12, 21, 15, 3) # Dec 21, 15:03 UTC
+    if lat >= 0: # Northern Hemisphere (including equator)
+        seasonal_start_dates = {
+            (3, 20): 0,
+            (6, 21): 1,
+            (9, 22): 2,
+            (12, 21): 3
+        }
+    else: # Southern Hemisphere
+        seasonal_start_dates = {
+            (9, 22): 0, 
+            (12, 21): 1,
+            (3, 20): 2,
+            (6, 21): 3 
+        }
+    if month_day_key in annual_special_dates:
+        event = annual_special_dates[month_day_key]
+        print(f"And it is also the {event}!")
+    elif month_day_key in seasonal_start_dates:
+        season_index = seasonal_start_dates[month_day_key]
+        season_name = seasons[season_index]
+        print(f"And it is also the Beginning of the {season_name}.")
 
-	spring_equinox_sh = autumn_equinox_nh
-	summer_solstice_sh = winter_solstice_nh
-	autumn_equinox_sh = spring_equinox_nh
-	winter_solstice_sh = summer_solstice_nh
-	
-	system_date_ymd = system_date.replace(hour=0, minute=0, second=0, microsecond=0)
-
-	if lat >= 0: 
-		if spring_equinox_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts 🌻 Spring."
-		elif summer_solstice_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts ☀️ Summer."
-		elif autumn_equinox_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts 🍁 Autumn."
-		elif winter_solstice_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts ❄️ Winter."
-	else:
-		if spring_equinox_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts 🌻 Spring"
-		elif summer_solstice_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts ☀️ Summer."
-		elif autumn_equinox_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts 🍁 Autumn."
-		elif winter_solstice_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
-			return f"Today starts ❄️ Winter."
-	return None
-	
 #--------------------------------------------------
 def weather_like_season():
 	month_name = datetime.today().strftime('%B').lower()
@@ -3451,8 +3472,8 @@ def main():
 
 			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
 			print(f"Is the day {iniyeardays.days} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
-			if starting_season() != None:
-				print(starting_season())
+			if special_dates(datetime.now()) != None:
+				print(special_dates(datetime.now()))
 			if is_holiday:
 				print(f"{_spchar_[18:19]} and is : {holiday_name}!")
 			print("")
