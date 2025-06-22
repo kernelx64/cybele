@@ -13,9 +13,9 @@ lon = -8.4265
 version = '1.0 βeta'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯❝❞'
+_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '12.06.2025'
+_revise_ = '20.06.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -82,9 +82,10 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 	sys.exit(1)
 elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-	modname = f"This specific version is known to have issues with SSL/SQLite. \n   Work localy downloading the databases or download Python v{pyver[0]}.{pyver[1]}.{pyver[2]+1}. \n   I cannot execute properly. Exiting."
+	modname = f"This specific version is known to have issues with SSL/SQLite. \n   Work localy downloading the databases or download Python {pyver[0]}.{pyver[1]}.{pyver[2]+1}. \n   I cannot execute properly. Exiting."
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 	sys.exit(1)
+
 
 start_time = datetime.now()
 node_name = platform.node()
@@ -633,6 +634,22 @@ asteroids_list = {
 	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
 }
 #----------------------------------------------------
+def whatgmt():
+	import time
+	current_offset_seconds = None
+	if time.localtime().tm_isdst == 1 and time.daylight != 0:
+		current_offset_seconds = -time.altzone
+	else:
+		current_offset_seconds = -time.timezone
+	tz_offset_hours = current_offset_seconds / 3600
+
+	if tz_offset_hours >= 0:
+		gmt_string = f"GMT+{int(tz_offset_hours):2d}"
+	else:
+		gmt_string = f"GMT-{abs(int(tz_offset_hours)):2d}"
+	return gmt_string.replace(" ","")
+
+#----------------------------------------------------
 def chkcoor(lat, lon):
     try:
         lat_val = float(lat)
@@ -785,7 +802,6 @@ def make_intextdb():
 		sys.exit(0)
 	else:
 		print_statusline(f"Handling databases ...")
-		#cybelecode = fetch_fromdbfile("cybele.db", "config", "code")
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
@@ -865,7 +881,6 @@ questions = [
 	"Who built the pyramids?",
 	"Clock time",
 	"What time it is?",
-	"Today is?",
 	"Can you replicate yourself?",
 	"Hertzian waves",
 	"How to read latitude and longitude?",
@@ -903,7 +918,6 @@ answers = [
 	"The exact builders of the pyramids are still debated...",
 	"The current time in the system clock is "+datetime.now().strftime("%H:%M"),
 	"The current time is "+datetime.now().strftime("%H:%M"),
-	"Today is " + days[weekdaydate] + " and currently is "+datetime.now().strftime("%d")+" of "+month_name+" from "+datetime.now().strftime("%Y"),
 	"Unlike LLMs who can't, my core functionality can be replicated, but my responses may vary based on training data.",
 	"An electromagnetic wave produced by the oscillation of electricity in a conductor (as a radio antenna) and of a length ranging from a few millimeters to many kilometers. There is 7 types of waves are as follows: Radio Waves, Microwaves, InfraRED, Visible, Ultraviolet, X-Ray, Gamma Rays. \nRadio waves have the longest wavelength and small frequency while the gamma rays have shortest wavelength and high frequency.",
 	"The numbers are in decimal degrees format and range are from -90 to 90 for latitude using + for North and - for South and -180 to 180 for longitude using + for East and - for West.",
@@ -1318,11 +1332,11 @@ def leapyear():
 	result = ''
 
 	if (year % 400 == 0) and (year % 100 == 0):
-		result = "This year ({0}) is a leap year.\n".format(year)
+		result = "a leap year".format(year)
 	elif (year % 4 ==0) and (year % 100 != 0):
-		result = "This year ({0}) is a leap year.\n".format(year)
+		result = "a leap year".format(year)
 	else:
-		result = "This year({0}) is not a leap year\n".format(year)
+		result = "not a leap year".format(year)
 	return result
 
 #---------------------------------------------------------------------------
@@ -2021,18 +2035,84 @@ def extract_from_vorian():
 		print(f"{random.choice(messages['trouble_msg'])} Error fetching the page: {e}\n")
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_msg'])} An unexpected error occurred: {e}")
-		
+
 #-------------------------------------------------
 def get_the_season():
+	
 	today = datetime.today()
-	month = today.month
+	m = today.month * 100
+	d = today.day
+	md = m + d
+	s = -1
+
+	if lat >= 0:
+		# Northern Hemisphere
+		if ((md >= 301) and (md <= 531)):
+			s = 0  # spring
+		elif ((md > 531) and (md < 901)):
+			s = 1  # summer
+		elif ((md >= 901) and (md <= 1130)):
+			s = 2  # autumn
+		elif ((md > 1130) and (md <= 1229)):
+			s = 3  # winter
+	else:
+		# Southern Hemisphere
+		if (md >= 901) and (md <= 1130):
+			s = 0  # spring
+		elif (md > 1130) or (md <= 228): # Handles December to February
+			s = 1  # summer
+		elif (md >= 301) and (md <= 531):
+			s = 2  # autumn
+		elif (md > 531) and (md < 901):
+			s = 3  # winter
+
+	if s == -1:
+		print (f"{random.choice(messages['trouble_short'])} Could not determine season!\n")
+		return None, None
+
 	seasons = list(core['seasons'])
-	current_season_index = (month - 3) // 3 if month >= 3 else month + 9 // 3
-	current_season = seasons[current_season_index]
-	next_season_index = (current_season_index + 1) % 4
+	current_season = seasons[s]
+	next_season_index = (s + 1) % 4
 	other_seasons = seasons[next_season_index:] + seasons[:next_season_index - 1]
 	return current_season, other_seasons
 
+#--------------------------------------------------
+def starting_season():
+	system_date = datetime.now()
+	year = system_date.year
+
+	spring_equinox_nh = datetime(year, 3, 20, 9, 1)    # March 20, 09:01 UTC
+	summer_solstice_nh = datetime(year, 6, 21, 2, 42)  # June 21, 02:42 UTC
+	autumn_equinox_nh = datetime(year, 9, 22, 18, 19)  # Sept 22, 18:19 UTC
+	winter_solstice_nh = datetime(year, 12, 21, 15, 3) # Dec 21, 15:03 UTC
+
+	spring_equinox_sh = autumn_equinox_nh
+	summer_solstice_sh = winter_solstice_nh
+	autumn_equinox_sh = spring_equinox_nh
+	winter_solstice_sh = summer_solstice_nh
+	
+	system_date_ymd = system_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+	if lat >= 0: 
+		if spring_equinox_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts 🌻 Spring."
+		elif summer_solstice_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts ☀️ Summer."
+		elif autumn_equinox_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts 🍁 Autumn."
+		elif winter_solstice_nh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts ❄️ Winter."
+	else:
+		if spring_equinox_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts 🌻 Spring"
+		elif summer_solstice_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts ☀️ Summer."
+		elif autumn_equinox_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts 🍁 Autumn."
+		elif winter_solstice_sh.replace(hour=0, minute=0, second=0, microsecond=0) == system_date_ymd:
+			return f"Today starts ❄️ Winter."
+	return None
+	
 #--------------------------------------------------
 def weather_like_season():
 	month_name = datetime.today().strftime('%B').lower()
@@ -2464,6 +2544,36 @@ def yoda_speak(sentence):
 		yoda_words = complement + [verb, subject]
 	new_sentence = " ".join(yoda_words).capitalize() + ", " + random.choice(sentence_end)
 	return new_sentence
+
+#----------------------------------------------------------------
+#----------------------------------------------------------------
+def today_holiday():
+	today = datetime.today()
+	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
+	country = pycountry.countries.get(name=os_country_2l)
+
+	if country:
+		country_code_for_holidays = country.alpha_2
+	else:
+		print(f"{random.choice(messages['trouble_short'])} No valid country detected or two-letter country code.\n")
+		return False, None
+
+	if country_code_for_holidays:
+		try:
+			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
+
+			if today in country_holidays:
+				holiday_name = country_holidays.get(today)
+				print(f"Today ({today}) IS a holiday in {country_code_for_holidays}: {holiday_name}")
+				return True, holiday_name
+			else:
+				return False, None
+		except Exception as e:
+			print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} Error checking holidays for {country_code_for_holidays}")
+			return False, None
+	else:
+		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} No country code determined, cannot check for holidays.")
+		return False, None
 
 #----------------------------------------------------------------
 #----------------------------------------------------------------
@@ -3194,10 +3304,16 @@ def main():
 			else:
 				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _auth1r_ + "'s code is too powerful for me!\n")
 
+		elif question == "season" or question == "actual season":
+			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
+			country = pycountry.countries.get(name=os_country_2l)
+			sentence = f"Actualy based on the system date {datetime.today().strftime("%d.%m")} it's {get_the_season()[0].capitalize()}"
+			if country:
+				sentence = sentence + f" here in {country.name}."	
+			print (f"{sentence}\n")			
+
 		elif question == "time" or question == "what time it is" or question == 'clock time':
 			print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
-		elif question == "what day it is" or question == 'what day is it' or question == 'date':
-			print ("Today is " + days[weekdaydate] + " and currently is "+datetime.now().strftime("%d")+" of "+month_name+" from "+datetime.now().strftime("%Y")+".\n")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
@@ -3215,10 +3331,7 @@ def main():
 				print ("In name of vorian " + random.choice(messages['birthday_msg']))
 				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_auth1r_ , date.today().year - date(2010,12,9).year))
 			else:
-				#if _cybid_ == True:
 				print(random.choice(messages['birthday_short']) + " Are trying to trik'me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin() + "!\n")
-				#else:
-				#	print(random.choice(messages['birthday_short']) + " Are trying to trik'me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD User!\n")
 
 		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
 			dt = date.today()
@@ -3329,18 +3442,23 @@ def main():
 			print('  Storage : ' + storage)
 			print('  Running : ' + str(days_till_today.days) + ' days.\n')
 
-		elif question == 'date' or question == 'today' or question == 'today is' or question == 'what day is today' or question == 'what is the date' or question == 'what is today':
+		elif question == 'date' or question == 'today' or question == 'today is' or question == 'what is the date' or question == 'what is today':
 			now = datetime.now()
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
-			current_time = now.strftime("%H:%M:%S")
+			current_time = now.strftime("%H:%M")
 			days_left = days_until(date(year=date.today().year, month=12, day=31))
+			is_holiday, holiday_name = today_holiday()
 
-			print( str(days[weekdaydate]) + ", " + str(date.today().strftime('%d') ) + " " + str(month_name) + " of " + str(date.today().strftime('%Y')) + ", " + str( current_time) + " - GMT" + str (strftime("%z", gmtime())) + "\n")
-			print("We are in the " + str(date.today().isocalendar()[1]) + " week of the current year.")
-			print("Is the day "+ str(iniyeardays.days) + " since beginning of the year")
-			print("There are "+ str(days_left) +" days left until " + str(date.today().year) + " ends\n")
+			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
+			print(f"Is the day {iniyeardays.days} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
+			if starting_season() != None:
+				print(starting_season())
+			if is_holiday:
+				print(f"{_spchar_[18:19]} and is : {holiday_name}!")
+			print("")
+			
 		elif question == 'leap year' or question == 'is this year a leap year':
-			print (leapyear())
+			print (f"The actual year ({datetime.now().strftime("%Y")}) {leapyear()}. \n")
 
 		elif question[0:7] == "convert" and question[-4:] =="days" or question[-3:] =="day" or question[-7:] =="seconds" or question[-7:] =="minutes" or question[-5:] =="hours":
 			sub = question.split()[1:]
@@ -3777,9 +3895,7 @@ def main():
 			print ("")
 		
 		elif question == 'testing':
-			print ('Development testing propose code...\n')
-			xn = fetch_fromdbfile("cybele.db", "config", "code")
-			print (xn[0])
+			print (f"Development testing propose code...")
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
