@@ -120,7 +120,7 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; cybelecode = []
+iknow_pun = {"i know": "you know","you know": "i know"}; cybelecode = []; specialdates = {}
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
@@ -509,6 +509,7 @@ help = {
 	"help show me": "Usage: show me <star names|all/constellations|asteroids|quote  names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
+	"help today": "Usage <today> \nDisplays all the available data for the actual system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
