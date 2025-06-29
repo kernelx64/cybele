@@ -86,7 +86,6 @@ elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 	sys.exit(1)
 
-
 start_time = datetime.now()
 node_name = platform.node()
 country_code = locale.getlocale()
@@ -2079,11 +2078,11 @@ def get_the_season():
 
 #--------------------------------------------------
 def special_dates(date_to_check):
-    global lat
-    annual_special_dates = {
-        (1, 1): "New Year's Day.",
+	global lat
+	annual_special_dates = {
+		(1, 1): "New Year's Day.",
 		(1, 20): "World Day of Social Justice.",
-        (2, 14): "Valentine's Day.",
+		(2, 14): "Valentine's Day.",
 		(3, 14): "Pi Day (mathematical constant π≈3.14)",
 		(3, 20): "International Day of Happiness.",
 		(4, 1): "April Fools' Day.",
@@ -2108,32 +2107,38 @@ def special_dates(date_to_check):
 		(12, 3): "International Day of Persons with Disabilities",
 		(12, 9): "Vorian's Launch day.",
 		(12, 10): "Human Rights Day",
-		(12, 25): "Christmas Day."
-    }
-    seasons = ("🌻 Spring", "☀️ Summer", "🍁 Autumn", "❄️ Winter")
-    month_day_key = (date_to_check.month, date_to_check.day)
+		(12, 25): "Christmas Day.",
+		(7, 9) : "reduction of 1.30 milliseconds compared to the normal length of the day.",
+		(7, 22) : "reduction of 1.38 milliseconds compared to the normal length of the day.",
+		(8, 5) : "reduction of 1.5 milliseconds compared to the normal length of the day.",
+	}
+	seasons = ("🌻 Spring", "☀️ Summer", "🍁 Autumn", "❄️ Winter")
+	month_day_key = (date_to_check.month, date_to_check.day)
 
-    if lat >= 0: # Northern Hemisphere (including equator)
-        seasonal_start_dates = {
-            (3, 20): 0,
-            (6, 21): 1,
-            (9, 22): 2,
-            (12, 21): 3
-        }
-    else: # Southern Hemisphere
-        seasonal_start_dates = {
-            (9, 22): 0, 
-            (12, 21): 1,
-            (3, 20): 2,
-            (6, 21): 3 
-        }
-    if month_day_key in annual_special_dates:
-        event = annual_special_dates[month_day_key]
-        print(f"And it is also the {event}!")
-    elif month_day_key in seasonal_start_dates:
-        season_index = seasonal_start_dates[month_day_key]
-        season_name = seasons[season_index]
-        print(f"And it is also the Beginning of the {season_name}.")
+	if lat >= 0: # Northern Hemisphere (including equator)
+		seasonal_start_dates = {
+			(3, 20): 0,
+			(6, 21): 1,
+			(9, 22): 2,
+			(12, 21): 3
+		}
+	else: # Southern Hemisphere
+		seasonal_start_dates = {
+			(9, 22): 0, 
+			(12, 21): 1,
+			(3, 20): 2,
+			(6, 21): 3 
+		}
+
+	if month_day_key in annual_special_dates:
+		event = annual_special_dates[month_day_key]
+		print(f"And it is also the {event}!")
+	elif month_day_key in seasonal_start_dates:
+		season_index = seasonal_start_dates[month_day_key]
+		season_name = seasons[season_index]
+		print(f"And it is also the Beginning of the {season_name}.")
+	elif month_day_key in seasonal_start_dates and month_day_key.year == 2025:
+		print(f"And especially this year will exist {event}.")
 
 #--------------------------------------------------
 def weather_like_season():
