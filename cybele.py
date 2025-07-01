@@ -132,6 +132,7 @@ website = {
 	"mystory": "https://www.adelinosaldanha.site/mystory",
 	"may4th" : "https://dub.sh/1vgai8g",
 	"tvshow": "https://www.adelinosaldanha.site/tvshows",
+	"movies": "https://www.adelinosaldanha.site/tvshows",
 	"thamix": "https://www.adelinosaldanha.site/thamix",
 	"deserted": "https://www.adelinosaldanha.site/deserted",
 	"trails": "https://www.adelinosaldanha.site/trails",
@@ -458,7 +459,7 @@ weather_season_condiction = {
 topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","asteroids","constelations","information about stars","distance of planets and from the sun",
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
-		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python",
+		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
 		"astronomy questions","difference from <date>","age calc <from date>","Show you the meaning of some words or terms","generate pwd"]
 
 #------------------------------------------------------------
@@ -477,6 +478,7 @@ help = {
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
+	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from vorian website the favorite list.\nex: favorite tvshows\n    fav movies\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
@@ -2033,29 +2035,47 @@ def get_thepopulation(country_name):
 		return None
 
 #-------------------------------------------------
-def extract_from_vorian():
-	import bs4
-	import urllib.request
-	from bs4 import BeautifulSoup
-	url = website['tvshow']
+def extract_from_vorian(content_type):
+	url = website.get(content_type)
+
+	if not url:
+		print(f"{random.choice(messages['trouble_msg'])} No URL defined for content type '{content_type}'.\n")
+		return
+
 	try:
 		response = urllib.request.urlopen(url)
 		html_content = response.read()
 		html_string = html_content.decode("utf-8")
 		soup = BeautifulSoup(html_string, 'html.parser')
-		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
-		tv_show_list = []
-		for show in tv_shows:
-			title_element = show.find('span', class_='C9DxTc')
-			if title_element:
-				tv_show_list.append(title_element.text.strip())
-		for i in range(12, len(tv_show_list)):
-			print (tv_show_list[i])
+		items_list = []
+		if content_type == 'tvshow':
+			tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+			for show in tv_shows:
+				title_element = show.find('span', class_='C9DxTc')
+				if title_element:
+					items_list.append(title_element.text.strip())           
+			for i in range(87, len(items_list)):
+				print (items_list[i])
+		elif content_type == 'movies':
+			classic_movies_section = soup.find('div', id='h.7ea6f691e3c697ae_12')
+			if classic_movies_section:
+				movies = classic_movies_section.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+				for movie in movies:
+					title_element = movie.find('span', class_='C9DxTc')
+					if title_element:
+						items_list.append(title_element.text.strip())
+			if items_list:
+				for item in items_list:
+					print(item)
+			else:
+				print(f"{random.choice(messages['trouble_msg'])} No {content_type.replace('_', ' ')} found or the structure has changed.")
+		else:
+			print(f"{random.choice(messages['trouble_msg'])} Unknown content type: {content_type}")
 	except urllib.error.URLError as e:
 		print(f"{random.choice(messages['trouble_msg'])} Error fetching the page: {e}\n")
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_msg'])} An unexpected error occurred: {e}")
-
+		
 #-------------------------------------------------
 def get_the_season():
 	
@@ -3699,8 +3719,14 @@ def main():
 		
 		elif question[-11:] == 'fav tvshows' or question[-16:] == 'favorite tvshows':
 			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
-			extract_from_vorian()
+			extract_from_vorian('tvshow')
 			print ("")
+
+		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
+			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
+			extract_from_vorian('movies')
+			print ("")
+
 
 		elif question == "do you speak" or question == 'do you talk' or question[-13:] == 'say something' or question[-15:] == 'make a sentence':
 			cybele_phrase = make_sentence()
