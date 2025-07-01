@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '29.06.2025'
+_revise_ = '01.07.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -119,11 +119,11 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; cybelecode = []; specialdates = {}
+iknow_pun = {"i know": "you know","you know": "i know"}; cybelecode = []; special_dates_dict = {}
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
-tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities']
+tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates']
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -795,9 +795,19 @@ def check_tables(tables_names):
 			conn.close()
 
 #------------------------------------------------------------
+def parse_date_string(date_str):
+	try:
+		month_str, day_str = date_str.split('/')
+		month = int(month_str)
+		day = int(day_str)
+		return (month, day)
+	except (ValueError, IndexError):
+		return None
+
+#------------------------------------------------------------
 def make_intextdb():
 	#global cybelecode, midbcounter
-	global midbcounter, ncountries, constellations_dict
+	global midbcounter, ncountries, constellations_dict, special_dates_dict
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
@@ -847,7 +857,16 @@ def make_intextdb():
 				}
 				
 		old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
-
+		
+		special_dates_data = fetch_fromdbfile("cybele.db", "special_dates", "sdate")
+		special_dates_events = fetch_fromdbfile("cybele.db", "special_dates", "event")
+		
+		for date_str, event_desc in zip(special_dates_data, special_dates_events):
+			parsed_date_tuple = parse_date_string(date_str)
+			if parsed_date_tuple:
+				special_dates_dict[parsed_date_tuple] = event_desc	
+		midbcounter = midbcounter + (len(special_dates_data))
+		
 		core["astronomy glossary"] = list(astronomy_glossary)
 		core["star name"] = [key.lower() for key in stars_dict.keys()]
 		core["constelattion"] = list(constellations_dict.keys())
@@ -2078,40 +2097,8 @@ def get_the_season():
 
 #--------------------------------------------------
 def special_dates(date_to_check):
-	global lat
-	annual_special_dates = {
-		(1, 1): "New Year's Day.",
-		(1, 20): "World Day of Social Justice.",
-		(2, 14): "Valentine's Day.",
-		(3, 14): "Pi Day (mathematical constant π≈3.14)",
-		(3, 20): "International Day of Happiness.",
-		(4, 1): "April Fools' Day.",
-		(4, 22): "Earth Day.",
-		(5, 15): "International Day of Families.",
-		(5, 17): "International Internet Day.",
-		(6, 5): "World Environment Day.",
-		(6, 8): "World Oceans Day.",
-		(7, 30): "International Day of Friendship.",
-		(8, 1): "General celebration of the World Wide Web's existence and impact.",
-		(8, 6): "World Wide Web Launch Day (or First Website Day.)",
-		(8, 23): "Internaut Day – Celebrates the moment the World Wide Web was opened to the public.",
-		(9, 15): "International Day of Democracy.",
-		(10, 1): "International Day of Older Persons.",
-		(10, 10): "World Mental Health Day.",
-		(10, 24): "United Nations Day.",
-		(10, 29): "Internet Day | Commemoration of the first message sent on ARPANET.",
-		(10, 31): "Halloween.",
-		(11, 10): "World Science Day for Peace and Development.",
-		(11, 16): "International Day for Tolerance",
-		(11, 20): "Universal Children's Day.",
-		(12, 3): "International Day of Persons with Disabilities",
-		(12, 9): "Vorian's Launch day.",
-		(12, 10): "Human Rights Day",
-		(12, 25): "Christmas Day.",
-		(7, 9) : "reduction of 1.30 milliseconds compared to the normal length of the day.",
-		(7, 22) : "reduction of 1.38 milliseconds compared to the normal length of the day.",
-		(8, 5) : "reduction of 1.5 milliseconds compared to the normal length of the day.",
-	}
+	global lat,special_dates_dict
+	
 	seasons = ("🌻 Spring", "☀️ Summer", "🍁 Autumn", "❄️ Winter")
 	month_day_key = (date_to_check.month, date_to_check.day)
 
@@ -2130,8 +2117,8 @@ def special_dates(date_to_check):
 			(6, 21): 3 
 		}
 
-	if month_day_key in annual_special_dates:
-		event = annual_special_dates[month_day_key]
+	if month_day_key in special_dates_dict:
+		event = special_dates_dict[month_day_key]
 		print(f"And it is also the {event}!")
 	elif month_day_key in seasonal_start_dates:
 		season_index = seasonal_start_dates[month_day_key]
@@ -3339,7 +3326,7 @@ def main():
 				sentence = sentence + f" here in {country.name}."	
 			print (f"{sentence}\n")			
 
-		elif question == "time" or question == "what time it is" or question == 'clock time':
+		elif question == "time" or question == 'clock time' or question == 'what is the time' or question == "what time is it":
 			print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
@@ -3387,13 +3374,13 @@ def main():
 				print( random.choice(messages['earlier_nyear']) + "\n")
 
 		elif question == 'what is your version' or question == '#version':
-			global cybelecode
+			global cybelecode, idcode
 			cybelecode = ksha([_title_+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
 			nversion = f"I am {_title_} {_chkwww_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nmy unique id is '{_chkcid_}'."
-			
 			print (nversion + "\n")
+
 		#------------------------------------------------
 		elif question =='convert gps to distance' or question == 'gps to distance' or question == 'harvesine' or question == 'harvesine formula':
 			pregpsconvert()
