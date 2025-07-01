@@ -119,7 +119,7 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; cybelecode = []; special_dates_dict = {}
+iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
@@ -807,11 +807,12 @@ def parse_date_string(date_str):
 #------------------------------------------------------------
 def make_intextdb():
 	#global cybelecode, midbcounter
-	global midbcounter, ncountries, constellations_dict, special_dates_dict
+	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
 		print_statusline(f"Handling databases ...")
+		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
@@ -3378,7 +3379,8 @@ def main():
 			cybelecode = ksha([_title_+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
-			nversion = f"I am {_title_} {_chkwww_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nmy unique id is '{_chkcid_}'."
+			chkids = "and this isn't my original source code" if idcode != _chkcid_ else 'running via my original source code'
+			nversion = f"I am {_title_} {_chkwww_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nmy unique id is '{_chkcid_}' {chkids}."
 			print (nversion + "\n")
 
 		#------------------------------------------------
