@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '01.07.2025'
+_revise_ = '02.07.2025'
 _author_ = 'Adelino Saldanha'
 _auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
@@ -2038,8 +2038,8 @@ def get_thepopulation(country_name):
 def extract_from_vorian(content_type):
 	url = website.get(content_type)
 
-	if not url:
-		print(f"{random.choice(messages['trouble_msg'])} No URL defined for content type '{content_type}'.\n")
+	if internet_onoff() == False or not url:
+		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
 		return
 
 	try:
@@ -2072,9 +2072,9 @@ def extract_from_vorian(content_type):
 		else:
 			print(f"{random.choice(messages['trouble_msg'])} Unknown content type: {content_type}")
 	except urllib.error.URLError as e:
-		print(f"{random.choice(messages['trouble_msg'])} Error fetching the page: {e}\n")
+		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
 	except Exception as e:
-		print(f"{random.choice(messages['trouble_msg'])} An unexpected error occurred: {e}")
+		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
 		
 #-------------------------------------------------
 def get_the_season():
