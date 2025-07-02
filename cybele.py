@@ -3396,7 +3396,7 @@ def main():
 
 		elif question == 'what is your version' or question == '#version':
 			global cybelecode, idcode
-			cybelecode = ksha([_title_+chr(46)+chr(112)+chr(121)])[0][1]
+			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
 			chkids = "and this isn't my original source code" if idcode != _chkcid_ else 'running via my original source code'
