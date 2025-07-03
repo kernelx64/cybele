@@ -990,8 +990,8 @@ others = [
 	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was vorian created",
-	"play game constelattions","play game capitals","when did vorian went online","difference from <date>","what is my uptime","cybele uptime",
-	"current system uptime","display my uptime"
+	"play game constelattions","play game capitals","when did vorian went online","difference from <date>","cybele uptime",
+	"current system uptime","display uptime"
 ]
 #----------------------------------------------------------
 maincommands = [
