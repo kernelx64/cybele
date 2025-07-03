@@ -15,9 +15,8 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '02.07.2025'
+_revise_ = '03.07.2025'
 _author_ = 'Adelino Saldanha'
-_auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
 _cybid_ = False
 
@@ -81,10 +80,6 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 	modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 	sys.exit(1)
-elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-	modname = f"This specific version is known to have issues with SSL/SQLite. \n   Work localy downloading the databases or download Python {pyver[0]}.{pyver[1]}.{pyver[2]+1}. \n   I cannot execute properly. Exiting."
-	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-	sys.exit(1)
 
 start_time = datetime.now()
 node_name = platform.node()
@@ -123,7 +118,7 @@ iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode =
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
-tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates']
+tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -236,7 +231,7 @@ core = {
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
-	"question_words":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
+	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
 	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later."],
@@ -244,6 +239,9 @@ core = {
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
 	"share":	["sharing about","sharing links"],
 	"sayconvert":	["say","longhand"],
+	"time_query": ["what time is it", "current time", "time now", "clock time", "what's the time"],
+	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
+	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -499,7 +497,7 @@ help = {
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
-	"help presence": "Usage: presence <service> \nShow's the direct link for "+_auth1r_+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
+	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
@@ -790,6 +788,11 @@ def check_tables(tables_names):
 		modname = f"An unexpected error occurred: {e}\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
+	except SQLiteCloudException as e:
+		print_statusline(f"")
+		modname = f"SSL error occurred: {e}\n   I cannot execute properly. Exiting."
+		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		return False
 	finally:
 		if cur:
 			cur.close()
@@ -808,13 +811,18 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	#global cybelecode, midbcounter
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
 		print_statusline(f"Handling databases ...")
-		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
+		try:
+			idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
+		except SSLEOFError as err:
+			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
+			print(f"{' '*3}I cannot execute properly. Exiting.")
+			sys.exit(0)
+	
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
@@ -999,7 +1007,7 @@ maincommands = [
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
 	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
 	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
-	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","first last","limits",
+	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits",
 	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
 	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
@@ -1390,7 +1398,7 @@ def find_answer(question,whatlist):
 	dict_climate = core.get("climate dictionary", [])
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
-	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd"]
+	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd","time_query","season_query"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands 
 	is_correct, suggestions = spell_check(question, alldict)
@@ -1710,6 +1718,20 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "help":
 				print (help[word])
+				
+			elif list_name == "time_query":
+				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
+
+			elif list_name == "season_query":
+				os_country_2l = locale.getlocale()[0].split('_')[-1].title()
+				country = pycountry.countries.get(name=os_country_2l)
+				sentence = f"Actualy based on the system date {datetime.today().strftime("%d.%m")} it's {get_the_season()[0].capitalize()}"
+				if country:
+					sentence = sentence + f" here in {country.name}."	
+				print (f"{sentence}\n")		
+
+			elif list_name == "holidays_query":
+				print ("")
 
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
@@ -2352,7 +2374,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			nchar = _spchar_[7:8]
 			dbname = 'old tech'
 		else:
-			print ('Well done ' + _auth1r_ +'!. The code has a error. Fix it, you morone!')
+			print ('Well done ' + _author_.split()[0] +'!. The code has a error. Fix it, you morone!')
 		
 		cursor = conn.execute(filter)
 		results = cursor.fetchall()
@@ -2493,10 +2515,10 @@ def chkpy():
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
-	elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-		modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-		return False
+	#elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
+	#	modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
+	#	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+	#	return False
 	return True	
 
 #-------------------------------------------------
@@ -3006,9 +3028,9 @@ def main():
 
 		elif find_word_in_dicts(question, core) == True:
 			if question == 'cybele idea' or 'cybele idea' in question:
-			   print("The word idea was me until "+ _auth1r_ +" started to develop me.\nAhah and just for fun!\n")
+			   print("The word idea was me until "+ _author_.split()[0] +" started to develop me.\nAhah and just for fun!\n")
 
-		elif question == 'what can i ask you' or question == 'what can you anwser' or question == 'what do you know' or question == 'what can you do' or question == 'what do you do' or question =='what you can do':
+		elif question == 'what can i ask you' or question == 'what can you anwser' or question == 'what do you know' or question == "what do you know about'it" or question == 'what can you do' or question == 'what do you do' or question =='what you can do':
 			print ("\n" + random.choice(core['cthemes']) + ": \n")
 			random.shuffle(topics)
 			last_topic = len(topics)-1
@@ -3018,7 +3040,7 @@ def main():
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
 		elif question == 'adelino quote':
-			print ("Here's a quote by my author " + _auth1r_ + ".")
+			print ("Here's a quote by my author " + _author_.split()[0] + ".")
 			print (" " + _spchar_[1:2] + " " + random.choice(as_quotes))
 			print ("")
 
@@ -3133,7 +3155,7 @@ def main():
 				eventdays = days_to_event(subevent.replace(" ",""))
 				if eventdays != 0:
 					if subevent == "birthday" or subevent == "my birthday":
-						select_creator = random.choice(["my creator", _auth1r_, "my creator "+_auth1r_])
+						select_creator = random.choice(["my creator", _author_.split()[0], "my creator "+_author_.split()[0]])
 						print ('To yours i dont know, doing my privacy limitations but to the ' + select_creator + ' are '+ eventdays +' days.\n')
 					elif eventdays != 0:
 						print ("%s left for %s\n" % (eventdays, subevent.title()))
@@ -3178,16 +3200,16 @@ def main():
 		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
 			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
 
-		elif any(word in question for word in core['question_words']) and "you born" in question:
+		elif any(word in question for word in core['question_word']) and "you born" in question:
 			print ("I borned from the code of my predecessor, Zorie, in early 2023 and I was officially actived " + str(days_till_today.days) + " days ago with an updated in " + _revise_ + ", so you better do the math!\n")
 
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['planet']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "planet")
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "old term and word" )
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['constelattion']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['constelattion']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "constellations")
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "astronomy term")
 
 		elif question[-14:] == 'periodic table':
@@ -3316,11 +3338,10 @@ def main():
 			elif sysos == 'Linux':
 				os.system('clear')
 			else:
-				print ("Sorry i cannot execute that command in a unidentified S.O!\n")
+				print ("Sorry i cannot execute this command in a unidentified S.O for me!\n")
 
 		elif question == 's.o' or question == 'operating system' or question == 'system':
 			if sysos == 'Linux':
-				#nuptime = os.system('uptime')
 				print ("This is the " + sysos + " Operating System (OS). ")
 			elif sysos == 'Windows':
 				print ("I am behing executed in " + sysos + "Operating System (OS).\n")
@@ -3337,18 +3358,13 @@ def main():
 				del nhelp
 				print ("")
 			else:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _auth1r_ + "'s code is too powerful for me!\n")
+				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _author_.split()[0] + "'s code is too powerful for me!\n")
 
-		elif question == "season" or question == "actual season":
-			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-			country = pycountry.countries.get(name=os_country_2l)
-			sentence = f"Actualy based on the system date {datetime.today().strftime("%d.%m")} it's {get_the_season()[0].capitalize()}"
-			if country:
-				sentence = sentence + f" here in {country.name}."	
-			print (f"{sentence}\n")			
+		elif any(word in question for word in core['season_query']):
+			print("")	
 
-		elif question == "time" or question == 'clock time' or question == 'what is the time' or question == "what time is it":
-			print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
+		elif any(word in question for word in core['time_query']):
+			print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
@@ -3364,7 +3380,7 @@ def main():
 			elif (str(dt)[5:]) == '12-09' and question == 'happy birthday':
 				random.shuffle(messages['birthday_msg'])
 				print ("In name of vorian " + random.choice(messages['birthday_msg']))
-				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_auth1r_ , date.today().year - date(2010,12,9).year))
+				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
 			else:
 				print(random.choice(messages['birthday_short']) + " Are trying to trik'me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin() + "!\n")
 
@@ -3561,7 +3577,7 @@ def main():
 			print ("Based on the system actual date this is the " + str(get_ordinal_position(week_number)) + " week of the year.\n")
 
 		elif question.find('last')!=-1 and question.find('update')!=-1:
-			print ('My creator '+ _auth1r_ + ' the last time updated my internal data was in '+ _revise_ +'.\n')
+			print ('My creator '+ _author_.split()[0] + ' the last time updated my internal data was in '+ _revise_ +'.\n')
 
 		elif question == 'yes':
 			if len(csugestions) == 0:
@@ -3571,7 +3587,7 @@ def main():
 				question = csugestions[0]
 				print ("So, the question you want to make'me is [" + question + "]\nNow you know what to write to ask'me.\n" )
 			else:
-				print ("Yes what ?! There are infinite possibilities! \nSo better write down the one you want to ask'me. \nI'm "+_title_+" a chat bot by "+ _auth1r_ +" not the f* Merlin, the wizard.\n")
+				print ("Yes what ?! There are infinite possibilities! \nSo better write down the one you want to ask'me. \nI'm "+_title_+" a chat bot by "+ _author_.split()[0] +" not the f* Merlin, the wizard.\n")
 
 		elif question[0:13] == 'search askard':
 			getparam = question.split()
@@ -3713,20 +3729,19 @@ def main():
 
 		elif question == 'what is he watching' or question == 'what are you watching':
 			if question.find('fav')!=-1 or question.find('favorite')!=-1:
-				print ("You can know what are "+_auth1r_+"'s in her public profile.\n  > "+ website['trakt'] + "\n")
+				print ("You can know what are "+_author_.split()[0]+"'s in her public profile.\n  > "+ website['trakt'] + "\n")
 			else:
-				print ("You can follow real time what "+_auth1r_+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
+				print ("You can follow real time what "+_author_.split()[0]+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
 		
 		elif question[-11:] == 'fav tvshows' or question[-16:] == 'favorite tvshows':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
+			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
 			extract_from_vorian('tvshow')
 			print ("")
 
 		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
+			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
 			extract_from_vorian('movies')
 			print ("")
-
 
 		elif question == "do you speak" or question == 'do you talk' or question[-13:] == 'say something' or question[-15:] == 'make a sentence':
 			cybele_phrase = make_sentence()
@@ -3818,7 +3833,7 @@ def main():
 			print ("It's look like we have " + weather_like_season() + " based in the fact we are in the " + dayseason.capitalize() +".\n")
 
 		elif question[-9:] == 'about you':
-				print ("Ok!. My name is " + _title_ +" and I was maded by " + _auth1r_ + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of Vorian, this website.\n" + aboutyou + "\n" )
+				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of Vorian, this website.\n" + aboutyou + "\n" )
 
 		elif question[0:8] == 'presence':
 			if any(word in question for word in presence_online):
@@ -3828,12 +3843,12 @@ def main():
 				else:
 					service = ' '.join(sub)
 					if service in presence_online:
-						print ("Yes, " + _auth1r_ + " have a online presence on that service. Here is the direct link: \n "+_spchar_[1:2] + presence_online[service] + "\n")
+						print ("Yes, " + _author_.split()[0] + " have a online presence on that service. Here is the direct link: \n "+_spchar_[1:2] + presence_online[service] + "\n")
 			elif "services" in question:
 				digifoot = str(len(presence_online))
 				presence_online_abc = list(presence_online.keys())
 				presence_online_abc.sort()
-				print ("%s have a online presence or a digital footprint in this %s entities/services on the internet:\n" % (_auth1r_, digifoot))
+				print ("%s have a online presence or a digital footprint in this %s entities/services on the internet:\n" % (_author_.split()[0], digifoot))
 				for service in presence_online_abc:
 					print(" "*3 + _spchar_[4:5] + " " + service.title())
 				print("")
@@ -3841,7 +3856,7 @@ def main():
 				if len(presence_online) == 1:
 					print( presence_online['online'] + "\n")
 				else:
-					print (random.choice(messages['trouble_msg']) + " I dont have any "+ _auth1r_ +" online presence information for the '" + " ".join(question.split()[1:]).title() + "' service.")
+					print (random.choice(messages['trouble_msg']) + " I dont have any "+ _author_.split()[0] +" online presence information for the '" + " ".join(question.split()[1:]).title() + "' service.")
 
 		elif question[0:8] == 'phonetic':
 			words = question.split()[1:]
@@ -3924,7 +3939,8 @@ def main():
 						sentence = sentence_parts[0]
 			print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
 		
-		elif question[0:8] == 'holidays':
+		#print("I'm not familiar with this subject!")
+		elif any(word in question for word in core['holidays_query']):
 			country_holidays()
 			
 		elif question == 'trails':
@@ -3938,6 +3954,8 @@ def main():
 		
 		elif question == 'testing':
 			print (f"Development testing propose code...")
+			print (core['working_hard'][0])
+			print ("")
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
