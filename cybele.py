@@ -2970,7 +2970,8 @@ def main():
 			w = r.get_random_word()
 			print(f"{w}\n")
 		
-		elif question.startswith('tell me') or question.startswith('show me') and question.find('quote')!=-1:
+		#elif question.startswith('tell me') or question.startswith('show me') and question.find('quote')!=-1:
+		elif question.find('quote')!=-1:
 			print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
@@ -3606,7 +3607,7 @@ def main():
 				mandb('askardb','askard_db','view',getparam[2],0)
 				print ("")
 		
-		elif question[0:8] == 'fun fact':
+		elif question == 'fun fact' or question == 'fast fact':
 			if ffctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['nicefun_msg'])}\n")
 			else:
