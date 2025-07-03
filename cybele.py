@@ -458,7 +458,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","Show you the meaning of some words or terms","generate pwd"]
+		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd"]
 
 #------------------------------------------------------------
 factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
@@ -988,9 +988,10 @@ others = [
 	"show askard <id>","list askard <id start> to <id end>","achk askard <id>","leap year","make a sentence","make a phrase",
 	"people in space","do you speak","tvshows is he watching","your fav tvshows","seek <topic>","find <topic>","infostar <star name>",
 	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
-	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands"
+	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was vorian created",
-	"play game constelattions","play game capitals","when did vorian went online","difference from <date>"
+	"play game constelattions","play game capitals","when did vorian went online","difference from <date>","what is my uptime","cybele uptime",
+	"current system uptime","display my uptime"
 ]
 #----------------------------------------------------------
 maincommands = [
@@ -3923,7 +3924,7 @@ def main():
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
 		
-		elif question == "cybele uptime":
+		elif question == "what is my uptime" or question == "cybele uptime" or question == "current system uptime" or question == "display my uptime":
 			uptime_parts = get_uptime()
 			time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
 			sentence_parts = []
