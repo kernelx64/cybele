@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '03.07.2025'
+_revise_ = '07.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -460,8 +460,6 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
 		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd"]
 
-#------------------------------------------------------------
-factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
 #------------------------------------------------------------
 help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
@@ -931,7 +929,6 @@ questions = [
 	"A coffee for you",
 	"Coffee for you",
 	"How are you?",
-	"How are you today?",
 	"Hello",
 	"Hi",
 	"Whats on your mind today?",
@@ -967,7 +964,6 @@ answers = [
 	"No problem. Glad i could be of assistance.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
-	"I am good, thank you for asking!",
 	"I am doing well, thank you for asking!",
 	"Hi! What's on your mind?",
 	"Hello! What's on your mind?",
@@ -1739,34 +1735,131 @@ def find_word_in_dicts(word, core):
 			return True
 
 #--------------------------------------------
-def convert_units( question ):
-	operationf = 0
-	unit_result = None
-	c_element = question.split(" ")
-	if len(c_element) != 4 or c_element[2] != 'from'.lower():
-		print("convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit\n")
-	else:
-		value = float(c_element[1])
-		unit_name = c_element[3]
-		if find_unit_factor(factors, c_element[3]) == None:
-			print("The unit you insert is not available! Units available: feets|miles|yards|m3|gallons|fahrenheit\n")
-		else:
-			factor = float(find_unit_factor(factors, unit_name))
-			operationf = value*factor
-		if unit_name == 'feets' or unit_name == 'miles' or unit_name == 'yards' or unit_name == 'au':
-			unit_result = 'Kilometer(s)'
-		elif unit_name == 'm3' or unit_name == 'gallons':
-			unit_result = 'Litter(s)'
-		elif unit_name == 'celcius' or unit_name == 'fahrenheit':
-			unit_result = 'celcius'
-	return operationf, unit_result
+def convert_units(question: str):
+	CONVERSION_FACTORS = {
+		'length': {
+			'meter': 1.0,
+			'meters': 1.0,
+			'kilometre': 1000.0,
+			'kilometres': 1000.0,
+            'kilometer': 1000.0,
+			'kilometers': 1000.0,
+			'foot': 0.3048,
+			'feet': 0.3048,
+			'mile': 1609.34,
+			'miles': 1609.34,
+			'yard': 0.9144,
+			'yards': 0.9144,
+			'au': 149597870700.0, # Astronomical Unit to meters
+			'astronomical unit': 149597870700.0,
+			'astronomical units': 149597870700.0,
+		},
+		'volume': {
+			'liter': 1.0,
+			'liters': 1.0,
+			'm3': 1000.0, # cubic meter to liters
+			'cubic meter': 1000.0,
+			'cubic meters': 1000.0,
+			'gallon': 3.78541,
+			'gallons': 3.78541,
+		},
+		'time': {
+			'second': 1.0,
+			'seconds': 1.0,
+			'minute': 60.0,
+			'minutes': 60.0,
+			'hour': 3600.0,
+			'hours': 3600.0,
+			'day': 86400.0,
+			'days': 86400.0,
+			'week': 604800.0,
+			'weeks': 604800.0,
+		},
+		'temperature': {
+			'celsius': 'celsius',
+			'fahrenheit': 'fahrenheit',
+			'kelvin': 'kelvin',
+		}
+	}
 
-#--------------------------------------------
-def find_unit_factor(cfactors, unit):
-	for unit_name, factor in factors:
-		if unit_name == unit:
-			return factor
-	return None
+	match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
+    
+	if not match:
+		match = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
+		if not match:
+			return None, "Use: convert <VALUE> <UNIT FROM> to <UNIT TO> \n"
+        
+		value_str, unit_from_raw = match.groups()
+		unit_to_raw = None # No explicit 'to' unit
+        
+	else:
+		value_str, unit_from_raw, unit_to_raw = match.groups()
+
+	try:
+		value = float(value_str)
+	except ValueError:
+		return None, "Invalid value. Please provide a numeric value.\n"
+
+	unit_from = unit_from_raw.strip()
+	unit_to = unit_to_raw.strip() if unit_to_raw else None
+
+	from_category = None
+	from_factor = None
+	for category, units in CONVERSION_FACTORS.items():
+		if unit_from in units:
+			from_category = category
+			from_factor = units[unit_from]
+			break
+
+	if not from_category:
+		return None, f"Unknown source unit: '{unit_from}'. Please check spelling or supported units.\n"
+
+	if unit_to is None:
+		if from_category == 'length':
+			unit_to = 'meters'
+		elif from_category == 'volume':
+			unit_to = 'liters'
+		elif from_category == 'time':
+			unit_to = 'seconds'
+		elif from_category == 'temperature':
+			return None, f"Please specify the target temperature unit (celsius|fahrenheit|kelvin')\n."
+        
+	to_category = None
+	to_factor = None
+	for category, units in CONVERSION_FACTORS.items():
+		if unit_to in units:
+			to_category = category
+			to_factor = units[unit_to]
+			break
+
+	if not to_category:
+		return None, f"Unknown target unit: '{unit_to}'. Please check spelling or supported units.\n"
+
+	if from_category != to_category and from_category != 'temperature':
+		return None, f"Cannot convert between different unit categories: '{from_category}' and '{to_category}'.\n"
+
+	if from_category == 'temperature':
+		if unit_from == 'celsius' and unit_to == 'fahrenheit':
+			converted_value = (value * 9/5) + 32
+		elif unit_from == 'fahrenheit' and unit_to == 'celsius':
+			converted_value = (value - 32) * 5/9
+		elif unit_from == 'celsius' and unit_to == 'kelvin':
+			converted_value = value + 273.15
+		elif unit_from == 'kelvin' and unit_to == 'celsius':
+			converted_value = value - 273.15
+		elif unit_from == 'fahrenheit' and unit_to == 'kelvin':
+			converted_value = (value - 32) * 5/9 + 273.15
+		elif unit_from == 'kelvin' and unit_to == 'fahrenheit':
+			converted_value = (value - 273.15) * 9/5 + 32
+		elif unit_from == unit_to:
+			converted_value = value
+		else:
+			return None, f"Unsupported temperature conversion from '{unit_from}' to '{unit_to}'.\n"
+	else:
+		value_in_base_unit = value * from_factor
+		converted_value = value_in_base_unit / to_factor
+
+	return round(converted_value, 4), unit_to
 
 #--------------------------------------------
 def get_current_century():
@@ -3513,63 +3606,32 @@ def main():
 			
 		elif question == 'leap year' or question == 'is this year a leap year':
 			print (f"The actual year ({datetime.now().strftime("%Y")}) {leapyear()}. \n")
-
-		elif question[0:7] == "convert" and question[-4:] =="days" or question[-3:] =="day" or question[-7:] =="seconds" or question[-7:] =="minutes" or question[-5:] =="hours":
-			sub = question.split()[1:]
-			if not sub[0].isdigit():
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " For now i dont handle: "+str(sub[0])+". It's a number with decimals! Maybe in the future.\n")
-			elif not int(sub[0]):
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " I'm having a problem with the "+str(sub[0])+" number. !\n")
-			elif len(sub) >= 3 and sub[2] != "in":
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There is a problem in convert systax. convert <VALUE> days in <TIME UNIT>!\n")
-			elif len(sub) > 4:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Wow! To many parameters! convert <number> days in/to <time unit>.\n")
-			elif sub[1]!='seconds' and sub[1]!='minutes' and sub[1]!='hours' and sub[1]!='days' and sub[1]!='day':
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There's be some kinda of problem with your "+sub[1]+" time Unit!\n")
+	
+		#-------------------------------------- convert ----------------------------------------
+		
+		elif question.startswith('convert'):
+			match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
+			original_value_str = None
+			original_unit_from = None
+			if match:
+				original_value_str, original_unit_from_raw, _ = match.groups()
+				original_unit_from = original_unit_from_raw.strip()
 			else:
-				if len(sub) == 4 and sub[2] != 'to' and sub[2] != 'in':
-					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Usage method : convert <"+str(sub[0])+"> days "+sub[2]+" <unit>.\n")
+				match_simple = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
+				if match_simple:
+					original_value_str, original_unit_from_raw = match_simple.groups()
+					original_unit_from = original_unit_from_raw.strip()
+			converting = convert_units(question)
+			if converting[0] is None:
+				print(f"{converting[1]}") # Print the error message
+			else:
+				converted_value, target_unit = converting
+				if original_value_str and original_unit_from:
+					print(f"{original_value_str} {original_unit_from} is {converted_value} {target_unit}.\n")
 				else:
-					if len(sub) == 2:
-						unit = 'None'
-						number = int(sub[0])
-						calculated = days_to_units(number)
-					elif len(sub) == 4:
-						unit = sub[3]
-						number = int(sub[0])
-						calculated = days_to_units(number)
+					print(f"The conversion result is approximately {converted_value} {target_unit}.\n")
 
-					if not calculated:
-						print ( random.choice(messages['trouble_short']) + " " + random.choice(core['trouble_msg']) + " Something happen cos i did not calculate nothing!\n")
-					else:
-						if unit == 'None':
-							calculate_minutes = calculated[0]
-							calculate_hours = calculated[1]
-							calculate_seconds = calculated[2]
-							print("Based on my calculations is {:,.0f} seconds | {:,.0f} minutes | {:,.0f} hours.\n".format(calculate_seconds, calculate_minutes, calculate_hours))
-						else:
-							value_unit = ' '.join(sub[0:2])
-							if unit == 'seconds':
-								calculate_seconds = calculated[2]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} seconds. \n".format(calculate_seconds))
-							elif unit == 'minutes':
-								calculate_minutes = calculated[0]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} minutes. \n".format(calculate_minutes))
-							elif unit == 'hours':
-								calculate_hours = calculated[1]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} hours. \n".format(calculate_hours))
-							else:
-								print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Something happen! You should report this to my developer.\n")
-
-		elif question[0:7] == "convert":
-			sub = question.split()[1:]
-			qconvert = convert_units( question )
-			if qconvert[0] != 0 and qconvert[1] != None:
-				converted_value = str("{:,.2f}".format(convert_units( question )[0]))
-				to_unit_converted = str(convert_units( question )[1])
-				if sub[2] == "au":
-					sub[2] = 'Astronomical Units'
-				print("In my knowledge converting the value %s from %s is %s %s.\n" % (sub[0], sub[2], converted_value, to_unit_converted))
+		#---------------------------------------------------------------------------------------
 
 		elif question == 'how many weeks have a year' or question == ' year weeks':
 			print ( str(daysweeks_year()[1]) + " weeks. A calendar year consists of " + str(daysweeks_year()[1]) + " weeks, " + str(daysweeks_year()[0]) + " days in total.\n" )
