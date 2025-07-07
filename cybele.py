@@ -466,7 +466,7 @@ help = {
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
+	"help convert": "Usage: convert <VALUE> <UNIT FROM> to <UNIT TO> \nUnits: seconds|minutes|hours|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards to kilometers\n    convert 4 cubic meters to liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
@@ -1740,6 +1740,7 @@ def convert_units(question: str):
 		'length': {
 			'meter': 1.0,
 			'meters': 1.0,
+			'km': 1000.0,
 			'kilometre': 1000.0,
 			'kilometres': 1000.0,
             'kilometer': 1000.0,
@@ -1833,10 +1834,10 @@ def convert_units(question: str):
 			break
 
 	if not to_category:
-		return None, f"Unknown target unit: '{unit_to}'. Please check spelling or supported units.\n"
+		return None, f"Please check spelling. I dont recognize the target unit: '{unit_to}'. \n"
 
 	if from_category != to_category and from_category != 'temperature':
-		return None, f"Cannot convert between different unit categories: '{from_category}' and '{to_category}'.\n"
+		return None, f"I cannot convert between different unit categories like '{from_category}' and '{to_category}'.\n"
 
 	if from_category == 'temperature':
 		if unit_from == 'celsius' and unit_to == 'fahrenheit':
@@ -1854,7 +1855,7 @@ def convert_units(question: str):
 		elif unit_from == unit_to:
 			converted_value = value
 		else:
-			return None, f"Unsupported temperature conversion from '{unit_from}' to '{unit_to}'.\n"
+			return None, f"Conversion between '{unit_from}' and '{unit_to}' temperature units is not available.\n"
 	else:
 		value_in_base_unit = value * from_factor
 		converted_value = value_in_base_unit / to_factor
