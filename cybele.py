@@ -466,7 +466,7 @@ help = {
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help convert": "Usage: convert <VALUE> <UNIT FROM> to <UNIT TO> \nUnits: seconds|minutes|hours|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards to kilometers\n    convert 4 cubic meters to liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
+	"help convert": "Usage: convert <VALUE> <UNIT FROM> to <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards to kilometers\n    convert 4 cubic meters to liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
@@ -1813,7 +1813,7 @@ def convert_units(question: str):
 			break
 
 	if not from_category:
-		return None, f"Unknown source unit: '{unit_from}'. Please check spelling or supported units.\n"
+		return None, f"{random.choice(messages['trouble_short'])} I don't recognize '{unit_from}' unit. Please check spelling or supported units.\n"
 
 	if unit_to is None:
 		if from_category == 'length':
@@ -1834,7 +1834,7 @@ def convert_units(question: str):
 			break
 
 	if not to_category:
-		return None, f"Please check spelling. I dont recognize the target unit: '{unit_to}'. \n"
+		return None, f"{random.choice(messages['trouble_short'])} I dont recognize the target unit: '{unit_to}'. Please check spelling.\n"
 
 	if from_category != to_category and from_category != 'temperature':
 		return None, f"I cannot convert between different unit categories like '{from_category}' and '{to_category}'.\n"
