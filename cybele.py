@@ -1952,13 +1952,6 @@ def add_days(n, d = datetime.today()):
   return d + timedelta(n)
 
 #-------------------------------------------------
-def days_to_units(num_days):
-	minutes = num_days * 24 * 60
-	hours = num_days * 24
-	seconds = num_days * 24 * 60 * 60
-	return minutes, hours, seconds
-
-#-------------------------------------------------
 def days_to_event(event):
 	if not event:
 		print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
@@ -3628,9 +3621,9 @@ def main():
 			else:
 				converted_value, target_unit = converting
 				if original_value_str and original_unit_from:
-					print(f"{original_value_str} {original_unit_from} is {converted_value} {target_unit}.\n")
+					print(f"Based on my calculations {original_value_str} {original_unit_from} is {converted_value} {target_unit}.\n")
 				else:
-					print(f"The conversion result is approximately {converted_value} {target_unit}.\n")
+					print(f"Based on my calculations {converted_value} {target_unit}.\n")
 
 		#---------------------------------------------------------------------------------------
 
