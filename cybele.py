@@ -296,11 +296,12 @@ messages = {
 						"I would characterize '%s' as a %s idea." , "The word '%s' is a %s concept." , "I find '%s' to be a very %s term.",
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
 
-	"db_pause_msg":	["Oops! Our database is currently in deep hibernation. A quick nudge from the Dashboard should wake it up!",
-					"Looks like the database is on a coffee break. Give it a gentle prod from the SQLite Cloud Dashboard to bring it back online.",
-					"Database says 'do not disturb'! It's in offline mode. Wake it up from the Dashboard to resume service.",
-					"Our database decided to take a spontaneous vacation. Just open your project on the Dashboard to call it back!",
-					"Connection refused! The database is currently practicing its 'offline arts.' Pop over to the Dashboard to get it reconnected."],
+	"db_pause_msg":	["Oops! The SQLiteCloud database is currently in deep hibernation.",
+					"Sleeping instead of working?! Give yourself a shake and wake up. Lazy database!",
+					"Looks like the database is on a coffee break. Call'her to see if she comes online.",
+					"Database says 'do not disturb'! It's in offline mode. Wake'her up to resume the service.",
+					"Our database decided to take a spontaneous vacation. Maybe we'll see her again soon.",
+					"Connection refused! The database is currently practicing its 'offline arts.'."],
 	
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
@@ -472,7 +473,7 @@ help = {
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help convert": "Usage: convert <VALUE> <UNIT FROM> to <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards to kilometers\n    convert 4 cubic meters to liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
+	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
@@ -1800,7 +1801,7 @@ def convert_units(question: str):
 	if not match:
 		match = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
 		if not match:
-			return None, "Use: convert <VALUE> <UNIT FROM> to <UNIT TO> \n"
+			return None, "Use: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \n"
         
 		value_str, unit_from_raw = match.groups()
 		unit_to_raw = None # No explicit 'to' unit
