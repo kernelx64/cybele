@@ -296,6 +296,12 @@ messages = {
 						"I would characterize '%s' as a %s idea." , "The word '%s' is a %s concept." , "I find '%s' to be a very %s term.",
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
 
+	"db_pause_msg":	["Oops! Our database is currently in deep hibernation. A quick nudge from the Dashboard should wake it up!",
+					"Looks like the database is on a coffee break. Give it a gentle prod from the SQLite Cloud Dashboard to bring it back online.",
+					"Database says 'do not disturb'! It's in offline mode. Wake it up from the Dashboard to resume service.",
+					"Our database decided to take a spontaneous vacation. Just open your project on the Dashboard to call it back!",
+					"Connection refused! The database is currently practicing its 'offline arts.' Pop over to the Dashboard to get it reconnected."],
+	
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
 					"Is it December already? Time flies when you're having fun!", "You're officially the most prepared person I know.",
@@ -681,7 +687,13 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
 	if internet_onoff() == True:
 		print_statusline(f"Connecting with remote database ...")
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		try:
+			conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		except sqlitecloud.exceptions.SQLiteCloudException:
+			print_statusline(f"")
+			modname =  random.choice(messages['db_pause_msg']) + "\n   I cannot execute properly. Exiting."
+			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			exit(0)
 	else:
 		print_statusline(f"Checking local database ...")
 		if os.path.isfile (db_filename) == True :
