@@ -117,7 +117,7 @@ days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_
 iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
-stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
+stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
 gamescore=[-1,0,0]
@@ -689,26 +689,29 @@ def chkcoor(lat, lon):
 
 #------------------------------------------------------------
 def internet_onoff():
+	global dbmsgbl
 	try:
 		import requests
 		response = requests.get("https://www.google.com", timeout=5)
 		response.raise_for_status()
+		dbmsgbl = "Connecting with remote database"
 		return True
 	except ImportError:
 		print("\n\033[1;31m 〉 " + _title_ + "\033[0;0m" + ": Error loadind standard Python module.\n   I cannot perform this task correctly.")
 		return False
 	except requests.exceptions.RequestException as e:
+		dbmsgbl = "Checking local database"
 		return False
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database "+chr(124))
+		print_statusline(f"{dbmsgbl} {chr(124)}")
 		max_attempts = 5
 		for attempt in range(1, max_attempts + 1):
 			try:
-				print_statusline(f"Connecting with remote database "+chr(47))
+				print_statusline(f"{dbmsgbl} {chr(47)}")
 				conn = sqlitecloud.connect(sqlconn)
 				break
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
@@ -727,11 +730,11 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
 	try:
-		print_statusline(f"Connecting with remote database "+chr(45))
+		print_statusline(f"{dbmsgbl} {chr(45)}")
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
 		result = [row[0] for row in cursor.fetchall()]
-		print_statusline(f"Connecting with remote database "+chr(92))
+		print_statusline(f"{dbmsgbl} {chr(92)}")
 		return result
 	except sqlite3.Error as e:
 		return []
@@ -774,11 +777,11 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database "+chr(124))
+		print_statusline(f"{dbmsgbl} {chr(124)}")
 		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True :
-			print_statusline(f"Checking local database ...")
+			print_statusline(f"{dbmsgbl}")
 			conn = sqlite3.connect(db_filename)
 		else:
 			print_statusline(f"")
