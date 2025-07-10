@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '07.07.2025'
+_revise_ = '09.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -297,7 +297,9 @@ messages = {
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
 
 	"db_pause_msg":	["Oops! The SQLiteCloud database is currently in deep hibernation.",
-					"Sleeping instead of working?! Give yourself a shake and wake up. Lazy database!",
+					"SQLiteCloud database is in serious Z's. Give it a few solid pokes and get it back online!",
+					"Uh oh, the database is in a deep slumber. A few persistent attempts should rouse it from its rest!",
+					"Sleeping instead of working?! Give'it some solid pokes to make'her wake up. Lazy database!",
 					"Looks like the database is on a coffee break. Call'her to see if she comes online.",
 					"Database says 'do not disturb'! It's in offline mode. Wake'her up to resume the service.",
 					"Our database decided to take a spontaneous vacation. Maybe we'll see her again soon.",
@@ -709,11 +711,6 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
 		result = [row[0] for row in cursor.fetchall()]
 		return result 
-	except sqlitecloud.exceptions.SQLiteCloudOperationalError as e:
-		print_statusline(f"")
-		error_message = f"SQLiteCloud Database error {e} \n{' '*12}I cannot execute properly. Exiting."
-		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {error_message}")
-		exit(0)
 	except sqlite3.Error as e:
 		return []
 	finally:
@@ -797,11 +794,6 @@ def check_tables(tables_names):
 	except Exception as e:
 		print_statusline(f"")
 		modname = f"An unexpected error occurred: {e}\n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-		return False
-	except SQLiteCloudException as e:
-		print_statusline(f"")
-		modname = f"SSL error occurred: {e}\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	finally:
