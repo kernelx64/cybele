@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '09.07.2025'
+_revise_ = '10.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -297,9 +297,7 @@ messages = {
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
 
 	"db_pause_msg":	["Oops! The SQLiteCloud database is currently in deep hibernation.",
-					"SQLiteCloud database is in serious Z's. Give it a few solid pokes and get it back online!",
-					"Uh oh, the database is in a deep slumber. A few persistent attempts should rouse it from its rest!",
-					"Sleeping instead of working?! Give'it some solid pokes to make'her wake up. Lazy database!",
+					"Sleeping instead of working?! Give yourself a shake and wake up. Lazy database!",
 					"Looks like the database is on a coffee break. Call'her to see if she comes online.",
 					"Database says 'do not disturb'! It's in offline mode. Wake'her up to resume the service.",
 					"Our database decided to take a spontaneous vacation. Maybe we'll see her again soon.",
@@ -689,28 +687,27 @@ def internet_onoff():
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database ...")
-		try:
-			conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
-		except sqlitecloud.exceptions.SQLiteCloudException:
-			print_statusline(f"")
-			modname =  random.choice(messages['db_pause_msg']) + "\n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-	else:
-		print_statusline(f"Checking local database ...")
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-		else:
-			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
+		print_statusline(f"Connecting with remote database "+chr(124))
+		max_attempts = 5
+		for attempt in range(1, max_attempts + 1):
+			try:
+				print_statusline(f"Connecting with remote database "+chr(47))
+				conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+				break
+			except sqlitecloud.exceptions.SQLiteCloudException as e:
+				if attempt < max_attempts:
+					time.sleep(2)
+				else:
+					modname = random.choice(messages['db_pause_msg']) + f"\n    {max_attempts} attempts failed, I cannot execute properly. Exiting."
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)
 	try:
+		print_statusline(f"Connecting with remote database "+chr(45))
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
 		result = [row[0] for row in cursor.fetchall()]
-		return result 
+		print_statusline(f"Connecting with remote database "+chr(92))
+		return result
 	except sqlite3.Error as e:
 		return []
 	finally:
@@ -753,7 +750,7 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database ...")
+		print_statusline(f"Connecting with remote database "+chr(124))
 		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
 	else:
 		if os.path.isfile (db_filename) == True :
