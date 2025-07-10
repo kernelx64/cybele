@@ -718,6 +718,15 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					modname = random.choice(messages['db_pause_msg']) + f"\n    {max_attempts} attempts failed, I cannot execute properly. Exiting."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
+	else:
+		print_statusline(f"Checking local database ...")
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+		else:
+			print_statusline(f"")
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			exit(0)
 	try:
 		print_statusline(f"Connecting with remote database "+chr(45))
 		cursor = conn.cursor()
@@ -740,7 +749,6 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
 		else:
-			print_statusline(f"\nLoading ...")
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
