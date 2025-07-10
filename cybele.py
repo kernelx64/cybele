@@ -118,6 +118,7 @@ iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode =
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
+dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
 gamescore=[-1,0,0]
 
@@ -638,6 +639,22 @@ asteroids_list = {
 	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
 	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
 }
+#-------------------------------------------------
+def kdecode(emessage, shift):
+    dek_msg = ""
+    for char in emessage:
+        if char.isalpha():
+            if char.isupper():
+                k_char = chr((ord(char) - shift - 65) % 26 + 65)
+            else:
+                k_char = chr((ord(char) - shift - 97) % 26 + 97)
+            dek_msg += k_char
+        else:
+            dek_msg += char
+    return dek_msg
+
+#----------------------------------------------------
+sqlconn = kdecode(dbconn, shift)
 #----------------------------------------------------
 def whatgmt():
 	import time
@@ -692,7 +709,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		for attempt in range(1, max_attempts + 1):
 			try:
 				print_statusline(f"Connecting with remote database "+chr(47))
-				conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+				conn = sqlitecloud.connect(sqlconn)
 				break
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
 				if attempt < max_attempts:
@@ -718,7 +735,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	conn = None
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
@@ -751,7 +768,7 @@ def check_tables(tables_names):
 	
 	if internet_onoff() == True:
 		print_statusline(f"Connecting with remote database "+chr(124))
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True :
 			print_statusline(f"Checking local database ...")
@@ -816,13 +833,7 @@ def make_intextdb():
 		sys.exit(0)
 	else:
 		print_statusline(f"Handling databases ...")
-		try:
-			idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
-		except SSLEOFError as err:
-			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-			print(f"{' '*3}I cannot execute properly. Exiting.")
-			sys.exit(0)
-	
+		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
 		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
@@ -1336,14 +1347,6 @@ def drawart(artname):
 		else:
 			print (artcor + str(res))
 	print (kolor['OFF'])
-
-#---------------------------------------------------
-def scan_askards(query):
-	results = []
-	for sdb, text in askards_db.items():
-		if query.lower() in kdecode(text.lower(), shift):
-			results.append(sdb)
-	return results
 
 #---------------------------------------------------
 def daysweeks_year():
@@ -2605,25 +2608,7 @@ def chkpy():
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
-	#elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-	#	modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
-	#	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-	#	return False
 	return True	
-
-#-------------------------------------------------
-def kdecode(emessage, shift):
-    dek_msg = ""
-    for char in emessage:
-        if char.isalpha():
-            if char.isupper():
-                k_char = chr((ord(char) - shift - 65) % 26 + 65)
-            else:
-                k_char = chr((ord(char) - shift - 97) % 26 + 97)
-            dek_msg += k_char
-        else:
-            dek_msg += char
-    return dek_msg
 
 #-------------------------------------------------
 def ksha(files, chunk_size=4096):
