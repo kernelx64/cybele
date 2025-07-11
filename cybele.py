@@ -466,7 +466,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd"]
+		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd","recently added tvshows"]
 
 #------------------------------------------------------------
 help = {
@@ -508,6 +508,7 @@ help = {
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
@@ -706,8 +707,8 @@ def internet_onoff():
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
+	print_statusline(f"{dbmsgbl} {chr(124)}")
 	if internet_onoff() == True:
-		print_statusline(f"{dbmsgbl} {chr(124)}")
 		max_attempts = 5
 		for attempt in range(1, max_attempts + 1):
 			try:
@@ -718,11 +719,12 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 				if attempt < max_attempts:
 					sleep(1)
 				else:
-					modname = random.choice(messages['db_pause_msg']) + f"\n    {max_attempts} attempts failed, I cannot execute properly. Exiting."
+					modname = random.choice(messages['db_pause_msg']) + f"\n   I made {max_attempts} attempts and {attempts} failed. Give another try now."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
 	else:
 		if os.path.isfile (db_filename) == True :
+			print_statusline(f"{dbmsgbl} {chr(47)}")
 			conn = sqlite3.connect(db_filename)
 		else:
 			print_statusline(f"")
@@ -777,7 +779,6 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
-		print_statusline(f"{dbmsgbl} {chr(124)}")
 		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True :
@@ -809,7 +810,7 @@ def check_tables(tables_names):
 			return False
 		else:
 			return True
-
+		
 	except sqlite3.Error as e:
 		print_statusline(f"")
 		modname = f"Database query error {e} \n   I cannot execute properly. Exiting."
@@ -2158,6 +2159,30 @@ def get_thepopulation(country_name):
 	except Exception as e:
 		print (random.choice(messages['trouble_msg']) + " An error occurred while attempting to retrieve population for %s..\n" % country_name)
 		return None
+
+#-------------------------------------------------
+def recent_from_vorian():
+	url = website.get('tvshow')
+	if internet_onoff() == False or not url:
+		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
+		return
+	try:
+		response = urllib.request.urlopen(url)
+		html_content = response.read()
+		html_string = html_content.decode("utf-8")
+		soup = BeautifulSoup(html_string, 'html.parser')
+		items_list = []
+		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+		for show in tv_shows:
+			title_element = show.find('span', class_='C9DxTc')
+			if title_element:
+				items_list.append(title_element.text.strip())           
+		for i in range(82, 87):
+			print (items_list[i])
+	except urllib.error.URLError as e:
+		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
 
 #-------------------------------------------------
 def extract_from_vorian(content_type):
@@ -3797,6 +3822,11 @@ def main():
 			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
 			extract_from_vorian('movies')
 			print ("")
+			
+		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
+			print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
+			recent_from_vorian()
+			print("")
 
 		elif question == "do you speak" or question == 'do you talk' or question[-13:] == 'say something' or question[-15:] == 'make a sentence':
 			cybele_phrase = make_sentence()
