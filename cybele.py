@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '10.07.2025'
+_revise_ = '11.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -105,8 +105,8 @@ def print_statusline(msg: str):
     print(msg, end='\r')
     sys.stdout.flush()
     setattr(print_statusline, 'last_msg', msg)
+#-----------------------------------------------------------
 print_statusline(f"\nLoading ...")
-
 #-----------------------------------------------------------
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
@@ -709,7 +709,6 @@ def internet_onoff():
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	conn = None
-	print_statusline(f"{dbmsgbl} {chr(124)}")
 	if internet_onoff() == True:
 		max_attempts = 5
 		for attempt in range(1, max_attempts + 1):
@@ -757,8 +756,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-	
+			exit(0)	
 	try:
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_to_fetch} FROM {table_name} WHERE {search_column} = ?", (record,))
@@ -781,11 +779,9 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
-		print_statusline(f"{dbmsgbl}")
 		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True :
-			print_statusline(f"{dbmsgbl}")
 			conn = sqlite3.connect(db_filename)
 		else:
 			print_statusline(f"")
@@ -846,7 +842,6 @@ def make_intextdb():
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
-		print_statusline(f"Handling databases ...")
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
@@ -3038,6 +3033,7 @@ def ascii_horiz_solar_system(width):
 #-------------------------------------------------
 def main():
 	#----------------------------
+	print_statusline(f"Loading ...")
 	check_tables(tables)
 	make_intextdb()
 	#----------------------------
