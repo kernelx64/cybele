@@ -161,7 +161,9 @@ as_quotes = [
 	"I am sorry if you don't like my honesty, but to be fair i dont give a fuck.",
 	"Somethings just cannot be fixed. Sometimes wore mented to not. Somethings lost are lost forever. No matter how hard we fight, How much it hurts.",
 	"In memory of the 90s, that beloved era, a special time for many.",
-	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete."
+	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete.",
+	"Technology is not revolutionary, it's evolutionary.",
+	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility."
 ]
 #-----------------------------------------------------------
 kolor = {
@@ -779,6 +781,7 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
+		print_statusline(f"{dbmsgbl}")
 		conn = sqlitecloud.connect(sqlconn)
 	else:
 		if os.path.isfile (db_filename) == True :
@@ -3078,10 +3081,6 @@ def main():
 			r = RandomWords()
 			w = r.get_random_word()
 			print(f"{w}\n")
-		
-		#elif question.startswith('tell me') or question.startswith('show me') and question.find('quote')!=-1:
-		elif question.find('quote')!=-1:
-			print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
@@ -3150,10 +3149,13 @@ def main():
 			print ("  and: ")
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
-		elif question == 'adelino quote':
-			print ("Here's a quote by my author " + _author_.split()[0] + ".")
-			print (" " + _spchar_[1:2] + " " + random.choice(as_quotes))
-			print ("")
+		elif question[-5:] == 'quote':
+			if 'adelino' in question:
+				print ("Here's a quote by my author " + _author_.split()[0] + ".")
+				print (" " + _spchar_[1:2] + " " + random.choice(as_quotes))
+				print ("")
+			else:
+				print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
 
 		elif question == "what is" or question == "do you know what is" or question == "meaning of":
 			what_creative= ["","I think you were trying to know something, righ ?!\n","Are you trying to ask or know something ?!\n","You were going to ask for knowledge weren't you? ?!\n","Well, to know or question you need a matter !\n"]
