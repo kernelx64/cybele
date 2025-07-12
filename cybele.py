@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '11.07.2025'
+_revise_ = '12.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -162,6 +162,7 @@ as_quotes = [
 	"Somethings just cannot be fixed. Sometimes wore mented to not. Somethings lost are lost forever. No matter how hard we fight, How much it hurts.",
 	"In memory of the 90s, that beloved era, a special time for many.",
 	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete.",
+	"Let's face it, Nature is already scrud'ed.  The question is whether it is possible for us to have a future.",
 	"Technology is not revolutionary, it's evolutionary.",
 	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility."
 ]
@@ -720,7 +721,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 				if attempt < max_attempts:
 					sleep(1)
 				else:
-					modname = random.choice(messages['db_pause_msg']) + f"\n   I made {max_attempts} attempts and {attempts} failed. Give another try now."
+					modname = random.choice(messages['db_pause_msg']) + f"\n   I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
 	else:
