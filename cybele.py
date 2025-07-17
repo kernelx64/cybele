@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '12.07.2025'
+_revise_ = '17.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -115,8 +115,8 @@ days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}
-month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
-shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
+month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
+shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
@@ -740,8 +740,16 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		result = [row[0] for row in cursor.fetchall()]
 		print_statusline(f"{dbmsgbl} {chr(92)}")
 		return result
+	except ValueError as e:
+		modname = f"\n   An unexpected error occurred: {e}"
+		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+		exit(0)
 	except sqlite3.Error as e:
 		return []
+	except Exception as e:
+		modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
+		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+		exit(0)
 	finally:
 		if conn:
 			conn.close()
@@ -1737,10 +1745,10 @@ def find_word_in_dicts(word, core):
 			elif list_name == "season_query":
 				os_country_2l = locale.getlocale()[0].split('_')[-1].title()
 				country = pycountry.countries.get(name=os_country_2l)
-				sentence = f"Actualy based on the system date {datetime.today().strftime("%d.%m")} it's {get_the_season()[0].capitalize()}"
+				sentence = f"Actualy based on the system date {datemd} it's {get_the_season()[0].capitalize()}"
 				if country:
 					sentence = sentence + f" here in {country.name}."	
-				print (f"{sentence}\n")		
+				print (f"{sentence}\n")
 
 			elif list_name == "holidays_query":
 				print ("")
@@ -3620,7 +3628,7 @@ def main():
 			print("")
 			
 		elif question == 'leap year' or question == 'is this year a leap year':
-			print (f"The actual year ({datetime.now().strftime("%Y")}) {leapyear()}. \n")
+			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
 	
 		#-------------------------------------- convert ----------------------------------------
 		
@@ -3962,6 +3970,16 @@ def main():
 				print ("Translation of the morse code: " + morse_decode(' '.join(morse2)) + "\n")
 			else:
 				print (random.choice(messages['trouble_msg']) + " I cannot transform emptyness to the morse code except with silence.\n")
+
+		elif question == 'actual country':
+			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
+			country = pycountry.countries.get(name=os_country_2l)
+			sentence = f"Actualy based on the system"
+			if country:
+				sentence = sentence + f" we are in {country.name}."	
+			else:
+				sentence = sentence + f" i cannot determine the country."	
+			print (f"{sentence}\n")
 
 		elif question[0:8] == 'yoda say':
 			senyoda = question.split()[2:]
