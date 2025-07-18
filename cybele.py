@@ -84,8 +84,8 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 start_time = datetime.now()
 node_name = platform.node()
 country_code = locale.getlocale()
+sysos = platform.system()
 if node_name:
-	sysos = platform.system()
 	if platform.node().upper() in [node.upper() for node in _pcnode_]:
 		try:
 			import cybext
@@ -1751,7 +1751,7 @@ def find_word_in_dicts(word, core):
 				print (f"{sentence}\n")
 
 			elif list_name == "holidays_query":
-				print ("")
+				country_holidays()
 
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
@@ -2753,7 +2753,14 @@ def today_holiday():
 #----------------------------------------------------------------
 def country_holidays():
 	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-	country = pycountry.countries.get(name=os_country_2l)	
+	if sysos.lower() == 'windows':
+		country = pycountry.countries.get(name=os_country_2l)
+	elif sysos.lower() == 'linux':
+		country = pycountry.countries.get(alpha_2=os_country_2l)
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
+		
 	if country:
 		print(f"\nDetected country: {country.name} ({country.alpha_2})")
 		country_code_for_holidays = country.alpha_2
@@ -4043,7 +4050,7 @@ def main():
 		
 		#print("I'm not familiar with this subject!")
 		elif any(word in question for word in core['holidays_query']):
-			country_holidays()
+			print("")
 			
 		elif question == 'trails':
 			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
