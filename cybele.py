@@ -83,7 +83,8 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 
 start_time = datetime.now()
 node_name = platform.node()
-country_code = locale.getlocale()
+#country_code = locale.getlocale()
+country_code = locale.getlocale()[0].split('_')[-1]
 sysos = platform.system()
 if node_name:
 	if platform.node().upper() in [node.upper() for node in _pcnode_]:
@@ -1743,11 +1744,10 @@ def find_word_in_dicts(word, core):
 				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
 
 			elif list_name == "season_query":
-				os_country_2l = locale.getlocale()[0].split('_')[-1].title()
 				if sysos.lower() == 'windows':
-					country = pycountry.countries.get(name=os_country_2l)
+					country = pycountry.countries.get(name=country_code)
 				elif sysos.lower() == 'linux':
-					country = pycountry.countries.get(alpha_2=os_country_2l)
+					country = pycountry.countries.get(alpha_2=country_code)			
 				sentence = f"Actualy based on the system date {datemd} it's {get_the_season()[0].capitalize()}"
 				if country:
 					sentence = sentence + f" here in {country.name}."	
@@ -2726,11 +2726,10 @@ def yoda_speak(sentence):
 #----------------------------------------------------------------
 def today_holiday():
 	today = datetime.today()
-	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
 	if sysos.lower() == 'windows':
-		country = pycountry.countries.get(name=os_country_2l)
+		country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		country = pycountry.countries.get(alpha_2=os_country_2l)
+		country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
@@ -2761,11 +2760,10 @@ def today_holiday():
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def country_holidays():
-	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
 	if sysos.lower() == 'windows':
-		country = pycountry.countries.get(name=os_country_2l)
+		country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		country = pycountry.countries.get(alpha_2=os_country_2l)
+		country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
@@ -3988,17 +3986,13 @@ def main():
 				print (random.choice(messages['trouble_msg']) + " I cannot transform emptyness to the morse code except with silence.\n")
 
 		elif question == 'actual country':
-			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
 			if sysos.lower() == 'windows':
-				country = pycountry.countries.get(name=os_country_2l)
+				country = pycountry.countries.get(name=country_code)
 			elif sysos.lower() == 'linux':
-				country = pycountry.countries.get(alpha_2=os_country_2l)
-			else:
-				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-				return
+				country = pycountry.countries.get(alpha_2=country_code)
 			sentence = f"Actualy based on the system"
 			if country:
-				sentence = sentence + f" we are in {country.name}, ({os_country_2l.upper()})."
+				sentence = sentence + f" we are in {country.name}, {country.alpha_2}."
 			else:
 				sentence = sentence + f" i cannot determine the country."	
 			print (f"{sentence}\n")
