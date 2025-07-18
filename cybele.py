@@ -474,7 +474,8 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd","recently added tvshows"]
+		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd","recently added tvshows",
+		"protect image"]
 
 #------------------------------------------------------------
 help = {
@@ -1041,7 +1042,7 @@ maincommands = [
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
 	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
 	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
-	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits",
+	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits","protect image",
 	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
 	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
@@ -1426,7 +1427,7 @@ def find_answer(question,whatlist):
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd","time_query","season_query"]
 	others = [item for key in others_keys if key in core for item in core[key]]
-	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands 
+	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
 		output_string = random.choice(outoptions)
