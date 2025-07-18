@@ -1744,7 +1744,10 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "season_query":
 				os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-				country = pycountry.countries.get(name=os_country_2l)
+				if sysos.lower() == 'windows':
+					country = pycountry.countries.get(name=os_country_2l)
+				elif sysos.lower() == 'linux':
+					country = pycountry.countries.get(alpha_2=os_country_2l)
 				sentence = f"Actualy based on the system date {datemd} it's {get_the_season()[0].capitalize()}"
 				if country:
 					sentence = sentence + f" here in {country.name}."	
@@ -2724,7 +2727,13 @@ def yoda_speak(sentence):
 def today_holiday():
 	today = datetime.today()
 	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-	country = pycountry.countries.get(name=os_country_2l)
+	if sysos.lower() == 'windows':
+		country = pycountry.countries.get(name=os_country_2l)
+	elif sysos.lower() == 'linux':
+		country = pycountry.countries.get(alpha_2=os_country_2l)
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
 
 	if country:
 		country_code_for_holidays = country.alpha_2
@@ -3980,10 +3989,16 @@ def main():
 
 		elif question == 'actual country':
 			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-			country = pycountry.countries.get(name=os_country_2l)
+			if sysos.lower() == 'windows':
+				country = pycountry.countries.get(name=os_country_2l)
+			elif sysos.lower() == 'linux':
+				country = pycountry.countries.get(alpha_2=os_country_2l)
+			else:
+				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+				return
 			sentence = f"Actualy based on the system"
 			if country:
-				sentence = sentence + f" we are in {country.name}."	
+				sentence = sentence + f" we are in {country.name}, ({os_country_2l.upper()})."
 			else:
 				sentence = sentence + f" i cannot determine the country."	
 			print (f"{sentence}\n")
