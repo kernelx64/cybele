@@ -38,6 +38,9 @@ try:
 	import quote
 	import locale
 	import pycountry
+	import numpy as np
+	import PIL
+	from PIL import Image, ImageEnhance, ImageFilter
 	from bs4 import BeautifulSoup
 	from random_word import RandomWords
 	from platform import python_version
@@ -53,6 +56,8 @@ except ImportError as err:
 	if match:
 		module_name = match.group(1)
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
+		if module_name == 'PIL':
+			module_name = 'Pillow'
 		while True:
 			install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
 			if install_choice == 'y':
@@ -83,7 +88,6 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 
 start_time = datetime.now()
 node_name = platform.node()
-#country_code = locale.getlocale()
 country_code = locale.getlocale()[0].split('_')[-1]
 sysos = platform.system()
 if node_name:
@@ -512,6 +516,7 @@ help = {
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help protect image": "Usage: protect image <filename> \nAdd some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image my_image.jpg \n    protect image IMG_20250718.png\n",	
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
@@ -3053,6 +3058,71 @@ def ascii_horiz_solar_system(width):
 	print ("")
 
 #-------------------------------------------------
+def protect_image(input_filepath, output_directory="protected_images",
+					noise_intensity=10, pixel_shift_amount=1,
+					color_jitter_factor=0.05, jpeg_quality=90):
+  
+	if not os.path.exists(output_directory):
+		os.makedirs(output_directory)
+
+	try:
+		img = Image.open(input_filepath).convert("RGB")
+	except FileNotFoundError:
+		print (f"{random.choice(messages['trouble_short'])} Input file not found at {input_filepath}\n")
+		return
+	except Exception as e:
+		print (f"{random.choice(messages['trouble_short'])} Error opening image {input_filepath}: {e}\n")
+		return
+
+	original_filename = os.path.basename(input_filepath)
+	name, ext = os.path.splitext(original_filename)
+	output_filename = f"{name}_protected{ext}"
+	output_filepath = os.path.join(output_directory, output_filename)
+
+	print(f"Processing image: {original_filename.upper()}")
+	
+	width, height = img.size
+	noise = Image.effect_noise((width, height), sigma=noise_intensity)
+	noise_rgb = noise.convert("RGB")
+
+	# alpha=0.95 means 95% original, 5% noise.
+	img = Image.blend(img, noise_rgb, alpha=0.05)
+
+	pixels = img.load()
+	for y in range(height):
+		for x in range(width):
+			dx = random.randint(-pixel_shift_amount, pixel_shift_amount)
+			dy = random.randint(-pixel_shift_amount, pixel_shift_amount)
+			new_x = max(0, min(width - 1, x + dx))
+			new_y = max(0, min(height - 1, y + dy))
+			if (new_x, new_y) != (x, y):
+				original_pixel = pixels[x, y]
+				shifted_pixel = pixels[new_x, new_y]
+				pixels[x, y] = shifted_pixel
+				pixels[new_x, new_y] = original_pixel
+	enhancers = [
+		(ImageEnhance.Brightness, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor)),
+		(ImageEnhance.Contrast, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor)),
+		(ImageEnhance.Color, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor))
+	]
+	for enhancer_class, factor in enhancers:
+		enhancer = enhancer_class(img)
+		img = enhancer.enhance(factor)
+	try:
+		if ext.lower() in ['.jpg', '.jpeg']:
+			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
+		elif ext.lower() == '.png':
+			img.save(output_filepath, format="PNG")
+		else:
+			print(f"Warning: Unsupported output format '{ext}'. Saving as JPEG.")
+			output_filename = f"{name}_protected.jpg"
+			output_filepath = os.path.join(output_directory, output_filename)
+			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
+		print(f"Protected image saved to: {output_filepath.upper()}\n")
+	except Exception as e:
+		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	#----------------------------
@@ -4070,6 +4140,22 @@ def main():
 			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
 		
+		elif question[0:13] == 'protect image':
+			piaiparam = question.split()[2:]
+			if len(piaiparam) == 0:
+				input_image_path = input("Enter the filename (e.g., 'my_photo.jpg' or full path): ")
+				if input_image_path == '':
+					print (f"{random.choice(messages['trouble_short'])} The image filename cannot be empty.\n")
+			else:
+				input_image_path = piaiparam[0]
+				custom_noise_intensity = 18
+				custom_pixel_shift_amount = 2
+				custom_color_jitter_factor = 0.04
+				custom_jpeg_quality = 90
+				protect_image(input_image_path, noise_intensity=custom_noise_intensity,
+							pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
+							jpeg_quality=custom_jpeg_quality)
+			
 		elif question == 'testing':
 			print (f"Development testing propose code...")
 			print (core['working_hard'][0])
