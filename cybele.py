@@ -717,6 +717,10 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 				print_statusline(f"{dbmsgbl} {chr(47)}")
 				conn = sqlitecloud.connect(sqlconn)
 				break
+			except ValueError as e:
+				modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
 				if attempt < max_attempts:
 					sleep(1)
@@ -740,16 +744,12 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		result = [row[0] for row in cursor.fetchall()]
 		print_statusline(f"{dbmsgbl} {chr(92)}")
 		return result
-	except ValueError as e:
+	except Exception as e:
 		modname = f"\n   An unexpected error occurred: {e}"
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 		exit(0)
 	except sqlite3.Error as e:
 		return []
-	except Exception as e:
-		modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
-		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-		exit(0)
 	finally:
 		if conn:
 			conn.close()
