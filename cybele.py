@@ -2740,6 +2740,8 @@ def yoda_speak(sentence):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def today_holiday():
+	
+	global sysos
 	today = datetime.today()
 	if sysos.lower() == 'windows':
 		if newsetcountry:
@@ -2758,7 +2760,7 @@ def today_holiday():
 	if country:
 		country_code_for_holidays = country.alpha_2
 	else:
-		print(f"{random.choice(messages['trouble_short'])} No valid country detected or two-letter country code.\n")
+		print(f"{random.choice(messages['trouble_short'])} No valid country detected!\n")
 		return False, None
 
 	if country_code_for_holidays:
@@ -3148,8 +3150,7 @@ def protect_image(input_filepath, output_directory="protected_images",
 #-------------------------------------------------
 def set_system_country():
 	
-	global newsetcountry
-	sysos = platform.system().lower()
+	global newsetcountry, sysos
 	current_locale_info = locale.getlocale()[0]
 	if current_locale_info:
 		country_code = current_locale_info.split('_')[-1]
@@ -3161,19 +3162,15 @@ def set_system_country():
 	else:
 		print(f"Current system Country code '{country_code}' not found in pycountry data.")
 		print(f"{random.choice(messages['trouble_short'])} Could not determine current country name.")
-
 	target_locale_string = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
-
 	if not pycountry.countries.get(alpha_2=target_locale_string):
 		print(f"{random.choice(messages['trouble_short'])} Invalid country code '{target_locale_string}'. Please enter a valid two-letter code.\n")
 		return
-		
 	language_code = country_to_language_map.get(target_locale_string, 'pt')
 	base_locale_string = f"{language_code}_{target_locale_string}"
-
-	if sysos == "windows":
+	if sysos.lower() == "windows":
 		final_locale_string = base_locale_string
-	elif sysos == "linux":
+	elif sysos.lower() == "linux":
 		final_locale_string = f"{base_locale_string}.UTF-8"
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
@@ -3181,7 +3178,6 @@ def set_system_country():
 
 	try:
 		locale.setlocale(locale.LC_ALL, final_locale_string)
-		#print(f" > Successfully set Country to: '{final_locale_string}'.")
 	except locale.Error as e:
 		print(f"{random.choice(messages['trouble_short'])} Error overriding the system Country: {e}")
 		locale.setlocale(locale.LC_ALL, '')
@@ -3190,8 +3186,9 @@ def set_system_country():
 		locale.setlocale(locale.LC_ALL, '')
 
 	newsetcountry = locale.getlocale()
-	#print(f" > New System Country assigned by override: {", ".join(newsetcountry)}\n")
-	print(f" > Successfully set Country by override to {", ".join(newsetcountry)}\n")
+	newsetcountry2 = locale.getlocale()[0].split('_')[-1]
+	overcountry = pycountry.countries.get(alpha_2=newsetcountry2)
+	print(f" > Successfully set Country by override to {overcountry.name} ({newsetcountry[0]})\n")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -3617,9 +3614,9 @@ def main():
 			print ("The value of π is "+ str(math.pi)+ "\n")
 
 		elif question == 'clear screen' or question == 'cls':
-			if sysos == 'Windows':
+			if sysos.lower() == 'windows':
 				os.system('cls')
-			elif sysos == 'Linux':
+			elif sysos.lower() == 'linux':
 				os.system('clear')
 			else:
 				print ("Sorry i cannot execute this command in a unidentified S.O for me!\n")
@@ -3628,7 +3625,7 @@ def main():
 			if sysos == 'Linux':
 				print ("This is the " + sysos + " Operating System (OS). ")
 			elif sysos == 'Windows':
-				print ("I am behing executed in " + sysos + "Operating System (OS).\n")
+				print ("I am behing executed in " + sysos +  "Operating System (OS).\n")
 			else:
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
