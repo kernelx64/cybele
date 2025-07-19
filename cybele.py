@@ -119,7 +119,7 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}
+iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; newsetcountry = ""
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""
@@ -205,6 +205,15 @@ art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [98,121,32,65,83]
 #------------------------------------------------------------
 csugestions = []; chkdict = []
+#------------------------------------------------------------
+country_to_language_map = {
+    'US': 'en',
+    'GB': 'en',
+    'PT': 'pt',
+    'ES': 'es',
+    'FR': 'fr',
+    'DE': 'de',
+}
 #------------------------------------------------------------
 core = {
 	"greatings":	["good morning","good evening","good afternoon","good night","hi good morning","hello good morning","hi good evening",
@@ -486,6 +495,7 @@ help = {
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
+	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
@@ -519,6 +529,7 @@ help = {
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help protect image": "Usage: protect image <filename> \nAdd some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image my_image.jpg \n    protect image IMG_20250718.png\n",	
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
+	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
@@ -2766,10 +2777,17 @@ def today_holiday():
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def country_holidays():
+	global newsetcountry
 	if sysos.lower() == 'windows':
-		country = pycountry.countries.get(name=country_code)
+		if newsetcountry:
+			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		country = pycountry.countries.get(alpha_2=country_code)
+		if newsetcountry:
+			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
@@ -3122,6 +3140,54 @@ def protect_image(input_filepath, output_directory="protected_images",
 		print(f"Protected image saved to: {output_filepath.upper()}\n")
 	except Exception as e:
 		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
+
+#-------------------------------------------------
+def set_system_country():
+	
+	global newsetcountry
+	sysos = platform.system().lower()
+	current_locale_info = locale.getlocale()[0]
+	if current_locale_info:
+		country_code = current_locale_info.split('_')[-1]
+	else:
+		country_code = 'PT'
+	ncountry = pycountry.countries.get(name=country_code)
+	if ncountry:
+		print(f"Current system Country: {ncountry.name} ({ncountry.alpha_2})")
+	else:
+		print(f"Current system Country code '{country_code}' not found in pycountry data.")
+		print(f"{random.choice(messages['trouble_short'])} Could not determine current country name.")
+
+	target_locale_string = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
+
+	if not pycountry.countries.get(alpha_2=target_locale_string):
+		print(f"{random.choice(messages['trouble_short'])} Invalid country code '{target_locale_string}'. Please enter a valid two-letter code.\n")
+		return
+		
+	language_code = country_to_language_map.get(target_locale_string, 'pt')
+	base_locale_string = f"{language_code}_{target_locale_string}"
+
+	if sysos == "windows":
+		final_locale_string = base_locale_string
+	elif sysos == "linux":
+		final_locale_string = f"{base_locale_string}.UTF-8"
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
+
+	try:
+		locale.setlocale(locale.LC_ALL, final_locale_string)
+		#print(f" > Successfully set Country to: '{final_locale_string}'.")
+	except locale.Error as e:
+		print(f"{random.choice(messages['trouble_short'])} Error overriding the system Country: {e}")
+		locale.setlocale(locale.LC_ALL, '')
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred: {e}")
+		locale.setlocale(locale.LC_ALL, '')
+
+	newsetcountry = locale.getlocale()
+	#print(f" > New System Country assigned by override: {", ".join(newsetcountry)}\n")
+	print(f" > Successfully set Country by override to {", ".join(newsetcountry)}\n")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -3510,6 +3576,17 @@ def main():
 				print (" Longitude : " + str(_poigps_[1]))
 				print ('Defaults gps coordinates loaded from code.\n')
 
+		elif question == 'set default country':
+			set_system_country()
+		
+		elif question == 'default country off':
+			global newsetcountry
+			if newsetcountry:
+				print(' > default system country detection restored.\n')
+				newsetcountry = ""
+			else:
+				print('No user override is being used in the country system detection, so it is not applicable.\n')
+		
 		elif question[-7:] == 'capital':
 			word = question.split()[0].lower()
 			if word in core['country']:
@@ -3613,7 +3690,7 @@ def main():
 				random.shuffle(messages['earlier_nyear'])
 				print( random.choice(messages['earlier_nyear']) + "\n")
 
-		elif question == 'what is your version' or question == '#version':
+		elif question == 'what is your version' or question == 'cybele version' or question == '#version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
@@ -4057,11 +4134,22 @@ def main():
 				print (random.choice(messages['trouble_msg']) + " I cannot transform emptyness to the morse code except with silence.\n")
 
 		elif question == 'actual country':
+			sentence = f"Actualy based on "
 			if sysos.lower() == 'windows':
-				country = pycountry.countries.get(name=country_code)
+				if newsetcountry:
+					country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+					sentence = sentence + f"user override"
+				else:
+					country = pycountry.countries.get(name=country_code)
+					sentence = sentence + f"the system"
 			elif sysos.lower() == 'linux':
-				country = pycountry.countries.get(alpha_2=country_code)
-			sentence = f"Actualy based on the system"
+				if newsetcountry:
+					country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+				else:
+					country = pycountry.countries.get(alpha_2=country_code)
+			else:
+				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+				country = ""
 			if country:
 				sentence = sentence + f" we are in {country.name}, {country.alpha_2}."
 			else:
