@@ -2742,9 +2742,15 @@ def yoda_speak(sentence):
 def today_holiday():
 	today = datetime.today()
 	if sysos.lower() == 'windows':
-		country = pycountry.countries.get(name=country_code)
+		if newsetcountry:
+			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		country = pycountry.countries.get(alpha_2=country_code)
+		if newsetcountry:
+			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
