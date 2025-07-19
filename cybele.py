@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '18.07.2025'
+_revise_ = '19.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -207,12 +207,10 @@ art_byas = [98,121,32,65,83]
 csugestions = []; chkdict = []
 #------------------------------------------------------------
 country_to_language_map = {
-    'US': 'en',
-    'GB': 'en',
-    'PT': 'pt',
-    'ES': 'es',
-    'FR': 'fr',
-    'DE': 'de',
+	'US': 'en','GB': 'en','PT': 'pt','ES': 'es','FR': 'fr','DE': 'de','IT': 'it','CA': 'en','AU': 'en','IE': 'en','NZ': 'en',
+	'MX': 'es','AR': 'es','CO': 'es','CL': 'es','BR': 'pt','CH': 'de','AT': 'de','BE': 'fr','NL': 'nl','SE': 'sv','NO': 'no',
+	'DK': 'da','FI': 'fi','PL': 'pl','CZ': 'cs','HU': 'hu','GR': 'el','TR': 'tr','RU': 'ru','CN': 'zh','JP': 'ja','KR': 'ko',
+	'IN': 'hi','ZA': 'en','EG': 'ar','SA': 'ar'
 }
 #------------------------------------------------------------
 core = {
