@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '19.07.2025'
+_revise_ = '20.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -119,7 +119,7 @@ year_months = ["January", "February", "March", "April", "May", "June","July", "A
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; newsetcountry = ""
+iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""
@@ -205,13 +205,6 @@ art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [98,121,32,65,83]
 #------------------------------------------------------------
 csugestions = []; chkdict = []
-#------------------------------------------------------------
-country_to_language_map = {
-	'US': 'en','GB': 'en','PT': 'pt','ES': 'es','FR': 'fr','DE': 'de','IT': 'it','CA': 'en','AU': 'en','IE': 'en','NZ': 'en',
-	'MX': 'es','AR': 'es','CO': 'es','CL': 'es','BR': 'pt','CH': 'de','AT': 'de','BE': 'fr','NL': 'nl','SE': 'sv','NO': 'no',
-	'DK': 'da','FI': 'fi','PL': 'pl','CZ': 'cs','HU': 'hu','GR': 'el','TR': 'tr','RU': 'ru','CN': 'zh','JP': 'ja','KR': 'ko',
-	'IN': 'hi','ZA': 'en','EG': 'ar','SA': 'ar'
-}
 #------------------------------------------------------------
 core = {
 	"greatings":	["good morning","good evening","good afternoon","good night","hi good morning","hello good morning","hi good evening",
@@ -850,7 +843,7 @@ def check_tables(tables_names):
 			cur.close()
 		if conn:
 			conn.close()
-
+			
 #------------------------------------------------------------
 def parse_date_string(date_str):
 	try:
@@ -863,7 +856,7 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode
+	global midbcounter, ncountries, country_alpha2, constellations_dict, special_dates_dict, idcode
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
@@ -885,11 +878,13 @@ def make_intextdb():
 		db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
 		db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
 		db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
+		db_alpha2 = list(fetch_fromdbfile("cybele.db", "countries", "alpha_2"))
 		ncountries = {
-			country.lower(): {"capital": capital, "population": population}
-			for country, capital, population in zip(db_country, db_capital, db_population)
+			country.lower(): {"capital": capital, "population": population, "alpha2": alpha_2}
+			for country, capital, population, alpha_2 in zip(db_country, db_capital, db_population, db_alpha2)
 		}
-			
+		
+		country_alpha2 = [(country_name, data["alpha2"]) for country_name, data in ncountries.items()]
 		ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
 		ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
 		climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
@@ -1057,7 +1052,8 @@ maincommands = [
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations"
+	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
+	"protect image","set default country","list holidays"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -2744,29 +2740,32 @@ def today_holiday():
 	global sysos
 	today = datetime.today()
 	if sysos.lower() == 'windows':
-		if newsetcountry:
-			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
 			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		if newsetcountry:
-			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
 			country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
-
+		
 	if country:
 		country_code_for_holidays = country.alpha_2
 	else:
-		print(f"{random.choice(messages['trouble_short'])} No valid country detected!\n")
-		return False, None
+		if system_country != None:
+			country_code_for_holidays = system_country[0]
+			country_code_name = system_country[1]
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+			return False, None
 
 	if country_code_for_holidays:
 		try:
 			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
-
 			if today in country_holidays:
 				holiday_name = country_holidays.get(today)
 				print(f"Today ({today}) IS a holiday in {country_code_for_holidays}: {holiday_name}")
@@ -2783,38 +2782,44 @@ def today_holiday():
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def country_holidays():
-	global newsetcountry
+	global system_country
 	if sysos.lower() == 'windows':
-		if newsetcountry:
-			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
 			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
-		if newsetcountry:
-			country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
 			country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
-		
+	
 	if country:
 		print(f"\nDetected country: {country.name} ({country.alpha_2})")
 		country_code_for_holidays = country.alpha_2
+		country_code_name = country.name
 	else:
-		print(f"{random.choice(messages['trouble_short'])} No valid country detected or two-letter country code.\n")
-		return
+		if system_country != None:
+			country_code_for_holidays = system_country[0]
+			country_code_name = system_country[1]
+			print(f"\nUsing default country: {country_code_name} ({country_code_for_holidays})")
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+			return
 
 	holidays_country_year = datetime.now().year
 	try:
 		country_holidays = holidays.country_holidays(country_code_for_holidays, years=holidays_country_year)
 		if country_holidays:
-			print(f"Holidays for {country.name} ({country.alpha_2}) in the year {holidays_country_year}:\n")
+			print(f"Holidays for {country_code_name} ({country_code_for_holidays}) in the year {holidays_country_year}:\n")
 			sorted_holidays = sorted(country_holidays.items())
 			for date, name in sorted_holidays:
 				print(f"  {date} | {name}")
 		else:
-			print(f"No holidays found for {country.name} ({country.alpha_2}) in {holidays_country_year}.")
+			print(f"No holidays found for {country_code_name} ({country_code_for_holidays}) in {holidays_country_year}.")
 	except NotImplementedError:
 		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} The holidays does not have data for {country.name} ({country.alpha_2}).")
 	except KeyError:
@@ -3149,46 +3154,21 @@ def protect_image(input_filepath, output_directory="protected_images",
 
 #-------------------------------------------------
 def set_system_country():
-	
-	global newsetcountry, sysos
-	current_locale_info = locale.getlocale()[0]
-	if current_locale_info:
-		country_code = current_locale_info.split('_')[-1]
-	else:
-		country_code = 'PT'
-	ncountry = pycountry.countries.get(name=country_code)
-	if ncountry:
-		print(f"Current system Country: {ncountry.name} ({ncountry.alpha_2})")
-	else:
-		print(f"Current system Country code '{country_code}' not found in pycountry data.")
-		print(f"{random.choice(messages['trouble_short'])} Could not determine current country name.")
-	target_locale_string = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
-	if not pycountry.countries.get(alpha_2=target_locale_string):
-		print(f"{random.choice(messages['trouble_short'])} Invalid country code '{target_locale_string}'. Please enter a valid two-letter code.\n")
-		return
-	language_code = country_to_language_map.get(target_locale_string, 'pt')
-	base_locale_string = f"{language_code}_{target_locale_string}"
-	if sysos.lower() == "windows":
-		final_locale_string = base_locale_string
-	elif sysos.lower() == "linux":
-		final_locale_string = f"{base_locale_string}.UTF-8"
-	else:
-		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-		return
+	global system_country
+	while True:
+		user_input_code = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
 
-	try:
-		locale.setlocale(locale.LC_ALL, final_locale_string)
-	except locale.Error as e:
-		print(f"{random.choice(messages['trouble_short'])} Error overriding the system Country: {e}")
-		locale.setlocale(locale.LC_ALL, '')
-	except Exception as e:
-		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred: {e}")
-		locale.setlocale(locale.LC_ALL, '')
-
-	newsetcountry = locale.getlocale()
-	newsetcountry2 = locale.getlocale()[0].split('_')[-1]
-	overcountry = pycountry.countries.get(alpha_2=newsetcountry2)
-	print(f" > Successfully set Country by override to {overcountry.name} ({newsetcountry[0]})\n")
+		found_country_name = None
+		for country_name, details in ncountries.items():
+			if details.get("alpha2") == user_input_code:
+				found_country_name = country_name
+				break
+		if found_country_name:
+			system_country = (user_input_code, found_country_name.capitalize())
+			print(f"System country set to: {system_country[1]} ({system_country[0]})\n")
+			break
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Invalid country code. Please enter a valid two-letter code.\n")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -3581,10 +3561,10 @@ def main():
 			set_system_country()
 		
 		elif question == 'default country off':
-			global newsetcountry
-			if newsetcountry:
+			global system_country
+			if system_country != None:
 				print(' > default system country detection restored.\n')
-				newsetcountry = ""
+				system_country = None
 			else:
 				print('No user override is being used in the country system detection, so it is not applicable.\n')
 		
@@ -4137,22 +4117,23 @@ def main():
 		elif question == 'actual country':
 			sentence = f"Actualy based on "
 			if sysos.lower() == 'windows':
-				if newsetcountry:
-					country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+				if system_country != None:
+					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 					sentence = sentence + f"user override"
 				else:
 					country = pycountry.countries.get(name=country_code)
 					sentence = sentence + f"the system"
 			elif sysos.lower() == 'linux':
-				if newsetcountry:
-					country = pycountry.countries.get(alpha_2=newsetcountry[0].split('_')[-1])
+				if system_country != None:
+					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					sentence = sentence + f"user override"
 				else:
 					country = pycountry.countries.get(alpha_2=country_code)
+					sentence = sentence + f"the system"
 			else:
 				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-				country = ""
 			if country:
-				sentence = sentence + f" we are in {country.name}, {country.alpha_2}."
+				sentence = sentence + f" the country is {country.name}, {country.alpha_2}."
 			else:
 				sentence = sentence + f" i cannot determine the country."	
 			print (f"{sentence}\n")
