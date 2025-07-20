@@ -1,4 +1,4 @@
-#py:python_OS_win_linux_shell_cmd
+#py:python_OS_win_linux_android_shell_cmd
 __doc__ = """
 Cybele by AS for www.adelinosaldanha.site ✦
 
@@ -251,6 +251,7 @@ core = {
 	"time_query": ["what time is it", "current time", "time now", "clock time", "what's the time"],
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
+	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -856,7 +857,7 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	global midbcounter, ncountries, country_alpha2, constellations_dict, special_dates_dict, idcode
+	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
@@ -884,7 +885,7 @@ def make_intextdb():
 			for country, capital, population, alpha_2 in zip(db_country, db_capital, db_population, db_alpha2)
 		}
 		
-		country_alpha2 = [(country_name, data["alpha2"]) for country_name, data in ncountries.items()]
+		#country_alpha2 = [(country_name, data["alpha2"]) for country_name, data in ncountries.items()]
 		ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
 		ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
 		climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
@@ -1053,7 +1054,7 @@ maincommands = [
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","list holidays"
+	"protect image","set default country","list holidays","actual country","view solar system"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1430,7 +1431,7 @@ def find_answer(question,whatlist):
 	dict_climate = core.get("climate dictionary", [])
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
-	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd","time_query","season_query"]
+	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd","time_query","season_query","asking for country details"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
 	is_correct, suggestions = spell_check(question, alldict)
@@ -1571,6 +1572,7 @@ def get_uptime():
 	return (hours,minutes,seconds)
 	
 #-------------------------------------------------------
+
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
 
@@ -1756,16 +1758,32 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "season_query":
 				if sysos.lower() == 'windows':
-					country = pycountry.countries.get(name=country_code)
+					if system_country != None:
+						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					else:
+						country = pycountry.countries.get(name=country_code)
 				elif sysos.lower() == 'linux':
-					country = pycountry.countries.get(alpha_2=country_code)			
+					if system_country != None:
+						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					else:
+						country = pycountry.countries.get(alpha_2=country_code)
+				else:
+					if system_country != None:
+						country_code_for_holidays = system_country[0]
+						country_code_name = system_country[1]
+					else:
+						print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+	
 				sentence = f"Actualy based on the system date {datemd} it's {get_the_season()[0].capitalize()}"
 				if country:
-					sentence = sentence + f" here in {country.name}."	
+					sentence = sentence + f" in {country.name}."
 				print (f"{sentence}\n")
 
 			elif list_name == "holidays_query":
 				country_holidays()
+			
+			elif list_name == "asking for country details":
+				list_country_details()
 
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
@@ -3155,9 +3173,12 @@ def protect_image(input_filepath, output_directory="protected_images",
 #-------------------------------------------------
 def set_system_country():
 	global system_country
+
 	while True:
 		user_input_code = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
-
+		if not user_input_code:
+			print ("")
+			return False
 		found_country_name = None
 		for country_name, details in ncountries.items():
 			if details.get("alpha2") == user_input_code:
@@ -3166,10 +3187,34 @@ def set_system_country():
 		if found_country_name:
 			system_country = (user_input_code, found_country_name.capitalize())
 			print(f"System country set to: {system_country[1]} ({system_country[0]})\n")
-			break
+			return True
 		else:
-			print (f"{random.choice(messages['trouble_short'])} Invalid country code. Please enter a valid two-letter code.\n")
+			print(f"{random.choice(messages['trouble_short'])} Invalid country code. Please enter a valid two-letter code.\n")
 
+#-------------------------------------------------
+def list_country_details():
+	if not ncountries:
+		print(f"{random.choice(messages['trouble_short'])} I have an internal error. No country data available.\n")
+		return
+
+	COUNTRY_WIDTH = 40
+	CAPITAL_WIDTH = 35
+	ALPHA2_WIDTH = 10
+
+	print (f"Here's some basic information i have about the {len(ncountries)} Countries i have in my knowledge:")
+	print(f"\n{'Country':<{COUNTRY_WIDTH}} {'Capital':<{CAPITAL_WIDTH}} {'Alpha2 Code':<{ALPHA2_WIDTH}}")
+	print("-" * (COUNTRY_WIDTH + CAPITAL_WIDTH + ALPHA2_WIDTH + 3)) # 2 for spaces between columns
+
+	for country_name, details in ncountries.items():
+		display_country_name = country_name.capitalize()
+		capital = details.get("capital", "N/A")
+		alpha2 = details.get("alpha2")
+		if alpha2 is None:
+			alpha2 = "N/A"
+		# f-string with '<' for left-alignment and the defined width
+		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
+	print("")
+		
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
@@ -4226,7 +4271,8 @@ def main():
 				protect_image(input_image_path, noise_intensity=custom_noise_intensity,
 							pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
 							jpeg_quality=custom_jpeg_quality)
-			
+		
+	
 		elif question == 'testing':
 			print (f"Development testing propose code...")
 			print (core['working_hard'][0])
