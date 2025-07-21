@@ -103,6 +103,8 @@ if node_name:
 			_cybid_ = False
 
 #------------------------------------------------------------------
+rw = RandomWords()
+#------------------------------------------------------------------
 # Init-process
 def print_statusline(msg: str):
     last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
@@ -260,6 +262,7 @@ core = {
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"asking for talking":	["do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
+	"asking for a word":	["word","say a word","talk","share a word","speak a word"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -1744,15 +1747,15 @@ def find_word_in_dicts(word, core):
 				heading_color = kolor['BOLD_CYAN']
 				print(f"{heading_color}Keep in mind, i am a βeta version and currently lack NLP and speech synthesis capabilities, here's what I have:{kolor['OFF']}")
 				for _ in range(5):
-					print(f" - {text_color}{make_sentence()}{kolor['OFF']}")
+					print(f" - {text_color}{make_text(rw, num_sentences=3, num_paragraphs=1)}{kolor['OFF']}")
 				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
-				generated_text = make_text(num_sentences=3, num_paragraphs=2)
+				generated_text = make_text(rw, num_sentences=3, num_paragraphs=2)
 				print(f"{text_color}{generated_text}{kolor['OFF']}")
-				print(f"\n{heading_color}and in last generating a Longer Text (1 paragraph, 7 sentences):{kolor['OFF']}")
-				generated_text_long = make_text(num_sentences=7, num_paragraphs=1)
-				print(f"{text_color}{generated_text_long}{kolor['OFF']}")
 				print("")
-				
+			
+			elif list_name == "asking for a word":
+				print("")
+			
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 			return True
@@ -3008,18 +3011,15 @@ def conjugate_verb(verb_type, subject_pronoun, knowledge):
     return "[CONJUGATION_ERROR]"
 
 #-------------------------------------------------------------------
-def make_sentence():
-  
+def make_sentence(rw_instance):
+    
     knowledge = {
         "pronoun_singular_third": ["he", "she", "it"],
         "pronoun_first_second_plural": ["I", "you", "we", "they"],
         "subject": [], # Failsafe key
-        "determiner": ["the", "some"],
+        "determiner": ["the", "some", "a", "an"], 
         "verb_base": ["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe", "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear", "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have"],
-        "verb_s_form": ["runs", "jumps", "eats", "sleeps", "talks", "listens", "thinks", "sees", "hears", "smells", "feels", "tastes", "walks", "flies", "swims", "climbs", "drives", "rides", "falls", "rises", "says", "tells", "asks", "shouts", "whispers", "yells", "argues", "discusses", "knows", "understands", "believes", "remembers", "forgets", "learns", "imagines", "loves", "hates", "likes", "dislikes", "fears", "seems", "appears", "becomes", "looks", "sounds", "owns", "belongs", "does", "has"],
-        "verb_past": ["ran", "jumped", "ate", "slept", "talked", "listened", "thought", "saw", "heard", "smelled", "felt", "tasted", "walked", "flew", "swam", "climbed", "drove", "rode", "fell", "rose", "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "knew", "understood", "believed", "remembered", "forgot", "learned", "imagined", "loved", "hated", "liked", "disliked", "feared", "seemed", "appeared", "became", "looked", "sounded", "owned", "belonged", "did", "had"],
         "verb_past_participle": ["run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled", "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen", "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known", "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated", "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned", "belonged", "done", "had"],
-        "verb_ing_form": ["running", "jumping", "eating", "sleeping", "talking", "listening", "thinking", "seeing", "hearing", "smelling", "feeling", "tasting", "walking", "flying", "swimming", "climbing", "driving", "riding", "falling", "rising", "saying", "telling", "asking", "shouting", "whispering", "yelling", "arguing", "discussing", "knowing", "understanding", "believing", "remembering", "forgetting", "learning", "imagining", "loving", "hating", "liking", "disliking", "fearing", "seeming", "appearing", "becoming", "looking", "sounding", "owning", "belonging", "doing", "having"],
         "aux_be_present_I": ["am"],
         "aux_be_present_singular_third": ["is"],
         "aux_be_present_plural": ["are"],
@@ -3033,7 +3033,7 @@ def make_sentence():
         "negation": ["not"],
         "verb_base_be": ["be"],
         "verb_past_participle_be": ["been"],
-		
+        
         "noun": ["person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean", "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water"],
         "noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
         "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
@@ -3048,15 +3048,15 @@ def make_sentence():
 
     sentence_structures = [
         # 1. Simple Present: Subject + Verb + (Object/Complement)
-        ["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"], 
-        ["subject", "verb_present_conjugated", "determiner", "noun_uncountable"], 
-        ["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"], 
-        ["subject", "verb_present_conjugated"], 
-        ["subject", "verb_present_conjugated", "adverb"], 
+        ["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
+        ["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
+        ["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
+        ["subject", "verb_present_conjugated"],  
+        ["subject", "verb_present_conjugated", "adverb"],  
 
         # 2. To Be Verb: Subject + To Be + Complement (Adjective / Noun)
-        ["subject", "aux_be_present_conjugated", "adjective"], 
-        ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"], 
+        ["subject", "aux_be_present_conjugated", "adjective"],  
+        ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],  
 
         # NEW: To Be Verb Negation (fixes "We do not are happy")
         ["subject", "aux_be_present_conjugated", "negation", "adjective"],
@@ -3099,27 +3099,84 @@ def make_sentence():
                 else:
                     chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
                 word_to_add = chosen_subject
-            
+                
             elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
                 if chosen_subject is None:
                     raise ValueError("Subject must be chosen before verb conjugation.")
                 word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
-            
+                
             elif part_type == "aux_do_present_neg_conjugated":
                 if chosen_subject in knowledge["pronoun_singular_third"]:
                     word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
                 else:
                     word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
-            
+                    
             elif part_type == "verb_base_be":
                 word_to_add = random.choice(knowledge["verb_base_be"])
-            
+                
             elif part_type == "verb_past_participle_be":
                 word_to_add = random.choice(knowledge["verb_past_participle_be"])
+            
+            # --- START: RandomWords Integration (using rw_instance to get *new* words) ---
+            elif part_type.startswith("noun"):
+                # Call rw_instance.get_random_word() *here* to get a NEW random word for this noun slot
+                temp_word = rw_instance.get_random_word() 
+                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+                    temp_word = rw_instance.get_random_word()
+                
+                # Use heuristics and fallbacks to ensure it's a reasonable noun
+                if temp_word.lower() in knowledge["noun"] or \
+                   temp_word.lower() in knowledge["noun_countable_singular"] or \
+                   temp_word.lower() in knowledge["noun_countable_plural"] or \
+                   temp_word.lower() in knowledge["noun_uncountable"] or \
+                   temp_word.lower() in knowledge["noun_abstract"] or \
+                   random.random() < 0.3: # A small chance to use it even if not in our lists (for more variety)
+                    word_to_add = temp_word.lower()
+                else:
+                    # Fallback to a random noun from our predefined list for guaranteed correctness
+                    if part_type == "noun_countable_singular":
+                        word_to_add = random.choice(knowledge["noun_countable_singular"])
+                    elif part_type == "noun_countable_plural":
+                        word_to_add = random.choice(knowledge["noun_countable_plural"])
+                    elif part_type == "noun_uncountable":
+                        word_to_add = random.choice(knowledge["noun_uncountable"])
+                    elif part_type == "noun_abstract":
+                        word_to_add = random.choice(knowledge["noun_abstract"])
+                    else: # General noun
+                        word_to_add = random.choice(knowledge["noun"])
+
+                # If the structure specifically asks for plural, try to pluralize (simple 's' for now)
+                if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
+                    word_to_add += 's'
+
+            elif part_type == "adjective":
+                # Call rw_instance.get_random_word() *here* to get a NEW random word for this adjective slot
+                temp_word = rw_instance.get_random_word()
+                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+                    temp_word = rw_instance.get_random_word()
+                
+                # Heuristic for adjectives + fallback
+                if temp_word.lower() in knowledge["adjective"] or \
+                   temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
+                   random.random() < 0.3: 
+                    word_to_add = temp_word.lower()
+                else:
+                    word_to_add = random.choice(knowledge["adjective"])
+
+            elif part_type == "adverb":
+                # Call rw_instance.get_random_word() *here* to get a NEW random word for this adverb slot
+                temp_word = rw_instance.get_random_word()
+                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+                    temp_word = rw_instance.get_random_word()
+                
+                # Heuristic for adverbs + fallback
+                if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
+                   random.random() < 0.3: 
+                    word_to_add = temp_word.lower()
+                else:
+                    word_to_add = random.choice(knowledge["adverb"])
 
             elif part_type == "determiner":
-                word_to_add = random.choice(knowledge["determiner"])
-                
                 next_noun_category_in_structure = None
                 if i + 1 < len(chosen_structure) and chosen_structure[i+1].startswith("noun"):
                     next_noun_category_in_structure = chosen_structure[i+1]
@@ -3127,31 +3184,29 @@ def make_sentence():
                 if next_noun_category_in_structure == "noun_uncountable":
                     word_to_add = random.choice(["some", "the"]) 
                 elif next_noun_category_in_structure == "noun_countable_singular":
-                    temp_noun = random.choice(knowledge["noun_countable_singular"])
-                    if temp_noun.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+                    temp_word_for_vowel_check = rw_instance.get_random_word() 
+                    while not temp_word_for_vowel_check or len(temp_word_for_vowel_check) < 2:
+                        temp_word_for_vowel_check = rw_instance.get_random_word()
+                    
+                    if temp_word_for_vowel_check.lower().startswith(('a', 'e', 'i', 'o', 'u')):
                         word_to_add = "an"
                     else:
                         word_to_add = "a"
                 elif next_noun_category_in_structure == "noun_countable_plural": 
                     word_to_add = random.choice(["the", "some"]) 
-                elif next_noun_category_in_structure == "noun":
-                    temp_noun_choice = random.choice(knowledge["noun"])
-                    if temp_noun_choice in knowledge["noun_uncountable"]:
-                        word_to_add = random.choice(["some", "the"])
-                    elif temp_noun_choice in knowledge["noun_countable_singular"]: 
-                        if temp_noun_choice.lower().startswith(('a', 'e', 'i', 'o', 'u')):
-                            word_to_add = "an"
-                        else:
-                            word_to_add = "a"
-                    else:
-                        word_to_add = random.choice(["the", "some"])
+                elif next_noun_category_in_structure == "noun": 
+                    word_to_add = random.choice(["the", "some", "a", "an"]) 
             
+            # This handles remaining types like pronouns, prepositions, conjunctions, modal verbs, etc.
             elif part_type in knowledge:
                 word_to_add = random.choice(knowledge[part_type])
-            
+                
             else:
-                print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
-                word_to_add = "[UNKNOWN]"
+                if part_type in knowledge:
+                     word_to_add = random.choice(knowledge[part_type])
+                else:
+                    print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
+                    word_to_add = "[UNKNOWN]"
 
             sentence_words.append(word_to_add)
 
@@ -3161,20 +3216,33 @@ def make_sentence():
         return final_sentence
 
     except Exception as e:
-        return f"\n{_spchar_[1:2]}{_title_}: Error generating sentence: {e}"
+        return f"Error generating sentence: {e}"
 
 #-------------------------------------------------------------------
-def make_text(num_sentences=5, num_paragraphs=1):
-
+def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instance here
     text_paragraphs = []
     for _ in range(num_paragraphs):
         paragraph_sentences = []
         for _ in range(num_sentences):
-            paragraph_sentences.append(make_sentence())
+            paragraph_sentences.append(make_sentence(rw_instance)) # Pass rw_instance to make_sentence
         text_paragraphs.append(" ".join(paragraph_sentences))
-    
+        
     return "\n".join(text_paragraphs)
 
+#--------------------------------------------------
+def preamble_random_word():
+	preambles = [
+		"Here's a word for you:","How about this one:","My word for you is:",
+		"Consider this word:","A random word:","Perhaps this word will interest you:"
+	]
+	random.shuffle(preambles)
+	chosen_preamble = random.choice(preambles)
+	random_word = rw.get_random_word()
+	while not random_word or len(random_word) < 2 or not random_word.isalpha():
+		random_word = rw.get_random_word()
+        
+	return f"{chosen_preamble} {random_word.lower()}.\n"
+	
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
 def ascii_horiz_solar_system(width):
@@ -3423,10 +3491,8 @@ def main():
 		if question == "bye" or question == "exit" or question == "quit":
 			return False
 		
-		elif question == "word":
-			r = RandomWords()
-			w = r.get_random_word()
-			print(f"{w}\n")
+		elif any(word in question for word in core['asking for a word']):
+			print (preamble_random_word())
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
