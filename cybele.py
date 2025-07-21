@@ -1382,7 +1382,7 @@ def drawart(artname):
 	for i in range(len(art)):
 		res = ''.join(map(chr, art[i]))
 		if i == 5 and artname == 'art_cybele':
-			print (artcor + str(res) + kolor['YELLOW'] + ''.join(map(chr, art_byas)))
+			print (artcor + str(res) + kolor['BOLD_YELLOW'] + ''.join(map(chr, art_byas)))
 		else:
 			print (artcor + str(res))
 	print (kolor['OFF'])
@@ -1428,6 +1428,7 @@ def get_question():
 	return qt.lower()
 
 def find_answer(question,whatlist):
+	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
 	outoptions = ["Perhaps you meant: ","It looks like you might have meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
 	for p in range(len(pontuation)):
@@ -1449,10 +1450,7 @@ def find_answer(question,whatlist):
 		output_string = ""
 	for i, suggestion in enumerate(suggestions):
 		if i < 3:
-			if _cybid_ == True:
-				output_bycyid = ""+kolor['YELLOW']+suggestion.capitalize() + kolor['OFF'] + " or "
-			else:
-				output_bycyid = ""+kolor['DARK_MAGENTA']+suggestion.capitalize() + kolor['OFF'] + " or "
+			output_bycyid = ""+kolor[sugestion_color]+suggestion.capitalize() + kolor['OFF'] + " or "
 			output_string += output_bycyid
 			csugestions.insert( 0, suggestion)
 	return output_string[:-4] + "\n"
@@ -1492,86 +1490,6 @@ def levenshtein_distance(a, b):
 				cost = 1
 			dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
 	return dp[n][m]
-
-#---------------------------------------------------------
-def make_sentence_improved():
-    knowledge = {
-        "subject_pronoun": ["I","you","he","she","it","we","they"],
-        "object_pronoun": ["me","you","him","her","it","us","them"],
-        "possessive_pronoun": ["mine","yours","his","hers","its","ours","theirs"],
-        "determiner": ["a", "an", "the"],
-        "not asverb": ["is","was","are","were","am","have","had","has","will","would","should","can","could","may","might","must","ought","need","dare","used","be"],
-        "contration": ["Can't","cannot","Don't","do not","Didn't","did not","Shouldn't","should not","Wouldn't","would not","Couldn't","could not","Mustn't","must not","Haven't","have not","Hasn't","has not"],
-        "verb_base": ["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste", "do", "walk", "fly", "swim", "crawl", "climb", "drive", "ride", "fall", "rise", "say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe", "think", "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear", "anger", "surprise", "sadness", "happiness", "seem", "appear", "become", "look", "sound", "taste", "own", "belong"], # Removed 'be', 'have' here to simplify conjugation examples
-        "verb_s_form": ["runs", "jumps", "eats", "sleeps", "talks", "listens", "thinks", "sees", "hears", "smells", "feels", "tastes", "does", "walks", "flies", "swims", "crawls", "climbs", "drives", "rides", "falls", "rises", "says", "tells", "asks", "shouts", "whispers", "yells", "argues", "discusses", "knows", "understands", "believes", "thinks", "remembers", "forgets", "learns", "imagines", "loves", "hates", "likes", "dislikes", "fears", "angers", "surprises", "saddens", "happens", "seems", "appears", "becomes", "looks", "sounds", "tastes", "owns", "belongs"],
-        "be_verb": ["am", "is", "are", "was", "were"],
-        "have_verb": ["have", "has", "had"],
-        "noun": ["person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "water", "ocean", "mountain", "river", "tree", "flower", "car"],
-        "adverb": ["quickly", "slowly", "happily", "now", "here", "very", "often"],
-        "adjective": ["happy", "sad", "beautiful", "big", "small", "new", "good", "smart"],
-        "preposition": ["about", "on", "in", "with", "to"],
-        "conjunction": ["and", "but", "or"],
-        "possibilities": ["might","could","may","can"],
-    }
-    sentence_structures = [
-        ["subject_pronoun", "verb_base", "determiner", "noun"],
-        ["subject_pronoun", "be_verb", "adjective"],
-        ["subject_pronoun", "verb_base"],
-        ["subject_pronoun", "verb_base", "determiner", "adjective", "noun"],
-        ["subject_pronoun", "contration", "verb_base", "determiner", "noun"],
-        ["subject_pronoun", "contration", "be_verb", "adjective"],
-        ["subject_pronoun", "possibilities", "verb_base", "determiner", "noun"],
-    ]
-
-    try:
-        structure = random.choice(sentence_structures)
-        sentence_words = []
-
-        # Track the subject for agreement
-        current_subject_pronoun = None
-
-        for i, part in enumerate(structure):
-            if part not in knowledge:
-                raise ValueError(f"Missing part of speech in 'knowledge' dictionary: '{part}'")
-
-            word = random.choice(knowledge[part])
-
-            # Special handling for agreement and determiners
-            if part == "subject_pronoun":
-                current_subject_pronoun = word
-            elif part == "be_verb":
-                if current_subject_pronoun in ["I"]:
-                    word = "am"
-                elif current_subject_pronoun in ["he", "she", "it"]:
-                    word = "is"
-                elif current_subject_pronoun in ["you", "we", "they"]:
-                    word = "are"
-            elif part == "verb_base":
-                if i > 0 and structure[i-1] == "subject_pronoun":
-                    if current_subject_pronoun in ["he", "she", "it"]:
-                        pass
-
-            elif part == "determiner":
-                # Basic 'a' vs 'an' logic
-                next_word = None
-                if i + 1 < len(structure):
-                    next_part_type = structure[i+1]
-                    if next_part_type in knowledge:
-                        next_word = random.choice(knowledge[next_part_type])
-
-                if next_word and next_word.lower().startswith(('a', 'e', 'i', 'o', 'u')):
-                    word = "an"
-                else:
-                    word = "a"
-
-            sentence_words.append(word)
-
-        sentence_words[0] = sentence_words[0].capitalize()
-        final_sentence = " ".join(sentence_words) + "."
-        return final_sentence
-
-    except (ValueError, IndexError) as e:
-        return f"Error generating sentence: {e}"
 
 #------------------------------------------------------------
 def pwdgen(num_passwords, length):
