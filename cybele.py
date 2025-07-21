@@ -12,10 +12,10 @@ lon = -8.4265
 # static global cybele variables
 version = '1.0 βeta'
 _title_ = 'Cybele'
-_pcnode_ = ['ASUSK','TUMBLEWEED']
+_pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '20.07.2025'
+_revise_ = '21.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -173,12 +173,19 @@ as_quotes = [
 ]
 #-----------------------------------------------------------
 kolor = {
-    'WHITE': '\033[1;37m','YELLOW': '\033[1;33m','GREEN': '\033[1;32m','BLUE': '\033[1;34m','CYAN': '\033[1;36m',
-    'RED': '\033[1;31m','MAGENTA': '\033[1;35m','BLACK': '\033[1;30m','DARK_WHITE': '\033[0;37m','DARK_YELLOW': '\033[0;33m',
-    'DARK_GREEN': '\033[0;32m','DARK_BLUE': '\033[0;34m','DARK_CYAN': '\033[0;36m','DARK_RED': '\033[0;31m',
-	'DARK_MAGENTA': '\033[0;35m','DARK_BLACK': '\033[0;30m','OFF': '\033[0;0m'
+	'BOLD_WHITE':'\033[1;37m','BOLD_YELLOW':'\033[1;33m','BOLD_GREEN':'\033[1;32m','BOLD_BLUE':'\033[1;34m',
+	'BOLD_CYAN':'\033[1;36m','BOLD_RED':'\033[1;31m','BOLD_MAGENTA':'\033[1;35m','BOLD_BLACK':'\033[1;30m',
+	'WHITE':'\033[0;37m','YELLOW':'\033[0;33m','GREEN':'\033[0;32m','BLUE':'\033[0;34m','CYAN':'\033[0;36m',
+	'RED':'\033[0;31m','MAGENTA':'\033[0;35m','BLACK':'\033[0;30m',
+	'VIVID_RED':'\033[91m','VIVID_GREEN':'\033[92m','VIVID_YELLOW':'\033[93m','VIVID_BLUE':'\033[94m',
+	'VIVID_MAGENTA':'\033[95m','VIVID_CYAN':'\033[96m','VIVID_WHITE':'\033[97m',
+	'DARK_BLACK':'\033[30m','DARK_RED':'\033[31m','DARK_GREEN':'\033[32m','DARK_YELLOW':'\033[33m',
+	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
+	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
+	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
+	'OFF':'\033[0m',
 }
-#--------------------------
+#-----------------------------------------------------------
 art_world = [
 	[32,32,32,32,32,32,32,32,32,32,32,32,95,44,45,45,39,44,32,32,32,95,46,95,46,45,45,46,95,95,95,95,95,32],
 	[32,32,32,32,32,46,45,45,46,45,45,39,59,95,39,45,46,39,44,32,39,59,95,32,32,32,32,32,32,95,46,44,45,32],
@@ -252,6 +259,7 @@ core = {
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
+	"asking for talking":	["do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -907,7 +915,7 @@ def make_intextdb():
 					"explanation": explanation,
 					"examples": examples
 				}
-				
+		
 		old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
 		
 		special_dates_data = fetch_fromdbfile("cybele.db", "special_dates", "sdate")
@@ -1357,7 +1365,7 @@ def drawart(artname):
 	print (kolor['OFF'])
 	if artname == 'art_cybele' and _cybid_ == True:
 		random_color = random.choice(list(kolor.keys()))
-		if random_color == 'DARK_BLACK' or random_color == 'BLACK' or random_color == 'WHITE':
+		if random_color == 'BOLD_BLACK' or random_color == 'DIM_BLACK' or random_color == 'BLACK':
 			random_color = 'RED'
 		artcor = kolor[random_color]
 		art = art_cybele
@@ -1368,13 +1376,13 @@ def drawart(artname):
 		artcor = kolor['GREEN']
 		art = art_py
 	else:
-		randomcolor = ['RED','BLACK','DARK_MAGENTA','DARK_GREEN']
+		randomcolor = ['RED','DARK_MAGENTA','GREEN']
 		artcor = kolor[random.choice(randomcolor)]
 		art = art_cybele
 	for i in range(len(art)):
 		res = ''.join(map(chr, art[i]))
 		if i == 5 and artname == 'art_cybele':
-			print (artcor + str(res) + kolor['DARK_YELLOW'] + ''.join(map(chr, art_byas)))
+			print (artcor + str(res) + kolor['YELLOW'] + ''.join(map(chr, art_byas)))
 		else:
 			print (artcor + str(res))
 	print (kolor['OFF'])
@@ -1486,56 +1494,84 @@ def levenshtein_distance(a, b):
 	return dp[n][m]
 
 #---------------------------------------------------------
-def make_sentence():
+def make_sentence_improved():
+    knowledge = {
+        "subject_pronoun": ["I","you","he","she","it","we","they"],
+        "object_pronoun": ["me","you","him","her","it","us","them"],
+        "possessive_pronoun": ["mine","yours","his","hers","its","ours","theirs"],
+        "determiner": ["a", "an", "the"],
+        "not asverb": ["is","was","are","were","am","have","had","has","will","would","should","can","could","may","might","must","ought","need","dare","used","be"],
+        "contration": ["Can't","cannot","Don't","do not","Didn't","did not","Shouldn't","should not","Wouldn't","would not","Couldn't","could not","Mustn't","must not","Haven't","have not","Hasn't","has not"],
+        "verb_base": ["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste", "do", "walk", "fly", "swim", "crawl", "climb", "drive", "ride", "fall", "rise", "say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe", "think", "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear", "anger", "surprise", "sadness", "happiness", "seem", "appear", "become", "look", "sound", "taste", "own", "belong"], # Removed 'be', 'have' here to simplify conjugation examples
+        "verb_s_form": ["runs", "jumps", "eats", "sleeps", "talks", "listens", "thinks", "sees", "hears", "smells", "feels", "tastes", "does", "walks", "flies", "swims", "crawls", "climbs", "drives", "rides", "falls", "rises", "says", "tells", "asks", "shouts", "whispers", "yells", "argues", "discusses", "knows", "understands", "believes", "thinks", "remembers", "forgets", "learns", "imagines", "loves", "hates", "likes", "dislikes", "fears", "angers", "surprises", "saddens", "happens", "seems", "appears", "becomes", "looks", "sounds", "tastes", "owns", "belongs"],
+        "be_verb": ["am", "is", "are", "was", "were"],
+        "have_verb": ["have", "has", "had"],
+        "noun": ["person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "water", "ocean", "mountain", "river", "tree", "flower", "car"],
+        "adverb": ["quickly", "slowly", "happily", "now", "here", "very", "often"],
+        "adjective": ["happy", "sad", "beautiful", "big", "small", "new", "good", "smart"],
+        "preposition": ["about", "on", "in", "with", "to"],
+        "conjunction": ["and", "but", "or"],
+        "possibilities": ["might","could","may","can"],
+    }
+    sentence_structures = [
+        ["subject_pronoun", "verb_base", "determiner", "noun"],
+        ["subject_pronoun", "be_verb", "adjective"],
+        ["subject_pronoun", "verb_base"],
+        ["subject_pronoun", "verb_base", "determiner", "adjective", "noun"],
+        ["subject_pronoun", "contration", "verb_base", "determiner", "noun"],
+        ["subject_pronoun", "contration", "be_verb", "adjective"],
+        ["subject_pronoun", "possibilities", "verb_base", "determiner", "noun"],
+    ]
 
-	knowledge = {
-	"pronoun":	["I","you","he","she","it","we","they","me","you","him","her","it","us","them","mine","yours","his","hers","its","ours","theirs"],
-	"not asverb":	["is","was","are","were","am","have","had","has","will","would","should","can","could","may","might","must","ought","need","dare","used","be"],
-	"contration":	["Can't","cannot","Don't","do not","Didn't","did not","Shouldn't","should not","Wouldn't","would not","Couldn't","could not","Mustn't","must not","Haven't","have not","Hasn't","has not","Couldn't have","could not have","Shouldn't have","should not have","Wouldn't have","would not have","Mustn't have","must not have"],
-	"preposition":	["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
-	"conjunction":	["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
-	"noun":	["person", "place", "thing", "idea","animal", "object", "event", "feeling", "action", "substance","food", "drink", "color", "shape", "number", "sound", "time","information", "equipment", "tool", "machine", "vehicle","clothing", "material", "plant", "flower", "fruit", "vegetable","disease", "injury", "emotion", "thought", "memory", "dream",
-			"symbol", "sign", "message", "communication", "system", "structure","country", "city", "town", "village", "building", "room","government", "law", "religion", "culture", "society", "economy","art", "music", "literature", "science", "technology", "mathematics","game", "sport", "competition", "hobby", "skill", "ability",
-			"knowledge", "wisdom", "belief", "faith", "opinion", "attitude","experience", "adventure", "journey", "discovery", "achievement","problem", "solution", "question", "answer", "issue", "argument","debate", "discussion", "conversation", "talk", "speech","writing", "book", "article", "poem", "story", "letter", "email","website",
-			"internet", "computer", "phone", "television", "radio","world", "universe", "galaxy", "star", "planet", "moon", "sun","air", "water", "earth", "fire", "sky", "cloud", "rain", "snow","wind", "mountain", "river", "lake", "ocean", "forest", "desert","island", "jungle", "beach", "animal", "bird", "fish", "insect","mammal", "reptile",
-			"amphibian", "invertebrate", "dog", "cat", "horse","cow", "pig", "sheep", "chicken", "snake", "lizard", "frog", "butterfly","bee", "fly", "spider", "worm", "tiger","elephant","book","food","tvshow","rainbow","computer","science","mathematics","reverse","water","ocean","cybele","ecologic","nature","beach","discrete",
-			"hackneyed","resilient","tenacious","humble","abstinence","affable","aloof","auspicious","bombastic","candid","capricious","cryptic","didactic","discreet","disparate","dolorous","duplicity","esoteric","euphemism","fiat","flaccid","florid","furtive","gravitas","laconic","levity","lexical","lucid","mercenary","mercurial","meticulous",
-			"modicum","neologism","opaque","oxygen","sedution","sexy","gorgeous","vigilant","ask","cat","dog","eye","fun","hat","key","man","not","one","top","boat","girl","iron","like","lose","pass","rock","star","thin","tree","man","baby","card","film","hair","idea","movie","life","love","rock","time","work","box","dog","eye","fly","hat","key",
-			"oil","pen","row","sun","tax","top","use","wine","yes","zoo","apple","black","card","dance","eagle","fish","house","king","milk","paper","queen","school","table","water","wine","YELLOW","banana","castle","dollar","euro","family","garden","history","island","jungle","monster","number","octopus","pencil","problem","robot","school",
-			"teacher","window","zebra","alligator","bicycle","dinosaur","elephant","flower","gorilla","kangaroo","library","monkey","pencil","river","starfish","university","window"],
-	"verb":	["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste","be", "have", "do","walk", "fly", "swim", "crawl", "climb", "drive", "ride", "fall", "rise","say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss","know", "understand", "believe", "think", "remember", "forget", "learn", "imagine","love", "hate", "like", "dislike", "fear", "anger", "surprise", "sadness", "happiness","seem", "appear", "become", "look", "smell", "sound", "taste","have", "own", "belong"],
-	"adverb":	["quickly", "slowly", "carefully", "badly", "well","happily", "sadly", "angrily", "excitedly", "calmly","now", "then", "soon", "later", "early","yesterday", "today", "tomorrow", "always", "never","here", "there", "everywhere", "anywhere","nowhere","upstairs", "downstairs",
-				"outside", "inside", "forward","very", "extremely", "quite", "rather", "too","enough", "almost", "nearly", "scarcely", "hardly","often", "sometimes", "usually", "rarely", "never","always", "frequently", "occasionally", "seldom", "generally"],
-	"possibilities":	["might","could","may","can","could possibly","might potentially","seems likely to","is possible to","has a chance to"],
-	"adjective":	["happy", "sad", "angry", "excited", "calm","beautiful", "ugly", "tall", "short", "big","small", "old", "new", "good", "bad","smart", "stupid", "funny", "serious", "kind"]
-	}
+    try:
+        structure = random.choice(sentence_structures)
+        sentence_words = []
 
-	sentence_structures = [
-		["pronoun", "verb", "noun"],
-		["pronoun", "verb", "adjective", "noun"],
-		["pronoun", "not asverb", "adjective"],
-		["pronoun", "verb", "adverb"],
-		["pronoun", "verb", "preposition", "noun"],
-		["adjective", "noun", "verb"],
-		["noun", "verb"],
-		["pronoun", "not asverb", "noun"],
-		["pronoun", "verb", "adverb", "preposition", "noun"],
-		["pronoun", "possibilities", "verb", "noun"],
-		["pronoun", "contration", "verb", "noun"],
-		["pronoun", "verb", "conjunction", "pronoun", "verb"]
-	]
-	try:
-		structure = random.choice(sentence_structures)
-		sentence = []
-		for part in structure:
-			if part not in knowledge:
-				raise ValueError("Missing part of speech: " + part)
-			word = random.choice(knowledge[part])
-			sentence.append(word)
-		sentence[0] = sentence[0].capitalize()
-		return " ".join(sentence)
-	except (ValueError, IndexError) as e:
-		return "Error: " + str(e)
+        # Track the subject for agreement
+        current_subject_pronoun = None
+
+        for i, part in enumerate(structure):
+            if part not in knowledge:
+                raise ValueError(f"Missing part of speech in 'knowledge' dictionary: '{part}'")
+
+            word = random.choice(knowledge[part])
+
+            # Special handling for agreement and determiners
+            if part == "subject_pronoun":
+                current_subject_pronoun = word
+            elif part == "be_verb":
+                if current_subject_pronoun in ["I"]:
+                    word = "am"
+                elif current_subject_pronoun in ["he", "she", "it"]:
+                    word = "is"
+                elif current_subject_pronoun in ["you", "we", "they"]:
+                    word = "are"
+            elif part == "verb_base":
+                if i > 0 and structure[i-1] == "subject_pronoun":
+                    if current_subject_pronoun in ["he", "she", "it"]:
+                        pass
+
+            elif part == "determiner":
+                # Basic 'a' vs 'an' logic
+                next_word = None
+                if i + 1 < len(structure):
+                    next_part_type = structure[i+1]
+                    if next_part_type in knowledge:
+                        next_word = random.choice(knowledge[next_part_type])
+
+                if next_word and next_word.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+                    word = "an"
+                else:
+                    word = "a"
+
+            sentence_words.append(word)
+
+        sentence_words[0] = sentence_words[0].capitalize()
+        final_sentence = " ".join(sentence_words) + "."
+        return final_sentence
+
+    except (ValueError, IndexError) as e:
+        return f"Error generating sentence: {e}"
 
 #------------------------------------------------------------
 def pwdgen(num_passwords, length):
@@ -1785,6 +1821,20 @@ def find_word_in_dicts(word, core):
 			elif list_name == "asking for country details":
 				list_country_details()
 
+			elif list_name == "asking for talking":
+				text_color = kolor['VIVID_WHITE']
+				heading_color = kolor['BOLD_CYAN']
+				print(f"{heading_color}Keep in mind, i am a βeta version and currently lack NLP and speech synthesis capabilities, here's what I have:{kolor['OFF']}")
+				for _ in range(5):
+					print(f" - {text_color}{make_sentence()}{kolor['OFF']}")
+				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
+				generated_text = make_text(num_sentences=3, num_paragraphs=2)
+				print(f"{text_color}{generated_text}{kolor['OFF']}")
+				print(f"\n{heading_color}and in last generating a Longer Text (1 paragraph, 7 sentences):{kolor['OFF']}")
+				generated_text_long = make_text(num_sentences=7, num_paragraphs=1)
+				print(f"{text_color}{generated_text_long}{kolor['OFF']}")
+				print("")
+				
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 			return True
@@ -2850,10 +2900,10 @@ def country_holidays():
 #----------------------------------------------------------------
 def set_cursor_pos(row, col):
     return f"\033[{row};{col}H"
-
+#----------------------------------------------------------------
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
-
+#----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
  
     try:
@@ -2891,17 +2941,7 @@ def create_firework_explosion(x, y, max_radius, characters):
         sleep(0.08) # Speed of the explosion expansion
 
 def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
-	kolor = {
-		'RED': "\033[91m",
-		'GREEN': "\033[92m",
-		'YELLOW': "\033[93m",
-		'BLUE': "\033[94m",
-		'MAGENTA': "\033[95m",
-		'CYAN': "\033[96m",
-		'WHITE': "\033[97m",
-		'DARK_YELLOW': "\033[33m",
-		'OFF': "\033[0m",
-	}
+	global kolor
 
 	CLEAR_SCREEN = "\033[2J"
 	HOME_CURSOR = "\033[H"
@@ -2992,7 +3032,7 @@ def draw_christmas_tree():
 	[32,32,32,32,32,32,32,32,32,32,32,32,96,34,34,32,96,32,96,9,9,9,9,9,9]
 ]
 
-	randomcolor = ['RED','DARK_YELLOW','GREEN','BLUE','CYAN','MAGENTA']
+	randomcolor = ['RED','YELLOW','GREEN','BLUE','CYAN','MAGENTA']
 	for i in range(len(tree)):
 		res = ''.join(map(chr, tree[i]))
 		if i <= 4:
@@ -3010,9 +3050,215 @@ def draw_christmas_tree():
 	)
 	print(" "*27 + merry_christmas_message)
 	
+#---------------------------------------------------------------------------
+#-------------------------------------------------------------------
+# cybele sentence, text, verb sub-cores
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
+def conjugate_verb(verb_type, subject_pronoun, knowledge):
 
-#-------------------------------------------------
-#-------------------------------------------------
+    if verb_type == "verb_present_conjugated":
+        base_verb_options = [v for v in knowledge["verb_base"] if v not in ["be", "have", "do"]]
+        if not base_verb_options:
+            return "[NO_GENERAL_VERB]"
+        base_verb = random.choice(base_verb_options)
+
+        if subject_pronoun in knowledge["pronoun_singular_third"]:
+            if base_verb in ["do", "go"]:
+                return base_verb + "es"
+            elif base_verb.endswith('y') and len(base_verb) > 1 and base_verb[-2] not in "aeiou":
+                return base_verb[:-1] + "ies"
+            else:
+                return base_verb + "s"
+        else:
+            return base_verb
+
+    elif verb_type == "aux_be_present_conjugated":
+        if subject_pronoun == "I":
+            return random.choice(knowledge["aux_be_present_I"])
+        elif subject_pronoun in knowledge["pronoun_singular_third"]:
+            return random.choice(knowledge["aux_be_present_singular_third"])
+        else:
+            return random.choice(knowledge["aux_be_present_plural"])
+
+    elif verb_type == "aux_have_present_conjugated":
+        if subject_pronoun in knowledge["pronoun_singular_third"]:
+            return random.choice(knowledge["aux_have_present_singular_third"])
+        else:
+            return random.choice(knowledge["aux_have_present_I_plural"])
+            
+    return "[CONJUGATION_ERROR]"
+
+#-------------------------------------------------------------------
+def make_sentence():
+  
+    knowledge = {
+        "pronoun_singular_third": ["he", "she", "it"],
+        "pronoun_first_second_plural": ["I", "you", "we", "they"],
+        "subject": [], # Failsafe key
+        "determiner": ["the", "some"],
+        "verb_base": ["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe", "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear", "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have"],
+        "verb_s_form": ["runs", "jumps", "eats", "sleeps", "talks", "listens", "thinks", "sees", "hears", "smells", "feels", "tastes", "walks", "flies", "swims", "climbs", "drives", "rides", "falls", "rises", "says", "tells", "asks", "shouts", "whispers", "yells", "argues", "discusses", "knows", "understands", "believes", "remembers", "forgets", "learns", "imagines", "loves", "hates", "likes", "dislikes", "fears", "seems", "appears", "becomes", "looks", "sounds", "owns", "belongs", "does", "has"],
+        "verb_past": ["ran", "jumped", "ate", "slept", "talked", "listened", "thought", "saw", "heard", "smelled", "felt", "tasted", "walked", "flew", "swam", "climbed", "drove", "rode", "fell", "rose", "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "knew", "understood", "believed", "remembered", "forgot", "learned", "imagined", "loved", "hated", "liked", "disliked", "feared", "seemed", "appeared", "became", "looked", "sounded", "owned", "belonged", "did", "had"],
+        "verb_past_participle": ["run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled", "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen", "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known", "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated", "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned", "belonged", "done", "had"],
+        "verb_ing_form": ["running", "jumping", "eating", "sleeping", "talking", "listening", "thinking", "seeing", "hearing", "smelling", "feeling", "tasting", "walking", "flying", "swimming", "climbing", "driving", "riding", "falling", "rising", "saying", "telling", "asking", "shouting", "whispering", "yelling", "arguing", "discussing", "knowing", "understanding", "believing", "remembering", "forgetting", "learning", "imagining", "loving", "hating", "liking", "disliking", "fearing", "seeming", "appearing", "becoming", "looking", "sounding", "owning", "belonging", "doing", "having"],
+        "aux_be_present_I": ["am"],
+        "aux_be_present_singular_third": ["is"],
+        "aux_be_present_plural": ["are"],
+        "aux_be_past_singular_I_third": ["was"],
+        "aux_be_past_plural": ["were"],
+        "aux_have_present_I_plural": ["have"],
+        "aux_have_present_singular_third": ["has"],
+        "aux_do_base": ["do"],
+        "aux_do_s_form": ["does"],
+        "modal_verb": ["will", "would", "should", "can", "could", "may", "might", "must"],
+        "negation": ["not"],
+        "verb_base_be": ["be"],
+        "verb_past_participle_be": ["been"],
+		
+        "noun": ["person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean", "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water"],
+        "noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
+        "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
+        "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
+        "noun_abstract": ["idea", "solution", "sadness", "happiness"],
+
+        "adjective": ["happy", "sad", "angry", "excited", "calm", "beautiful", "ugly", "tall", "short", "big", "small", "old", "new", "good", "bad", "smart", "stupid", "funny", "serious", "kind"],
+        "adverb": ["quickly", "slowly", "carefully", "badly", "well", "happily", "sadly", "angrily", "excitedly", "calmly", "now", "then", "soon", "later", "early", "yesterday", "today", "tomorrow", "always", "never", "here", "there", "everywhere", "anywhere", "upstairs", "downstairs", "outside", "inside", "forward", "very", "extremely", "quite", "rather", "too", "enough", "almost", "nearly", "scarcely", "hardly", "often", "sometimes", "usually", "rarely", "never", "always", "frequently", "occasionally", "seldom", "generally"],
+        "preposition": ["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
+        "conjunction": ["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
+    }
+
+    sentence_structures = [
+        # 1. Simple Present: Subject + Verb + (Object/Complement)
+        ["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"], 
+        ["subject", "verb_present_conjugated", "determiner", "noun_uncountable"], 
+        ["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"], 
+        ["subject", "verb_present_conjugated"], 
+        ["subject", "verb_present_conjugated", "adverb"], 
+
+        # 2. To Be Verb: Subject + To Be + Complement (Adjective / Noun)
+        ["subject", "aux_be_present_conjugated", "adjective"], 
+        ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"], 
+
+        # NEW: To Be Verb Negation (fixes "We do not are happy")
+        ["subject", "aux_be_present_conjugated", "negation", "adjective"],
+        ["subject", "aux_be_present_conjugated", "negation", "determiner", "noun_countable_singular"],
+
+        # 3. Modal Verbs: Subject + Modal + Base Verb + (Object/Complement)
+        ["subject", "modal_verb", "verb_base", "determiner", "noun_countable_singular"],
+        ["subject", "modal_verb", "verb_base", "determiner", "noun_uncountable"],
+        ["subject", "modal_verb", "verb_base", "adverb"],
+        ["subject", "modal_verb", "verb_base"],
+
+        # 4. Negatives with 'do/does': Subject + Do/Does Not + Base Verb + (Object/Complement)
+        # The `verb_base` in conjugate_verb() is already filtered for 'be', 'have', 'do' to avoid "do not be" etc.
+        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_countable_singular"],
+        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_uncountable"],
+        ["subject", "aux_do_present_neg_conjugated", "verb_base"],
+
+        # 5. Perfect Tense: Subject + Have/Has + Past Participle + (Object/Complement)
+        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_countable_singular"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
+
+        # FIX: Modal + Negation + Base 'be' + Adjective/Noun (e.g., "They may not be a cat.")
+        ["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
+        ["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
+    ]
+
+    try:
+        chosen_structure = random.choice(sentence_structures)
+        sentence_words = []
+        chosen_subject = None
+
+        for i, part_type in enumerate(chosen_structure):
+            word_to_add = ""
+
+            if part_type == "subject":
+                if random.random() < 0.5:
+                    chosen_subject = random.choice(knowledge["pronoun_singular_third"])
+                else:
+                    chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
+                word_to_add = chosen_subject
+            
+            elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
+                if chosen_subject is None:
+                    raise ValueError("Subject must be chosen before verb conjugation.")
+                word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
+            
+            elif part_type == "aux_do_present_neg_conjugated":
+                if chosen_subject in knowledge["pronoun_singular_third"]:
+                    word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
+                else:
+                    word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
+            
+            elif part_type == "verb_base_be":
+                word_to_add = random.choice(knowledge["verb_base_be"])
+            
+            elif part_type == "verb_past_participle_be":
+                word_to_add = random.choice(knowledge["verb_past_participle_be"])
+
+            elif part_type == "determiner":
+                word_to_add = random.choice(knowledge["determiner"])
+                
+                next_noun_category_in_structure = None
+                if i + 1 < len(chosen_structure) and chosen_structure[i+1].startswith("noun"):
+                    next_noun_category_in_structure = chosen_structure[i+1]
+
+                if next_noun_category_in_structure == "noun_uncountable":
+                    word_to_add = random.choice(["some", "the"]) 
+                elif next_noun_category_in_structure == "noun_countable_singular":
+                    temp_noun = random.choice(knowledge["noun_countable_singular"])
+                    if temp_noun.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+                        word_to_add = "an"
+                    else:
+                        word_to_add = "a"
+                elif next_noun_category_in_structure == "noun_countable_plural": 
+                    word_to_add = random.choice(["the", "some"]) 
+                elif next_noun_category_in_structure == "noun":
+                    temp_noun_choice = random.choice(knowledge["noun"])
+                    if temp_noun_choice in knowledge["noun_uncountable"]:
+                        word_to_add = random.choice(["some", "the"])
+                    elif temp_noun_choice in knowledge["noun_countable_singular"]: 
+                        if temp_noun_choice.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+                            word_to_add = "an"
+                        else:
+                            word_to_add = "a"
+                    else:
+                        word_to_add = random.choice(["the", "some"])
+            
+            elif part_type in knowledge:
+                word_to_add = random.choice(knowledge[part_type])
+            
+            else:
+                print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
+                word_to_add = "[UNKNOWN]"
+
+            sentence_words.append(word_to_add)
+
+        if sentence_words:
+            sentence_words[0] = sentence_words[0].capitalize()
+        final_sentence = " ".join(sentence_words) + "."
+        return final_sentence
+
+    except Exception as e:
+        return f"\n{_spchar_[1:2]}{_title_}: Error generating sentence: {e}"
+
+#-------------------------------------------------------------------
+def make_text(num_sentences=5, num_paragraphs=1):
+
+    text_paragraphs = []
+    for _ in range(num_paragraphs):
+        paragraph_sentences = []
+        for _ in range(num_sentences):
+            paragraph_sentences.append(make_sentence())
+        text_paragraphs.append(" ".join(paragraph_sentences))
+    
+    return "\n".join(text_paragraphs)
+
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
 def ascii_horiz_solar_system(width):
 	if width < 60:
 		print (f"{random.choice(messages['trouble_short'])} Width is very small. Output might be distorted.\n")
@@ -3233,14 +3479,14 @@ def main():
 	else:
 		print_statusline(f"")
 		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
-		print(f"\n{kolor['DARK_RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
+		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
 		sys.exit(0)
 	#----------------------------
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
 	drawart('art_cybele')
-	print(f"\n{kolor[('DARK_YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['DARK_RED']}{_title_} {kolor['RED']}{_spchar_[0:1]}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
+	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{_spchar_[0:1]}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
@@ -4023,10 +4269,9 @@ def main():
 			recent_from_vorian()
 			print("")
 
-		elif question == "do you speak" or question == 'do you talk' or question[-13:] == 'say something' or question[-15:] == 'make a sentence':
-			cybele_phrase = make_sentence()
-			print ("Well, beside behing a βeta version and dont using NLP or Library's or even speech synthesis here's something:")
-			print ("\n - " + cybele_phrase + "\n")
+		#elif question == "do you talk":
+		elif any(word in question for word in core['asking for talking']):
+			print("")
 
 		elif question.startswith('play') or question.startswith('game') and ('countries' in question or 'capitals' in question or 'math' in question or 'constellations' in question or 'elements' in question):
 			if question.find("math")!=-1:
