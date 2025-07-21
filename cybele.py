@@ -1448,7 +1448,9 @@ def find_answer(question,whatlist):
 	dict_climate = core.get("climate dictionary", [])
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
-	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd","time_query","season_query","asking for country details"]
+	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
+					"time_query","season_query","asking for country details","asking for talking","asking for a word","coded",
+					"sayconvert"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
 	is_correct, suggestions = spell_check(question, alldict)
