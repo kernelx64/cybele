@@ -430,6 +430,9 @@ messages = {
 				"e,m or h, not e=mc2 and allready is a problem? Use magic, coffee or nap!","Life's tough? Choose chill, grill or spill!",
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
 				"Stressed about e,m or h choice? Blame aliens, cats or dreams!"],
+				
+	"preambles":	["Here's a word for you:","How about this one:","My word for you is:","Consider this word:",
+					"A random word:","Perhaps this word will interest you:"],
 
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
 					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"],
@@ -987,11 +990,12 @@ questions = [
 	"Hi",
 	"Whats on your mind today?",
 	"The world",
-	"Life"
+	"Life",
+	"Chat"
 ]
 #------------------------------------------------
 answers = [
-	"Ola! Chamo-me " + _title_ + " e lamento informar que não falo pt-PT, nem ainda funciono com a tradução instantânea.",
+	"Olá! Sou " + _title_ + ". De momento, não falo português de Portugal. No entanto, estou aqui para ajudar! Pode digitar 'help' ou 'what can you do' para saber mais.",
 	"Chamo-me " + _title_ + " e lamento ter que informar que não falo pt-PT, nem ainda funciono com a tradução instantânea.",
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
@@ -1023,7 +1027,8 @@ answers = [
 	"Hello! What's on your mind?",
 	"I'm glad you're asking.\nI'm thinking about how lucky I am to be able to help people with my answers.",
 	"The world is a beautiful and complex place.\nIt is full of amazing things, from the tallest mountains to the deepest oceans.",
-	"Life is a journey, a mystery, and a gift. It is full of ups and downs, challenges and triumphs."
+	"Life is a journey, a mystery, and a gift. It is full of ups and downs, challenges and triumphs.",
+	"Hello! I'm here to help. You can type 'help', search for an astronomy term, or explore an old term. \nTo see more options, just type 'what can you do'.\n"
 ]
 #-------------------------------------------------
 others = [
@@ -3231,12 +3236,9 @@ def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instanc
 
 #--------------------------------------------------
 def preamble_random_word():
-	preambles = [
-		"Here's a word for you:","How about this one:","My word for you is:",
-		"Consider this word:","A random word:","Perhaps this word will interest you:"
-	]
-	random.shuffle(preambles)
-	chosen_preamble = random.choice(preambles)
+
+	random.shuffle(messages['preambles'])
+	chosen_preamble = random.choice(messages['preambles'])
 	random_word = rw.get_random_word()
 	while not random_word or len(random_word) < 2 or not random_word.isalpha():
 		random_word = rw.get_random_word()
