@@ -10,12 +10,12 @@ lat = 41.5454
 lon = -8.4265
 
 # static global cybele variables
-version = '1.0 βeta'
+version = '1.1.0-rc.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '21.07.2025'
+_revise_ = '22.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -542,7 +542,7 @@ help = {
 	"help show me": "Usage: show me <star names|all/constellations|asteroids|quote  names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
-	"help today": "Usage <today> \nDisplays all the available data for the actual system date.\n",
+	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
@@ -683,6 +683,8 @@ def kdecode(emessage, shift):
 
 #----------------------------------------------------
 sqlconn = kdecode(dbconn, shift)
+sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:] , shift)
+
 #----------------------------------------------------
 def whatgmt():
 	import time
@@ -953,6 +955,7 @@ def make_intextdb():
 							"climate dictionary term","climate dictionary","word meaning","qa-astro","help",
 							"linuxcmd","element symbol","element abbr","old_tech_term"]
 
+		midbcounter = len(questions) + len(answers)
 		for i in range(len(internal_db_array)):
 			 midbcounter = midbcounter + (len(core[internal_db_array[i]]))
 
@@ -1370,30 +1373,41 @@ def convert_to_words(num):
 
 #----------------------------------------------------
 def drawart(artname):
-	print (kolor['OFF'])
-	if artname == 'art_cybele' and _cybid_ == True:
-		random_color = random.choice(list(kolor.keys()))
-		if random_color == 'BOLD_BLACK' or random_color == 'DIM_BLACK' or random_color == 'BLACK':
-			random_color = 'RED'
-		artcor = kolor[random_color]
-		art = art_cybele
-	elif artname == 'art_world':
-		artcor = kolor['BLUE']
-		art = art_world
-	elif artname == 'art_py':
-		artcor = kolor['GREEN']
-		art = art_py
-	else:
-		randomcolor = ['RED','DARK_MAGENTA','GREEN']
-		artcor = kolor[random.choice(randomcolor)]
-		art = art_cybele
-	for i in range(len(art)):
-		res = ''.join(map(chr, art[i]))
-		if i == 5 and artname == 'art_cybele':
-			print (artcor + str(res) + kolor['BOLD_YELLOW'] + ''.join(map(chr, art_byas)))
-		else:
-			print (artcor + str(res))
-	print (kolor['OFF'])
+    print(kolor['OFF'])
+
+    art_data = {
+        'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
+			'fallback_colors': ['RED', 'DIM_RED', 'BOLD_RED'], 'special_line': 5, 'special_suffix': art_byas,
+			'special_suffix_color': 'BOLD_YELLOW'},
+        'art_world': {'art': art_world, 'color': 'BLUE'},
+        'art_py': {'art': art_py, 'color': 'GREEN'}
+    }
+
+    if artname not in art_data:
+        print(f"Error: Art '{artname}' not found to handle'it in my code. Fix'it!")
+        print(kolor['OFF'])
+        return
+
+    config = art_data[artname]
+    art = config['art']
+    if 'color' in config:
+        art_color = kolor[config['color']]
+    else:
+        available_colors = [c for c in list(kolor.keys()) if c not in config.get('exclude_colors', [])]
+        if not available_colors:
+            art_color_name = random.choice(config['fallback_colors'])
+        else:
+            art_color_name = random.choice(available_colors)
+        art_color = kolor[art_color_name]
+
+    for i, line_bytes in enumerate(art):
+        res = ''.join(map(chr, line_bytes))
+        if artname == 'art_cybele' and i == config['special_line']:
+            suffix_res = ''.join(map(chr, config['special_suffix']))
+            print(art_color + res + kolor[config['special_suffix_color']] + suffix_res)
+        else:
+            print(art_color + res)
+    print(kolor['OFF'])
 
 #---------------------------------------------------
 def daysweeks_year():
@@ -1535,8 +1549,6 @@ def get_uptime():
 	seconds = int(total_seconds % 60)
 	return (hours,minutes,seconds)
 	
-#-------------------------------------------------------
-
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
 
@@ -1905,9 +1917,8 @@ def get_current_century():
 #-------------------------------------------------
 def quicklist(list, delimiter):
 	if not delimiter:
-		delimiter = "\u3009"
+		delimiter = "\u3009" # or spchar[1:2]
 	for i in range(len(list)):
-		#print (" 〉 "+ list[i])
 		print (" " + delimiter + " " + list[i])
 
 #-----------------------------------------------
@@ -2388,7 +2399,7 @@ def random_season_activity():
 	conn = None
 	try:
 		if internet_onoff():
-			conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+			conn = sqlitecloud.connect(sqlconn)
 		else:
 			db_filename = "cybele.db"
 			if os.path.isfile(db_filename):
@@ -2405,8 +2416,7 @@ def random_season_activity():
 		if result:
 			activities_str = result[0]
 			if activities_str is not None:
-				activities = [activity.strip() for activity in activities_str.split(',')]
-				
+				activities = [activity.strip() for activity in activities_str.split(',')]				
 				activitie = "\n " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
 				print(activitie)
 			else:
@@ -2493,7 +2503,8 @@ def cybele_math_game():
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/"+dbname+".sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		sqlconm = sqlcodb.format(dbname_placeholder=dbname)
+		conn = sqlitecloud.connect(sqlconm)
 	else:
 		db_filename = dbname + ".db"
 		if os.path.isfile (db_filename) == True:
@@ -4019,13 +4030,21 @@ def main():
 			else:
 				storage = "offline [database files]"
 			if node_name:
-				print('   Device : ' + platform.node() + '|' + _cyext_[0:4].replace(" ",""))
+				print('   Device : ' + platform.node().upper() + '|' + _cyext_[0:4].replace(" ",""))
 			else:
 			  print ('  Device : unidentified device')
+			if system_country != None:
+				core_system_country = system_country[1]
+			elif country_code == None or country_code == "C" or country_code == "":
+				core_system_country = "Undetectable"
+			#elif country_code != "" or country_code != None or country_code != "C":
+			else:
+				core_system_country = country_code
 			print('     Name : ' + _title_)
 			print('  Version : ' +version)
 			print('  Revised : ' +_revise_)
 			print('   Python : ' + str(pyver[0]) + "." + str(pyver[1]) + "." + str(pyver[2]))
+			print('  Country : ' + core_system_country)
 			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
 			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(old_tech_terms_list)) + "|M" + str(len(core["word meaning"])))
 			print('    Linux : ' + str(len(linux_commands)))
@@ -4509,6 +4528,8 @@ def main():
 		elif question == 'testing':
 			print (f"Development testing propose code...")
 			print (core['working_hard'][0])
+			terminal_bg = os.getenv('COLOR_BACKGROUND')
+			print (terminal_bg)
 			print ("")
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
