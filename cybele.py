@@ -41,6 +41,7 @@ try:
 	import pycountry
 	import numpy as np
 	import PIL
+	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
 	from random_word import RandomWords
@@ -118,7 +119,6 @@ print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
-year_months = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"]
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
@@ -128,6 +128,7 @@ shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.aco
 stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""; dblrconn = ""
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
+GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -271,6 +272,344 @@ core = {
 	"asking for a word":	["word","say a word","talk","share a word","speak a word"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"coded":	["py","python","python art"]
+}
+#-------------------------------------------------------------
+knowledge = {
+		"pronoun_singular_third": ["he", "she", "it", "one", "this", "that"], # Added more
+		"pronoun_first_second_plural": ["I", "you", "we", "they", "these", "those"], # Added more
+		# ... (other existing categories) ...
+
+        "subject": [], # Failsafe key
+        "determiner": ["the", "some", "a", "an"], 
+        "aux_be_present_I": ["am"],
+        "aux_be_present_singular_third": ["is"],
+        "aux_be_present_plural": ["are"],
+        "aux_be_past_singular_I_third": ["was"],
+        "aux_be_past_plural": ["were"],
+        "aux_have_present_I_plural": ["have"],
+        "aux_have_present_singular_third": ["has"],
+        "aux_do_base": ["do"],
+        "aux_do_s_form": ["does"],
+        "modal_verb": ["will", "would", "should", "can", "could", "may", "might", "must"],
+        "negation": ["not"],
+        "verb_base_be": ["be"],
+        "verb_past_participle_be": ["been"],
+
+    "verb_base": [
+        "run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel",
+        "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell",
+        "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe",
+        "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear",
+        "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have",
+        "write", "read", "sing", "dance", "play", "work", "study", "teach", "travel", "explore",
+        "create", "build", "destroy", "help", "share", "receive", "give", "take", "bring", "send",
+        "meet", "leave", "arrive", "depart", "wait", "hurry", "relax", "dream", "hope", "wish",
+        "start", "finish", "open", "close", "cut", "paste", "copy", "delete", "save", "load",
+        "win", "lose", "break", "fix", "clean", "dirty", "empty", "fill", "find", "lose", "search",
+        "find", "hide", "show", "watch", "observe", "discover", "invent", "develop", "grow", "shrink",
+        "expand", "contract", "push", "pull", "lift", "drop", "throw", "catch", "buy", "sell",
+        "pay", "earn", "spend", "count", "measure", "weigh", "pour", "mix", "cook", "bake", "fry",
+        "boil", "chop", "slice", "stir", "eat", "drink", "sip", "gulp", "chew", "swallow",
+        "laugh", "cry", "smile", "frown", "nod", "shake", "wave", "point", "touch", "hold",
+        "carry", "drag", "push", "pull", "kick", "punch", "throw", "catch", "hit", "miss",
+        "aim", "shoot", "protect", "defend", "attack", "fight", "surrender", "escape", "capture",
+        "release", "bind", "untie", "wrap", "unwrap", "fold", "unfold", "bend", "straighten",
+        "twist", "untwist", "turn", "spin", "rotate", "slide", "slip", "crawl", "creep", "dash",
+        "rush", "stroll", "amble", "march", "jog", "sprint", "race", "compete", "win", "lose",
+        "draw", "tie", "score", "celebrate", "mourn", "grieve", "comfort", "console", "advise",
+        "warn", "suggest", "recommend", "permit", "forbid", "allow", "deny", "agree", "disagree",
+        "approve", "disapprove", "accept", "refuse", "promise", "threaten", "apologize", "forgive",
+        "thank", "welcome", "greet", "bid", "farewell", "introduce", "congratulate", "criticize",
+        "praise", "blame", "accuse", "defend", "excuse", "explain", "describe", "report", "announce",
+        "publish", "print", "type", "write", "draw", "paint", "sculpt", "build", "construct",
+        "demolish", "repair", "mend", "fix", "adjust", "tune", "install", "remove", "replace",
+        "connect", "disconnect", "attach", "detach", "fasten", "loosen", "tighten", "untie",
+        "bind", "unleash", "release", "capture", "hunt", "fish", "farm", "plant", "harvest",
+        "grow", "cultivate", "breed", "raise", "train", "teach", "learn", "study", "research",
+        "discover", "invent", "explore", "investigate", "analyze", "synthesize", "evaluate",
+        "plan", "organize", "manage", "supervise", "lead", "follow", "obey", "rebel", "resist",
+        "submit", "surrender", "fight", "struggle", "overcome", "succeed", "fail", "attempt",
+        "try", "practice", "exercise", "rest", "sleep", "wake", "rise", "shine", "glow", "sparkle",
+        "flash", "gleam", "glitter", "shimmer", "radiate", "reflect", "absorb", "emit", "transmit",
+        "receive", "send", "broadcast", "communicate", "interact", "collaborate", "cooperate",
+        "compete", "challenge", "defeat", "conquer", "lose", "win", "draw", "tie", "score"
+        # ... add many more verbs
+    ],
+    "verb_past_participle": [
+        "run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled",
+        "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen",
+        "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known",
+        "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated",
+        "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned",
+        "belonged", "done", "had",
+        # Add corresponding past participles for newly added verbs, handling irregular ones
+        "written", "read", "sung", "danced", "played", "worked", "studied", "taught", "traveled", "explored",
+        "created", "built", "destroyed", "helped", "shared", "received", "given", "taken", "brought", "sent",
+        "met", "left", "arrived", "departed", "waited", "hurried", "relaxed", "dreamed", "hoped", "wished",
+        "started", "finished", "opened", "closed", "cut", "pasted", "copied", "deleted", "saved", "loaded",
+        "won", "lost", "broken", "fixed", "cleaned", "dirtied", "emptied", "filled", "found", "lost", "searched",
+        "found", "hidden", "shown", "watched", "observed", "discovered", "invented", "developed", "grown", "shrunk",
+        "expanded", "contracted", "pushed", "pulled", "lifted", "dropped", "thrown", "caught", "bought", "sold",
+        "paid", "earned", "spent", "counted", "measured", "weighed", "poured", "mixed", "cooked", "baked", "fried",
+        "boiled", "chopped", "sliced", "stirred", "eaten", "drunk", "sipped", "gulped", "chewed", "swallowed",
+        "laughed", "cried", "smiled", "frowned", "nodded", "shaken", "waved", "pointed", "touched", "held",
+        "carried", "dragged", "pushed", "pulled", "kicked", "punched", "thrown", "caught", "hit", "missed",
+        "aimed", "shot", "protected", "defended", "attacked", "fought", "surrendered", "escaped", "captured",
+        "released", "bound", "untied", "wrapped", "unwrapped", "folded", "unfolded", "bent", "straightened",
+        "twisted", "untwisted", "turned", "spun", "rotated", "slid", "slipped", "crawled", "crept", "dashed",
+        "rushed", "strolled", "ambled", "marched", "jogged", "sprinted", "raced", "competed", "won", "lost",
+        "drawn", "tied", "scored", "celebrated", "mourned", "grieved", "comforted", "consoled", "advised",
+        "warned", "suggested", "recommended", "permitted", "forbidden", "allowed", "denied", "agreed", "disagreed",
+        "approved", "disapproved", "accepted", "refused", "promised", "threatened", "apologized", "forgiven",
+        "thanked", "welcomed", "greeted", "bidden", "farewelled", "introduced", "congratulated", "criticized",
+        "praised", "blamed", "accused", "defended", "excused", "explained", "described", "reported", "announced",
+        "published", "printed", "typed", "written", "drawn", "painted", "sculpted", "built", "constructed",
+        "demolished", "repaired", "mended", "fixed", "adjusted", "tuned", "installed", "removed", "replaced",
+        "connected", "disconnected", "attached", "detached", "fastened", "loosened", "tightened", "untied",
+        "bound", "unleashed", "released", "captured", "hunted", "fished", "farmed", "planted", "harvested",
+        "grown", "cultivated", "bred", "raised", "trained", "taught", "learned", "studied", "researched",
+        "discovered", "invented", "explored", "investigated", "analyzed", "synthesized", "evaluated",
+        "planned", "organized", "managed", "supervised", "led", "followed", "obeyed", "rebelled", "resisted",
+        "submitted", "surrendered", "fought", "struggled", "overcome", "succeeded", "failed", "attempted",
+        "tried", "practiced", "exercised", "rested", "slept", "woken", "risen", "shined", "glowed", "sparkled",
+        "flashed", "gleamed", "glittered", "shimmered", "radiated", "reflected", "absorbed", "emitted", "transmitted",
+        "received", "sent", "broadcast", "communicated", "interacted", "collaborated", "cooperated",
+        "competed", "challenged", "defeated", "conquered", "lost", "won", "drawn", "tied", "scored"
+        # ... add many more past participles
+    ],
+    "noun": [
+        "person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean",
+        "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water",
+        "house", "building", "street", "city", "country", "world", "universe", "star", "planet", "moon",
+        "sun", "sky", "cloud", "rain", "snow", "wind", "fire", "earth", "rock", "stone", "metal", "wood",
+        "paper", "cloth", "glass", "plastic", "air", "light", "darkness", "shadow", "sound", "silence",
+        "noise", "voice", "song", "story", "poem", "novel", "film", "movie", "play", "game", "sport",
+        "art", "painting", "sculpture", "drawing", "picture", "photo", "image", "design", "fashion", "style",
+        "beauty", "ugliness", "truth", "lie", "fact", "opinion", "knowledge", "wisdom", "intelligence",
+        "stupidity", "ignorance", "skill", "talent", "gift", "curse", "blessing", "luck", "fate", "destiny",
+        "chance", "opportunity", "problem", "puzzle", "mystery", "secret", "answer", "question", "doubt",
+        "belief", "faith", "hope", "despair", "joy", "grief", "love", "hate", "friendship", "enmity",
+        "peace", "war", "conflict", "harmony", "balance", "order", "chaos", "freedom", "slavery", "justice",
+        "injustice", "right", "wrong", "good", "evil", "virtue", "vice", "courage", "fear", "bravery",
+        "cowardice", "strength", "weakness", "health", "illness", "pain", "pleasure", "comfort", "discomfort",
+        "hunger", "thirst", "sleep", "wakefulness", "life", "death", "beginning", "end", "start", "finish",
+        "middle", "edge", "center", "side", "top", "bottom", "front", "back", "inside", "outside",
+        "surface", "depth", "height", "width", "length", "size", "shape", "color", "texture", "smell",
+        "taste", "sound", "sight", "touch", "feeling", "emotion", "thought", "memory", "dream", "nightmare",
+        "fantasy", "reality", "truth", "lie", "fact", "fiction", "history", "future", "past", "present",
+        "time", "space", "dimension", "universe", "galaxy", "solar system", "planet", "earth", "moon", "sun",
+        "star", "constellation", "nebula", "black hole", "wormhole", "alien", "robot", "cyborg", "android",
+        "human", "animal", "plant", "fungus", "bacteria", "virus", "cell", "molecule", "atom", "quark",
+        "energy", "matter", "force", "power", "strength", "weakness", "speed", "slowness", "acceleration",
+        "deceleration", "gravity", "magnetism", "electricity", "light", "sound", "heat", "cold", "pressure",
+        "vacuum", "liquid", "solid", "gas", "plasma", "crystal", "powder", "dust", "smoke", "fog", "mist",
+        "steam", "bubble", "wave", "ripple", "current", "flow", "stream", "river", "lake", "ocean", "sea",
+        "pond", "pool", "waterfall", "fountain", "spring", "well", "desert", "forest", "jungle", "mountain",
+        "valley", "hill", "plain", "plateau", "island", "coast", "beach", "shore", "cliff", "cave", "volcano",
+        "earthquake", "tsunami", "hurricane", "tornado", "storm", "blizzard", "drought", "flood", "fire",
+        "explosion", "disaster", "catastrophe", "accident", "mistake", "error", "success", "failure", "victory",
+        "defeat", "challenge", "opportunity", "risk", "danger", "safety", "security", "threat", "warning",
+        "sign", "symbol", "signal", "message", "letter", "word", "sentence", "paragraph", "text", "book",
+        "paper", "document", "file", "folder", "cabinet", "drawer", "box", "bag", "container", "package",
+        "envelope", "stamp", "ticket", "pass", "key", "lock", "door", "window", "wall", "roof", "floor",
+        "ceiling", "room", "house", "apartment", "building", "tower", "castle", "fortress", "palace", "temple",
+        "church", "mosque", "synagogue", "cathedral", "shrine", "monument", "statue", "bridge", "road",
+        "path", "trail", "street", "avenue", "boulevard", "lane", "alley", "square", "park", "garden",
+        "field", "forest", "woods", "jungle", "desert", "mountain", "hill", "valley", "plain", "plateau",
+        "island", "coast", "beach", "shore", "cliff", "cave", "volcano", "river", "lake", "ocean", "sea",
+        "pond", "pool", "waterfall", "fountain", "spring", "well", "farm", "ranch", "village", "town",
+        "city", "metropolis", "capital", "country", "nation", "state", "province", "region", "continent",
+        "world", "globe", "earth", "universe"],
+        # ... add many more nouns
+		
+		"noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
+        "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
+        "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
+        "noun_abstract": ["idea", "solution", "sadness", "happiness"],
+    
+    "adjective": [
+        "happy", "sad", "angry", "excited", "calm", "beautiful", "ugly", "tall", "short", "big", "small",
+        "old", "new", "good", "bad", "smart", "stupid", "funny", "serious", "kind", "brave", "cowardly",
+        "strong", "weak", "healthy", "ill", "sick", "well", "hungry", "thirsty", "tired", "energetic",
+        "sleepy", "awake", "bright", "dark", "light", "heavy", "soft", "hard", "smooth", "rough",
+        "hot", "cold", "warm", "cool", "dry", "wet", "clean", "dirty", "empty", "full", "open", "closed",
+        "fast", "slow", "quick", "rapid", "gentle", "rough", "loud", "quiet", "noisy", "silent",
+        "visible", "invisible", "audible", "inaudible", "tangible", "intangible", "real", "fake", "true",
+        "false", "correct", "wrong", "accurate", "inaccurate", "certain", "uncertain", "possible",
+        "impossible", "probable", "improbable", "easy", "difficult", "simple", "complex", "clear", "unclear",
+        "obvious", "hidden", "known", "unknown", "familiar", "unfamiliar", "common", "rare", "unique",
+        "ordinary", "special", "important", "unimportant", "significant", "insignificant", "major", "minor",
+        "large", "small", "huge", "tiny", "wide", "narrow", "deep", "shallow", "high", "low", "long",
+        "short", "thick", "thin", "broad", "slim", "fat", "thin", "round", "square", "triangular", "straight",
+        "curved", "bent", "broken", "fixed", "whole", "part", "complete", "incomplete", "full", "empty",
+        "available", "unavailable", "present", "absent", "near", "far", "close", "distant", "up", "down",
+        "inside", "outside", "above", "below", "front", "back", "left", "right", "east", "west", "north",
+        "south", "central", "eastern", "western", "northern", "southern", "upper", "lower", "inner", "outer",
+        "middle", "top", "bottom", "first", "last", "next", "previous", "early", "late", "recent", "ancient",
+        "modern", "old-fashioned", "new-fangled", "futuristic", "traditional", "contemporary", "classic",
+        "vintage", "antique", "rustic", "urban", "rural", "suburban", "local", "global", "national",
+        "international", "public", "private", "social", "personal", "individual", "collective", "common",
+        "shared", "unique", "diverse", "similar", "different", "same", "alike", "unlike", "equal", "unequal",
+        "fair", "unfair", "just", "unjust", "legal", "illegal", "moral", "immoral", "ethical", "unethical",
+        "good", "bad", "excellent", "poor", "superb", "terrible", "wonderful", "awful", "great", "dreadful",
+        "amazing", "horrible", "fantastic", "lousy", "pleasant", "unpleasant", "enjoyable", "unenjoyable",
+        "interesting", "boring", "exciting", "dull", "amusing", "tedious", "charming", "annoying", "delightful",
+        "irritating", "lovely", "ugly", "pretty", "handsome", "beautiful", "attractive", "unattractive",
+        "cute", "adorable", "hideous", "gorgeous", "stunning", "plain", "neat", "messy", "tidy", "untidy",
+        "clean", "dirty", "spotless", "filthy", "organized", "disorganized", "structured", "unstructured",
+        "simple", "complicated", "easy", "hard", "straightforward", "complex", "direct", "indirect",
+        "frank", "reserved", "open", "closed", "honest", "dishonest", "sincere", "insincere", "true",
+        "false", "loyal", "disloyal", "faithful", "unfaithful", "reliable", "unreliable", "trustworthy",
+        "untrustworthy", "dependable", "undependable", "responsible", "irresponsible", "careful", "careless",
+        "cautious", "reckless", "wise", "foolish", "intelligent", "unintelligent", "clever", "silly",
+        "smart", "dumb", "bright", "dim", "quick-witted", "slow-witted", "creative", "uncreative",
+        "imaginative", "unimaginative", "artistic", "unartistic", "musical", "unmusical", "athletic",
+        "unathletic", "talented", "untalented", "skilled", "unskilled", "experienced", "inexperienced",
+        "professional", "amateur", "expert", "novice", "master", "apprentice", "leader", "follower",
+        "dominant", "submissive", "assertive", "passive", "aggressive", "peaceful", "violent", "nonviolent",
+        "friendly", "unfriendly", "kind", "unkind", "generous", "selfish", "altruistic", "egoistic",
+        "sympathetic", "unsympathetic", "empathetic", "apathetic", "compassionate", "heartless", "warm",
+        "cold", "affectionate", "indifferent", "loving", "hateful", "joyful", "sorrowful", "cheerful",
+        "gloomy", "optimistic", "pessimistic", "hopeful", "hopeless", "confident", "insecure", "brave",
+        "timid", "courageous", "fearful", "strong", "weak", "powerful", "powerless", "energetic", "lethargic",
+        "active", "inactive", "busy", "idle", "productive", "unproductive", "efficient", "inefficient",
+        "effective", "ineffective", "successful", "unsuccessful", "victorious", "defeated", "winning",
+        "losing", "triumphant", "failed", "happy", "unhappy", "content", "discontent", "satisfied",
+        "dissatisfied", "pleased", "displeased", "excited", "bored", "thrilled", "calm", "nervous", "relaxed",
+        "tense", "stressed", "peaceful", "troubled", "comfortable", "uncomfortable", "safe", "unsafe",
+        "secure", "insecure", "protected", "exposed", "healthy", "sick", "well", "ill", "fit", "unfit",
+        "strong", "weak", "able", "unable", "capable", "incapable", "competent", "incompetent", "qualified",
+        "unqualified", "suitable", "unsuitable", "appropriate", "inappropriate", "proper", "improper",
+        "correct", "incorrect", "right", "wrong", "valid", "invalid", "true", "false", "authentic",
+        "fake", "genuine", "artificial", "natural", "unnatural", "real", "unreal", "existent",
+        "nonexistent", "present", "absent", "available", "unavailable", "current", "past", "future",
+        "old", "new", "ancient", "modern", "contemporary", "outdated", "current", "future", "past",
+        "temporary", "permanent", "brief", "long", "short", "quick", "slow", "fast", "rapid", "sudden",
+        "gradual", "early", "late", "timely", "untimely", "punctual", "late", "on time", "ahead of schedule",
+        "behind schedule", "first", "last", "next", "previous", "initial", "final", "primary", "secondary",
+        "tertiary", "main", "minor", "major", "chief", "subordinate", "principal", "auxiliary", "essential",
+        "nonessential", "critical", "trivial", "important", "unimportant", "significant", "insignificant",
+        "basic", "advanced", "complex", "simple", "easy", "difficult", "hard", "soft", "light", "dark",
+        "bright", "dim", "colorful", "dull", "vibrant", "pale", "loud", "quiet", "noisy", "silent",
+        "musical", "unmusical", "harmonious", "dissonant", "sweet", "sour", "bitter", "salty", "spicy",
+        "bland", "tasty", "delicious", "disgusting", "fragrant", "odorless", "stinky", "fresh", "stale",
+        "clean", "dirty", "pure", "impure", "smooth", "rough", "soft", "hard", "smooth", "bumpy", "flat",
+        "uneven", "straight", "curved", "bent", "cracked", "broken", "whole", "damaged", "repaired",
+        "new", "old", "ancient", "modern", "contemporary", "futuristic", "classic", "vintage", "antique",
+        "rustic", "polished", "dull", "shiny", "matte", "glossy", "transparent", "opaque", "clear",
+        "cloudy", "solid", "liquid", "gaseous", "dense", "sparse", "heavy", "light", "big", "small",
+        "large", "tiny", "huge", "miniature", "gigantic", "microscopic", "enormous", "petite", "massive",
+        "slight", "broad", "narrow", "wide", "thin", "thick", "deep", "shallow", "high", "low",
+        "tall", "short", "long", "brief", "extended", "limited", "unlimited", "finite", "infinite",
+        "bound", "unbound", "open", "closed", "covered", "uncovered", "exposed", "sheltered", "indoor",
+        "outdoor", "inside", "outside", "internal", "external", "central", "peripheral", "front", "back",
+        "top", "bottom", "upper", "lower", "left", "right", "eastern", "western", "northern", "southern",
+        "local", "regional", "national", "international", "global", "universal", "cosmic", "terrestrial",
+        "aquatic", "aerial", "grounded", "floating", "submerged", "emerged", "visible", "invisible",
+        "perceptible", "imperceptible", "detectable", "undetectable", "noticeable", "unnoticeable",
+        "apparent", "hidden", "obvious", "subtle", "distinct", "indistinct", "clear", "blurry", "sharp",
+        "fuzzy", "focused", "unfocused", "bright", "dim", "vivid", "faint", "strong", "weak", "intense",
+        "mild", "powerful", "powerless", "effective", "ineffective", "efficient", "inefficient",
+        "productive", "unproductive", "useful", "useless", "valuable", "worthless", "important",
+        "unimportant", "significant", "insignificant", "crucial", "trivial", "essential", "nonessential",
+        "necessary", "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory",
+        "elective", "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor",
+        "principal", "auxiliary", "leading", "following", "first", "last", "next", "previous",
+        "initial", "final", "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic",
+        "counterfeit", "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living",
+        "nonliving", "animate", "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid",
+        "gas", "plasma", "energy", "matter", "physical", "mental", "emotional", "spiritual", "intellectual",
+        "creative", "logical", "intuitive", "rational", "irrational", "sensible", "absurd", "realistic",
+        "unrealistic", "practical", "impractical", "feasible", "infeasible", "possible", "impossible",
+        "probable", "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful",
+        "optimistic", "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable",
+        "unfavorable", "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive",
+        "destructive", "helpful", "unhelpful", "useful", "useless", "effective", "ineffective",
+        "efficient", "inefficient", "productive", "unproductive", "successful", "unsuccessful",
+        "victorious", "defeated", "winning", "losing", "triumphant", "failed", "accomplished", "unaccomplished",
+        "achieved", "unachieved", "fulfilled", "unfulfilled", "satisfied", "dissatisfied", "content",
+        "discontent", "happy", "unhappy", "joyful", "sorrowful", "cheerful", "gloomy", "elated", "depressed",
+        "excited", "bored", "thrilled", "calm", "nervous", "relaxed", "tense", "stressed", "peaceful",
+        "troubled", "comfortable", "uncomfortable", "safe", "unsafe", "secure", "insecure", "protected",
+        "exposed", "healthy", "sick", "well", "ill", "fit", "unfit", "strong", "weak", "able", "unable",
+        "capable", "incapable", "competent", "incompetent", "qualified", "unqualified", "suitable",
+        "unsuitable", "appropriate", "inappropriate", "proper", "improper", "correct", "incorrect",
+        "right", "wrong", "valid", "invalid", "true", "false", "authentic", "fake", "genuine",
+        "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving", "animate",
+        "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid", "gas", "plasma", "energy",
+        "matter", "physical", "mental", "emotional", "spiritual", "intellectual", "creative", "logical",
+        "intuitive", "rational", "irrational", "sensible", "absurd", "realistic", "unrealistic",
+        "practical", "impractical", "feasible", "infeasible", "possible", "impossible", "probable",
+        "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful", "optimistic",
+        "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable", "unfavorable",
+        "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive", "destructive",
+        "helpful", "unhelpful", "useful", "useless", "valuable", "worthless", "important", "unimportant",
+        "significant", "insignificant", "crucial", "trivial", "essential", "nonessential", "necessary",
+        "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory", "elective",
+        "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor", "principal",
+        "auxiliary", "leading", "following", "first", "last", "next", "previous", "initial", "final",
+        "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic", "counterfeit",
+        "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving",
+        "animate", "inanimate", "human", "animal", "plant", "mineral"
+        # ... add many more adjectives
+    ],
+    "adverb": [
+        "quickly", "slowly", "carefully", "badly", "well", "happily", "sadly", "angrily", "excitedly",
+        "calmly", "now", "then", "soon", "later", "early", "yesterday", "today", "tomorrow", "always",
+        "never", "here", "there", "everywhere", "anywhere", "upstairs", "downstairs", "outside", "inside",
+        "forward", "very", "extremely", "quite", "rather", "too", "enough", "almost", "nearly", "scarcely",
+        "hardly", "often", "sometimes", "usually", "rarely", "never", "always", "frequently", "occasionally",
+        "seldom", "generally", "actually", "additionally", "allegedly", "almost", "already", "also",
+        "always", "amazingly", "annually", "apparently", "approximately", "arbitrarily", "arguably",
+        "around", "as", "aside", "automatically", "away", "back", "badly", "barely", "beautifully",
+        "before", "behind", "below", "beneath", "best", "better", "beyond", "bitterly", "blindly",
+        "boldly", "briefly", "brightly", "busily", "calmly", "carefully", "carelessly", "certainly",
+        "chiefly", "clearly", "closely", "commonly", "completely", "consequently", "constantly",
+        "continually", "correctly", "courageously", "currently", "daily", "dangerously", "darkly",
+        "decidedly", "deeply", "definitely", "deliberately", "delightfully", "densely", "directly",
+        "disappointingly", "distinctly", "down", "downstairs", "dramatically", "due", "eagerly",
+        "early", "easily", "effectively", "efficiently", "effortlessly", "elsewhere", "emotionally",
+        "enough", "entirely", "especially", "essentially", "even", "eventually", "ever", "everywhere",
+        "exactly", "exceptionally", "excessively", "exclusively", "explicitly", "expressly",
+        "extensively", "externally", "extraordinarily", "extremely", "fairly", "faithfully", "far",
+        "fast", "finally", "firmly", "first", "firstly", "flatly", "forever", "formerly", "forth",
+        "fortunately", "forward", "frankly", "free", "freely", "frequently", "fully", "generally",
+        "generously", "gently", "gladly", "globally", "gradually", "greatly", "grimly", "happily",
+        "hard", "hardly", "hastily", "healthily", "heavily", "hence", "here", "highly", "honestly",
+        "hourly", "how", "however", "hungrily", "ideally", "immediately", "impatiently", "importantly",
+        "improperly", "inaccurately", "incidentally", "increasingly", "indeed", "indirectly",
+        "individually", "inevitably", "informally", "initially", "inside", "instantly", "instead",
+        "intensely", "internally", "inwardly", "ironically", "just", "justly", "keenly", "kindly",
+        "knowingly", "last", "lastly", "late", "lately", "least", "legally", "less", "lightly",
+        "likewise", "literally", "locally", "logically", "long", "longingly", "loudly", "lovingly",
+        "loyally", "luckily", "mainly", "merely", "mightily", "moderately", "momentarily", "monthly",
+        "more", "moreover", "most", "mostly", "much", "mutually", "namely", "nationally", "naturally",
+        "nearly", "necessarily", "needlessly", "negatively", "never", "nevertheless", "newly", "next",
+        "nightly", "no", "nonetheless", "normally", "not", "notably", "nothing", "now", "nowhere",
+        "obviously", "occasionally", "off", "often", "on", "only", "openly", "optimistically",
+        "orally", "originally", "otherwise", "out", "outdoors", "outside", "over", "overall",
+        "overnight", "overseas", "painfully", "partially", "particularly", "partly", "patiently",
+        "perfectly", "personally", "physically", "plainly", "pleasantly", "politely", "poorly",
+        "possibly", "powerfully", "practically", "precisely", "presently", "presumably", "previously",
+        "primarily", "privately", "probably", "promptly", "properly", "publicly", "purely", "quickly",
+        "quietly", "quite", "randomly", "rapidly", "rarely", "rather", "readily", "really", "recently",
+        "regularly", "reluctantly", "remarkably", "repeatedly", "reportedly", "respectively",
+        "responsibly", "right", "rightly", "roughly", "routinely", "sadly", "safely", "scarcely",
+        "second", "secondly", "secretly", "seldom", "separately", "seriously", "sharply", "shortly",
+        "silently", "simply", "sincerely", "slowly", "so", "softly", "solely", "sometimes", "soon",
+        "specifically", "suddenly", "surely", "surprisingly", "swiftly", "thankfully", "then", "there",
+        "therefore", "thoroughly", "though", "thoughtfully", "thus", "tightly", "today", "together",
+        "tomorrow", "too", "totally", "truly", "twice", "typically", "ultimately", "unconditionally",
+        "undoubtedly", "unfortunately", "uniformly", "unilaterally", "uniquely", "unless", "unlikely",
+        "unnecessarily", "unusually", "up", "upstairs", "usually", "utterly", "very", "virtually",
+        "visibly", "voluntarily", "warmly", "weakly", "weekly", "well", "when", "whenever", "where",
+        "wherever", "whether", "while", "wholly", "why", "widely", "wildly", "willingly", "wisely",
+        "within", "without", "wonderfully", "yearly", "yes", "yesterday", "yet", "zealously"
+        # ... add many more adverbs
+    ],
+		"preposition": ["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
+        "conjunction": ["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
+    # ... other categories
 }
 #-------------------------------------------------------------
 messages = {
@@ -505,6 +844,8 @@ help = {
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
+	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
+	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
@@ -1102,7 +1443,7 @@ maincommands = [
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","list holidays","actual country","view solar system","ascii table"
+	"protect image","set default country","list holidays","actual country","view solar system","check update","last update","conjugate"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -3044,6 +3385,243 @@ def draw_christmas_tree():
 
 #---------------------------------------------------------------------------
 #-------------------------------------------------------------------
+# cybele verb conjugator (EN simple)
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
+def cybele_conjugator(verb):
+    
+    if not isinstance(verb, str):
+        if isinstance(verb, (int, float)):
+            print(f"{kolor['BOLD_RED']}Oh no, my friend!{kolor['OFF']} I need a proper verb ({kolor['BOLD_CYAN']}a string{kolor['OFF']}) to work my magic. It looks like you gave me a {kolor['BOLD_YELLOW']}number{kolor['OFF']}: {kolor['VIVID_RED']}{verb}{kolor['OFF']}")
+        else:
+            print(f"{kolor['BOLD_RED']}Oh no, my friend!{kolor['OFF']} I need a proper verb ({kolor['BOLD_CYAN']}a string{kolor['OFF']}) to work my magic. You gave me something of type: {kolor['VIVID_RED']}{type(verb)}{kolor['OFF']}")
+        return
+
+    verb = verb.lower()
+	
+    PERSON_COL_WIDTH = 18
+    TENSE_COL_WIDTH = 25
+
+    irregular_verbs = {
+        'be': ('was/were', 'been', 'ing'),
+        'have': ('had', 'had', 'ing'),
+        'do': ('did', 'done', 'ing'),
+        'go': ('went', 'gone', 'ing'),
+        'say': ('said', 'said', 'ing'),
+        'see': ('saw', 'seen', 'ing'),
+        'make': ('made', 'made', 'ing'),
+        'come': ('came', 'come', 'ing'),
+        'know': ('knew', 'known', 'ing'),
+        'get': ('got', 'gotten/got', 'ing'),
+        'give': ('gave', 'given', 'ing'),
+        'find': ('found', 'found', 'ing'),
+        'think': ('thought', 'thought', 'ing'),
+        'tell': ('told', 'told', 'ing'),
+        'take': ('took', 'taken', 'ing'),
+        'become': ('became', 'become', 'ing'),
+        'begin': ('began', 'begun', 'ning'),
+        'run': ('ran', 'run', 'nning'),
+        'cut': ('cut', 'cut', 'tting'),
+        'put': ('put', 'put', 'tting'),
+        'read': ('read', 'read', 'ing'),
+        'eat': ('ate', 'eaten', 'ing'),
+        'write': ('wrote', 'written', 'ing'),
+        'sing': ('sang', 'sung', 'ing'),
+        'drink': ('drank', 'drunk', 'ing'),
+        'sleep': ('slept', 'slept', 'ing'),
+        'drive': ('drove', 'driven', 'ing'),
+        'swim': ('swam', 'swum', 'mming'),
+        'fly': ('flew', 'flown', 'ing'),
+        'break': ('broke', 'broken', 'ing'),
+        'speak': ('spoke', 'spoken', 'ing'),
+        'steal': ('stole', 'stolen', 'ing'),
+        'choose': ('chose', 'chosen', 'ing'),
+        'fall': ('fell', 'fallen', 'ing'),
+        'grow': ('grew', 'grown', 'ing'),
+        'draw': ('drew', 'drawn', 'ing'),
+        'build': ('built', 'built', 'ing'),
+        'send': ('sent', 'sent', 'ing'),
+        'spend': ('spent', 'spent', 'ing'),
+        'lose': ('lost', 'lost', 'ing'),
+        'catch': ('caught', 'caught', 'ing'),
+        'bring': ('brought', 'brought', 'ing'),
+        'buy': ('bought', 'bought', 'ing'),
+        'teach': ('taught', 'taught', 'ing'),
+        'fight': ('fought', 'fought', 'ing'),
+        'sell': ('sold', 'sold', 'ing'),
+        'hear': ('heard', 'heard', 'ing'),
+        'hold': ('held', 'held', 'ing'),
+        'stand': ('stood', 'stood', 'ing'),
+        'understand': ('understood', 'understood', 'ing'),
+    }
+
+    persons = [
+        'I', 'You', 'He/She/It', 'We', 'You (plural)', 'They'
+    ]
+
+    conjugated_forms = {
+        'present_simple': {},
+        'past_simple': {},
+        'future_simple': {},
+        'present_continuous': {},
+        'past_continuous': {},
+        'present_perfect': {},
+        'present_participle': '',
+        'past_participle': ''
+    }
+
+    past_simple_form = ''
+    past_participle_form = ''
+    present_participle_form = ''
+
+    if verb in irregular_verbs:
+        past_simple_form, past_participle_form, pp_suffix = irregular_verbs[verb]
+        if verb.endswith('e') and pp_suffix == 'ing' and verb != 'be':
+            present_participle_form = verb[:-1] + 'ing'
+        elif pp_suffix == 'ing':
+            present_participle_form = verb + 'ing'
+        elif pp_suffix:
+             present_participle_form = verb + pp_suffix
+        else:
+             present_participle_form = verb + 'ing'
+    else:
+        if verb.endswith('e'):
+            past_form_regular = verb + 'd'
+        elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+            past_form_regular = verb[:-1] + 'ied'
+        elif len(verb) >= 2 and verb[-1] not in 'aeiouy' and verb[-2] in 'aeiou' and verb[-3] not in 'aeiou':
+            past_form_regular = verb + verb[-1] + 'ed'
+        else:
+            past_form_regular = verb + 'ed'
+        past_simple_form = past_form_regular
+        past_participle_form = past_form_regular
+
+        if verb.endswith('e') and verb not in ['be', 'dye', 'lie', 'tie', 'vie']:
+            present_participle_form = verb[:-1] + 'ing'
+        elif len(verb) >= 2 and verb[-1] not in 'aeiouy' and verb[-2] in 'aeiou' and verb[-3] not in 'aeiou':
+            present_participle_form = verb + verb[-1] + 'ing'
+        else:
+            present_participle_form = verb + 'ing'
+
+    conjugated_forms['present_participle'] = present_participle_form
+    conjugated_forms['past_participle'] = past_participle_form
+
+    if verb in irregular_verbs:
+        if verb == 'be':
+            conjugated_forms['present_simple'] = {
+                'I': 'am', 'You': 'are', 'He/She/It': 'is',
+                'We': 'are', 'You (plural)': 'are', 'They': 'are'
+            }
+        elif verb == 'have':
+             conjugated_forms['present_simple'] = {
+                'I': 'have', 'You': 'have', 'He/She/It': 'has',
+                'We': 'have', 'You (plural)': 'have', 'They': 'have'
+            }
+        else:
+            for i, person in enumerate(persons):
+                if person == 'He/She/It':
+                    if verb.endswith(('s', 'sh', 'ch', 'x', 'z', 'o')):
+                        conjugated_forms['present_simple'][person] = verb + 'es'
+                    elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+                        conjugated_forms['present_simple'][person] = verb[:-1] + 'ies'
+                    else:
+                        conjugated_forms['present_simple'][person] = verb + 's'
+                else:
+                    conjugated_forms['present_simple'][person] = verb
+
+        for person in persons:
+            conjugated_forms['past_simple'][person] = past_simple_form
+        for person in persons:
+            conjugated_forms['future_simple'][person] = 'will ' + verb
+
+        be_present = {
+            'I': 'am', 'You': 'are', 'He/She/It': 'is',
+            'We': 'are', 'You (plural)': 'are', 'They': 'are'
+        }
+        for person in persons:
+            conjugated_forms['present_continuous'][person] = f"{be_present[person]} {present_participle_form}"
+
+        be_past = {
+            'I': 'was', 'You': 'were', 'He/She/It': 'was',
+            'We': 'were', 'You (plural)': 'were', 'They': 'were'
+        }
+        for person in persons:
+            conjugated_forms['past_continuous'][person] = f"{be_past[person]} {present_participle_form}"
+
+        have_present = {
+            'I': 'have', 'You': 'have', 'He/She/It': 'has',
+            'We': 'have', 'You (plural)': 'have', 'They': 'have'
+        }
+        for person in persons:
+            conjugated_forms['present_perfect'][person] = f"{have_present[person]} {past_participle_form}"
+
+    else:
+        for i, person in enumerate(persons):
+            if person == 'He/She/It':
+                if verb.endswith(('s', 'sh', 'ch', 'x', 'z', 'o')):
+                    conjugated_forms['present_simple'][person] = verb + 'es'
+                elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+                    conjugated_forms['present_simple'][person] = verb[:-1] + 'ies'
+                else:
+                    conjugated_forms['present_simple'][person] = verb + 's'
+            else:
+                conjugated_forms['present_simple'][person] = verb
+
+        for person in persons:
+            conjugated_forms['past_simple'][person] = past_simple_form
+        for person in persons:
+            conjugated_forms['future_simple'][person] = 'will ' + verb
+
+        be_present = {
+            'I': 'am', 'You': 'are', 'He/She/It': 'is',
+            'We': 'are', 'You (plural)': 'are', 'They': 'are'
+        }
+        for person in persons:
+            conjugated_forms['present_continuous'][person] = f"{be_present[person]} {present_participle_form}"
+
+        be_past = {
+            'I': 'was', 'You': 'were', 'He/She/It': 'was',
+            'We': 'were', 'You (plural)': 'were', 'They': 'were'
+        }
+        for person in persons:
+            conjugated_forms['past_continuous'][person] = f"{be_past[person]} {present_participle_form}"
+
+        have_present = {
+            'I': 'have', 'You': 'have', 'He/She/It': 'has',
+            'We': 'have', 'You (plural)': 'have', 'They': 'have'
+        }
+        for person in persons:
+            conjugated_forms['present_perfect'][person] = f"{have_present[person]} {past_participle_form}"
+
+    print(f"\nHere's what I have for the '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}' bring in my knowledge base:")
+
+    print(f"{kolor['BOLD_BLUE']}{'Person':<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Past Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Future Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+    print(f"{kolor['DIM_WHITE']}{'-'*PERSON_COL_WIDTH:<{PERSON_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    for person in persons:
+        present_s = conjugated_forms['present_simple'].get(person, 'N/A')
+        past_s = conjugated_forms['past_simple'].get(person, 'N/A')
+        future_s = conjugated_forms['future_simple'].get(person, 'N/A')
+        print(f"{kolor['WHITE']}{person:<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_s:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{past_s:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{future_s:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    print(f"\n{kolor['BOLD_GREEN']}And here's the second part for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}', just as important, you see:")
+
+    print(f"{kolor['BOLD_BLUE']}{'Person':<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Continuous':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Past Continuous':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Perfect':<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+    print(f"{kolor['DIM_WHITE']}{'-'*PERSON_COL_WIDTH:<{PERSON_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    for person in persons:
+        present_c = conjugated_forms['present_continuous'].get(person, 'N/A')
+        past_c = conjugated_forms['past_continuous'].get(person, 'N/A')
+        present_p = conjugated_forms['present_perfect'].get(person, 'N/A')
+        print(f"{kolor['WHITE']}{person:<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_c:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{past_c:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_p:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    print(f"\n{kolor['BOLD_GREEN']}And don't forget the core forms for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}', they're very important, you know:")
+    print(f"Present Participle (the '-ing' form): {kolor['YELLOW']}{conjugated_forms['present_participle']}{kolor['OFF']}")
+    print(f"Past Participle (often the '-ed' or irregular form): {kolor['YELLOW']}{conjugated_forms['past_participle']}{kolor['OFF']}")
+    print(f"\n{kolor['BOLD_GREEN']}That's all for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}' now! Hope it helped!{kolor['OFF']}\n")
+	
+#---------------------------------------------------------------------------
+#-------------------------------------------------------------------
 # cybele sentence, text, verb sub-cores
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
@@ -3083,345 +3661,6 @@ def conjugate_verb(verb_type, subject_pronoun, knowledge):
 
 #-------------------------------------------------------------------
 def make_sentence(rw_instance):
-    
-	
-	knowledge = {
-		"pronoun_singular_third": ["he", "she", "it", "one", "this", "that"], # Added more
-		"pronoun_first_second_plural": ["I", "you", "we", "they", "these", "those"], # Added more
-		# ... (other existing categories) ...
-
-        "subject": [], # Failsafe key
-        "determiner": ["the", "some", "a", "an"], 
-        "aux_be_present_I": ["am"],
-        "aux_be_present_singular_third": ["is"],
-        "aux_be_present_plural": ["are"],
-        "aux_be_past_singular_I_third": ["was"],
-        "aux_be_past_plural": ["were"],
-        "aux_have_present_I_plural": ["have"],
-        "aux_have_present_singular_third": ["has"],
-        "aux_do_base": ["do"],
-        "aux_do_s_form": ["does"],
-        "modal_verb": ["will", "would", "should", "can", "could", "may", "might", "must"],
-        "negation": ["not"],
-        "verb_base_be": ["be"],
-        "verb_past_participle_be": ["been"],
-
-    "verb_base": [
-        "run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel",
-        "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell",
-        "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe",
-        "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear",
-        "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have",
-        "write", "read", "sing", "dance", "play", "work", "study", "teach", "travel", "explore",
-        "create", "build", "destroy", "help", "share", "receive", "give", "take", "bring", "send",
-        "meet", "leave", "arrive", "depart", "wait", "hurry", "relax", "dream", "hope", "wish",
-        "start", "finish", "open", "close", "cut", "paste", "copy", "delete", "save", "load",
-        "win", "lose", "break", "fix", "clean", "dirty", "empty", "fill", "find", "lose", "search",
-        "find", "hide", "show", "watch", "observe", "discover", "invent", "develop", "grow", "shrink",
-        "expand", "contract", "push", "pull", "lift", "drop", "throw", "catch", "buy", "sell",
-        "pay", "earn", "spend", "count", "measure", "weigh", "pour", "mix", "cook", "bake", "fry",
-        "boil", "chop", "slice", "stir", "eat", "drink", "sip", "gulp", "chew", "swallow",
-        "laugh", "cry", "smile", "frown", "nod", "shake", "wave", "point", "touch", "hold",
-        "carry", "drag", "push", "pull", "kick", "punch", "throw", "catch", "hit", "miss",
-        "aim", "shoot", "protect", "defend", "attack", "fight", "surrender", "escape", "capture",
-        "release", "bind", "untie", "wrap", "unwrap", "fold", "unfold", "bend", "straighten",
-        "twist", "untwist", "turn", "spin", "rotate", "slide", "slip", "crawl", "creep", "dash",
-        "rush", "stroll", "amble", "march", "jog", "sprint", "race", "compete", "win", "lose",
-        "draw", "tie", "score", "celebrate", "mourn", "grieve", "comfort", "console", "advise",
-        "warn", "suggest", "recommend", "permit", "forbid", "allow", "deny", "agree", "disagree",
-        "approve", "disapprove", "accept", "refuse", "promise", "threaten", "apologize", "forgive",
-        "thank", "welcome", "greet", "bid", "farewell", "introduce", "congratulate", "criticize",
-        "praise", "blame", "accuse", "defend", "excuse", "explain", "describe", "report", "announce",
-        "publish", "print", "type", "write", "draw", "paint", "sculpt", "build", "construct",
-        "demolish", "repair", "mend", "fix", "adjust", "tune", "install", "remove", "replace",
-        "connect", "disconnect", "attach", "detach", "fasten", "loosen", "tighten", "untie",
-        "bind", "unleash", "release", "capture", "hunt", "fish", "farm", "plant", "harvest",
-        "grow", "cultivate", "breed", "raise", "train", "teach", "learn", "study", "research",
-        "discover", "invent", "explore", "investigate", "analyze", "synthesize", "evaluate",
-        "plan", "organize", "manage", "supervise", "lead", "follow", "obey", "rebel", "resist",
-        "submit", "surrender", "fight", "struggle", "overcome", "succeed", "fail", "attempt",
-        "try", "practice", "exercise", "rest", "sleep", "wake", "rise", "shine", "glow", "sparkle",
-        "flash", "gleam", "glitter", "shimmer", "radiate", "reflect", "absorb", "emit", "transmit",
-        "receive", "send", "broadcast", "communicate", "interact", "collaborate", "cooperate",
-        "compete", "challenge", "defeat", "conquer", "lose", "win", "draw", "tie", "score"
-        # ... add many more verbs
-    ],
-    "verb_past_participle": [
-        "run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled",
-        "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen",
-        "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known",
-        "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated",
-        "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned",
-        "belonged", "done", "had",
-        # Add corresponding past participles for newly added verbs, handling irregular ones
-        "written", "read", "sung", "danced", "played", "worked", "studied", "taught", "traveled", "explored",
-        "created", "built", "destroyed", "helped", "shared", "received", "given", "taken", "brought", "sent",
-        "met", "left", "arrived", "departed", "waited", "hurried", "relaxed", "dreamed", "hoped", "wished",
-        "started", "finished", "opened", "closed", "cut", "pasted", "copied", "deleted", "saved", "loaded",
-        "won", "lost", "broken", "fixed", "cleaned", "dirtied", "emptied", "filled", "found", "lost", "searched",
-        "found", "hidden", "shown", "watched", "observed", "discovered", "invented", "developed", "grown", "shrunk",
-        "expanded", "contracted", "pushed", "pulled", "lifted", "dropped", "thrown", "caught", "bought", "sold",
-        "paid", "earned", "spent", "counted", "measured", "weighed", "poured", "mixed", "cooked", "baked", "fried",
-        "boiled", "chopped", "sliced", "stirred", "eaten", "drunk", "sipped", "gulped", "chewed", "swallowed",
-        "laughed", "cried", "smiled", "frowned", "nodded", "shaken", "waved", "pointed", "touched", "held",
-        "carried", "dragged", "pushed", "pulled", "kicked", "punched", "thrown", "caught", "hit", "missed",
-        "aimed", "shot", "protected", "defended", "attacked", "fought", "surrendered", "escaped", "captured",
-        "released", "bound", "untied", "wrapped", "unwrapped", "folded", "unfolded", "bent", "straightened",
-        "twisted", "untwisted", "turned", "spun", "rotated", "slid", "slipped", "crawled", "crept", "dashed",
-        "rushed", "strolled", "ambled", "marched", "jogged", "sprinted", "raced", "competed", "won", "lost",
-        "drawn", "tied", "scored", "celebrated", "mourned", "grieved", "comforted", "consoled", "advised",
-        "warned", "suggested", "recommended", "permitted", "forbidden", "allowed", "denied", "agreed", "disagreed",
-        "approved", "disapproved", "accepted", "refused", "promised", "threatened", "apologized", "forgiven",
-        "thanked", "welcomed", "greeted", "bidden", "farewelled", "introduced", "congratulated", "criticized",
-        "praised", "blamed", "accused", "defended", "excused", "explained", "described", "reported", "announced",
-        "published", "printed", "typed", "written", "drawn", "painted", "sculpted", "built", "constructed",
-        "demolished", "repaired", "mended", "fixed", "adjusted", "tuned", "installed", "removed", "replaced",
-        "connected", "disconnected", "attached", "detached", "fastened", "loosened", "tightened", "untied",
-        "bound", "unleashed", "released", "captured", "hunted", "fished", "farmed", "planted", "harvested",
-        "grown", "cultivated", "bred", "raised", "trained", "taught", "learned", "studied", "researched",
-        "discovered", "invented", "explored", "investigated", "analyzed", "synthesized", "evaluated",
-        "planned", "organized", "managed", "supervised", "led", "followed", "obeyed", "rebelled", "resisted",
-        "submitted", "surrendered", "fought", "struggled", "overcome", "succeeded", "failed", "attempted",
-        "tried", "practiced", "exercised", "rested", "slept", "woken", "risen", "shined", "glowed", "sparkled",
-        "flashed", "gleamed", "glittered", "shimmered", "radiated", "reflected", "absorbed", "emitted", "transmitted",
-        "received", "sent", "broadcast", "communicated", "interacted", "collaborated", "cooperated",
-        "competed", "challenged", "defeated", "conquered", "lost", "won", "drawn", "tied", "scored"
-        # ... add many more past participles
-    ],
-    "noun": [
-        "person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean",
-        "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water",
-        "house", "building", "street", "city", "country", "world", "universe", "star", "planet", "moon",
-        "sun", "sky", "cloud", "rain", "snow", "wind", "fire", "earth", "rock", "stone", "metal", "wood",
-        "paper", "cloth", "glass", "plastic", "air", "light", "darkness", "shadow", "sound", "silence",
-        "noise", "voice", "song", "story", "poem", "novel", "film", "movie", "play", "game", "sport",
-        "art", "painting", "sculpture", "drawing", "picture", "photo", "image", "design", "fashion", "style",
-        "beauty", "ugliness", "truth", "lie", "fact", "opinion", "knowledge", "wisdom", "intelligence",
-        "stupidity", "ignorance", "skill", "talent", "gift", "curse", "blessing", "luck", "fate", "destiny",
-        "chance", "opportunity", "problem", "puzzle", "mystery", "secret", "answer", "question", "doubt",
-        "belief", "faith", "hope", "despair", "joy", "grief", "love", "hate", "friendship", "enmity",
-        "peace", "war", "conflict", "harmony", "balance", "order", "chaos", "freedom", "slavery", "justice",
-        "injustice", "right", "wrong", "good", "evil", "virtue", "vice", "courage", "fear", "bravery",
-        "cowardice", "strength", "weakness", "health", "illness", "pain", "pleasure", "comfort", "discomfort",
-        "hunger", "thirst", "sleep", "wakefulness", "life", "death", "beginning", "end", "start", "finish",
-        "middle", "edge", "center", "side", "top", "bottom", "front", "back", "inside", "outside",
-        "surface", "depth", "height", "width", "length", "size", "shape", "color", "texture", "smell",
-        "taste", "sound", "sight", "touch", "feeling", "emotion", "thought", "memory", "dream", "nightmare",
-        "fantasy", "reality", "truth", "lie", "fact", "fiction", "history", "future", "past", "present",
-        "time", "space", "dimension", "universe", "galaxy", "solar system", "planet", "earth", "moon", "sun",
-        "star", "constellation", "nebula", "black hole", "wormhole", "alien", "robot", "cyborg", "android",
-        "human", "animal", "plant", "fungus", "bacteria", "virus", "cell", "molecule", "atom", "quark",
-        "energy", "matter", "force", "power", "strength", "weakness", "speed", "slowness", "acceleration",
-        "deceleration", "gravity", "magnetism", "electricity", "light", "sound", "heat", "cold", "pressure",
-        "vacuum", "liquid", "solid", "gas", "plasma", "crystal", "powder", "dust", "smoke", "fog", "mist",
-        "steam", "bubble", "wave", "ripple", "current", "flow", "stream", "river", "lake", "ocean", "sea",
-        "pond", "pool", "waterfall", "fountain", "spring", "well", "desert", "forest", "jungle", "mountain",
-        "valley", "hill", "plain", "plateau", "island", "coast", "beach", "shore", "cliff", "cave", "volcano",
-        "earthquake", "tsunami", "hurricane", "tornado", "storm", "blizzard", "drought", "flood", "fire",
-        "explosion", "disaster", "catastrophe", "accident", "mistake", "error", "success", "failure", "victory",
-        "defeat", "challenge", "opportunity", "risk", "danger", "safety", "security", "threat", "warning",
-        "sign", "symbol", "signal", "message", "letter", "word", "sentence", "paragraph", "text", "book",
-        "paper", "document", "file", "folder", "cabinet", "drawer", "box", "bag", "container", "package",
-        "envelope", "stamp", "ticket", "pass", "key", "lock", "door", "window", "wall", "roof", "floor",
-        "ceiling", "room", "house", "apartment", "building", "tower", "castle", "fortress", "palace", "temple",
-        "church", "mosque", "synagogue", "cathedral", "shrine", "monument", "statue", "bridge", "road",
-        "path", "trail", "street", "avenue", "boulevard", "lane", "alley", "square", "park", "garden",
-        "field", "forest", "woods", "jungle", "desert", "mountain", "hill", "valley", "plain", "plateau",
-        "island", "coast", "beach", "shore", "cliff", "cave", "volcano", "river", "lake", "ocean", "sea",
-        "pond", "pool", "waterfall", "fountain", "spring", "well", "farm", "ranch", "village", "town",
-        "city", "metropolis", "capital", "country", "nation", "state", "province", "region", "continent",
-        "world", "globe", "earth", "universe"],
-        # ... add many more nouns
-		
-		"noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
-        "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
-        "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
-        "noun_abstract": ["idea", "solution", "sadness", "happiness"],
-    
-    "adjective": [
-        "happy", "sad", "angry", "excited", "calm", "beautiful", "ugly", "tall", "short", "big", "small",
-        "old", "new", "good", "bad", "smart", "stupid", "funny", "serious", "kind", "brave", "cowardly",
-        "strong", "weak", "healthy", "ill", "sick", "well", "hungry", "thirsty", "tired", "energetic",
-        "sleepy", "awake", "bright", "dark", "light", "heavy", "soft", "hard", "smooth", "rough",
-        "hot", "cold", "warm", "cool", "dry", "wet", "clean", "dirty", "empty", "full", "open", "closed",
-        "fast", "slow", "quick", "rapid", "gentle", "rough", "loud", "quiet", "noisy", "silent",
-        "visible", "invisible", "audible", "inaudible", "tangible", "intangible", "real", "fake", "true",
-        "false", "correct", "wrong", "accurate", "inaccurate", "certain", "uncertain", "possible",
-        "impossible", "probable", "improbable", "easy", "difficult", "simple", "complex", "clear", "unclear",
-        "obvious", "hidden", "known", "unknown", "familiar", "unfamiliar", "common", "rare", "unique",
-        "ordinary", "special", "important", "unimportant", "significant", "insignificant", "major", "minor",
-        "large", "small", "huge", "tiny", "wide", "narrow", "deep", "shallow", "high", "low", "long",
-        "short", "thick", "thin", "broad", "slim", "fat", "thin", "round", "square", "triangular", "straight",
-        "curved", "bent", "broken", "fixed", "whole", "part", "complete", "incomplete", "full", "empty",
-        "available", "unavailable", "present", "absent", "near", "far", "close", "distant", "up", "down",
-        "inside", "outside", "above", "below", "front", "back", "left", "right", "east", "west", "north",
-        "south", "central", "eastern", "western", "northern", "southern", "upper", "lower", "inner", "outer",
-        "middle", "top", "bottom", "first", "last", "next", "previous", "early", "late", "recent", "ancient",
-        "modern", "old-fashioned", "new-fangled", "futuristic", "traditional", "contemporary", "classic",
-        "vintage", "antique", "rustic", "urban", "rural", "suburban", "local", "global", "national",
-        "international", "public", "private", "social", "personal", "individual", "collective", "common",
-        "shared", "unique", "diverse", "similar", "different", "same", "alike", "unlike", "equal", "unequal",
-        "fair", "unfair", "just", "unjust", "legal", "illegal", "moral", "immoral", "ethical", "unethical",
-        "good", "bad", "excellent", "poor", "superb", "terrible", "wonderful", "awful", "great", "dreadful",
-        "amazing", "horrible", "fantastic", "lousy", "pleasant", "unpleasant", "enjoyable", "unenjoyable",
-        "interesting", "boring", "exciting", "dull", "amusing", "tedious", "charming", "annoying", "delightful",
-        "irritating", "lovely", "ugly", "pretty", "handsome", "beautiful", "attractive", "unattractive",
-        "cute", "adorable", "hideous", "gorgeous", "stunning", "plain", "neat", "messy", "tidy", "untidy",
-        "clean", "dirty", "spotless", "filthy", "organized", "disorganized", "structured", "unstructured",
-        "simple", "complicated", "easy", "hard", "straightforward", "complex", "direct", "indirect",
-        "frank", "reserved", "open", "closed", "honest", "dishonest", "sincere", "insincere", "true",
-        "false", "loyal", "disloyal", "faithful", "unfaithful", "reliable", "unreliable", "trustworthy",
-        "untrustworthy", "dependable", "undependable", "responsible", "irresponsible", "careful", "careless",
-        "cautious", "reckless", "wise", "foolish", "intelligent", "unintelligent", "clever", "silly",
-        "smart", "dumb", "bright", "dim", "quick-witted", "slow-witted", "creative", "uncreative",
-        "imaginative", "unimaginative", "artistic", "unartistic", "musical", "unmusical", "athletic",
-        "unathletic", "talented", "untalented", "skilled", "unskilled", "experienced", "inexperienced",
-        "professional", "amateur", "expert", "novice", "master", "apprentice", "leader", "follower",
-        "dominant", "submissive", "assertive", "passive", "aggressive", "peaceful", "violent", "nonviolent",
-        "friendly", "unfriendly", "kind", "unkind", "generous", "selfish", "altruistic", "egoistic",
-        "sympathetic", "unsympathetic", "empathetic", "apathetic", "compassionate", "heartless", "warm",
-        "cold", "affectionate", "indifferent", "loving", "hateful", "joyful", "sorrowful", "cheerful",
-        "gloomy", "optimistic", "pessimistic", "hopeful", "hopeless", "confident", "insecure", "brave",
-        "timid", "courageous", "fearful", "strong", "weak", "powerful", "powerless", "energetic", "lethargic",
-        "active", "inactive", "busy", "idle", "productive", "unproductive", "efficient", "inefficient",
-        "effective", "ineffective", "successful", "unsuccessful", "victorious", "defeated", "winning",
-        "losing", "triumphant", "failed", "happy", "unhappy", "content", "discontent", "satisfied",
-        "dissatisfied", "pleased", "displeased", "excited", "bored", "thrilled", "calm", "nervous", "relaxed",
-        "tense", "stressed", "peaceful", "troubled", "comfortable", "uncomfortable", "safe", "unsafe",
-        "secure", "insecure", "protected", "exposed", "healthy", "sick", "well", "ill", "fit", "unfit",
-        "strong", "weak", "able", "unable", "capable", "incapable", "competent", "incompetent", "qualified",
-        "unqualified", "suitable", "unsuitable", "appropriate", "inappropriate", "proper", "improper",
-        "correct", "incorrect", "right", "wrong", "valid", "invalid", "true", "false", "authentic",
-        "fake", "genuine", "artificial", "natural", "unnatural", "real", "unreal", "existent",
-        "nonexistent", "present", "absent", "available", "unavailable", "current", "past", "future",
-        "old", "new", "ancient", "modern", "contemporary", "outdated", "current", "future", "past",
-        "temporary", "permanent", "brief", "long", "short", "quick", "slow", "fast", "rapid", "sudden",
-        "gradual", "early", "late", "timely", "untimely", "punctual", "late", "on time", "ahead of schedule",
-        "behind schedule", "first", "last", "next", "previous", "initial", "final", "primary", "secondary",
-        "tertiary", "main", "minor", "major", "chief", "subordinate", "principal", "auxiliary", "essential",
-        "nonessential", "critical", "trivial", "important", "unimportant", "significant", "insignificant",
-        "basic", "advanced", "complex", "simple", "easy", "difficult", "hard", "soft", "light", "dark",
-        "bright", "dim", "colorful", "dull", "vibrant", "pale", "loud", "quiet", "noisy", "silent",
-        "musical", "unmusical", "harmonious", "dissonant", "sweet", "sour", "bitter", "salty", "spicy",
-        "bland", "tasty", "delicious", "disgusting", "fragrant", "odorless", "stinky", "fresh", "stale",
-        "clean", "dirty", "pure", "impure", "smooth", "rough", "soft", "hard", "smooth", "bumpy", "flat",
-        "uneven", "straight", "curved", "bent", "cracked", "broken", "whole", "damaged", "repaired",
-        "new", "old", "ancient", "modern", "contemporary", "futuristic", "classic", "vintage", "antique",
-        "rustic", "polished", "dull", "shiny", "matte", "glossy", "transparent", "opaque", "clear",
-        "cloudy", "solid", "liquid", "gaseous", "dense", "sparse", "heavy", "light", "big", "small",
-        "large", "tiny", "huge", "miniature", "gigantic", "microscopic", "enormous", "petite", "massive",
-        "slight", "broad", "narrow", "wide", "thin", "thick", "deep", "shallow", "high", "low",
-        "tall", "short", "long", "brief", "extended", "limited", "unlimited", "finite", "infinite",
-        "bound", "unbound", "open", "closed", "covered", "uncovered", "exposed", "sheltered", "indoor",
-        "outdoor", "inside", "outside", "internal", "external", "central", "peripheral", "front", "back",
-        "top", "bottom", "upper", "lower", "left", "right", "eastern", "western", "northern", "southern",
-        "local", "regional", "national", "international", "global", "universal", "cosmic", "terrestrial",
-        "aquatic", "aerial", "grounded", "floating", "submerged", "emerged", "visible", "invisible",
-        "perceptible", "imperceptible", "detectable", "undetectable", "noticeable", "unnoticeable",
-        "apparent", "hidden", "obvious", "subtle", "distinct", "indistinct", "clear", "blurry", "sharp",
-        "fuzzy", "focused", "unfocused", "bright", "dim", "vivid", "faint", "strong", "weak", "intense",
-        "mild", "powerful", "powerless", "effective", "ineffective", "efficient", "inefficient",
-        "productive", "unproductive", "useful", "useless", "valuable", "worthless", "important",
-        "unimportant", "significant", "insignificant", "crucial", "trivial", "essential", "nonessential",
-        "necessary", "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory",
-        "elective", "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor",
-        "principal", "auxiliary", "leading", "following", "first", "last", "next", "previous",
-        "initial", "final", "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic",
-        "counterfeit", "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living",
-        "nonliving", "animate", "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid",
-        "gas", "plasma", "energy", "matter", "physical", "mental", "emotional", "spiritual", "intellectual",
-        "creative", "logical", "intuitive", "rational", "irrational", "sensible", "absurd", "realistic",
-        "unrealistic", "practical", "impractical", "feasible", "infeasible", "possible", "impossible",
-        "probable", "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful",
-        "optimistic", "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable",
-        "unfavorable", "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive",
-        "destructive", "helpful", "unhelpful", "useful", "useless", "effective", "ineffective",
-        "efficient", "inefficient", "productive", "unproductive", "successful", "unsuccessful",
-        "victorious", "defeated", "winning", "losing", "triumphant", "failed", "accomplished", "unaccomplished",
-        "achieved", "unachieved", "fulfilled", "unfulfilled", "satisfied", "dissatisfied", "content",
-        "discontent", "happy", "unhappy", "joyful", "sorrowful", "cheerful", "gloomy", "elated", "depressed",
-        "excited", "bored", "thrilled", "calm", "nervous", "relaxed", "tense", "stressed", "peaceful",
-        "troubled", "comfortable", "uncomfortable", "safe", "unsafe", "secure", "insecure", "protected",
-        "exposed", "healthy", "sick", "well", "ill", "fit", "unfit", "strong", "weak", "able", "unable",
-        "capable", "incapable", "competent", "incompetent", "qualified", "unqualified", "suitable",
-        "unsuitable", "appropriate", "inappropriate", "proper", "improper", "correct", "incorrect",
-        "right", "wrong", "valid", "invalid", "true", "false", "authentic", "fake", "genuine",
-        "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving", "animate",
-        "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid", "gas", "plasma", "energy",
-        "matter", "physical", "mental", "emotional", "spiritual", "intellectual", "creative", "logical",
-        "intuitive", "rational", "irrational", "sensible", "absurd", "realistic", "unrealistic",
-        "practical", "impractical", "feasible", "infeasible", "possible", "impossible", "probable",
-        "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful", "optimistic",
-        "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable", "unfavorable",
-        "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive", "destructive",
-        "helpful", "unhelpful", "useful", "useless", "valuable", "worthless", "important", "unimportant",
-        "significant", "insignificant", "crucial", "trivial", "essential", "nonessential", "necessary",
-        "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory", "elective",
-        "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor", "principal",
-        "auxiliary", "leading", "following", "first", "last", "next", "previous", "initial", "final",
-        "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic", "counterfeit",
-        "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving",
-        "animate", "inanimate", "human", "animal", "plant", "mineral"
-        # ... add many more adjectives
-    ],
-    "adverb": [
-        "quickly", "slowly", "carefully", "badly", "well", "happily", "sadly", "angrily", "excitedly",
-        "calmly", "now", "then", "soon", "later", "early", "yesterday", "today", "tomorrow", "always",
-        "never", "here", "there", "everywhere", "anywhere", "upstairs", "downstairs", "outside", "inside",
-        "forward", "very", "extremely", "quite", "rather", "too", "enough", "almost", "nearly", "scarcely",
-        "hardly", "often", "sometimes", "usually", "rarely", "never", "always", "frequently", "occasionally",
-        "seldom", "generally", "actually", "additionally", "allegedly", "almost", "already", "also",
-        "always", "amazingly", "annually", "apparently", "approximately", "arbitrarily", "arguably",
-        "around", "as", "aside", "automatically", "away", "back", "badly", "barely", "beautifully",
-        "before", "behind", "below", "beneath", "best", "better", "beyond", "bitterly", "blindly",
-        "boldly", "briefly", "brightly", "busily", "calmly", "carefully", "carelessly", "certainly",
-        "chiefly", "clearly", "closely", "commonly", "completely", "consequently", "constantly",
-        "continually", "correctly", "courageously", "currently", "daily", "dangerously", "darkly",
-        "decidedly", "deeply", "definitely", "deliberately", "delightfully", "densely", "directly",
-        "disappointingly", "distinctly", "down", "downstairs", "dramatically", "due", "eagerly",
-        "early", "easily", "effectively", "efficiently", "effortlessly", "elsewhere", "emotionally",
-        "enough", "entirely", "especially", "essentially", "even", "eventually", "ever", "everywhere",
-        "exactly", "exceptionally", "excessively", "exclusively", "explicitly", "expressly",
-        "extensively", "externally", "extraordinarily", "extremely", "fairly", "faithfully", "far",
-        "fast", "finally", "firmly", "first", "firstly", "flatly", "forever", "formerly", "forth",
-        "fortunately", "forward", "frankly", "free", "freely", "frequently", "fully", "generally",
-        "generously", "gently", "gladly", "globally", "gradually", "greatly", "grimly", "happily",
-        "hard", "hardly", "hastily", "healthily", "heavily", "hence", "here", "highly", "honestly",
-        "hourly", "how", "however", "hungrily", "ideally", "immediately", "impatiently", "importantly",
-        "improperly", "inaccurately", "incidentally", "increasingly", "indeed", "indirectly",
-        "individually", "inevitably", "informally", "initially", "inside", "instantly", "instead",
-        "intensely", "internally", "inwardly", "ironically", "just", "justly", "keenly", "kindly",
-        "knowingly", "last", "lastly", "late", "lately", "least", "legally", "less", "lightly",
-        "likewise", "literally", "locally", "logically", "long", "longingly", "loudly", "lovingly",
-        "loyally", "luckily", "mainly", "merely", "mightily", "moderately", "momentarily", "monthly",
-        "more", "moreover", "most", "mostly", "much", "mutually", "namely", "nationally", "naturally",
-        "nearly", "necessarily", "needlessly", "negatively", "never", "nevertheless", "newly", "next",
-        "nightly", "no", "nonetheless", "normally", "not", "notably", "nothing", "now", "nowhere",
-        "obviously", "occasionally", "off", "often", "on", "only", "openly", "optimistically",
-        "orally", "originally", "otherwise", "out", "outdoors", "outside", "over", "overall",
-        "overnight", "overseas", "painfully", "partially", "particularly", "partly", "patiently",
-        "perfectly", "personally", "physically", "plainly", "pleasantly", "politely", "poorly",
-        "possibly", "powerfully", "practically", "precisely", "presently", "presumably", "previously",
-        "primarily", "privately", "probably", "promptly", "properly", "publicly", "purely", "quickly",
-        "quietly", "quite", "randomly", "rapidly", "rarely", "rather", "readily", "really", "recently",
-        "regularly", "reluctantly", "remarkably", "repeatedly", "reportedly", "respectively",
-        "responsibly", "right", "rightly", "roughly", "routinely", "sadly", "safely", "scarcely",
-        "second", "secondly", "secretly", "seldom", "separately", "seriously", "sharply", "shortly",
-        "silently", "simply", "sincerely", "slowly", "so", "softly", "solely", "sometimes", "soon",
-        "specifically", "suddenly", "surely", "surprisingly", "swiftly", "thankfully", "then", "there",
-        "therefore", "thoroughly", "though", "thoughtfully", "thus", "tightly", "today", "together",
-        "tomorrow", "too", "totally", "truly", "twice", "typically", "ultimately", "unconditionally",
-        "undoubtedly", "unfortunately", "uniformly", "unilaterally", "uniquely", "unless", "unlikely",
-        "unnecessarily", "unusually", "up", "upstairs", "usually", "utterly", "very", "virtually",
-        "visibly", "voluntarily", "warmly", "weakly", "weekly", "well", "when", "whenever", "where",
-        "wherever", "whether", "while", "wholly", "why", "widely", "wildly", "willingly", "wisely",
-        "within", "without", "wonderfully", "yearly", "yes", "yesterday", "yet", "zealously"
-        # ... add many more adverbs
-    ],
-		"preposition": ["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
-        "conjunction": ["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
-    # ... other categories
-}
 
 	sentence_structures = [
 		# 1. Simple Present: Subject + Verb + (Object/Complement)
@@ -3883,6 +4122,53 @@ def list_country_details():
 		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
 	print("")
 		
+#-------------------------------------------------
+def get_remote_version_from_file():
+
+    try:
+        response = requests.get(kdecode(GITHUB, shift))
+        response.raise_for_status()     
+        content = response.text
+        match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
+        if match:
+            return match.group(1)
+        else:
+            print(f"Warning: Could not find 'version = ' in {GITHUB_FILE_PATH} on GitHub.")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching remote version from GitHub: {e}")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred while getting remote version: {e}")
+        return None
+
+#-------------------------------------------------
+def check_for_updates():
+
+	if internet_onoff() == True:
+		local_version_str = version
+		remote_version_str = get_remote_version_from_file()
+
+		if remote_version_str is None:
+			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
+			return
+
+		try:
+			local_version = parse_version(local_version_str)
+			remote_version = parse_version(remote_version_str)	
+			if local_version < remote_version:
+				print(f"Your current version: {local_version_str}")
+				print(f"Latest available version: {remote_version_str}")
+				print("")
+			elif local_version == remote_version:
+				print(f"You are running the latest version of me: {local_version_str}\n")
+			else:
+				print(f"Your version ({local_version_str}) is newer than the public available ({remote_version_str}).\n")
+		except Exception as e:
+			print (f"{random.choice(messages['trouble_short'])} Error comparing versions.\n")
+	else:
+		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
+	
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
@@ -4522,8 +4808,8 @@ def main():
 			week_number = date.today().isocalendar()[1]
 			print ("Based on the system actual date this is the " + str(get_ordinal_position(week_number)) + " week of the year.\n")
 
-		elif question.find('last')!=-1 and question.find('update')!=-1:
-			print ('My creator '+ _author_.split()[0] + ' the last time updated my internal data was in '+ _revise_ +'.\n')
+		elif question.find('update') != -1 and (question.find('last') != -1 or question.find('check') != -1):
+			check_for_updates()
 
 		elif question == 'yes':
 			if len(csugestions) == 0:
@@ -4656,7 +4942,7 @@ def main():
 				if country_name in core['country']:
 					print("Estimated population based on my offline data from [{}] \n{} has a population of {:,} according to the United Nations.\n".format(_revise_, country_name.capitalize(), ncountries[country_name]["population"]))
 				elif country_name == 'world' or country_name == 'earth':
-					print ("8.1 billion people in July 2024 according to the United Nations. Is "+ year_months[date.today().month-1] +", "+ str(date.today().year) +" so there must be quite a few more.\n")
+					print ("8.1 billion people in July 2024 according to the United Nations. Is "+ core['months'][date.today().month-1].title() +", "+ str(date.today().year) +" so there must be quite a few more.\n")
 				else:
 					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What ?! " + country_name.capitalize() + " Is that a new country? Perhaps! No-can do.\n")
 
@@ -4902,7 +5188,18 @@ def main():
 		
 		elif any(word in question for word in core['holidays_query']):
 			print("")
-			
+		
+		elif question[0:9] == 'conjugate':
+			parts = question.split()[1:]
+			if len(parts) != 1:
+					print(f"{random.choice(messages['trouble_short'])} I recognize the command but not the syntax. Use: conjugate|conjuga <verb>\n")
+			else:		
+				if any(word in parts for word in knowledge['verb_base']):
+					what_verb = parts[-1:][0]
+					cybele_conjugator(what_verb)
+				else:
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} {random.choice(['I dont recognize','I dont see'])} {kolor['BOLD_YELLOW']}{parts[-1:][0]}{kolor['OFF']} like a english verb!\n")
+		
 		elif question == 'trails':
 			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
 			print (f"{website['trails']}\n")
@@ -4937,7 +5234,7 @@ def main():
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 				
 		elif question == 'testing':
-			print (f"Development testing propose code...")
+			#print (f"Development testing propose code...")
 			print (random.choice(core['working_hard']))
 			print ("")
 			
