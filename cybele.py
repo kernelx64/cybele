@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '22.07.2025'
+_revise_ = '24.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -25,10 +25,11 @@ import subprocess
 try:
 	import string
 	import random
-	import math
+	import socket
 	import datetime
 	import os,time
 	import platform
+	import math
 	import hashlib
 	import sqlite3
 	import sqlitecloud
@@ -40,7 +41,7 @@ try:
 	import pycountry
 	import numpy as np
 	import PIL
-	from PIL import Image, ImageEnhance, ImageFilter
+	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
 	from random_word import RandomWords
 	from platform import python_version
@@ -124,7 +125,7 @@ days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_
 iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
-stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""
+stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""; dblrconn = ""
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
 gamescore=[-1,0,0]
@@ -185,7 +186,7 @@ kolor = {
 	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
 	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
-	'OFF':'\033[0m',
+	'OFF':'\033[0m'
 }
 #-----------------------------------------------------------
 art_world = [
@@ -252,7 +253,12 @@ core = {
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
-	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later."],
+	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later.",
+					"Cybele is currently unavailable. We appreciate your patience.",
+					"Cybele is temporarily out of reach. Please try again shortly.",
+					"Hold on a moment! Cybele will be back with you soon.",
+					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
+					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
 	"share":	["sharing about","sharing links"],
@@ -263,6 +269,7 @@ core = {
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"asking for talking":	["do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
 	"asking for a word":	["word","say a word","talk","share a word","speak a word"],
+	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"coded":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -533,7 +540,7 @@ help = {
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
-	"help protect image": "Usage: protect image <filename> \nAdd some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image my_image.jpg \n    protect image IMG_20250718.png\n",	
+	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
@@ -719,59 +726,64 @@ def chkcoor(lat, lon):
 
 #------------------------------------------------------------
 def internet_onoff():
-	global dbmsgbl
+
 	try:
-		import requests
-		response = requests.get("https://www.google.com", timeout=5)
-		response.raise_for_status()
-		dbmsgbl = "Connecting with remote database"
+		socket.setdefaulttimeout(1)
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect(("8.8.8.8", 53))
+		s.close()
 		return True
-	except ImportError:
-		print("\n\033[1;31m 〉 " + _title_ + "\033[0;0m" + ": Error loadind standard Python module.\n   I cannot perform this task correctly.")
-		return False
-	except requests.exceptions.RequestException as e:
-		dbmsgbl = "Checking local database"
-		return False
+	except OSError:
+		pass
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
+
+	global dblrconn, dbmsgbl
 	conn = None
+			
 	if internet_onoff() == True:
-		max_attempts = 5
-		for attempt in range(1, max_attempts + 1):
-			try:
-				print_statusline(f"{dbmsgbl} {chr(47)}")
-				conn = sqlitecloud.connect(sqlconn)
-				break
-			except ValueError as e:
-				modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
-				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)
-			except sqlitecloud.exceptions.SQLiteCloudException as e:
-				if attempt < max_attempts:
-					sleep(1)
-				else:
-					modname = random.choice(messages['db_pause_msg']) + f"\n   I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
+		if os.path.isfile(db_filename) == True:
+			conn = sqlite3.connect(db_filename)
+			dblrconn= "offline [database files]"
+			dbmsgbl = "Connected via local database"
+		else:
+			max_attempts = 5
+			for attempt in range(1, max_attempts + 1):
+				try:
+					conn = sqlitecloud.connect(sqlconn)
+					dblrconn="online [sqlitecloud]"
+					dbmsgbl = "Connecting with remote database"
+					break
+				except ValueError as e:
+					modname = f"\n    Unexpected data from the socket connection from a SQLite Cloud database.\n    Please try again. If the error persists, wait for an update."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
+				except sqlitecloud.exceptions.SQLiteCloudException as e:
+					if attempt < max_attempts:
+						sleep(1)
+					else:
+						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
+						print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+						exit(0)
 	else:
-		if os.path.isfile (db_filename) == True :
-			print_statusline(f"{dbmsgbl} {chr(47)}")
+		if os.path.isfile(db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = "Connected via local database"
 		else:
-			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n    I cannot execute properly. Exiting."
 			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
+
 	try:
-		print_statusline(f"{dbmsgbl} {chr(45)}")
+		#print_statusline(f"{dbmsgbl}")
 		cursor = conn.cursor()
-		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
+		cursor.execute(f"SELECT {column_name} FROM {table_name}")
 		result = [row[0] for row in cursor.fetchall()]
-		print_statusline(f"{dbmsgbl} {chr(92)}")
 		return result
 	except Exception as e:
-		modname = f"\n   An unexpected error occurred: {e}"
+		modname = f"\n    An unexpected error occurred: {e}"
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 		exit(0)
 	except sqlite3.Error as e:
@@ -782,12 +794,23 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			
 #------------------------------------------------------------
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
+	
+	global dblrconn
 	conn = None
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect(sqlconn)
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = "Connected via local database"
+		else:
+			conn = sqlitecloud.connect(sqlconn)
+			dblrconn="online [sqlitecloud]"
+			dbmsgbl = "Connecting with remote database"
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = "Connected via local database"
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -814,10 +837,16 @@ def check_tables(tables_names):
 	cur = None
 	
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect(sqlconn)
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dbmsgbl = "Connected via local database"
+		else:
+			conn = sqlitecloud.connect(sqlconn)
+			dbmsgbl = "Connecting with remote database"
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
+			dbmsgbl = "Connected via local database"
 		else:
 			print_statusline(f"")
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
@@ -1073,7 +1102,7 @@ maincommands = [
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","list holidays","actual country","view solar system"
+	"protect image","set default country","list holidays","actual country","view solar system","ascii table"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1774,6 +1803,22 @@ def find_word_in_dicts(word, core):
 			
 			elif list_name == "asking for a word":
 				print("")
+				
+			elif list_name == "asking the uptime":
+				uptime_parts = get_uptime()
+				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
+				sentence_parts = []
+				for value, unit in time_units:
+					if value > 0:
+						sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
+					if not sentence_parts:
+						sentence = "less than a second"
+					else:
+						if len(sentence_parts) > 1:
+							sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
+						else:
+							sentence = sentence_parts[0]
+				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
 			
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
@@ -2502,13 +2547,20 @@ def cybele_math_game():
 #-------------------------------------------------
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
+	global dblrconn
 	if internet_onoff() == True:
-		sqlconm = sqlcodb.format(dbname_placeholder=dbname)
-		conn = sqlitecloud.connect(sqlconm)
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+		else:
+			sqlconm = sqlcodb.format(dbname_placeholder=dbname)
+			conn = sqlitecloud.connect(sqlconm)
+			dblrconn="online [sqlitecloud]"
 	else:
 		db_filename = dbname + ".db"
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -2842,6 +2894,7 @@ def set_cursor_pos(row, col):
 #----------------------------------------------------------------
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
+
 #----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
  
@@ -2988,7 +3041,7 @@ def draw_christmas_tree():
 		kolor['OFF']
 	)
 	print(" "*27 + merry_christmas_message)
-	
+
 #---------------------------------------------------------------------------
 #-------------------------------------------------------------------
 # cybele sentence, text, verb sub-cores
@@ -3031,13 +3084,14 @@ def conjugate_verb(verb_type, subject_pronoun, knowledge):
 #-------------------------------------------------------------------
 def make_sentence(rw_instance):
     
-    knowledge = {
-        "pronoun_singular_third": ["he", "she", "it"],
-        "pronoun_first_second_plural": ["I", "you", "we", "they"],
+	
+	knowledge = {
+		"pronoun_singular_third": ["he", "she", "it", "one", "this", "that"], # Added more
+		"pronoun_first_second_plural": ["I", "you", "we", "they", "these", "those"], # Added more
+		# ... (other existing categories) ...
+
         "subject": [], # Failsafe key
         "determiner": ["the", "some", "a", "an"], 
-        "verb_base": ["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe", "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear", "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have"],
-        "verb_past_participle": ["run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled", "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen", "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known", "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated", "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned", "belonged", "done", "had"],
         "aux_be_present_I": ["am"],
         "aux_be_present_singular_third": ["is"],
         "aux_be_present_plural": ["are"],
@@ -3051,26 +3105,331 @@ def make_sentence(rw_instance):
         "negation": ["not"],
         "verb_base_be": ["be"],
         "verb_past_participle_be": ["been"],
-        
-        "noun": ["person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean", "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water"],
-        "noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
+
+    "verb_base": [
+        "run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel",
+        "taste", "walk", "fly", "swim", "climb", "drive", "ride", "fall", "rise", "say", "tell",
+        "ask", "shout", "whisper", "yell", "argue", "discuss", "know", "understand", "believe",
+        "remember", "forget", "learn", "imagine", "love", "hate", "like", "dislike", "fear",
+        "seem", "appear", "become", "look", "sound", "own", "belong", "do", "have",
+        "write", "read", "sing", "dance", "play", "work", "study", "teach", "travel", "explore",
+        "create", "build", "destroy", "help", "share", "receive", "give", "take", "bring", "send",
+        "meet", "leave", "arrive", "depart", "wait", "hurry", "relax", "dream", "hope", "wish",
+        "start", "finish", "open", "close", "cut", "paste", "copy", "delete", "save", "load",
+        "win", "lose", "break", "fix", "clean", "dirty", "empty", "fill", "find", "lose", "search",
+        "find", "hide", "show", "watch", "observe", "discover", "invent", "develop", "grow", "shrink",
+        "expand", "contract", "push", "pull", "lift", "drop", "throw", "catch", "buy", "sell",
+        "pay", "earn", "spend", "count", "measure", "weigh", "pour", "mix", "cook", "bake", "fry",
+        "boil", "chop", "slice", "stir", "eat", "drink", "sip", "gulp", "chew", "swallow",
+        "laugh", "cry", "smile", "frown", "nod", "shake", "wave", "point", "touch", "hold",
+        "carry", "drag", "push", "pull", "kick", "punch", "throw", "catch", "hit", "miss",
+        "aim", "shoot", "protect", "defend", "attack", "fight", "surrender", "escape", "capture",
+        "release", "bind", "untie", "wrap", "unwrap", "fold", "unfold", "bend", "straighten",
+        "twist", "untwist", "turn", "spin", "rotate", "slide", "slip", "crawl", "creep", "dash",
+        "rush", "stroll", "amble", "march", "jog", "sprint", "race", "compete", "win", "lose",
+        "draw", "tie", "score", "celebrate", "mourn", "grieve", "comfort", "console", "advise",
+        "warn", "suggest", "recommend", "permit", "forbid", "allow", "deny", "agree", "disagree",
+        "approve", "disapprove", "accept", "refuse", "promise", "threaten", "apologize", "forgive",
+        "thank", "welcome", "greet", "bid", "farewell", "introduce", "congratulate", "criticize",
+        "praise", "blame", "accuse", "defend", "excuse", "explain", "describe", "report", "announce",
+        "publish", "print", "type", "write", "draw", "paint", "sculpt", "build", "construct",
+        "demolish", "repair", "mend", "fix", "adjust", "tune", "install", "remove", "replace",
+        "connect", "disconnect", "attach", "detach", "fasten", "loosen", "tighten", "untie",
+        "bind", "unleash", "release", "capture", "hunt", "fish", "farm", "plant", "harvest",
+        "grow", "cultivate", "breed", "raise", "train", "teach", "learn", "study", "research",
+        "discover", "invent", "explore", "investigate", "analyze", "synthesize", "evaluate",
+        "plan", "organize", "manage", "supervise", "lead", "follow", "obey", "rebel", "resist",
+        "submit", "surrender", "fight", "struggle", "overcome", "succeed", "fail", "attempt",
+        "try", "practice", "exercise", "rest", "sleep", "wake", "rise", "shine", "glow", "sparkle",
+        "flash", "gleam", "glitter", "shimmer", "radiate", "reflect", "absorb", "emit", "transmit",
+        "receive", "send", "broadcast", "communicate", "interact", "collaborate", "cooperate",
+        "compete", "challenge", "defeat", "conquer", "lose", "win", "draw", "tie", "score"
+        # ... add many more verbs
+    ],
+    "verb_past_participle": [
+        "run", "jumped", "eaten", "slept", "talked", "listened", "thought", "seen", "heard", "smelled",
+        "felt", "tasted", "walked", "flown", "swum", "climbed", "driven", "ridden", "fallen", "risen",
+        "said", "told", "asked", "shouted", "whispered", "yelled", "argued", "discussed", "known",
+        "understood", "believed", "remembered", "forgotten", "learned", "imagined", "loved", "hated",
+        "liked", "disliked", "feared", "seemed", "appeared", "become", "looked", "sounded", "owned",
+        "belonged", "done", "had",
+        # Add corresponding past participles for newly added verbs, handling irregular ones
+        "written", "read", "sung", "danced", "played", "worked", "studied", "taught", "traveled", "explored",
+        "created", "built", "destroyed", "helped", "shared", "received", "given", "taken", "brought", "sent",
+        "met", "left", "arrived", "departed", "waited", "hurried", "relaxed", "dreamed", "hoped", "wished",
+        "started", "finished", "opened", "closed", "cut", "pasted", "copied", "deleted", "saved", "loaded",
+        "won", "lost", "broken", "fixed", "cleaned", "dirtied", "emptied", "filled", "found", "lost", "searched",
+        "found", "hidden", "shown", "watched", "observed", "discovered", "invented", "developed", "grown", "shrunk",
+        "expanded", "contracted", "pushed", "pulled", "lifted", "dropped", "thrown", "caught", "bought", "sold",
+        "paid", "earned", "spent", "counted", "measured", "weighed", "poured", "mixed", "cooked", "baked", "fried",
+        "boiled", "chopped", "sliced", "stirred", "eaten", "drunk", "sipped", "gulped", "chewed", "swallowed",
+        "laughed", "cried", "smiled", "frowned", "nodded", "shaken", "waved", "pointed", "touched", "held",
+        "carried", "dragged", "pushed", "pulled", "kicked", "punched", "thrown", "caught", "hit", "missed",
+        "aimed", "shot", "protected", "defended", "attacked", "fought", "surrendered", "escaped", "captured",
+        "released", "bound", "untied", "wrapped", "unwrapped", "folded", "unfolded", "bent", "straightened",
+        "twisted", "untwisted", "turned", "spun", "rotated", "slid", "slipped", "crawled", "crept", "dashed",
+        "rushed", "strolled", "ambled", "marched", "jogged", "sprinted", "raced", "competed", "won", "lost",
+        "drawn", "tied", "scored", "celebrated", "mourned", "grieved", "comforted", "consoled", "advised",
+        "warned", "suggested", "recommended", "permitted", "forbidden", "allowed", "denied", "agreed", "disagreed",
+        "approved", "disapproved", "accepted", "refused", "promised", "threatened", "apologized", "forgiven",
+        "thanked", "welcomed", "greeted", "bidden", "farewelled", "introduced", "congratulated", "criticized",
+        "praised", "blamed", "accused", "defended", "excused", "explained", "described", "reported", "announced",
+        "published", "printed", "typed", "written", "drawn", "painted", "sculpted", "built", "constructed",
+        "demolished", "repaired", "mended", "fixed", "adjusted", "tuned", "installed", "removed", "replaced",
+        "connected", "disconnected", "attached", "detached", "fastened", "loosened", "tightened", "untied",
+        "bound", "unleashed", "released", "captured", "hunted", "fished", "farmed", "planted", "harvested",
+        "grown", "cultivated", "bred", "raised", "trained", "taught", "learned", "studied", "researched",
+        "discovered", "invented", "explored", "investigated", "analyzed", "synthesized", "evaluated",
+        "planned", "organized", "managed", "supervised", "led", "followed", "obeyed", "rebelled", "resisted",
+        "submitted", "surrendered", "fought", "struggled", "overcome", "succeeded", "failed", "attempted",
+        "tried", "practiced", "exercised", "rested", "slept", "woken", "risen", "shined", "glowed", "sparkled",
+        "flashed", "gleamed", "glittered", "shimmered", "radiated", "reflected", "absorbed", "emitted", "transmitted",
+        "received", "sent", "broadcast", "communicated", "interacted", "collaborated", "cooperated",
+        "competed", "challenged", "defeated", "conquered", "lost", "won", "drawn", "tied", "scored"
+        # ... add many more past participles
+    ],
+    "noun": [
+        "person", "place", "thing", "idea", "computer", "dog", "cat", "book", "food", "rainbow", "ocean",
+        "mountain", "river", "tree", "flower", "car", "solution", "music", "sadness", "happiness", "water",
+        "house", "building", "street", "city", "country", "world", "universe", "star", "planet", "moon",
+        "sun", "sky", "cloud", "rain", "snow", "wind", "fire", "earth", "rock", "stone", "metal", "wood",
+        "paper", "cloth", "glass", "plastic", "air", "light", "darkness", "shadow", "sound", "silence",
+        "noise", "voice", "song", "story", "poem", "novel", "film", "movie", "play", "game", "sport",
+        "art", "painting", "sculpture", "drawing", "picture", "photo", "image", "design", "fashion", "style",
+        "beauty", "ugliness", "truth", "lie", "fact", "opinion", "knowledge", "wisdom", "intelligence",
+        "stupidity", "ignorance", "skill", "talent", "gift", "curse", "blessing", "luck", "fate", "destiny",
+        "chance", "opportunity", "problem", "puzzle", "mystery", "secret", "answer", "question", "doubt",
+        "belief", "faith", "hope", "despair", "joy", "grief", "love", "hate", "friendship", "enmity",
+        "peace", "war", "conflict", "harmony", "balance", "order", "chaos", "freedom", "slavery", "justice",
+        "injustice", "right", "wrong", "good", "evil", "virtue", "vice", "courage", "fear", "bravery",
+        "cowardice", "strength", "weakness", "health", "illness", "pain", "pleasure", "comfort", "discomfort",
+        "hunger", "thirst", "sleep", "wakefulness", "life", "death", "beginning", "end", "start", "finish",
+        "middle", "edge", "center", "side", "top", "bottom", "front", "back", "inside", "outside",
+        "surface", "depth", "height", "width", "length", "size", "shape", "color", "texture", "smell",
+        "taste", "sound", "sight", "touch", "feeling", "emotion", "thought", "memory", "dream", "nightmare",
+        "fantasy", "reality", "truth", "lie", "fact", "fiction", "history", "future", "past", "present",
+        "time", "space", "dimension", "universe", "galaxy", "solar system", "planet", "earth", "moon", "sun",
+        "star", "constellation", "nebula", "black hole", "wormhole", "alien", "robot", "cyborg", "android",
+        "human", "animal", "plant", "fungus", "bacteria", "virus", "cell", "molecule", "atom", "quark",
+        "energy", "matter", "force", "power", "strength", "weakness", "speed", "slowness", "acceleration",
+        "deceleration", "gravity", "magnetism", "electricity", "light", "sound", "heat", "cold", "pressure",
+        "vacuum", "liquid", "solid", "gas", "plasma", "crystal", "powder", "dust", "smoke", "fog", "mist",
+        "steam", "bubble", "wave", "ripple", "current", "flow", "stream", "river", "lake", "ocean", "sea",
+        "pond", "pool", "waterfall", "fountain", "spring", "well", "desert", "forest", "jungle", "mountain",
+        "valley", "hill", "plain", "plateau", "island", "coast", "beach", "shore", "cliff", "cave", "volcano",
+        "earthquake", "tsunami", "hurricane", "tornado", "storm", "blizzard", "drought", "flood", "fire",
+        "explosion", "disaster", "catastrophe", "accident", "mistake", "error", "success", "failure", "victory",
+        "defeat", "challenge", "opportunity", "risk", "danger", "safety", "security", "threat", "warning",
+        "sign", "symbol", "signal", "message", "letter", "word", "sentence", "paragraph", "text", "book",
+        "paper", "document", "file", "folder", "cabinet", "drawer", "box", "bag", "container", "package",
+        "envelope", "stamp", "ticket", "pass", "key", "lock", "door", "window", "wall", "roof", "floor",
+        "ceiling", "room", "house", "apartment", "building", "tower", "castle", "fortress", "palace", "temple",
+        "church", "mosque", "synagogue", "cathedral", "shrine", "monument", "statue", "bridge", "road",
+        "path", "trail", "street", "avenue", "boulevard", "lane", "alley", "square", "park", "garden",
+        "field", "forest", "woods", "jungle", "desert", "mountain", "hill", "valley", "plain", "plateau",
+        "island", "coast", "beach", "shore", "cliff", "cave", "volcano", "river", "lake", "ocean", "sea",
+        "pond", "pool", "waterfall", "fountain", "spring", "well", "farm", "ranch", "village", "town",
+        "city", "metropolis", "capital", "country", "nation", "state", "province", "region", "continent",
+        "world", "globe", "earth", "universe"],
+        # ... add many more nouns
+		
+		"noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
         "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
         "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
         "noun_abstract": ["idea", "solution", "sadness", "happiness"],
-
-        "adjective": ["happy", "sad", "angry", "excited", "calm", "beautiful", "ugly", "tall", "short", "big", "small", "old", "new", "good", "bad", "smart", "stupid", "funny", "serious", "kind"],
-        "adverb": ["quickly", "slowly", "carefully", "badly", "well", "happily", "sadly", "angrily", "excitedly", "calmly", "now", "then", "soon", "later", "early", "yesterday", "today", "tomorrow", "always", "never", "here", "there", "everywhere", "anywhere", "upstairs", "downstairs", "outside", "inside", "forward", "very", "extremely", "quite", "rather", "too", "enough", "almost", "nearly", "scarcely", "hardly", "often", "sometimes", "usually", "rarely", "never", "always", "frequently", "occasionally", "seldom", "generally"],
-        "preposition": ["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
+    
+    "adjective": [
+        "happy", "sad", "angry", "excited", "calm", "beautiful", "ugly", "tall", "short", "big", "small",
+        "old", "new", "good", "bad", "smart", "stupid", "funny", "serious", "kind", "brave", "cowardly",
+        "strong", "weak", "healthy", "ill", "sick", "well", "hungry", "thirsty", "tired", "energetic",
+        "sleepy", "awake", "bright", "dark", "light", "heavy", "soft", "hard", "smooth", "rough",
+        "hot", "cold", "warm", "cool", "dry", "wet", "clean", "dirty", "empty", "full", "open", "closed",
+        "fast", "slow", "quick", "rapid", "gentle", "rough", "loud", "quiet", "noisy", "silent",
+        "visible", "invisible", "audible", "inaudible", "tangible", "intangible", "real", "fake", "true",
+        "false", "correct", "wrong", "accurate", "inaccurate", "certain", "uncertain", "possible",
+        "impossible", "probable", "improbable", "easy", "difficult", "simple", "complex", "clear", "unclear",
+        "obvious", "hidden", "known", "unknown", "familiar", "unfamiliar", "common", "rare", "unique",
+        "ordinary", "special", "important", "unimportant", "significant", "insignificant", "major", "minor",
+        "large", "small", "huge", "tiny", "wide", "narrow", "deep", "shallow", "high", "low", "long",
+        "short", "thick", "thin", "broad", "slim", "fat", "thin", "round", "square", "triangular", "straight",
+        "curved", "bent", "broken", "fixed", "whole", "part", "complete", "incomplete", "full", "empty",
+        "available", "unavailable", "present", "absent", "near", "far", "close", "distant", "up", "down",
+        "inside", "outside", "above", "below", "front", "back", "left", "right", "east", "west", "north",
+        "south", "central", "eastern", "western", "northern", "southern", "upper", "lower", "inner", "outer",
+        "middle", "top", "bottom", "first", "last", "next", "previous", "early", "late", "recent", "ancient",
+        "modern", "old-fashioned", "new-fangled", "futuristic", "traditional", "contemporary", "classic",
+        "vintage", "antique", "rustic", "urban", "rural", "suburban", "local", "global", "national",
+        "international", "public", "private", "social", "personal", "individual", "collective", "common",
+        "shared", "unique", "diverse", "similar", "different", "same", "alike", "unlike", "equal", "unequal",
+        "fair", "unfair", "just", "unjust", "legal", "illegal", "moral", "immoral", "ethical", "unethical",
+        "good", "bad", "excellent", "poor", "superb", "terrible", "wonderful", "awful", "great", "dreadful",
+        "amazing", "horrible", "fantastic", "lousy", "pleasant", "unpleasant", "enjoyable", "unenjoyable",
+        "interesting", "boring", "exciting", "dull", "amusing", "tedious", "charming", "annoying", "delightful",
+        "irritating", "lovely", "ugly", "pretty", "handsome", "beautiful", "attractive", "unattractive",
+        "cute", "adorable", "hideous", "gorgeous", "stunning", "plain", "neat", "messy", "tidy", "untidy",
+        "clean", "dirty", "spotless", "filthy", "organized", "disorganized", "structured", "unstructured",
+        "simple", "complicated", "easy", "hard", "straightforward", "complex", "direct", "indirect",
+        "frank", "reserved", "open", "closed", "honest", "dishonest", "sincere", "insincere", "true",
+        "false", "loyal", "disloyal", "faithful", "unfaithful", "reliable", "unreliable", "trustworthy",
+        "untrustworthy", "dependable", "undependable", "responsible", "irresponsible", "careful", "careless",
+        "cautious", "reckless", "wise", "foolish", "intelligent", "unintelligent", "clever", "silly",
+        "smart", "dumb", "bright", "dim", "quick-witted", "slow-witted", "creative", "uncreative",
+        "imaginative", "unimaginative", "artistic", "unartistic", "musical", "unmusical", "athletic",
+        "unathletic", "talented", "untalented", "skilled", "unskilled", "experienced", "inexperienced",
+        "professional", "amateur", "expert", "novice", "master", "apprentice", "leader", "follower",
+        "dominant", "submissive", "assertive", "passive", "aggressive", "peaceful", "violent", "nonviolent",
+        "friendly", "unfriendly", "kind", "unkind", "generous", "selfish", "altruistic", "egoistic",
+        "sympathetic", "unsympathetic", "empathetic", "apathetic", "compassionate", "heartless", "warm",
+        "cold", "affectionate", "indifferent", "loving", "hateful", "joyful", "sorrowful", "cheerful",
+        "gloomy", "optimistic", "pessimistic", "hopeful", "hopeless", "confident", "insecure", "brave",
+        "timid", "courageous", "fearful", "strong", "weak", "powerful", "powerless", "energetic", "lethargic",
+        "active", "inactive", "busy", "idle", "productive", "unproductive", "efficient", "inefficient",
+        "effective", "ineffective", "successful", "unsuccessful", "victorious", "defeated", "winning",
+        "losing", "triumphant", "failed", "happy", "unhappy", "content", "discontent", "satisfied",
+        "dissatisfied", "pleased", "displeased", "excited", "bored", "thrilled", "calm", "nervous", "relaxed",
+        "tense", "stressed", "peaceful", "troubled", "comfortable", "uncomfortable", "safe", "unsafe",
+        "secure", "insecure", "protected", "exposed", "healthy", "sick", "well", "ill", "fit", "unfit",
+        "strong", "weak", "able", "unable", "capable", "incapable", "competent", "incompetent", "qualified",
+        "unqualified", "suitable", "unsuitable", "appropriate", "inappropriate", "proper", "improper",
+        "correct", "incorrect", "right", "wrong", "valid", "invalid", "true", "false", "authentic",
+        "fake", "genuine", "artificial", "natural", "unnatural", "real", "unreal", "existent",
+        "nonexistent", "present", "absent", "available", "unavailable", "current", "past", "future",
+        "old", "new", "ancient", "modern", "contemporary", "outdated", "current", "future", "past",
+        "temporary", "permanent", "brief", "long", "short", "quick", "slow", "fast", "rapid", "sudden",
+        "gradual", "early", "late", "timely", "untimely", "punctual", "late", "on time", "ahead of schedule",
+        "behind schedule", "first", "last", "next", "previous", "initial", "final", "primary", "secondary",
+        "tertiary", "main", "minor", "major", "chief", "subordinate", "principal", "auxiliary", "essential",
+        "nonessential", "critical", "trivial", "important", "unimportant", "significant", "insignificant",
+        "basic", "advanced", "complex", "simple", "easy", "difficult", "hard", "soft", "light", "dark",
+        "bright", "dim", "colorful", "dull", "vibrant", "pale", "loud", "quiet", "noisy", "silent",
+        "musical", "unmusical", "harmonious", "dissonant", "sweet", "sour", "bitter", "salty", "spicy",
+        "bland", "tasty", "delicious", "disgusting", "fragrant", "odorless", "stinky", "fresh", "stale",
+        "clean", "dirty", "pure", "impure", "smooth", "rough", "soft", "hard", "smooth", "bumpy", "flat",
+        "uneven", "straight", "curved", "bent", "cracked", "broken", "whole", "damaged", "repaired",
+        "new", "old", "ancient", "modern", "contemporary", "futuristic", "classic", "vintage", "antique",
+        "rustic", "polished", "dull", "shiny", "matte", "glossy", "transparent", "opaque", "clear",
+        "cloudy", "solid", "liquid", "gaseous", "dense", "sparse", "heavy", "light", "big", "small",
+        "large", "tiny", "huge", "miniature", "gigantic", "microscopic", "enormous", "petite", "massive",
+        "slight", "broad", "narrow", "wide", "thin", "thick", "deep", "shallow", "high", "low",
+        "tall", "short", "long", "brief", "extended", "limited", "unlimited", "finite", "infinite",
+        "bound", "unbound", "open", "closed", "covered", "uncovered", "exposed", "sheltered", "indoor",
+        "outdoor", "inside", "outside", "internal", "external", "central", "peripheral", "front", "back",
+        "top", "bottom", "upper", "lower", "left", "right", "eastern", "western", "northern", "southern",
+        "local", "regional", "national", "international", "global", "universal", "cosmic", "terrestrial",
+        "aquatic", "aerial", "grounded", "floating", "submerged", "emerged", "visible", "invisible",
+        "perceptible", "imperceptible", "detectable", "undetectable", "noticeable", "unnoticeable",
+        "apparent", "hidden", "obvious", "subtle", "distinct", "indistinct", "clear", "blurry", "sharp",
+        "fuzzy", "focused", "unfocused", "bright", "dim", "vivid", "faint", "strong", "weak", "intense",
+        "mild", "powerful", "powerless", "effective", "ineffective", "efficient", "inefficient",
+        "productive", "unproductive", "useful", "useless", "valuable", "worthless", "important",
+        "unimportant", "significant", "insignificant", "crucial", "trivial", "essential", "nonessential",
+        "necessary", "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory",
+        "elective", "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor",
+        "principal", "auxiliary", "leading", "following", "first", "last", "next", "previous",
+        "initial", "final", "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic",
+        "counterfeit", "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living",
+        "nonliving", "animate", "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid",
+        "gas", "plasma", "energy", "matter", "physical", "mental", "emotional", "spiritual", "intellectual",
+        "creative", "logical", "intuitive", "rational", "irrational", "sensible", "absurd", "realistic",
+        "unrealistic", "practical", "impractical", "feasible", "infeasible", "possible", "impossible",
+        "probable", "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful",
+        "optimistic", "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable",
+        "unfavorable", "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive",
+        "destructive", "helpful", "unhelpful", "useful", "useless", "effective", "ineffective",
+        "efficient", "inefficient", "productive", "unproductive", "successful", "unsuccessful",
+        "victorious", "defeated", "winning", "losing", "triumphant", "failed", "accomplished", "unaccomplished",
+        "achieved", "unachieved", "fulfilled", "unfulfilled", "satisfied", "dissatisfied", "content",
+        "discontent", "happy", "unhappy", "joyful", "sorrowful", "cheerful", "gloomy", "elated", "depressed",
+        "excited", "bored", "thrilled", "calm", "nervous", "relaxed", "tense", "stressed", "peaceful",
+        "troubled", "comfortable", "uncomfortable", "safe", "unsafe", "secure", "insecure", "protected",
+        "exposed", "healthy", "sick", "well", "ill", "fit", "unfit", "strong", "weak", "able", "unable",
+        "capable", "incapable", "competent", "incompetent", "qualified", "unqualified", "suitable",
+        "unsuitable", "appropriate", "inappropriate", "proper", "improper", "correct", "incorrect",
+        "right", "wrong", "valid", "invalid", "true", "false", "authentic", "fake", "genuine",
+        "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving", "animate",
+        "inanimate", "human", "animal", "plant", "mineral", "solid", "liquid", "gas", "plasma", "energy",
+        "matter", "physical", "mental", "emotional", "spiritual", "intellectual", "creative", "logical",
+        "intuitive", "rational", "irrational", "sensible", "absurd", "realistic", "unrealistic",
+        "practical", "impractical", "feasible", "infeasible", "possible", "impossible", "probable",
+        "improbable", "certain", "uncertain", "sure", "unsure", "confident", "doubtful", "optimistic",
+        "pessimistic", "hopeful", "hopeless", "positive", "negative", "favorable", "unfavorable",
+        "advantageous", "disadvantageous", "beneficial", "detrimental", "constructive", "destructive",
+        "helpful", "unhelpful", "useful", "useless", "valuable", "worthless", "important", "unimportant",
+        "significant", "insignificant", "crucial", "trivial", "essential", "nonessential", "necessary",
+        "unnecessary", "required", "optional", "mandatory", "voluntary", "compulsory", "elective",
+        "primary", "secondary", "tertiary", "main", "subordinate", "chief", "minor", "principal",
+        "auxiliary", "leading", "following", "first", "last", "next", "previous", "initial", "final",
+        "original", "copy", "replica", "duplicate", "genuine", "fake", "authentic", "counterfeit",
+        "real", "artificial", "natural", "synthetic", "organic", "inorganic", "living", "nonliving",
+        "animate", "inanimate", "human", "animal", "plant", "mineral"
+        # ... add many more adjectives
+    ],
+    "adverb": [
+        "quickly", "slowly", "carefully", "badly", "well", "happily", "sadly", "angrily", "excitedly",
+        "calmly", "now", "then", "soon", "later", "early", "yesterday", "today", "tomorrow", "always",
+        "never", "here", "there", "everywhere", "anywhere", "upstairs", "downstairs", "outside", "inside",
+        "forward", "very", "extremely", "quite", "rather", "too", "enough", "almost", "nearly", "scarcely",
+        "hardly", "often", "sometimes", "usually", "rarely", "never", "always", "frequently", "occasionally",
+        "seldom", "generally", "actually", "additionally", "allegedly", "almost", "already", "also",
+        "always", "amazingly", "annually", "apparently", "approximately", "arbitrarily", "arguably",
+        "around", "as", "aside", "automatically", "away", "back", "badly", "barely", "beautifully",
+        "before", "behind", "below", "beneath", "best", "better", "beyond", "bitterly", "blindly",
+        "boldly", "briefly", "brightly", "busily", "calmly", "carefully", "carelessly", "certainly",
+        "chiefly", "clearly", "closely", "commonly", "completely", "consequently", "constantly",
+        "continually", "correctly", "courageously", "currently", "daily", "dangerously", "darkly",
+        "decidedly", "deeply", "definitely", "deliberately", "delightfully", "densely", "directly",
+        "disappointingly", "distinctly", "down", "downstairs", "dramatically", "due", "eagerly",
+        "early", "easily", "effectively", "efficiently", "effortlessly", "elsewhere", "emotionally",
+        "enough", "entirely", "especially", "essentially", "even", "eventually", "ever", "everywhere",
+        "exactly", "exceptionally", "excessively", "exclusively", "explicitly", "expressly",
+        "extensively", "externally", "extraordinarily", "extremely", "fairly", "faithfully", "far",
+        "fast", "finally", "firmly", "first", "firstly", "flatly", "forever", "formerly", "forth",
+        "fortunately", "forward", "frankly", "free", "freely", "frequently", "fully", "generally",
+        "generously", "gently", "gladly", "globally", "gradually", "greatly", "grimly", "happily",
+        "hard", "hardly", "hastily", "healthily", "heavily", "hence", "here", "highly", "honestly",
+        "hourly", "how", "however", "hungrily", "ideally", "immediately", "impatiently", "importantly",
+        "improperly", "inaccurately", "incidentally", "increasingly", "indeed", "indirectly",
+        "individually", "inevitably", "informally", "initially", "inside", "instantly", "instead",
+        "intensely", "internally", "inwardly", "ironically", "just", "justly", "keenly", "kindly",
+        "knowingly", "last", "lastly", "late", "lately", "least", "legally", "less", "lightly",
+        "likewise", "literally", "locally", "logically", "long", "longingly", "loudly", "lovingly",
+        "loyally", "luckily", "mainly", "merely", "mightily", "moderately", "momentarily", "monthly",
+        "more", "moreover", "most", "mostly", "much", "mutually", "namely", "nationally", "naturally",
+        "nearly", "necessarily", "needlessly", "negatively", "never", "nevertheless", "newly", "next",
+        "nightly", "no", "nonetheless", "normally", "not", "notably", "nothing", "now", "nowhere",
+        "obviously", "occasionally", "off", "often", "on", "only", "openly", "optimistically",
+        "orally", "originally", "otherwise", "out", "outdoors", "outside", "over", "overall",
+        "overnight", "overseas", "painfully", "partially", "particularly", "partly", "patiently",
+        "perfectly", "personally", "physically", "plainly", "pleasantly", "politely", "poorly",
+        "possibly", "powerfully", "practically", "precisely", "presently", "presumably", "previously",
+        "primarily", "privately", "probably", "promptly", "properly", "publicly", "purely", "quickly",
+        "quietly", "quite", "randomly", "rapidly", "rarely", "rather", "readily", "really", "recently",
+        "regularly", "reluctantly", "remarkably", "repeatedly", "reportedly", "respectively",
+        "responsibly", "right", "rightly", "roughly", "routinely", "sadly", "safely", "scarcely",
+        "second", "secondly", "secretly", "seldom", "separately", "seriously", "sharply", "shortly",
+        "silently", "simply", "sincerely", "slowly", "so", "softly", "solely", "sometimes", "soon",
+        "specifically", "suddenly", "surely", "surprisingly", "swiftly", "thankfully", "then", "there",
+        "therefore", "thoroughly", "though", "thoughtfully", "thus", "tightly", "today", "together",
+        "tomorrow", "too", "totally", "truly", "twice", "typically", "ultimately", "unconditionally",
+        "undoubtedly", "unfortunately", "uniformly", "unilaterally", "uniquely", "unless", "unlikely",
+        "unnecessarily", "unusually", "up", "upstairs", "usually", "utterly", "very", "virtually",
+        "visibly", "voluntarily", "warmly", "weakly", "weekly", "well", "when", "whenever", "where",
+        "wherever", "whether", "while", "wholly", "why", "widely", "wildly", "willingly", "wisely",
+        "within", "without", "wonderfully", "yearly", "yes", "yesterday", "yet", "zealously"
+        # ... add many more adverbs
+    ],
+		"preposition": ["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
         "conjunction": ["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
-    }
+    # ... other categories
+}
 
-    sentence_structures = [
-        # 1. Simple Present: Subject + Verb + (Object/Complement)
-        ["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
-        ["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
-        ["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
-        ["subject", "verb_present_conjugated"],  
-        ["subject", "verb_present_conjugated", "adverb"],  
+	sentence_structures = [
+		# 1. Simple Present: Subject + Verb + (Object/Complement)
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
+		["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
+		["subject", "verb_present_conjugated"],  
+		["subject", "verb_present_conjugated", "adverb"],  
 
         # 2. To Be Verb: Subject + To Be + Complement (Adjective / Noun)
         ["subject", "aux_be_present_conjugated", "adjective"],  
@@ -3101,140 +3460,155 @@ def make_sentence(rw_instance):
         # FIX: Modal + Negation + Base 'be' + Adjective/Noun (e.g., "They may not be a cat.")
         ["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
         ["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
-    ]
+	]
 
-    try:
-        chosen_structure = random.choice(sentence_structures)
-        sentence_words = []
-        chosen_subject = None
+	try:
+		chosen_structure = random.choice(sentence_structures)
+		sentence_words = []
+		chosen_subject = None
+		temp_word = rw_instance.get_random_word()
 
-        for i, part_type in enumerate(chosen_structure):
-            word_to_add = ""
+		for i, part_type in enumerate(chosen_structure):
+			word_to_add = ""
 
-            if part_type == "subject":
-                if random.random() < 0.5:
-                    chosen_subject = random.choice(knowledge["pronoun_singular_third"])
-                else:
-                    chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
-                word_to_add = chosen_subject
+			if part_type == "subject":
+				if random.random() < 0.5:
+					chosen_subject = random.choice(knowledge["pronoun_singular_third"])
+				else:
+					chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
+				word_to_add = chosen_subject
                 
-            elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
-                if chosen_subject is None:
-                    raise ValueError("Subject must be chosen before verb conjugation.")
-                word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
+			elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
+				if chosen_subject is None:
+					raise ValueError("Subject must be chosen before verb conjugation.")
+				word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
                 
-            elif part_type == "aux_do_present_neg_conjugated":
-                if chosen_subject in knowledge["pronoun_singular_third"]:
-                    word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
-                else:
-                    word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
+			elif part_type == "aux_do_present_neg_conjugated":
+				if chosen_subject in knowledge["pronoun_singular_third"]:
+					word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
+				else:
+					word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
                     
-            elif part_type == "verb_base_be":
-                word_to_add = random.choice(knowledge["verb_base_be"])
+			elif part_type == "verb_base_be":
+				word_to_add = random.choice(knowledge["verb_base_be"])
                 
-            elif part_type == "verb_past_participle_be":
-                word_to_add = random.choice(knowledge["verb_past_participle_be"])
+			elif part_type == "verb_past_participle_be":
+				word_to_add = random.choice(knowledge["verb_past_participle_be"])
             
-            # --- START: RandomWords Integration (using rw_instance to get *new* words) ---
-            elif part_type.startswith("noun"):
-                # Call rw_instance.get_random_word() *here* to get a NEW random word for this noun slot
-                temp_word = rw_instance.get_random_word() 
-                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-                    temp_word = rw_instance.get_random_word()
+			elif part_type.startswith("noun"):
+				if part_type == "noun_countable_singular":
+					word_to_add = random.choice(knowledge["noun_countable_singular"])
+				elif part_type == "noun_countable_plural":
+					word_to_add = random.choice(knowledge["noun_countable_plural"])
+				elif part_type == "noun_uncountable":
+					word_to_add = random.choice(knowledge["noun_uncountable"])
+				elif part_type == "noun_abstract":
+					word_to_add = random.choice(knowledge["noun_abstract"])
+				else:
+					word_to_add = random.choice(knowledge["noun"])
+			#elif part_type.startswith("noun"):
+			#	temp_word = rw_instance.get_random_word() 
+			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+			#		temp_word = rw_instance.get_random_word()
                 
-                # Use heuristics and fallbacks to ensure it's a reasonable noun
-                if temp_word.lower() in knowledge["noun"] or \
-                   temp_word.lower() in knowledge["noun_countable_singular"] or \
-                   temp_word.lower() in knowledge["noun_countable_plural"] or \
-                   temp_word.lower() in knowledge["noun_uncountable"] or \
-                   temp_word.lower() in knowledge["noun_abstract"] or \
-                   random.random() < 0.3: # A small chance to use it even if not in our lists (for more variety)
-                    word_to_add = temp_word.lower()
-                else:
-                    # Fallback to a random noun from our predefined list for guaranteed correctness
-                    if part_type == "noun_countable_singular":
-                        word_to_add = random.choice(knowledge["noun_countable_singular"])
-                    elif part_type == "noun_countable_plural":
-                        word_to_add = random.choice(knowledge["noun_countable_plural"])
-                    elif part_type == "noun_uncountable":
-                        word_to_add = random.choice(knowledge["noun_uncountable"])
-                    elif part_type == "noun_abstract":
-                        word_to_add = random.choice(knowledge["noun_abstract"])
-                    else: # General noun
-                        word_to_add = random.choice(knowledge["noun"])
+				# Use heuristics and fallbacks to ensure it's a reasonable noun
+				if temp_word.lower() in knowledge["noun"] or \
+					temp_word.lower() in knowledge["noun_countable_singular"] or \
+					temp_word.lower() in knowledge["noun_countable_plural"] or \
+					temp_word.lower() in knowledge["noun_uncountable"] or \
+					temp_word.lower() in knowledge["noun_abstract"] or \
+					random.random() < 0.3: # A small chance to use it even if not in our lists (for more variety)
+					word_to_add = temp_word.lower()
+				else:
+					# Fallback to a random noun from our predefined list for guaranteed correctness
+					if part_type == "noun_countable_singular":
+						word_to_add = random.choice(knowledge["noun_countable_singular"])
+					elif part_type == "noun_countable_plural":
+						word_to_add = random.choice(knowledge["noun_countable_plural"])
+					elif part_type == "noun_uncountable":
+						word_to_add = random.choice(knowledge["noun_uncountable"])
+					elif part_type == "noun_abstract":
+						word_to_add = random.choice(knowledge["noun_abstract"])
+					else: # General noun
+						word_to_add = random.choice(knowledge["noun"])
 
-                # If the structure specifically asks for plural, try to pluralize (simple 's' for now)
-                if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
-                    word_to_add += 's'
-
-            elif part_type == "adjective":
-                # Call rw_instance.get_random_word() *here* to get a NEW random word for this adjective slot
-                temp_word = rw_instance.get_random_word()
-                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-                    temp_word = rw_instance.get_random_word()
+				# If the structure specifically asks for plural, try to pluralize (simple 's' for now)
+				if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
+					word_to_add += 's'
+			
+			elif part_type == "adjective":
+				word_to_add = random.choice(knowledge["adjective"])
+			
+			#elif part_type == "adjective":
+			#	# Call rw_instance.get_random_word() *here* to get a NEW random word for this adjective slot
+			#	temp_word = rw_instance.get_random_word()
+			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+			#		temp_word = rw_instance.get_random_word()
                 
-                # Heuristic for adjectives + fallback
-                if temp_word.lower() in knowledge["adjective"] or \
-                   temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
-                   random.random() < 0.3: 
-                    word_to_add = temp_word.lower()
-                else:
-                    word_to_add = random.choice(knowledge["adjective"])
+				# Heuristic for adjectives + fallback
+				if temp_word.lower() in knowledge["adjective"] or \
+					temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
+					random.random() < 0.3: 
+					word_to_add = temp_word.lower()
+				else:
+					word_to_add = random.choice(knowledge["adjective"])
 
-            elif part_type == "adverb":
-                # Call rw_instance.get_random_word() *here* to get a NEW random word for this adverb slot
-                temp_word = rw_instance.get_random_word()
-                while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-                    temp_word = rw_instance.get_random_word()
+			elif part_type == "adverb":
+				word_to_add = random.choice(knowledge["adverb"])
+
+			#elif part_type == "adverb":
+			#	temp_word = rw_instance.get_random_word()
+			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
+			#		temp_word = rw_instance.get_random_word()
                 
-                # Heuristic for adverbs + fallback
-                if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
-                   random.random() < 0.3: 
-                    word_to_add = temp_word.lower()
-                else:
-                    word_to_add = random.choice(knowledge["adverb"])
+				# Heuristic for adverbs + fallback
+				if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
+					random.random() < 0.3: 
+					word_to_add = temp_word.lower()
+				else:
+					word_to_add = random.choice(knowledge["adverb"])
 
-            elif part_type == "determiner":
-                next_noun_category_in_structure = None
-                if i + 1 < len(chosen_structure) and chosen_structure[i+1].startswith("noun"):
-                    next_noun_category_in_structure = chosen_structure[i+1]
+			elif part_type == "determiner":
+				next_noun_category_in_structure = None
+				if i + 1 < len(chosen_structure) and chosen_structure[i+1].startswith("noun"):
+					next_noun_category_in_structure = chosen_structure[i+1]
 
-                if next_noun_category_in_structure == "noun_uncountable":
-                    word_to_add = random.choice(["some", "the"]) 
-                elif next_noun_category_in_structure == "noun_countable_singular":
-                    temp_word_for_vowel_check = rw_instance.get_random_word() 
-                    while not temp_word_for_vowel_check or len(temp_word_for_vowel_check) < 2:
-                        temp_word_for_vowel_check = rw_instance.get_random_word()
+				if next_noun_category_in_structure == "noun_uncountable":
+					word_to_add = random.choice(["some", "the"]) 
+				elif next_noun_category_in_structure == "noun_countable_singular":
+					temp_word_for_vowel_check = rw_instance.get_random_word() 
+					while not temp_word_for_vowel_check or len(temp_word_for_vowel_check) < 2:
+						temp_word_for_vowel_check = rw_instance.get_random_word()
                     
-                    if temp_word_for_vowel_check.lower().startswith(('a', 'e', 'i', 'o', 'u')):
-                        word_to_add = "an"
-                    else:
-                        word_to_add = "a"
-                elif next_noun_category_in_structure == "noun_countable_plural": 
-                    word_to_add = random.choice(["the", "some"]) 
-                elif next_noun_category_in_structure == "noun": 
-                    word_to_add = random.choice(["the", "some", "a", "an"]) 
+					if temp_word_for_vowel_check.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+						word_to_add = "an"
+					else:
+						word_to_add = "a"
+				elif next_noun_category_in_structure == "noun_countable_plural": 
+					word_to_add = random.choice(["the", "some"]) 
+				elif next_noun_category_in_structure == "noun": 
+					word_to_add = random.choice(["the", "some", "a", "an"]) 
             
-            # This handles remaining types like pronouns, prepositions, conjunctions, modal verbs, etc.
-            elif part_type in knowledge:
-                word_to_add = random.choice(knowledge[part_type])
+			# handles remaining types like pronouns, prepositions, conjunctions, modal verbs, etc.
+			elif part_type in knowledge:
+				word_to_add = random.choice(knowledge[part_type])
                 
-            else:
-                if part_type in knowledge:
-                     word_to_add = random.choice(knowledge[part_type])
-                else:
-                    print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
-                    word_to_add = "[UNKNOWN]"
+			else:
+				if part_type in knowledge:
+					word_to_add = random.choice(knowledge[part_type])
+				else:
+					print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
+					word_to_add = "[UNKNOWN]"
 
-            sentence_words.append(word_to_add)
+			sentence_words.append(word_to_add)
 
-        if sentence_words:
-            sentence_words[0] = sentence_words[0].capitalize()
-        final_sentence = " ".join(sentence_words) + "."
-        return final_sentence
+		if sentence_words:
+			sentence_words[0] = sentence_words[0].capitalize()
+		final_sentence = " ".join(sentence_words) + "."
+		return final_sentence
 
-    except Exception as e:
-        return f"Error generating sentence: {e}"
+	except Exception as e:
+		return f"Error generating sentence: {e}"
 
 #-------------------------------------------------------------------
 def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instance here
@@ -3257,7 +3631,7 @@ def preamble_random_word():
 		random_word = rw.get_random_word()
         
 	return f"{chosen_preamble} {random_word.lower()}.\n"
-	
+
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
 def ascii_horiz_solar_system(width):
@@ -3355,18 +3729,18 @@ def ascii_horiz_solar_system(width):
 #-------------------------------------------------
 def protect_image(input_filepath, output_directory="protected_images",
 					noise_intensity=10, pixel_shift_amount=1,
-					color_jitter_factor=0.05, jpeg_quality=90):
-  
+					color_jitter_factor=0.05, jpeg_quality=90, add_symbol=False):
+	
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 
 	try:
 		img = Image.open(input_filepath).convert("RGB")
 	except FileNotFoundError:
-		print (f"{random.choice(messages['trouble_short'])} Input file not found at {input_filepath}\n")
+		print (f"{random.choice(messages['trouble_short'])} Input file not found. Action required: Verify the file name and path.\n")
 		return
 	except Exception as e:
-		print (f"{random.choice(messages['trouble_short'])} Error opening image {input_filepath}: {e}\n")
+		print(f"{random.choice(messages['trouble_short'])} Failed to open the image. Please ensure the file is valid and the path is correct.\n")
 		return
 
 	original_filename = os.path.basename(input_filepath)
@@ -3374,7 +3748,7 @@ def protect_image(input_filepath, output_directory="protected_images",
 	output_filename = f"{name}_protected{ext}"
 	output_filepath = os.path.join(output_directory, output_filename)
 
-	print(f"Processing image: {original_filename.upper()}")
+	print(f"Processing image: {original_filename.upper()}{' with ▧ watermark' if add_symbol else ''}")
 	
 	width, height = img.size
 	noise = Image.effect_noise((width, height), sigma=noise_intensity)
@@ -3403,20 +3777,67 @@ def protect_image(input_filepath, output_directory="protected_images",
 	for enhancer_class, factor in enhancers:
 		enhancer = enhancer_class(img)
 		img = enhancer.enhance(factor)
+
+	# --- ADDING THE ▧ SYMBOL TO THE CORNER ---
+	if add_symbol:
+		draw = ImageDraw.Draw(img)
+		symbol_text = "▧"
+		
+		# --- MODIFICATION: INCREASED FONT SIZE ---
+		# Adjusted multiplier from 0.025/0.03 to 0.045 for a noticeable increase
+		font_size = int(min(width, height) * 0.045) 
+
+		font = None
+		try:
+			font_path = "arial.ttf" # Adjust this path if 'arial.ttf' isn't found
+			font = ImageFont.truetype(font_path, font_size)
+		except IOError:
+			print(f"Warning: Font '{font_path}' not found. Using default font. Symbol '▧' may not render perfectly.")
+			font_size = int(min(width, height) * 0.05) # Slightly larger for default fallback
+			font = ImageFont.load_default()
+
+		try:
+			bbox = draw.textbbox((0, 0), symbol_text, font=font)
+			text_width = bbox[2] - bbox[0]
+			text_height = bbox[3] - bbox[1]
+		except AttributeError:
+			text_width, text_height = draw.textsize(symbol_text, font=font)
+
+		margin = int(min(width, height) * 0.01)
+
+		x_pos = width - text_width - margin
+		y_pos = height - text_height - margin
+
+		# --- MODIFICATION: CHANGED TO FULLY OPAQUE WHITE ---
+		text_color = (255, 255, 255, 255) # RGBA: Fully opaque white
+
+		if img.mode != 'RGBA':
+			img = img.convert('RGBA')
+		draw = ImageDraw.Draw(img)
+
+		draw.text((x_pos, y_pos), symbol_text, fill=text_color, font=font)
+	# --- END OF SYMBOL ADDITION ---
+
 	try:
 		if ext.lower() in ['.jpg', '.jpeg']:
+			# JPEG doesn't support transparency, so convert back to RGB
+			if img.mode == 'RGBA':
+				img = img.convert('RGB')
 			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
 		elif ext.lower() == '.png':
+			# PNG supports transparency, so keep it as RGBA if it became so
 			img.save(output_filepath, format="PNG")
 		else:
 			print(f"Warning: Unsupported output format '{ext}'. Saving as JPEG.")
 			output_filename = f"{name}_protected.jpg"
 			output_filepath = os.path.join(output_directory, output_filename)
+			if img.mode == 'RGBA':
+				img = img.convert('RGB')
 			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
 		print(f"Protected image saved to: {output_filepath.upper()}\n")
 	except Exception as e:
 		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
-
+		
 #-------------------------------------------------
 def set_system_country():
 	global system_country
@@ -3465,12 +3886,13 @@ def list_country_details():
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
+	global aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
 	print_statusline(f"Loading ...")
 	check_tables(tables)
+	print_statusline(f"{dbmsgbl}...")
 	make_intextdb()
 	#----------------------------
-	global aboutyou, days
 	wms = random.choice(core['intromsg'])
 	tdctl=0;ncctl=0;ffctl=0;ftr=0;kuote=quote()
 	aboutyou = kdecode(aboutyou, checksum)
@@ -4025,10 +4447,6 @@ def main():
 
 		elif question == 'diagnostics' or question == 'show core' or question == '#core':
 			print("Here he is my full internal specifications :\n")
-			if internet_onoff() == True:
-				storage = "online [sqlitecloud]"
-			else:
-				storage = "offline [database files]"
 			if node_name:
 				print('   Device : ' + platform.node().upper() + '|' + _cyext_[0:4].replace(" ",""))
 			else:
@@ -4050,7 +4468,7 @@ def main():
 			print('    Linux : ' + str(len(linux_commands)))
 			print('    Astro : ' + "G"+str(len(core["astronomy glossary"])) + "|A" +  str(len(core["asteroid"])) + "|C" +  str(len(core["constelattion"])) + "|S" +  str(len(core["star name"])))
 			print('    World : ' + str(len(core["country"])))
-			print('  Storage : ' + storage)
+			print('  Storage : ' + dblrconn)
 			print('  Running : ' + str(days_till_today.days) + ' days.\n')
 
 		elif question == 'date' or question == 'today' or question == 'today is' or question == 'what is the date' or question == 'what is today':
@@ -4230,17 +4648,17 @@ def main():
 		#world population
 		elif question[-10:] == "population":
 			country_name = question.split()[0]
-			if internet_onoff() == False:
+			if ncountries and internet_onoff() == True:
+				cpopulation = get_thepopulation(country_name)
+				if cpopulation is not None:
+					print("Based on the online data from [{}] \n{} has a population of {:,} according to the Worldometers.\n".format(str(date.today().strftime("%d.%m.%y")), country_name.capitalize(), cpopulation))
+			else:
 				if country_name in core['country']:
 					print("Estimated population based on my offline data from [{}] \n{} has a population of {:,} according to the United Nations.\n".format(_revise_, country_name.capitalize(), ncountries[country_name]["population"]))
 				elif country_name == 'world' or country_name == 'earth':
 					print ("8.1 billion people in July 2024 according to the United Nations. Is "+ year_months[date.today().month-1] +", "+ str(date.today().year) +" so there must be quite a few more.\n")
 				else:
 					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What ?! " + country_name.capitalize() + " Is that a new country? Perhaps! No-can do.\n")
-			else:
-				cpopulation = get_thepopulation(country_name)
-				if cpopulation is not None:
-					print("Based on the online data from [{}] \n{} has a population of {:,} according to the Worldometers.\n".format(str(date.today().strftime("%d.%m.%y")), country_name.capitalize(), cpopulation))
 
 		elif question.startswith('where is ') and ('iss' in question or 'zarya' in question):
 			if internet_onoff() == False:
@@ -4478,24 +4896,10 @@ def main():
 					print("")
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
+					
+		elif any(word in question for word in core['asking the uptime']):
+			print("")
 		
-		elif question == "what is my uptime" or question == "cybele uptime" or question == "current system uptime" or question == "display my uptime":
-			uptime_parts = get_uptime()
-			time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
-			sentence_parts = []
-			for value, unit in time_units:
-				if value > 0:
-					sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
-				if not sentence_parts:
-					sentence = "less than a second"
-				else:
-					if len(sentence_parts) > 1:
-						sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-					else:
-						sentence = sentence_parts[0]
-			print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
-		
-		#print("I'm not familiar with this subject!")
 		elif any(word in question for word in core['holidays_query']):
 			print("")
 			
@@ -4508,30 +4912,35 @@ def main():
 			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
 		
-		elif question[0:13] == 'protect image':
-			piaiparam = question.split()[2:]
-			if len(piaiparam) == 0:
-				input_image_path = input("Enter the filename (e.g., 'my_photo.jpg' or full path): ")
-				if input_image_path == '':
-					print (f"{random.choice(messages['trouble_short'])} The image filename cannot be empty.\n")
+		elif question[0:7] == 'protect':
+			piaiparam = question.split()[1:]
+			if len(piaiparam) != 2:
+				print (f"{random.choice(messages['trouble_short'])} Missing or incorrect parameters. To learn how to use this command correctly, type: help protect image\n")
 			else:
-				input_image_path = piaiparam[0]
+				input_image_path = piaiparam[-1:]
 				custom_noise_intensity = 18
 				custom_pixel_shift_amount = 2
 				custom_color_jitter_factor = 0.04
 				custom_jpeg_quality = 90
-				protect_image(input_image_path, noise_intensity=custom_noise_intensity,
-							pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
-							jpeg_quality=custom_jpeg_quality)
-		
-	
+				if piaiparam[0] == 'image':
+					add_symbol=False
+					input_image_path = piaiparam[-1:][0]
+				elif piaiparam[0] == 'mark':
+					add_symbol=True
+					input_image_path = piaiparam[-1:][0]
+				else:
+					print (f"{random.choice(messages['trouble_short'])} Incorrect usage. The correct usage is: protect image|mark <image filename>.<jpg|png|jpeg>\n")
+					add_symbol=None
+				if add_symbol != None:
+					protect_image(input_image_path, noise_intensity=custom_noise_intensity,
+									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
+									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
+				
 		elif question == 'testing':
 			print (f"Development testing propose code...")
-			print (core['working_hard'][0])
-			terminal_bg = os.getenv('COLOR_BACKGROUND')
-			print (terminal_bg)
+			print (random.choice(core['working_hard']))
 			print ("")
-		
+			
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 2:
@@ -4543,6 +4952,9 @@ def main():
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
+		
+		#else:
+		#	print (f"{core['trouble_short']} I'm not familiar with this subject!")
 
 #-------------------------------------------------
 if __name__ == "__main__":
