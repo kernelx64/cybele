@@ -1605,11 +1605,18 @@ def pwdgen(num_passwords, length):
     return passwords
 
 #------------------------------------------------------------
-def generate_random_question():
-	grq = list(core["qa-astro"]) + list(questions) + list(others)
-	index = random.randint(0, len(grq) - 1)
-	return grq[index].capitalize()
-
+def generate_random_questions(question_sources: list, num_questions: int) -> list:
+    all_raw_questions = []
+    for source_list in question_sources:
+        all_raw_questions.extend(source_list)
+    unique_questions = list(set(all_raw_questions))
+    random.shuffle(unique_questions)
+    questions_to_return = min(num_questions, len(unique_questions))
+    selected_questions = []
+    for _ in range(questions_to_return):
+        selected_questions.append(unique_questions.pop().capitalize())
+    return selected_questions
+	
 #------------------------------------------------------------
 def days_until(what_date):
 	today = date.today()
@@ -3953,8 +3960,10 @@ def main():
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
 			print (" " + _spchar_[1:2] + " " + "What can you anwser")
-			for i in range(random.randint(1,4)):
-				print (" " + _spchar_[1:2] + " " + generate_random_question())
+			source_list = [list(core["qa-astro"]), questions, others]
+			list_source = generate_random_questions(source_list, random.randint(1, 4))
+			for source in list_source:
+				print (f" {_spchar_[1:2]} {source}")
 			print ("")
 		#-------------------------
 		if question == "bye" or question == "exit" or question == "quit":
