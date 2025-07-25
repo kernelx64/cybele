@@ -108,6 +108,8 @@ if node_name:
 rw = RandomWords()
 #------------------------------------------------------------------
 # Init-process
+#------------------------------------------------------------------
+# Init-process
 def print_statusline(msg: str):
     last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
     print(' ' * last_msg_length, end='\r')
@@ -118,19 +120,27 @@ def print_statusline(msg: str):
 print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
+dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
+GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
+iknow_pun = {"i know": "you know","you know": "i know"}
+datemd = str(datetime.today().strftime("%d.%m"))
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
-month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
+month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
-stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0;dbmsgbl = "";dblrconn = ""
-dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
-tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
-GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
+stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
+dblrconn = ""; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
 gamescore=[-1,0,0]
 
+#-----------------------------------------------------------
+tables = [
+	'config','adjectivedb','adverbdb','astronomy_glossary','climate_dict','conjunctiondb',
+	'constelations','contigency','countries','funfacts','linux_commands','meanings','nicethings',
+	'oldtech','prepositiondb','qa_astro','season_activities','special_dates','stars',
+	'topactivities','verb_basedb','verb_past_db','vocabulary'
+	]
 #-----------------------------------------------------------
 website = {
 	"home": "https://www.adelinosaldanha.site",
@@ -469,6 +479,10 @@ messages = {
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
 				"Stressed about e,m or h choice? Blame aliens, cats or dreams!"],
 				
+	"loadings":	["Loading core data structures...","Loading essential data core...","Initializing core components...",
+				"Allocating memory resources...","Activating primary functions...","Preparing user components...",
+				"Optimizing runtime environment..."],
+				
 	"preambles":	["Here's a word for you:","How about this one:","My word for you is:","Consider this word:",
 					"A random word:","Perhaps this word will interest you:"],
 
@@ -527,7 +541,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","aster
 		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
 		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
 		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate pwd","recently added tvshows",
+		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate passwords (genpwd)","recently added tvshows",
 		"protect image","fast fact","nice thing"]
 
 #------------------------------------------------------------
@@ -723,7 +737,7 @@ def kdecode(emessage, shift):
 
 #----------------------------------------------------
 sqlconn = kdecode(dbconn, shift)
-sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:] , shift)
+sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
 
 #----------------------------------------------------
 def whatgmt():
@@ -884,14 +898,9 @@ def check_tables(tables_names):
 		else:
 			print_statusline(f"")
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
-	if conn is None:
-		print_statusline(f"")
-		modname = "Could not establish a database connection. \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			
-		return False, "Error: "
+		
 	try:
 		cur = conn.cursor()
 		cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -902,8 +911,8 @@ def check_tables(tables_names):
 
 		if missing_tables:
 			print_statusline(f"")
-			modname = f"The database file is from a previous version and dont satisfy all my requirements.\n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   I cannot execute properly. Exiting."
+			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			return False
 		else:
 			return True
@@ -911,12 +920,12 @@ def check_tables(tables_names):
 	except sqlite3.Error as e:
 		print_statusline(f"")
 		modname = f"Database query error {e} \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	except Exception as e:
 		print_statusline(f"")
 		modname = f"An unexpected error occurred: {e}\n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	finally:
 		if cur:
@@ -936,10 +945,12 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge
+	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, animation_index
 	if not check_tables(tables):
 		sys.exit(0)
 	else:
+		message = random.choice(messages['loadings'])
+		print_statusline(f"{message}")
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
 		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
 		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
@@ -947,14 +958,14 @@ def make_intextdb():
 		constelations = list(fetch_fromdbfile("cybele.db", "stars", "constelation"))
 		for name, hr, const in zip(star_names, hr_numbers, constelations):
 			stars_dict[name] = [hr, const]
-			
+
 		constelation = list(fetch_fromdbfile("cybele.db", "constelations", "constelation"))
 		meaning = list(fetch_fromdbfile("cybele.db", "constelations", "meaning"))
 		abbr = list(fetch_fromdbfile("cybele.db", "constelations", "abbr"))
 		for constelation, meaning, abbr in zip(constelation, meaning, abbr):
 			constellations_dict[constelation] = meaning, abbr
 			constellations_abbr[abbr] = constelation
-			
+
 		db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
 		db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
 		db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
@@ -963,8 +974,7 @@ def make_intextdb():
 			country.lower(): {"capital": capital, "population": population, "alpha2": alpha_2}
 			for country, capital, population, alpha_2 in zip(db_country, db_capital, db_population, db_alpha2)
 		}
-		
-		#country_alpha2 = [(country_name, data["alpha2"]) for country_name, data in ncountries.items()]
+
 		ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
 		ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
 		climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
@@ -988,32 +998,32 @@ def make_intextdb():
 				}
 		
 		old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
-		
+
 		special_dates_data = fetch_fromdbfile("cybele.db", "special_dates", "sdate")
 		special_dates_events = fetch_fromdbfile("cybele.db", "special_dates", "event")
-		
+
 		for date_str, event_desc in zip(special_dates_data, special_dates_events):
 			parsed_date_tuple = parse_date_string(date_str)
 			if parsed_date_tuple:
-				special_dates_dict[parsed_date_tuple] = event_desc	
+				special_dates_dict[parsed_date_tuple] = event_desc
 		midbcounter = midbcounter + (len(special_dates_data))
 		del special_dates_data, special_dates_events
-		
+
 		dbadjective = fetch_fromdbfile("cybele.db", "adjectivedb", "adjective")
 		dbadverb = fetch_fromdbfile("cybele.db", "adverbdb", "adverb")
 		dbconjunction = fetch_fromdbfile("cybele.db", "conjunctiondb", "conjunction")
 		dbpreposition = fetch_fromdbfile("cybele.db", "prepositiondb", "preposition")
 		dbverb_base = fetch_fromdbfile("cybele.db", "verb_basedb", "verb_base")
 		dbverb_past_participle = fetch_fromdbfile("cybele.db", "verb_past_db", "verb_past_participle")
-		
+
 		knowledge["adjective"] = list(dbadjective)
 		knowledge["adverb"] = list(dbadverb)
-		knowledge["conjunction"] = list(dbconjunction)	
+		knowledge["conjunction"] = list(dbconjunction)
 		knowledge["preposition"] = list(dbpreposition)
 		knowledge["verb_base"] = list(dbverb_base)
 		knowledge["verb_past_participle"] = list(dbverb_past_participle)
 		del dbadjective, dbadverb, dbconjunction, dbpreposition, dbverb_base, dbverb_past_participle
-		
+
 		core["astronomy glossary"] = list(astronomy_glossary)
 		core["star name"] = [key.lower() for key in stars_dict.keys()]
 		core["constelattion"] = list(constellations_dict.keys())
@@ -1029,17 +1039,18 @@ def make_intextdb():
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 		core["old_tech_term"] = old_tech_terms_list
-				
+		
 		internal_db_array = ["astronomy glossary","star name","constelattion","asteroid","country","capital",
 							"climate dictionary term","climate dictionary","word meaning","qa-astro","help",
 							"linuxcmd","element symbol","element abbr","old_tech_term"]
 		knowledge_db_array = ["adjective","adverb","conjunction","preposition","verb_base","verb_past_participle"]
-		
+
 		for i in range(len(knowledge_db_array)):
-			 midbcounter = midbcounter + (len(knowledge[knowledge_db_array[i]]))	 
+			midbcounter = midbcounter + (len(knowledge[knowledge_db_array[i]]))
 		midbcounter = midbcounter + len(questions) + len(answers)
 		for i in range(len(internal_db_array)):
-			 midbcounter = midbcounter + (len(core[internal_db_array[i]]))
+			midbcounter = midbcounter + (len(core[internal_db_array[i]]))
+		#sys.stdout.flush()
 
 #----------------------------------------------------------------------
 questions = [
@@ -2946,6 +2957,8 @@ def country_holidays():
 	print("")
 	
 #----------------------------------------------------------------
+def get_display_length(s):
+    return len(re.sub(r'\033\[[0-9;]*m', '', s))
 #----------------------------------------------------------------
 def set_cursor_pos(row, col):
     return f"\033[{row};{col}H"
@@ -2986,8 +2999,6 @@ def showlisttell(data_key_list, num_terms=5, category="terms"):
         return f"{chosen_intro_fragment} {formatted_items_list}"
     else:
         return f"Sorry, I don't have any {category} to show at the moment."
-
-#----------------------------------------------------------------
 
 #----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
@@ -3927,7 +3938,8 @@ def check_for_updates():
 def main():
 	global aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
-	check_tables(tables)
+	if not check_tables(tables):
+		exit()
 	print_statusline(f"{dbmsgbl}...")
 	make_intextdb()
 	print_statusline(f"{dbmsgbl}...")
