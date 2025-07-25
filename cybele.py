@@ -125,7 +125,7 @@ days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_
 iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday();datemd = str(datetime.today().strftime("%d.%m"))
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
-stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0; dbmsgbl=""; dblrconn = ""
+stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0;dbmsgbl = "";dblrconn = ""
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates','config']
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
@@ -810,7 +810,6 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			exit(0)
 
 	try:
-		#print_statusline(f"{dbmsgbl}")
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")
 		result = [row[0] for row in cursor.fetchall()]
@@ -828,7 +827,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 #------------------------------------------------------------
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	
-	global dblrconn
+	global dblrconn, dbmsgbl
 	conn = None
 	if internet_onoff() == True:
 		if os.path.isfile (db_filename) == True :
@@ -864,6 +863,8 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 
 #--------------------------------------------------------
 def check_tables(tables_names):
+	
+	global dbmsgbl
 	db_filename = 'cybele.db'
 	missing_tables = []
 	conn = None
@@ -1155,7 +1156,8 @@ maincommands = [
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
 	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
-	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls"
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know",
+	"how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1204,10 +1206,6 @@ core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 if _cybid_ == True:
 	for i in range(len(addcomm)):
 		others.append(addcomm[i])
-
-#----------------------------------------------------------------------
-old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
-core["old_tech_term"] = old_tech_terms_list
 
 #----------------------------------------------------------------------
 if _cybid_ == True:
@@ -2947,6 +2945,42 @@ def set_cursor_pos(row, col):
 #----------------------------------------------------------------
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
+#----------------------------------------------------------------
+def findme(input_string, item_list):	
+	input_words = input_string
+	matches = []
+	for item in item_list:
+		item_words = item.lower().split()
+		for word in input_words:
+			if word in item_words:
+				matches.append(item)
+				break
+	return matches #if matches else True
+#----------------------------------------------------------------
+def showlisttell(data_key_list, num_terms=5, category="terms"):
+   
+    all_items = list(data_key_list)
+    random.shuffle(all_items)
+    selected_items = all_items[:num_terms]
+    formatted_items_list = ""
+    if len(selected_items) > 1:
+        formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
+    elif selected_items:
+        formatted_items_list = selected_items[0]
+    intro_fragments = [
+        f"I can show you based on my knowledge, these are some {category}:",
+        f"Here are some {category} I have in knowledge:",
+        f"Based on what I know, these are some {category}:",
+        f"Let me share some {category} I have:",
+        f"You might be interested in these {category}:"
+    ]
+    chosen_intro_fragment = random.choice(intro_fragments)
+    if formatted_items_list:
+        return f"{chosen_intro_fragment} {formatted_items_list}"
+    else:
+        return f"Sorry, I don't have any {category} to show at the moment."
+
+#----------------------------------------------------------------
 
 #----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
@@ -3886,10 +3920,10 @@ def check_for_updates():
 def main():
 	global aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
-	print_statusline(f"Loading ...")
 	check_tables(tables)
 	print_statusline(f"{dbmsgbl}...")
 	make_intextdb()
+	print_statusline(f"{dbmsgbl}...")
 	#----------------------------
 	wms = random.choice(core['intromsg'])
 	tdctl=0;ncctl=0;ffctl=0;ftr=0;kuote=quote()
@@ -3992,7 +4026,16 @@ def main():
 			   print("The word idea was me until "+ _author_.split()[0] +" started to develop me.\nAhah and just for fun!\n")
 
 		elif question == 'what can i ask you' or question == 'what can you anwser' or question == 'what do you know' or question == "what do you know about'it" or question == 'what can you do' or question == 'what do you do' or question =='what you can do':
-			print ("\n" + random.choice(core['cthemes']) + ": \n")
+			print (random.choice(core['cthemes']) + ": \n")
+			random.shuffle(topics)
+			last_topic = len(topics)-1
+			for i in range(last_topic):
+				print ( "   - " + topics[i].title())
+			print ("  and: ")
+			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
+
+		elif question == "show topics" or question == "show me your topics" or question == "show topic's" or question == "show me your topic's" or question == "topics" or question == "topic's":
+			print (random.choice(core['cthemes']) + ": \n")
 			random.shuffle(topics)
 			last_topic = len(topics)-1
 			for i in range(last_topic):
@@ -4021,85 +4064,48 @@ def main():
         #	call astronomy logic
 		
 		elif question.startswith(('show me', 'tell me', 'list me')):
-			if 'astronomy' in question or 'astronomy glossary' in question:
-				all_keys = core["astronomy glossary"]
-				random.shuffle(all_keys)
-				astronomy_random_keys = all_keys[:5]
-				astro_terms = ""
-				for term in astronomy_random_keys:
-					astro_terms += term + ", "
-				print ("This are some of the terms i have in knowledge : " + astro_terms[:-2] + ".\n")
+			if 'astronomy terms' in question or 'astronomy glossary' in question:
+				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
 			
+			elif 'astronomy questions' in question or 'questions of astronomy' in question:
+				all_astro = core["qa-astro"]
+				random.shuffle(all_astro)
+				astro_random_keys = all_astro[:3]
+				astro_qa = ""
+				for term in astro_random_keys:
+					astro_qa += " "+_spchar_[1:2] + term + "?\n"
+				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
+	
 			elif 'stars' in question or 'star names' in question:
-				all_stars = core["star name"]
-				random.shuffle(all_stars)
-				stars_random_keys = all_stars[:5]
-				stars_names = ""
-				for term in stars_random_keys:
-					stars_names += term + ", "
-				print ("This are some Stars names i have in knowledge : " + stars_names.title()[:-2] + ".\n")
+				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
 
 			elif 'asteroids' in question:
-				all_asteroids = core["asteroid"]
-				random.shuffle(all_asteroids)
-				asteroids_random = all_asteroids[:5]
-				asteroid_names = ", ".join(asteroids_random)
-				print ("Here are some asteroids i have in knowledge : " + asteroid_names + ".\n")
+				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
 
 			elif 'old' in question or 'tech' in question:
-				all_oldtech = core["old_tech_term"]
-				random.shuffle(all_oldtech)
-				oldtechs_random = all_oldtech[:3]
-				oldtech_names = ", ".join(oldtechs_random)
-				print ("Here are some old Tech terms i have in knowledge : " + oldtech_names + ".\n")
+				print (f"{showlisttell(core["old_tech_term"], num_terms=5, category="old Tech terms")}.\n")
 
 			elif 'constellations' in question:
-				constelattionx = list(core['constelattion'])
-				random.shuffle(constelattionx)
-				constelattion_random = constelattionx[:5]
-				viewconstellations = ", ".join(constelattion_random[:-1]) + ' and ' + constelattion_random[4] + ' constellations.'
-				print ("I can show you based in my knowledge " + viewconstellations.title() + ".\n")
+				print (f"{showlisttell(core["constelattion"], num_terms=5, category="Constellations")}.\n")
 
-			if 'climate' in question or 'dictionary' in question:
-				climatedict = list(core['climate dictionary term'])
-				random.shuffle(climatedict)
-				climatedict_random = climatedict[:3]
-				viewclimatedict = ", ".join(climatedict_random[:-1]) + ' and ' + climatedict_random[2]
-				print ("I can show you based on my Climate Dictionary knowledge terms like " + viewclimatedict.title() + ".\n")
+			elif 'climate' in question or 'dictionary' in question:
+				print (f"{showlisttell(core["climate dictionary term"], num_terms=5, category="Climate Dictionary terms")}.\n")
 
-			if 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
-				all_meanings = core["word meaning"]
-				random.shuffle(all_meanings)
-				meaning_random_keys = all_meanings[:3]
-				meaning_words = ""
-				for term in meaning_random_keys:
-					meaning_words += term + ", "
-				print ("This are some Meaning Terms/Words i have in my knowledge : " + meaning_words.title()[:-2] + ".\n")
+			elif 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
+				print (f"{showlisttell(core["word meaning"], num_terms=5, category="Meaning Terms/Words")}.\n")
 			
-			if 'constellations' in question and 'all' in question:
+			elif 'constellations' in question and 'all' in question:
 				print ("\nHere are all Constellations i have in knowledge ("+str(len(constellations_dict))+") and the meaning of her name or her designation:\n")
 				for constelattion in constellations_dict:
 					print(" %s: %s" % (constelattion.title(), constellations_dict[constelattion]))
 				print ("")
 
 			elif 'linux commands' in question:
-				all_commands = core["linuxcmd"]
-				random.shuffle(all_commands)
-				commands_random_keys = all_commands[:5]
-				commands_names = ""
-				for term in commands_random_keys:
-					commands_names += term + ", "
-				print ("This are some Linux commands i have in knowledge : " + commands_names[:-2] + ".\n")
+				print (f"{showlisttell(core["linuxcmd"], num_terms=5, category="Linux commands")}.\n")
 				
-			elif 'verbs' in question:
-				all_commands = knowledge["verb_base"]
-				random.shuffle(all_commands)
-				commands_random_keys = all_commands[:5]
-				commands_names = ""
-				for term in commands_random_keys:
-					commands_names += term + ", "
-				print ("Here some english verbs i have in knowledge: " + commands_names[:-2] + " that you can <conjugate>.\n")
-
+			elif 'verbs' or 'english verbs' in question:
+				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
+				
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 				all_astro = core["qa-astro"]
 				random.shuffle(all_astro)
@@ -4110,7 +4116,7 @@ def main():
 				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
 
 		elif question[0:8] == 'how many' and question.find('glossary')!=-1 or question.find('astronomy terms')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you the meaning of " + str(len(astronomy_glossary)) + " Astronomy glossary terms." + "\n")
+			print ("I can tell you the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy glossary terms." + "\n")
 		elif question[0:8] == 'how many' and question.find('asteroids')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
 			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet." + "\n")
 		elif question[0:8] == 'how many' and question.find('star')!=-1 and question.find('names')!=-1 and question.find('you know')!=-1:
@@ -4124,9 +4130,9 @@ def main():
 		elif question[0:8] == 'how many' and question.find('verbs')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(knowledge['verb_base'])) + " verbs. " + random.choice(messages['endterm']) + "...\n")	
 
-		elif question[0:8] == 'what' and question.find('capitals')!=-1 and question.find('you know')!=-1:
+		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'what' and question.find('countries')!=-1 and question.find('you know')!=-1:
+		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
@@ -4161,7 +4167,7 @@ def main():
 				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There is a problem in the syntax. Enter the date in 'dd.mm.yyyy' format. \n")
 
 		elif question[0:22] == 'what do you know about' and question.find('astronomy')!=-1:
-			print ("I can tell you the solar system, information about planets, distances and the meaning of " + str(len(astronomy_glossary)) + " Astronomy terms." + "\n")
+			print ("I can tell you the solar system, information about planets, distances and the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy terms." + "\n")
 
 		elif question[0:22] == 'what do you know about' and question.find('asteroids')!=-1 or question.find('celestial bodys')!=-1:
 			print ("I can tell you about " + str(len(core['asteroid'])) + " asteroids. Only the most basic information.")
@@ -4171,7 +4177,7 @@ def main():
 			print ("I can tell you about " + str(len(constellations_dict)) + " constelations.\n ")
 
 		elif question[0:22] == 'what do you know about' and question.find('the')!=-1 and question.find('universe')!=-1 or question.endswith('?'):
-			print ("The solar system, information about planets, distances and the meaning of " + str(len(astronomy_glossary)) + " Astronomy terms, " + str(len(core['asteroid'])) + " asteroids (most basic information) and " + str(len(constellations_dict)) + " constelations.\n")
+			print ("The solar system, information about planets, distances and the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy terms, " + str(len(core['asteroid'])) + " asteroids (most basic information) and " + str(len(constellations_dict)) + " constelations.\n")
 
 		elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
 			if question[0:4] == 'make':
@@ -4466,7 +4472,7 @@ def main():
 			moon_phase = MoonPhase(_poigps_[0], _poigps_[1], datetime.now())
 			print("\n"+"Currently the moon phase is", moon_phase.phase_of_moon(),"\n")
 
-		elif question == 'diagnostics' or question == 'show core' or question == '#core':
+		elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
 			print("Here he is my full internal specifications :\n")
 			if node_name:
 				print('   Device : ' + platform.node().upper() + '|' + _cyext_[0:4].replace(" ",""))
@@ -4492,7 +4498,7 @@ def main():
 			print('  Storage : ' + dblrconn)
 			print('  Running : ' + str(days_till_today.days) + ' days.\n')
 
-		elif question == 'date' or question == 'today' or question == 'today is' or question == 'what is the date' or question == 'what is today':
+		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
 			current_time = now.strftime("%H:%M")
@@ -4539,10 +4545,9 @@ def main():
 		elif question == 'how many weeks have a year' or question == 'year weeks':
 			print ( str(daysweeks_year()[1]) + " weeks. A calendar year consists of " + str(daysweeks_year()[1]) + " weeks, " + str(daysweeks_year()[0]) + " days in total.\n" )
 
-		elif question == 'week' or question == 'week number' or question == 'what number is this week' or question == 'what is this week number':
-			week_number = date.today().isocalendar()[1]
-			print ("Based on the system actual date this is the " + str(get_ordinal_position(week_number)) + " week of the year.\n")
-
+		elif re.compile(r'\b(week|current week|week #?num(?:ber)?|what week)\b').search(question):
+			print (f"Based on the system actual date this is the {str(date.today().isocalendar()[1])} week of the year.\n")
+		
 		elif question.find('update') != -1 and (question.find('last') != -1 or question.find('check') != -1):
 			check_for_updates()
 
@@ -4969,7 +4974,7 @@ def main():
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 				
 		elif question == 'testing':
-			#print (f"Development testing propose code...")
+			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
 			print ("")
 			
