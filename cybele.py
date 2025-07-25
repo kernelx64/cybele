@@ -271,6 +271,8 @@ core = {
 	"asking for talking":	["do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
 	"asking for a word":	["word","say a word","talk","share a word","speak a word"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
+	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
+	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
 	"python art":	["py","python","python art"]
 }
 #-------------------------------------------------------------
@@ -1042,6 +1044,7 @@ def make_intextdb():
 questions = [
 	"Ola",
 	"Como te chamas?",
+	"Tudo bem?",
 	"Hello",
 	"What is your name?",
 	"What is the meaning of your name?",
@@ -1067,7 +1070,6 @@ questions = [
 	"Good to know",
 	"A coffee for you",
 	"Coffee for you",
-	"How are you?",
 	"Hello",
 	"Hi",
 	"Whats on your mind today?",
@@ -1079,6 +1081,7 @@ questions = [
 answers = [
 	"Olá! Sou " + _title_ + ". De momento, não falo português de Portugal. No entanto, estou aqui para ajudar! Pode digitar 'help' ou 'what can you do' para saber mais.",
 	"Chamo-me " + _title_ + " e lamento ter que informar que não falo pt-PT, nem ainda funciono com a tradução instantânea.",
+	"Melhor impossível! Mas não me venhas com truques hoje, hmm?",
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
@@ -1104,7 +1107,6 @@ answers = [
 	"No problem. Glad i could be of assistance.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
-	"I am doing well, thank you for asking!",
 	"Hi! What's on your mind?",
 	"Hello! What's on your mind?",
 	"I'm glad you're asking.\nI'm thinking about how lucky I am to be able to help people with my answers.",
@@ -1152,8 +1154,8 @@ maincommands = [
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","list holidays","actual country","view solar system","check update","last update","conjugate",
-	"fun fact","fast fact","nice thing"
+	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1870,7 +1872,7 @@ def find_word_in_dicts(word, core):
 						else:
 							sentence = sentence_parts[0]
 				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
-			
+						
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 			return True
@@ -3954,6 +3956,10 @@ def main():
 			quicklist(addcomm,"")
 			print ("")
 		
+		elif any(word in question for word in core['information state']):
+			random.shuffle(core['information state awnsers'])
+			print (f"{random.choice(core['information state awnsers'])}\n")
+		
 		elif any(word in question for word in core['sayconvert']):
 			convert_number = question.split()[-1:][0]
 			if not convert_number.isdigit():
@@ -4007,6 +4013,13 @@ def main():
 			cquestion = random.choice(what_creative)
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
+		# Next: extract the category directly
+		#match = re.search(r'(astronomy(?: glossary)?|stars(?: names)?)', question.lower())
+		#if match:
+		#	category = match.group(1)
+		#if 'astronomy' in category:
+        #	call astronomy logic
+		
 		elif question.startswith(('show me', 'tell me', 'list me')):
 			if 'astronomy' in question or 'astronomy glossary' in question:
 				all_keys = core["astronomy glossary"]
@@ -4077,6 +4090,15 @@ def main():
 				for term in commands_random_keys:
 					commands_names += term + ", "
 				print ("This are some Linux commands i have in knowledge : " + commands_names[:-2] + ".\n")
+				
+			elif 'verbs' in question:
+				all_commands = knowledge["verb_base"]
+				random.shuffle(all_commands)
+				commands_random_keys = all_commands[:5]
+				commands_names = ""
+				for term in commands_random_keys:
+					commands_names += term + ", "
+				print ("Here some english verbs i have in knowledge: " + commands_names[:-2] + " that you can <conjugate>.\n")
 
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 				all_astro = core["qa-astro"]
@@ -4099,6 +4121,8 @@ def main():
 			print ("Actualy based on my knowledge " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 		elif question[0:8] == 'how many' and question.find('linux commands')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(core['linuxcmd'])) + " Linux commands. " + random.choice(messages['endterm']) + "...\n")
+		elif question[0:8] == 'how many' and question.find('verbs')!=-1 and question.find('you know')!=-1:
+			print ("Actualy based on my knowledge " + str(len(knowledge['verb_base'])) + " verbs. " + random.choice(messages['endterm']) + "...\n")	
 
 		elif question[0:8] == 'what' and question.find('capitals')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
@@ -4351,7 +4375,8 @@ def main():
 				print ("In name of vorian " + random.choice(messages['birthday_msg']))
 				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
 			else:
-				print(random.choice(messages['birthday_short']) + " Are trying to trik'me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin() + "!\n")
+				print(f"To who?! To Me ?!")
+				print(random.choice(messages['birthday_short']) + " Are trying to trik me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin().upper() + "!\n")
 
 		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
 			dt = date.today()
