@@ -2618,6 +2618,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
 	global dblrconn
 	if internet_onoff() == True:
+		db_filename = dbtable + ".db"
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
@@ -2631,7 +2632,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
 		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			sys.exit(0)
 	
@@ -2671,8 +2672,24 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 	if dbtask == 'view':
 		cursor = None
 		if dbname == 'askardb':
-			filter = "SELECT ask_id="+str(dbbegin)+", askard from askard_db"
-		elif dbname == 'cybele':
+			try:
+				ask_id_val = int(dbbegin)
+			except ValueError:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} Invalid Input. [ask_id] must be an integer..\n")
+				return
+			filter = f"SELECT ask_id, askard FROM askard_db WHERE ask_id = {ask_id_val}"
+			cursor = conn.execute(filter)
+			row_found = False
+			for row in cursor:
+				row_found = True
+				zdb.append(row[0])
+				zdb.append(row[1])
+			if row_found and len(zdb) > 0:
+				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
+			else:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for ask_id={ask_id_val}.\n")
+			
+		elif dbname == 'cybele': # <--- This is the first 'cybele' block. It sets 'filter'.
 			if dbtable == 'funfacts':
 				filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
 			elif dbtable == 'nicethings':	
@@ -2680,20 +2697,8 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			else:
 				print ("option view none of dbtables with conditions... Fix'it")
 		
-		if dbname == 'askardb':
-			conn = sqlite3.connect(dbname + ".db")
-			cursor = conn.execute(filter)
-			for row in cursor:
-				if row[0] == 1:
-					zdb.append (dbbegin)
-					zdb.append (row[1])		
-			if len(zdb) > 0:
-				print(f"\n > {zdb[1]}")
-			else:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
-		
-		elif dbname == 'cybele':
-			cursor = conn.execute(filter)
+		if dbname == 'cybele': # <--- This `if` now applies to the previous `elif`'s result
+			cursor = conn.execute(filter) # Executes the filter set above
 			if dbtable == 'funfacts':
 				nchar = _spchar_[13:14]
 			elif dbtable == 'nicethings':	
@@ -2703,7 +2708,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				if row:
 					print(f"\n {nchar} {str(row[0])}\n")
 				else:
-					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
 		
 	if dbtask == 'list':
 		if dbname == 'askardb':
@@ -2748,7 +2753,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			titvar = "astronomy glossary term"
 		elif dbname == 'cybele' and dbtable == 'oldtech':
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
-			titvar = "old tech terminology" 
+			titvar = "old tech terminology"
 		cursor = conn.execute(filter)
 		for row in cursor:
 			print ("The first "+ titvar +" in the database file is '" + str(row[0]) + "' and the last is '" + str(row[1]) + "'.\n")
@@ -4519,6 +4524,15 @@ def main():
 			print('  Storage : ' + dblrconn)
 			print('  Running : ' + str(days_till_today.days) + ' days.\n')
 
+		# == "today activity":
+		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
+			if tdctl >= 3:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
+			else:
+				random_season_activity()
+				tdctl = tdctl + 1
+
+		# == "today"
 		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
@@ -4808,13 +4822,6 @@ def main():
 							print (response[i])
 					else:
 						print( random.choice(messages['nostar_message']) + "cybele.star #" + star_name + " have empty data!\n")
-
-		elif question == 'today activity':		
-			if tdctl >= 3:
-				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
-			else:
-				random_season_activity()
-				tdctl = tdctl + 1
 
 		elif _cybid_ == True and question == 'extcybele' or question == 'extver' or question == 'extdir':
 			print ( kolor['RED'] + " 〉 Cybele external Library Module by AS" + kolor['OFF'])
