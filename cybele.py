@@ -4637,7 +4637,7 @@ def main():
 			if len(getparam) == 2:
 				mandb('cybele','askard_db','list',0,0)
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
-				mandb('cybele','askardb_db','list',getparam[2], getparam[3] )
+				mandb('cybele','askard_db','list',getparam[2], getparam[3] )
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
