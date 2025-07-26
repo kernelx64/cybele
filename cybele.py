@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '26.07.2025'
+_revise_ = '27.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -273,7 +273,7 @@ core = {
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
 	"share":	["sharing about","sharing links"],
-	"sayconvert":	["say","longhand"],
+	"sayconvert":	["in full","longhand"],
 	"time_query": ["what time is it", "current time", "time now", "clock time", "what's the time"],
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
@@ -474,6 +474,8 @@ messages = {
 					"Are you trying to summon a random space rock? Be more specific!","You expect me to channel my inner astrologer with nothing but empty space?",
 					"I'm not a cosmic detective. Give me a clue!","I'm not a mind reader, you know!"],
 
+	"short_no":	["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"],
+
 	"math_msg":	["What! e,m or h brain's on fire? Use ice, cream or sleep!","If it's allready hard use e,m or h, Math Quiz!?, gonna be Einscharged!.",
 				"e,m or h, not e=mc2 and allready is a problem? Use magic, coffee or nap!","Life's tough? Choose chill, grill or spill!",
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
@@ -548,6 +550,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
+	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
@@ -557,9 +560,8 @@ help = {
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
-	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
+	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
-	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
 	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from vorian website the favorite list.\nex: favorite tvshows\n    fav movies\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
@@ -575,6 +577,7 @@ help = {
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
@@ -593,7 +596,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|all/constellations|asteroids|quote  names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
+	"help show me": "Usage: show me <star names|constellations|asteroids|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
@@ -1151,7 +1154,7 @@ maincommands = [
 	"what can you anwser","what do you know","what can you do","what do you do","what you can do","adelino quote","what is",
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
 	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
-	"difference from","age calc","what do you know about","astronomy","asteroid","constelations","universe","can you","vorian created",
+	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","vorian created",
 	"visualize periodic table","show periodic table","distance from","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
 	"set default gps","capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me",
@@ -1329,40 +1332,41 @@ class Sun:
 #-----------------------------------------------------------------------
 # Moon fases calculation
 class MoonPhase:
-    def __init__(self, latitude, longitude, date):
-        self.latitude = latitude
-        self.longitude = longitude
-        self.date = date
+	def __init__(self, latitude, longitude, date):
+		self.latitude = latitude
+		self.longitude = longitude
+		self.date = date
 
-    def phase_of_moon(self):
-        jd = (self.date - datetime(2000, 1, 1)).total_seconds() / 86400 + 2451545.0
-        L = (218.316 + 13.176396 * jd) % 360
-        M = (134.963 + 13.064993 * jd) % 360
-        F = (93.272 + 13.229350 * jd) % 360
-        l = L + 6.289 * math.sin(math.radians(M))
-        b = 5.128 * math.sin(math.radians(F))
-        r = 385001 - 20905 * math.cos(math.radians(M))
+	def phase_of_moon(self):
+		jd = (self.date - datetime(2000, 1, 1)).total_seconds() / 86400 + 2451545.0
+		L = (218.316 + 13.176396 * jd) % 360
+		M = (134.963 + 13.064993 * jd) % 360
+		F = (93.272 + 13.229350 * jd) % 360
+		l = L + 6.289 * math.sin(math.radians(M))
+		b = 5.128 * math.sin(math.radians(F))
+		r = 385001 - 20905 * math.cos(math.radians(M))
 
-        obl = 23.439 - 0.0000004 * jd
-        x = r * math.cos(math.radians(l))
-        y = r * math.cos(math.radians(obl)) * math.sin(math.radians(l))
-        z = r * math.sin(math.radians(obl)) * math.sin(math.radians(l))
+		obl = 23.439 - 0.0000004 * jd
+		x = r * math.cos(math.radians(l))
+		y = r * math.cos(math.radians(obl)) * math.sin(math.radians(l))
+		z = r * math.sin(math.radians(obl)) * math.sin(math.radians(l))
 
-        ra = math.atan2(y, x)
-        dec = math.asin(z / r)
+		ra = math.atan2(y, x)
+		dec = math.asin(z / r)
 
-        lst = (100.46 + 0.985647352 * jd + self.longitude) % 360
-        ha = (lst - ra) % 360
-        phase_angle = math.degrees(math.acos(math.sin(math.radians(self.latitude)) * math.sin(math.radians(dec)) + math.cos(math.radians(self.latitude)) * math.cos(math.radians(dec)) * math.cos(math.radians(ha))))
+		lst = (100.46 + 0.985647352 * jd + self.longitude) % 360
+		ha = (lst - ra) % 360
+		phase_angle = math.degrees(math.acos(math.sin(math.radians(self.latitude)) * math.sin(math.radians(dec)) + math.cos(math.radians(self.latitude)) * math.cos(math.radians(dec)) * math.cos(math.radians(ha))))
 
-        if phase_angle < 90:
-            return "Waxing Crescent"
-        elif phase_angle < 180:
-            return "First Quarter"
-        elif phase_angle < 270:
-            return "Waxing Gibbous"
-        else:
-            return "Full Moon"
+		moon_phase_emoji = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘","🌑"]
+		if phase_angle < 90:
+			return moon_phase_emoji[7] + " Waxing Crescent"
+		elif phase_angle < 180:
+			return moon_phase_emoji[6] + " First Quarter"
+		elif phase_angle < 270:
+			return moon_phase_emoji[3] + " Waxing Gibbous"
+		else:
+			return moon_phase_emoji[4] + " Full Moon"
 
 #---------------------------------------------------
 # pre harvesine / pregpsconvert
@@ -1476,7 +1480,7 @@ def drawart(artname):
     }
 
     if artname not in art_data:
-        print(f"Error: Art '{artname}' not found to handle'it in my code. Fix'it!")
+        print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!")
         print(kolor['OFF'])
         return
 
@@ -1515,7 +1519,6 @@ def daysweeks_year():
 def leapyear():
 	year = int(datetime.now().strftime("%Y"))
 	result = ''
-
 	if (year % 400 == 0) and (year % 100 == 0):
 		result = "a leap year".format(year)
 	elif (year % 4 ==0) and (year % 100 != 0):
@@ -1574,7 +1577,6 @@ def find_answer(question,whatlist):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def spell_check(word, word_list):
-
 	word = word.lower()
 	if word in word_list:
 		return True, []
@@ -1591,7 +1593,6 @@ def spell_check(word, word_list):
 
 #----------------------------------------------------------------
 def levenshtein_distance(a, b):
-
 	n, m = len(a), len(b)
 	dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
 	for i in range(n + 1):
@@ -1719,7 +1720,7 @@ def find_word_in_dicts(word, core):
 				print ("")
 
 			elif list_name == 'linuxexcmd':
-				print ("exemplo....")
+				print ("")
 
 			elif list_name == 'python art':
 				print ("Python is a programmer language wich i was builted (coded).")
@@ -1794,8 +1795,11 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "asteroid":
 				asteroid_info = asteroids_list[word]
-				print ("\n %s - %s" % (list_name.capitalize(), word.capitalize()))
-				print (" Type: " + asteroid_info['type'].capitalize())
+				if asteroid_info['type'].lower() == "dangerous asteroid":
+					dangerast = f"{kolor['BOLD_RED']}{asteroid_info['type'].upper()}{kolor['OFF']}"
+				else:
+					dangerast = f"{kolor['BOLD_WHITE']}{asteroid_info['type']}{kolor['OFF']}"
+				print (f"\n [ {kolor['YELLOW']}{list_name.upper()} {word}{kolor['OFF']} | {dangerast} {kolor['OFF']}]")
 				print (" Description: " + asteroid_info['description'].capitalize())
 				print (" Dimentions: " + str(asteroid_info['dimensions']) + " Km ±\n")
 
@@ -2112,39 +2116,45 @@ def add_days(n, d = datetime.today()):
 
 #-------------------------------------------------
 def days_to_event(event):
-	if not event:
-		print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
-	else:
-		if event == 'christmas':
-			thisyear = date.today().year
-			christmas = date(year=thisyear, month=12, day=25)
-			days_left = days_until(christmas)
-		elif event == 'newyear':
-			thisyear = date.today().year
-			yearseve = date(year=thisyear, month=12, day=31)
-			days_left = days_until(yearseve)
-		elif event == 'birthday' or event == 'mybirthday':
-			nextyear = date.today().year + 1
-			birthday = date(year=nextyear, month=5, day=4)
-			days_left = days_until(birthday)
-		else:
-			try:
-				datetime.strptime(event, "%d.%m.%Y")
-			except ValueError:
-				pass
-			try:
-				datetime.strptime(event, "%d/%m/%Y")
-			except ValueError:
-				pass
-			try:
-				datetime.strptime(event, "%d-%m-%Y")
-			except ValueError:
-				pass
-			days_left = 0
-		userdate = date(year=int(event[6:]), month=int(event[3:5]), day=int(event[0:2]))
-		days_left = days_until(userdate)
-	return days_left
 
+	if not event:
+		print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
+		return 0
+
+	today = date.today()
+	this_year = today.year
+	days_left = 0
+
+	if event == 'christmas':
+		christmas = date(year=this_year, month=12, day=25)
+		days_left = days_until(christmas)
+	elif event == 'newyear':
+		new_year = date(year=this_year + 1, month=1, day=1)
+		days_left = days_until(new_year)
+	elif event == 'birthday':
+		birthday_this_year = date(year=this_year, month=5, day=4)
+		if birthday_this_year < today:
+			birthday = date(year=this_year + 1, month=5, day=4)
+		else:
+			birthday = birthday_this_year
+		days_left = days_until(birthday)
+	else:
+		parsed_date = None
+		formats = ["%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y"]
+		for fmt in formats:
+			try:
+				parsed_date = datetime.strptime(event, fmt).date()
+				break
+			except ValueError:
+				continue
+		if parsed_date:
+			days_left = days_until(parsed_date)
+		else:
+			#print(f"I couldn't understand '{event}'. Provide a valid event or a date in DD.MM.YYYY, DD/MM/YYYY, or DD-MM-YYYY.")
+			days_left = 0
+
+	return days_left
+	
 #-------------------------------------------------
 def daysweeks_from_date(start_date):
 	import datetime
@@ -3022,31 +3032,23 @@ def create_firework_explosion(x, y, max_radius, characters):
     explosion_color = random.choice([k for k in kolor.keys() if k != 'OFF']) # Pick a random color, not 'OFF'
 
     for radius in range(1, max_radius + 1):
-        # Create a temporary canvas for this frame of the explosion
-        # This allows us to build the frame and then print it efficiently
         frame_canvas = [[' ' for _ in range(canvas_width)] for _ in range(canvas_height)]
 
-        # Populate the frame_canvas with explosion particles for the current radius
         for i in range(canvas_height):
             for j in range(canvas_width):
-                # Calculate distance from the explosion center
                 dist = ((j - x)**2 + (i - y)**2)**0.5
-                # Draw particles within the current radius ring
                 if radius - 1 <= dist < radius:
                     if 0 <= i < canvas_height and 0 <= j < canvas_width:
                         frame_canvas[i][j] = random.choice(characters)
 
         clear_screen()
 
-        # Print the current frame of the explosion
         for row_idx, row_chars in enumerate(frame_canvas):
-            # Move cursor to the start of this row before printing
             print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
         
-        # Flush output to ensure frame is displayed immediately
-        import sys
+        #import sys
         sys.stdout.flush()
-        sleep(0.08) # Speed of the explosion expansion
+        sleep(0.08)
 
 def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 	global kolor
@@ -3070,28 +3072,21 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 
 	try:
 		for _ in range(num_fireworks):
-			# Random starting position for the firework (rocket path)
-			# Ensure rocket starts near the bottom
 			start_x = random.randint(int(term_width * 0.1), int(term_width * 0.9))
 			start_y = term_height - 2 # Start 2 rows from the bottom
 
-			# Random explosion height for this firework
 			explosion_y = random.randint(int(term_height * 0.2), int(term_height * 0.6)) # Explode in upper-middle
             
-			# Simulate rocket ascent
 			random_color = random.choice([k for k in kolor.keys() if k != 'OFF'])
 			rocket_char = '↟'
 
 			for y_coord in range(start_y, explosion_y, -1):
-				clear_screen() # Clear screen for each rocket frame
-				# Draw the rocket at its current position
-				# Row is y_coord, Column is start_x
+				clear_screen()
 				print(f"{set_cursor_pos(y_coord, start_x)}{kolor[random_color]}{rocket_char}{kolor['OFF']}", end="")
 				import sys
-				sys.stdout.flush() # Ensure rocket is drawn immediately
-				sleep(0.08) # Speed of the rocket ascent
+				sys.stdout.flush()
+				sleep(0.08)
 
-			# Clear the rocket after ascent
 			clear_screen()
 
 			# Explosion!
@@ -4170,20 +4165,19 @@ def main():
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
 			if len(question.split()[2:]) == 0:
 				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? \n")
-			else:					
+			else:
 				subevent = " ".join(question.split()[2:])
 				eventdays = days_to_event(subevent.replace(" ",""))
 				if eventdays != 0:
-					if subevent == "birthday" or subevent == "my birthday":
-						select_creator = random.choice(["my creator", _author_.split()[0], "my creator "+_author_.split()[0]])
-						print ('To yours i dont know, doing my privacy limitations but to the ' + select_creator + ' are '+ eventdays +' days.\n')
+					if subevent[-8:] == "birthday":
+						select_creator = random.choice(["my creator "+_author_,"my creator "+_author_.split()[0],"my creator"])
+						print ('To yours i dont know, but to the ' + select_creator + ' are '+ eventdays +' days.\n')
 					elif eventdays != 0:
 						print ("%s left for %s\n" % (eventdays, subevent.title()))
-				else:
-					short_no = ["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"]
-					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(short_no) + "\n")				
+				else:				
+					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(messages['short_no']) + "\n")				
 
-		elif question[0:15] == 'difference from' or question[0:8] == 'age calc':
+		elif question[0:15] == 'difference from' or question[0:9] == 'diff from' or question[0:8] == 'age calc':
 			try:
 				if len(question.split()) > 2:
 					inputDate = str(question.split()[2:][0])
@@ -4485,24 +4479,29 @@ def main():
 			print(' 〉 Solar noon : ' + str(s.solarnoon()))
 			print(' 〉     Sunset : ' + str(s.sunset()))
 			print("")
+			
 		elif question == 'moon phase' or question == 'what is the moon phase' or question =='what is the actual moon phase':
 			if _poigps_[3] == 0:
-				try:
-					mlatgps = float(input('\nWhat is your latitude coordinates: '))
-					if mlatgps > 90 or mlatgps < -90:
-						print("The latitude degrees format are out of range!\n")
+				if not (lat and lon):
+					try:
+						mlatgps = float(input('\nWhat is your latitude coordinates: '))
+						if mlatgps > 90 or mlatgps < -90:
+							print("The latitude degrees format are out of range!\n")
+							continue
+						_poigps_.insert( 0, mlatgps)
+						mlongps = float(input('What is your longitude coordinates: '))
+						if mlongps > 180 or mlongps < -180:
+							print("The longitude degrees format are out of range!\n")
+							continue
+						_poigps_.insert( 1, mlongps)
+					except ValueError:
+						print("Value not recognized like latitude or longitude gps coordinates!\n")
 						continue
-					_poigps_.insert( 0, mlatgps)
-					mlongps = float(input('What is your longitude coordinates: '))
-					if mlongps > 180 or mlongps < -180:
-						print("The longitude degrees format are out of range!\n")
-						continue
-					_poigps_.insert( 1, mlongps)
-				except ValueError:
-					print("Value not recognized like latitude or longitude gps coordinates!\n")
-					continue
-			moon_phase = MoonPhase(_poigps_[0], _poigps_[1], datetime.now())
-			print("\n"+"Currently the moon phase is", moon_phase.phase_of_moon(),"\n")
+			else:
+				_poigps_.insert( 0, lat)
+				_poigps_.insert( 1, lon)
+			moon_phase = MoonPhase(_poigps_[0], _poigps_[0], datetime.now())
+			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
 		elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
 			print("Here he is my full internal specifications :\n")
