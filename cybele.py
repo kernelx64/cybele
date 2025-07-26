@@ -10,12 +10,12 @@ lat = 41.5454
 lon = -8.4265
 
 # static global cybele variables
-version = '1.1.0-rc.1'
+version = '1.1.0-rc.2'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '25.07.2025'
+_revise_ = '26.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -537,12 +537,12 @@ weather_season_condiction = {
 	"autumn":	["Cooling temperatures","Falling leaves","Harvest season","Crisp air","Occasional drizzle","Crisp evenings","Changing colors","Sky partly cloudy","Wind increasings","Winter approaching"]
 }
 #------------------------------------------------------------
-topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","asteroids","constelations","information about stars","distance of planets and from the sun",
-		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
-		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
-		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms","generate passwords (genpwd)","recently added tvshows",
-		"protect image","fast fact","nice thing"]
+topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types of orbits","asteroids","constelations","information about stars",
+		"distance of planets and from the sun","periodic table elements","visualize the periodic table","where is the ISS","people in space",
+		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
+		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
+		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing"]
 
 #------------------------------------------------------------
 help = {
@@ -598,6 +598,7 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
+	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
@@ -1151,7 +1152,7 @@ maincommands = [
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
 	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
 	"difference from","age calc","what do you know about","astronomy","asteroid","constelations","universe","can you","vorian created",
-	"visualize periodic table","show periodic table","distance from","orbit","planets of the solar system","planets of solar system",
+	"visualize periodic table","show periodic table","distance from","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
 	"set default gps","capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me",
 	"can you help","help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
@@ -2640,7 +2641,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 	filter = ""
 
 	if dbtask == 'search':
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			filter = "SELECT ask_id, askard FROM askard_db WHERE askard LIKE '%"+str(dbend)+"%'"
 			nchar = _spchar_[9:10]
 		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
@@ -2671,12 +2672,8 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				
 	if dbtask == 'view':
 		cursor = None
-		if dbname == 'askardb':
-			try:
-				ask_id_val = int(dbbegin)
-			except ValueError:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} Invalid Input. [ask_id] must be an integer..\n")
-				return
+		if dbname == 'cybele' and dbtable == 'askard_db':
+			ask_id_val = int(dbbegin)
 			filter = f"SELECT ask_id, askard FROM askard_db WHERE ask_id = {ask_id_val}"
 			cursor = conn.execute(filter)
 			row_found = False
@@ -2685,33 +2682,36 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				zdb.append(row[0])
 				zdb.append(row[1])
 			if row_found and len(zdb) > 0:
-				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
+				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
 			else:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for ask_id={ask_id_val}.\n")
-			
-		elif dbname == 'cybele': # <--- This is the first 'cybele' block. It sets 'filter'.
-			if dbtable == 'funfacts':
-				filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
-			elif dbtable == 'nicethings':	
-				filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
-			else:
-				print ("option view none of dbtables with conditions... Fix'it")
-		
-		if dbname == 'cybele': # <--- This `if` now applies to the previous `elif`'s result
-			cursor = conn.execute(filter) # Executes the filter set above
-			if dbtable == 'funfacts':
-				nchar = _spchar_[13:14]
-			elif dbtable == 'nicethings':	
-				nchar = _spchar_[14:15]
+		elif dbname == 'cybele' and dbtable == 'funfacts':
+			filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
+			cursor = conn.execute(filter)
+			nchar = _spchar_[13:14]
 			if cursor:
 				row = cursor.fetchone()
 				if row:
 					print(f"\n {nchar} {str(row[0])}\n")
 				else:
 					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
+		elif dbtable == 'nicethings':	
+			filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
+			cursor = conn.execute(filter)
+			nchar = _spchar_[14:15]
+			if cursor:
+				row = cursor.fetchone()
+				if row:
+					print(f"\n {nchar} {str(row[0])}\n")
+				else:
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
+			else:
+				print ("option view none of dbtables with conditions... Fix'it")
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for view task for {dbname} dabatase...\n")
 		
 	if dbtask == 'list':
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			if dbbegin == 0 and dbend == 0:
 				nfilter = "SELECT * from askard_db"
 			else:
@@ -2731,7 +2731,9 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				nfilter = "SELECT * from constelations"
 			else:
 				nfilter = "SELECT constelation, meaning FROM constelations WHERE constelation BETWEEN '" + str(dbbegin) + "' and '"+ str(dbend) + "' ORDER BY constelation;"
-		print ("")
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for List task for {dbname} dabatase...\n")
+			return
 		
 		filter = nfilter
 		cursor = conn.execute(filter)
@@ -2745,7 +2747,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			print("")
 		
 	if dbtask == 'limits':	
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			filter = "SELECT min(ask_id) , max(ask_id) FROM askard_db"
 			titvar = "askard ID"
 		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
@@ -2754,6 +2756,10 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		elif dbname == 'cybele' and dbtable == 'oldtech':
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
 			titvar = "old tech terminology"
+		else:
+			print ("Option limits none of dbtables with conditions... Fix'it")
+			conn.close()
+			return
 		cursor = conn.execute(filter)
 		for row in cursor:
 			print ("The first "+ titvar +" in the database file is '" + str(row[0]) + "' and the last is '" + str(row[1]) + "'.\n")
@@ -3950,7 +3956,7 @@ def main():
 	print_statusline(f"{dbmsgbl}...")
 	#----------------------------
 	wms = random.choice(core['intromsg'])
-	tdctl=0;ncctl=0;ffctl=0;ftr=0;kuote=quote()
+	tdctl=0;ncctl=0;ffctl=0;kuote=quote()
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	if chkcoor(lat,lon) == True:
@@ -4072,7 +4078,7 @@ def main():
 		elif question[-5:] == 'quote':
 			if 'adelino' in question:
 				print ("Here's a quote by my author " + _author_.split()[0] + ".")
-				print (" " + _spchar_[1:2] + " " + random.choice(as_quotes))
+				print (f"{_spchar_[18:19]} {random.choice(as_quotes)}")
 				print ("")
 			else:
 				print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
@@ -4601,7 +4607,7 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search askard <word>\n')
 			else:
-				mandb('askardb','askardb_db','search',0,getparam[2])
+				mandb('cybele','askard_db','search',0,getparam[2])
 				print ("")
 		
 		elif question[0:11] == 'view askard':
@@ -4609,7 +4615,7 @@ def main():
 			if len(getparam) != 3 or getparam[2].isnumeric() != True:
 				print ('The correct usage is <view> ' + _spchar_[9:10] + ' askard <id>\n')
 			else:
-				mandb('askardb','askard_db','view',getparam[2],0)
+				mandb('cybele','askard_db','view',getparam[2],0)
 				print ("")
 		
 		elif question == 'fun fact' or question == 'fast fact':
@@ -4629,9 +4635,9 @@ def main():
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('askardb','askardb_db','list',0,0)
+				mandb('cybele','askard_db','list',0,0)
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
-				mandb('askardb','askardb_db','list',getparam[2], getparam[3] )
+				mandb('cybele','askardb_db','list',getparam[2], getparam[3] )
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
@@ -5005,6 +5011,8 @@ def main():
 			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
 			print ("")
+			for i in range(len(orbit_regime.keys())):
+				print (orbit_regime[orbit_regime.values()[i]])
 			
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
