@@ -30,6 +30,7 @@ try:
 	import platform
 	import socket
 	import math
+	import base64
 	import hashlib
 	import sqlite3
 	import sqlitecloud
@@ -125,7 +126,7 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
-datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[]
+datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[]
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
@@ -134,12 +135,11 @@ dblrconn = ""; idcode=""; cybelecode = []; special_dates_dict = {}; system_count
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
-tables = [
-	'config','adjectivedb','adverbdb','astronomy_glossary','climate_dict','conjunctiondb',
-	'constelations','contigency','countries','funfacts','linux_commands','meanings','nicethings',
-	'oldtech','prepositiondb','qa_astro','season_activities','special_dates','stars',
-	'topactivities','verb_basedb','verb_past_db','vocabulary'
-	]
+etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 'Y2xpbWF0ZV9kaWN0',
+		'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==', 'Y291bnRyaWVz', 'ZnVuZmFjdHM=',
+		'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=', 'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==',
+		'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==', 'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==',
+		'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==']
 #-----------------------------------------------------------
 website = {
 	"home": "https://www.adelinosaldanha.site",
@@ -767,6 +767,8 @@ def kdecode(emessage, shift):
 #----------------------------------------------------
 sqlconn = kdecode(dbconn, shift)
 sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
+for table in etables:
+    tables.append(base64.b64decode(table.encode('utf-8')).decode('utf-8'))
 
 #----------------------------------------------------
 def whatgmt():
@@ -3961,7 +3963,7 @@ def check_for_updates():
 			return
 		try:		
 			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
-				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!. {kolor['OFF']}\n")
+				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
 			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
 				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!.{kolor['OFF']} \n")
 			elif local_version_str < remote_version_str or local_revised_str < remote_revised_str:
