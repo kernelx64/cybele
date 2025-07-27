@@ -567,7 +567,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
-		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing"]
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance"]
 
 #------------------------------------------------------------
 help = {
@@ -591,7 +591,7 @@ help = {
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
+	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
