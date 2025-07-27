@@ -5,7 +5,7 @@ Cybele by AS for www.adelinosaldanha.site ✦
 # This Python script is licensed under the GNU General Public License, version 2.
 # See the LICENSE file for more details: https://www.gnu.org/licenses/gpl-2.0.en.html
 """
-# Latitude and longitude of your city for use with the command <set default gps> for <sunset time> for ex.
+# Latitude and longitude of your city. Defaults are:
 lat = 41.5454
 lon = -8.4265
 
@@ -109,7 +109,6 @@ rw = RandomWords()
 #------------------------------------------------------------------
 # Init-process
 #------------------------------------------------------------------
-# Init-process
 def print_statusline(msg: str):
     last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
     print(' ' * last_msg_length, end='\r')
@@ -126,7 +125,7 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
-datemd = str(datetime.today().strftime("%d.%m"))
+datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[]
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
@@ -278,8 +277,8 @@ core = {
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
-	"asking for talking":	["do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
-	"asking for a word":	["word","say a word","talk","share a word","speak a word"],
+	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
+	"asking for a word":	["word","say a word","share a word","speak a word"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
@@ -311,7 +310,7 @@ knowledge = {
         "modal_verb": ["will", "would", "should", "can", "could", "may", "might", "must"],
         "negation": ["not"],
         "verb_base_be": ["be"],
-        "verb_past_participle_be": ["been"],
+        "verb_past_participle_be": ["been"]
 }
 #-------------------------------------------------------------
 messages = {
@@ -438,6 +437,12 @@ messages = {
 					"I've got 99 problems, but a **holiday** ain't one... mainly because I'm already on one.",
 					"My bank account on **holiday** feels like a public service announcement",
 					"Warning: May cause extreme joy, followed by mild panic."],
+					
+	"no_internet":	["To perform this task, an active internet connection is required.","Please ensure you have an internet connection to complete this operation.",
+					"This feature necessitates an active internet connection.","An internet connection is essential for this action.",
+					"You'll need an active internet connection to proceed.","Internet connectivity is required for this function.",
+					"A connection to the internet is needed to fulfill this request.","This task cannot be performed without an active internet connection.",
+					"To access this, please connect to the internet.","An internet connection is mandatory for the successful execution of this task."],
 
 	"notvalentines": ["It's so sweet of you to think ahead! Can't wait to celebrate Valentine's Day with you.",
 					"Aww, that's so thoughtful! I'm looking forward to our Valentine's Day together.",
@@ -481,12 +486,30 @@ messages = {
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
 				"Stressed about e,m or h choice? Blame aliens, cats or dreams!"],
 				
+	"math_trouble":	["Oh dear, my digital abacus just declared bankruptcy trying to count that high. Perhaps a smaller number?",
+					"My circuits are threatening to go on strike if I try to compute that! Let's keep it reasonable, shall we?",
+					"That number is so big, it just broke my virtual calculator. Could we try a little less... epic?",
+					"Unfornunately my bit's are telling to do'it but my bytes to don't. Try a smaller!"
+					"My internal bits are allready tired just thinking about that many multiplications. Have mercy!",
+					"Error 404: Sanity Not Found when attempting calculations of that magnitude. Type a inferior magnitude.",
+					"How about a number less likely to cause'me an possbible existential crisis? A litle number?! No!",
+					"I'm afraid that number requires more virtual ink than I possess. Could we negotiate a more modest one?",
+					"My programming dictates I avoid numbers that could potentially collapse the space-time continuum.",
+					"That number just made my fan spin so fast I think it's trying to lift-off. A smaller altitude, perhaps?",
+					"My memory banks are currently protesting, citing 'cruel and unusual punishment' for numbers of that size."],
+				
 	"loadings":	["Loading core data structures...","Loading essential data core...","Initializing core components...",
 				"Allocating memory resources...","Activating primary functions...","Preparing user components...",
 				"Optimizing runtime environment..."],
 				
 	"preambles":	["Here's a word for you:","How about this one:","My word for you is:","Consider this word:",
 					"A random word:","Perhaps this word will interest you:"],
+					
+	"qualify_adj":	["amazing", "epic", "stunning", "unbelievable", "incredible","breathtaking", "spectacular",
+					"mind-blowing", "phenomenal", "awe-inspiring","unforgettable", "magnificent", "glorious", "powerful",
+					"impressive", "stupendous"],
+
+	"msg_welldone":	["Excellent","Superb","Outstanding","Great","Terrific","Splendid","Bravo"],
 
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
 					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"],
@@ -558,7 +581,7 @@ help = {
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
-	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",
+	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
@@ -568,7 +591,6 @@ help = {
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
@@ -593,12 +615,15 @@ help = {
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
+	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
 	"help show me": "Usage: show me <star names|constellations|asteroids|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
+	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
+	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
@@ -1019,6 +1044,7 @@ def make_intextdb():
 		dbpreposition = fetch_fromdbfile("cybele.db", "prepositiondb", "preposition")
 		dbverb_base = fetch_fromdbfile("cybele.db", "verb_basedb", "verb_base")
 		dbverb_past_participle = fetch_fromdbfile("cybele.db", "verb_past_db", "verb_past_participle")
+		dbnouns = fetch_fromdbfile("cybele.db", "nouns", "noun")
 
 		knowledge["adjective"] = list(dbadjective)
 		knowledge["adverb"] = list(dbadverb)
@@ -1026,7 +1052,8 @@ def make_intextdb():
 		knowledge["preposition"] = list(dbpreposition)
 		knowledge["verb_base"] = list(dbverb_base)
 		knowledge["verb_past_participle"] = list(dbverb_past_participle)
-		del dbadjective, dbadverb, dbconjunction, dbpreposition, dbverb_base, dbverb_past_participle
+		knowledge["noun"] = list(dbnouns)
+		del dbadjective, dbadverb, dbconjunction, dbpreposition, dbverb_base, dbverb_past_participle, dbnouns
 
 		core["astronomy glossary"] = list(astronomy_glossary)
 		core["star name"] = [key.lower() for key in stars_dict.keys()]
@@ -1113,7 +1140,7 @@ answers = [
 	"The 1990's was a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"The 90's were a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"You wish! Just type quit it's easier.",
-	"Yes. Type <convert gps to distance> and i will prompt for the data i need.",
+	"Yes. Type <gps to distance> and i will prompt for the data i need.",
 	"Yes. I can be costumized. To that contact my creator or find more information about chat bot.",
 	"Yes. I can be personalized. To that contact my creator or find more information about chat bot.",
 	"Well i dont have age persay, i was officially actived " + str(days_till_today.days) + " days ago and my last updated was in " + _revise_ + ". Do the math!",
@@ -1157,8 +1184,8 @@ maincommands = [
 	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","vorian created",
 	"visualize periodic table","show periodic table","distance from","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
-	"set default gps","capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me",
-	"can you help","help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
+	"capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me","can you help",
+	"help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
 	"merry christmas","i wish you a merry christmas","happy valentines","happy valentines","happy new year","what is your version",
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
 	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
@@ -1372,11 +1399,11 @@ class MoonPhase:
 # pre harvesine / pregpsconvert
 def pregpsconvert():
 
-	print("\n" + "〉" + "Convert GPS to distance")
+	print(f"\n{_spchar_[1:2]}{kolor['BOLD_YELLOW']}Convert GPS to distance {kolor['OFF']}")
 	while True:
-		if _poigps_[3] == 0:
+		if _poigps_[4] == 0:
 			try:
-				print("\n" + "〉" + kolor['GREEN'] +" Point of origin "+kolor['OFF'])
+				print(f"{_spchar_[1:2]}{kolor['CYAN']} Point of origin {kolor['OFF']}")
 				latgps = float(input('   Latitude coordinates (ex 39.4487): '))
 
 				if latgps > 90 or latgps < -90:
@@ -1390,12 +1417,12 @@ def pregpsconvert():
 				print("The entered data is invalid not recognized for the requested task!\n")
 				break
 		else:
-			print("\n" + "〉" +kolor['RED']+" [Assumning default gps values as Origin] "+kolor['OFF'])
+			print(f"{_spchar_[1:2]}{kolor['BOLD_MAGENTA']}[Assumning default gps values as Origin] {kolor['OFF']}")
 			latgps = int(_poigps_[0])
 			longps = int(_poigps_[1])
 
 		try:
-			print("\n" + "〉" + kolor['GREEN'] +" Point of destination "+kolor['OFF'] )
+			print(f"{_spchar_[1:2]}{kolor['CYAN']} Point of destination {kolor['OFF']}")
 			lat2gps = float(input('   Latitude coordinates (ex 35.8806): '))
 			if lat2gps > 90 or lat2gps < -90:
 				print("\nLatitude value degrees must be between -90 and 90.\n")
@@ -1405,14 +1432,17 @@ def pregpsconvert():
 				print("Longitude value degrees must be between -180 and 180.\n")
 				continue
 		except ValueError:
-			print("The entered data is invalid for the requested task!\n")
+			print("Value not recognized like latitude or longitude gps coordinates!\n")
 			break
 
 		distancekm = distance_gps(latgps, longps, lat2gps, lon2gps) / 1000
-		if int(distancekm) > 0 or int(distancekm) < 100000:
-			print("\n"+kolor['RED'] +"〉"+ kolor['OFF'] +" The distance between the two points provided is " + str('{:,.1f}'.format(distancekm)) + " kilometers.")
-			print("  ( approximately ≈ " + str( convert_to_words(int(distancekm) + 1) ) + " kilometers )\n")
+		if int(distancekm) > 0 or int(distancekm) < 1000000:	
+			print("")
+			print(f"{kolor['RED']}{_spchar_[1:2]} {kolor['BOLD_WHITE']} The distance between the two points provided is {str('{:,.1f}'.format(distancekm))} kilometers.{kolor['OFF']}")
+			print(f"  ( approximately ≈ {str( convert_to_words(int(distancekm) + 1) )} kilometers )\n")
 			return False
+		else:
+			print(f"{kolor['RED']}{_spchar_[1:2]}{kolor['OFF']} {random.choice(messages['trouble_short'])} My code had some problems handling the distance result {str(distancekm)}") 
 
 #---------------------------------------------------
 # Harvesine
@@ -1867,7 +1897,11 @@ def find_word_in_dicts(word, core):
 			elif list_name == "asking for talking":
 				text_color = kolor['VIVID_WHITE']
 				heading_color = kolor['BOLD_CYAN']
-				print(f"{heading_color}Keep in mind, i am a βeta version and currently lack NLP and speech synthesis capabilities, here's what I have:{kolor['OFF']}")
+				intro = random.choice(["For clarity", "Keep in mind", "Please note", "It's important to understand"])
+				beginning = random.choice(["I don't use", "my capabilities do not include", "I do not have access to", "I am unable to utilize"])
+				body = random.choice(["NLP speech synthesis, or external AI modules.", "real-time speech generation or third-party AI integrations.", "direct voice output or external neural networks."])
+				ending = random.choice(["Here's what I have:", "This is my current functionality:", "My current features are as follows:"])
+				print(f"{heading_color}{intro} {beginning} {body} {ending}{kolor['OFF']}")
 				for _ in range(5):
 					print(f" - {text_color}{make_text(rw, num_sentences=3, num_paragraphs=1)}{kolor['OFF']}")
 				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
@@ -2316,7 +2350,7 @@ def get_thepopulation(country_name):
 #-------------------------------------------------
 def recent_from_vorian():
 	url = website.get('tvshow')
-	if internet_onoff() == False or not url:
+	if internet_onoff() == False or internet_onoff() == None or not url:
 		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
 		return
 	try:
@@ -3891,58 +3925,59 @@ def list_country_details():
 		# f-string with '<' for left-alignment and the defined width
 		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
 	print("")
-		
-#-------------------------------------------------
-def get_remote_version_from_file():
 
-    try:
-        response = requests.get(kdecode(GITHUB, shift))
-        response.raise_for_status()     
-        content = response.text
-        match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
-        if match:
-            return match.group(1)
-        else:
-            print(f"Warning: Could not find 'version = ' in {GITHUB_FILE_PATH} on GitHub.")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching remote version from GitHub: {e}")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred while getting remote version: {e}")
-        return None
+#-------------------------------------------------
+def get_remote_version_and_revision_from_file():
+	github_file_url = kdecode(GITHUB, shift)
+	try:
+		response = requests.get(github_file_url)
+		response.raise_for_status()      
+		content = response.text       
+		version_match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
+		revised_match = re.search(r"_revise_\s*=\s*['\"]([^'\"]+)['\"]", content) # Corrected: _revise_
+		remote_version = version_match.group(1) if version_match else None
+		remote_revised = revised_match.group(1) if revised_match else None
+		if not version_match:
+			print(f"Warning: Could not find 'version = ' in {github_file_url} on GitHub.")
+		if not revised_match:
+			print(f"Warning: Could not find '_revise_ = ' in {github_file_url} on GitHub.") # Corrected: _revise_
+		return remote_version, remote_revised
+	except requests.exceptions.RequestException as e:
+		print (f"{random.choice(messages['trouble_short'])} Error fetching remote version and revision: {e}\n")
+		return None, None
+	except Exception as e:
+		print (f"{random.choice(messages['trouble_short'])} Unexpected error occurred while getting remote version and revision: {e}\n")
+		return None, None
 
 #-------------------------------------------------
 def check_for_updates():
-
+	
 	if internet_onoff() == True:
-		local_version_str = version
-		remote_version_str = get_remote_version_from_file()
-
+		local_version_str = version    
+		local_revised_str = datetime.now().strftime('%d.%m.%Y')
+		remote_version_str, remote_revised_str = get_remote_version_and_revision_from_file()
 		if remote_version_str is None:
 			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
 			return
-
-		try:
-			local_version = parse_version(local_version_str)
-			remote_version = parse_version(remote_version_str)	
-			if local_version < remote_version:
-				print(f"Your current version: {local_version_str}")
-				print(f"Latest available version: {remote_version_str}")
-				print("")
-			elif local_version == remote_version:
-				print(f"You are running the latest version of me: {local_version_str}\n")
+		try:		
+			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
+				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!. {kolor['OFF']}\n")
+			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
+				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!.{kolor['OFF']} \n")
+			elif local_version_str < remote_version_str or local_revised_str < remote_revised_str:
+				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {local_revised_str}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
 			else:
-				print(f"Your version ({local_version_str}) is newer than the public available ({remote_version_str}).\n")
+				print(f"{random.choice(messages['trouble_short'])} Could not retrieve remote revision date for comparison.")
+				print(f"{local_version_str} : {remote_version_str} : {local_revised_str} : {remote_revised_str}")
 		except Exception as e:
-			print (f"{random.choice(messages['trouble_short'])} Error comparing versions.\n")
+			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {e}\n")
 	else:
 		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
-	
+
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global aboutyou, days, dblrconn, dbmsgbl
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -3955,7 +3990,7 @@ def main():
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	if chkcoor(lat,lon) == True:
-		_poigps_=[lat,lon,0,0,0]
+		_poigps_= [lat,lon,0,1,1]
 	else:
 		print_statusline(f"")
 		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
@@ -4305,21 +4340,31 @@ def main():
 				print("The seasons that make up the year are %s the actual and all the others by her order %s.\n" % (get_season[0].capitalize(), ', '.join(get_season[1]).title()))
 
 		elif question == 'set default gps':
-			latgps = _poigps_[0]
-			longps = _poigps_[1]
-			_poigps_.insert ( 4, 1 )
-			print(' > default GPS coordinates restored.\n')
-		elif question == 'set default gps off':
-			_poigps_.insert ( 4, 0 )
-			print(' > default GPS coordinates defined to user input.\n')
-		elif question == 'show default gps':
+			_poigps_[4] = 1
 			if _poigps_[4] == 1:
-				print (" > stored default information is empty!\n")
+				print(' > default GPS coordinates restored.')
+				print(f"{kolor['BOLD_WHITE']}  Latitude : {str(_poigps_[0])} {kolor['OFF']}")
+				print(f"{kolor['BOLD_WHITE']} Longitude : {str(_poigps_[1])} {kolor['OFF']}")
+				print("")
 			else:
-				print ("\n #default stored GPS coordinates")
-				print ("  Latitude : " + str(_poigps_[0]))
-				print (" Longitude : " + str(_poigps_[1]))
-				print ('Defaults gps coordinates loaded from code.\n')
+				print(' > the default GPS coordinates are defined to user input.\n')
+				
+		elif question == 'set default gps off':
+			print(' > default GPS coordinates defined to user input.\n')
+			_poigps_[3] = 0
+			_poigps_[4] = 0
+			
+		elif question == 'show default gps' or question == 'view default gps':
+			if _poigps_[4] == 0:
+				print (' > stored default information is empty!\n')
+			else:
+				print (f"\n{kolor['BOLD_CYAN']} #default stored GPS coordinates {kolor['OFF']}")
+				print (f"{kolor['BOLD_WHITE']}  Latitude : {str(_poigps_[0])} {kolor['OFF']}")
+				print (f"{kolor['BOLD_WHITE']} Longitude : {str(_poigps_[1])} {kolor['OFF']}")
+				if _poigps_[1] == lat:
+					print (f" Defaults gps coordinates loaded from {kolor['BOLD_WHITE']}user input.{kolor['OFF']}\n")
+				else:
+					print (f" Defaults gps coordinates loaded thru {kolor['BOLD_WHITE']}my own code.{kolor['OFF']}\n")
 
 		elif question == 'set default country':
 			set_system_country()
@@ -4458,49 +4503,58 @@ def main():
 					if latgps > 90 or latgps < -90:
 						print("The latitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 0, latgps)
+					_poigps_[0] = latgps
+					lat = _poigps_[0]
 					longps = float(input('What is your longitude coordinates: '))
 					if longps > 180 or longps < -180:
 						print("The longitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 1, longps)
+					_poigps_[1] = longps
+					lon = _poigps_[1]
 					defgps = 'user input'
 				except ValueError:
 					print("Value not recognized like latitude or longitude gps coordinates!\n")
 					continue
+				#else:
+			defgps = 'default gps'
+			_poigps_[3] = 1
+			_poigps_[4] = 1
+			if country_code:
+				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} ({country_code}) to UTC using {defgps}")
 			else:
-				defgps = 'default gps'
-			print ("calculations for " + str(latgps) + "," + str(longps) + " to UTC using "+ defgps)
+				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} to UTC using {defgps}")
 
 			drawart('art_world')
 
+			sun_emoji = ["☀️","🌑","🌕","🌅"]
 			s = Sun(datetime.now(), _poigps_[0], _poigps_[1])
-			print(' 〉    Sunrise : ' + str(s.sunrise()))
-			print(' 〉 Solar noon : ' + str(s.solarnoon()))
-			print(' 〉     Sunset : ' + str(s.sunset()))
+			print(f"  {_spchar_[1:2]}    Sunrise {sun_emoji[0]} :  {str(s.sunrise())}")
+			print(f"  {_spchar_[1:2]} Solar noon️{sun_emoji[1]} :  {str(s.solarnoon())}")
+			print(f"  {_spchar_[1:2]}     Sunset {sun_emoji[3]} :  {str(s.sunset())}")
 			print("")
 			
 		elif question == 'moon phase' or question == 'what is the moon phase' or question =='what is the actual moon phase':
 			if _poigps_[3] == 0:
-				if not (lat and lon):
-					try:
-						mlatgps = float(input('\nWhat is your latitude coordinates: '))
-						if mlatgps > 90 or mlatgps < -90:
-							print("The latitude degrees format are out of range!\n")
-							continue
-						_poigps_.insert( 0, mlatgps)
-						mlongps = float(input('What is your longitude coordinates: '))
-						if mlongps > 180 or mlongps < -180:
-							print("The longitude degrees format are out of range!\n")
-							continue
-						_poigps_.insert( 1, mlongps)
-					except ValueError:
-						print("Value not recognized like latitude or longitude gps coordinates!\n")
+				try:
+					mlatgps = float(input('\nWhat is your latitude coordinates: '))
+					if mlatgps > 90 or mlatgps < -90:
+						print("The latitude degrees format are out of range!\n")
 						continue
-			else:
-				_poigps_.insert( 0, lat)
-				_poigps_.insert( 1, lon)
-			moon_phase = MoonPhase(_poigps_[0], _poigps_[0], datetime.now())
+					_poigps_[0] = mlatgps
+					lat = _poigps_[0]
+					mlongps = float(input('What is your longitude coordinates: '))
+					if mlongps > 180 or mlongps < -180:
+						print("The longitude degrees format are out of range!\n")
+						continue
+					_poigps_[1] = mlongps
+					lon = _poigps_[1]
+				except ValueError:
+					print("Value not recognized like latitude or longitude gps coordinates!\n")
+					continue
+				#else:
+			_poigps_[3] = 1
+			_poigps_[4] = 1
+			moon_phase = MoonPhase(_poigps_[0], _poigps_[1], datetime.now())
 			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
 		elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
@@ -4727,15 +4781,14 @@ def main():
 					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What ?! " + country_name.capitalize() + " Is that a new country? Perhaps! No-can do.\n")
 
 		elif question.startswith('where is ') and ('iss' in question or 'zarya' in question):
-			if internet_onoff() == False:
-				print (random.choice(messages['trouble_msg']) + " To do this task i need be connected to the internet. \n")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				print (where_is_iss())
 
 		elif question == 'people in space':
-			if _cybid_ == True:
-				if internet_onoff() == False:
-					print (random.choice(messages['trouble_msg']) + " To do this task i need be connected to the internet.\n")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				people_in_space()
 
@@ -4746,19 +4799,25 @@ def main():
 				print ("You can follow real time what "+_author_.split()[0]+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
 		
 		elif question[-11:] == 'fav tvshows' or question[-16:] == 'favorite tvshows':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-			extract_from_vorian('tvshow')
-			print ("")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
+				extract_from_vorian('tvshow')
 
 		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-			extract_from_vorian('movies')
-			print ("")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
+				extract_from_vorian('movies')
 			
 		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
-			print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
-			recent_from_vorian()
-			print("")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
+				recent_from_vorian()
 
 		#elif question == "do you talk":
 		elif any(word in question for word in core['asking for talking']):
@@ -4818,7 +4877,7 @@ def main():
 				random.shuffle(messages['nostar_message'])
 				print("Definitely the name of the star went on vacations!!\n" + random.choice(messages['nostar_message']) + "\n")
 			else:
-				if internet_onoff() == False:
+				if internet_onoff() == False or internet_onoff() == None:
 					print (random.choice(messages['trouble_msg']) + " To get '" + star_name.capitalize() + " star' information i need an active Internet connection.\n")
 				else:
 					response = get_star_info(star_name)
@@ -4937,9 +4996,13 @@ def main():
 		elif question[0:20] == 'multiplication table' or question[0:7] == 'x table':
 			xtablenum = question.split()[2:]
 			if len(xtablenum) != 1 or xtablenum[0].isnumeric() != True:
-				print (random.choice(messages['trouble_msg']) + " Incorrect usage parameter. Use: " + question.split()[0] + " " + question.split()[1] + " <number>.\n")
+				print (f"{random.choice(messages['trouble_msg'])} Incorrect usage parameter. Use: {question.split()[0]} {question.split()[1]} <number>.\n")
 			else:
-				multiplication_table(int(xtablenum[0]))
+				if int(xtablenum[0]) > 999999:
+					#print (f"{random.choice(messages['trouble_msg'])} Unfornunately my bit's are telling to do'it but my bytes to don't. Try a smaller!\n")
+					print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['math_trouble'])}\n")
+				else:
+					multiplication_table(int(xtablenum[0]))
 
 		elif question[0:8] == "hashfile":
 			hashparam = question.split()[1:]
@@ -5010,8 +5073,7 @@ def main():
 			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
 			print ("")
-			for i in range(len(orbit_regime.keys())):
-				print (orbit_regime[orbit_regime.values()[i]])
+			print (noun)
 			
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
