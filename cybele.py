@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '27.07.2025'
+_revise_ = '29.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -154,14 +154,14 @@ website = {
 	"askard": "https://www.adelinosaldanha.site/askards"
 }
 webshare = {
-  "tvshow": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
-  "movies": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
-  "art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot"
+	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
+	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
+	"movies": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
+	"tvshow": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz"
 }
 presence_online = {
 	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
 }
-
 #-----------------------------------------------------------
 as_quotes = [
 	"... to keep you busy.",
@@ -574,7 +574,6 @@ help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
-	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
@@ -584,7 +583,7 @@ help = {
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
-	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
 	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from vorian website the favorite list.\nex: favorite tvshows\n    fav movies\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
@@ -629,6 +628,7 @@ help = {
 	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
+	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
@@ -707,7 +707,7 @@ asteroids_list = {
 	"ceres": {"type": "dwarf planet", "dimensions":939.4, "description": "Largest asteroid, potential water ice"},
     "vesta": {"type": "asteroid", "dimensions":525.4, "description": "Brightest asteroid visible to the naked eye. Second-largest, differentiated structure"},
     "pallas": {"type": "asteroid", "dimensions":545, "description": "Third-largest, unusual orbit"},
-    "bennu": {"type": "dangerous asteroid", "dimentions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
+    "bennu": {"type": "dangerous asteroid", "dimensions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
     "ryugu": {"type": "asteroid", "dimensions":0.9, "description": "Carbon-rich, explored by Hayabusa2"},
     "itokawa": {"type": "asteroid", "dimensions":0.33, "description": "Small, S-type, explored by Hayabusa"},
     "eros": {"type": "asteroid", "dimensions":16.84, "description": "Near-Earth asteroid, extensively studied"},
@@ -748,7 +748,7 @@ asteroids_list = {
 	"2010 al30": {"type": "dangerous asteroid", "dimensions": 15, "description": "This asteroid made a very close approach to Earth in 2010, emphasizing the need for early detection of these objects."},
 	"2011 md": {"type": "dangerous asteroid", "dimensions": 7, "description": "This small asteroid made an exceptionally close Earth flyby in 2011, highlighting the potential for unexpected encounters."},
 	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
-	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
+	"unidentified pha": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
 }
 #-------------------------------------------------
 def kdecode(emessage, shift):
@@ -1073,9 +1073,12 @@ def make_intextdb():
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 		core["old_tech_term"] = old_tech_terms_list
 		
+		core["dangerous asteroids"] = [asteroid_name for asteroid_name, data in asteroids_list.items() 
+										if data['type'] == "dangerous asteroid"]
+										
 		internal_db_array = ["astronomy glossary","star name","constelattion","asteroid","country","capital",
 							"climate dictionary term","climate dictionary","word meaning","qa-astro","help",
-							"linuxcmd","element symbol","element abbr","old_tech_term"]
+							"linuxcmd","element symbol","element abbr","old_tech_term","dangerous asteroids"]
 		knowledge_db_array = ["adjective","adverb","conjunction","preposition","verb_base","verb_past_participle"]
 
 		for i in range(len(knowledge_db_array)):
@@ -1713,18 +1716,26 @@ def find_word_in_dicts(word, core):
 					print (salutation_first + salutation_time + salutation_end + "\n")
 
 			elif list_name == 'seasons':
+				main_season, other_seasons = get_the_season()
+				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
 				allyearseasons = '' + ', '.join(core[list_name]) + ''
-				seasonmonths = '' + ', '.join(core[word]) + ''
-				print ("A period of the year that is distinguished by special climate condictions.")
-				print ("%s is one of the four seasons (%s) of the year." % (word.capitalize(), allyearseasons.title()))
-				print ("The %s period is composed by the months %s of the year." % (word.capitalize(), seasonmonths.title()))
-				print ("%s have %s.\n" % (get_the_season()[0].capitalize(),weather_like_season()))
+				sentence_starters = [
+					f"As the year unfolds, {word.capitalize()} arrives, distinguished by its unique climate, often bringing {{weather_placeholder}}.",
+					f"Every year brings distinct seasons, and for {word.capitalize()}, you can expect a climate like {{weather_placeholder}}.",
+					f"Out of the year's cycle of seasons, {word.capitalize()} stands out with its distinct climate, typically featuring {{weather_placeholder}}.",
+					f"{word.capitalize()} is a time of year recognized by its special climate, often characterized by {{weather_placeholder}}.",
+					f"When we talk about {word.capitalize()}, we're referring to a season known for its specific climate, such as {{weather_placeholder}}."
+					]	
+				print(random.choice(sentence_starters).format(weather_placeholder=weather_like_season()))
+				print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {get_the_season()[1][0].capitalize()} approach's.\n")
 
 			elif list_name == 'spring' or list_name == 'summer' or list_name == 'autumn' or list_name == 'winter':
-				month_number = core['months'].index(word)
-				print ("%s is the %s month of the year and one month of the %s season." % (word.capitalize(), get_ordinal_position(month_number), list_name.capitalize()))
-				print ("A year is composed by %s months and this one is made up of %s days.\n" % (len(core['months']), days_in_year()))
-
+				month_number = core['months'].index(word) + 1
+				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+				hemisphere_season = get_the_season()[0]
+				leap_year = leapyear()
+				print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
+				
 			elif list_name == 'word meaning':
 				db_file ='cybele.db';table = 'meanings';search_val = word
 				search_col = 'term';fetch_col = 'designation'
@@ -4144,7 +4155,10 @@ def main():
 				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
 
 			elif 'asteroids' in question:
-				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
+				if not 'dangerous' in question:
+					print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
+				else:
+					print (f"{showlisttell(core["dangerous asteroids"], num_terms=5, category="dangerous asteroids")}.\n")
 
 			elif 'old' in question or 'tech' in question:
 				print (f"{showlisttell(core["old_tech_term"], num_terms=5, category="old Tech terms")}.\n")
@@ -4422,7 +4436,7 @@ def main():
 
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
 			if 'help' in core and isinstance(core['help'], list):
-				print("Here are the topics ordered alphabetically for better help about.\nJust type help <topic>\n")
+				print("Here are the available help ordered alphabetically to better help'you. \nJust type help <topic>\n")
 				nhelp = [key[5:] for key in core['help']]
 				nhelp.sort()
 				for i in range(len(nhelp)):
@@ -4559,7 +4573,8 @@ def main():
 			moon_phase = MoonPhase(_poigps_[0], _poigps_[1], datetime.now())
 			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
-		elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
+		#elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
+		elif question == 'show core' or question == '#core':
 			print("Here he is my full internal specifications :\n")
 			if node_name:
 				print('   Device : ' + platform.node().upper() + '|' + _cyext_[0:4].replace(" ",""))
@@ -4578,7 +4593,7 @@ def main():
 			print('   Python : ' + str(pyver[0]) + "." + str(pyver[1]) + "." + str(pyver[2]))
 			print('  Country : ' + core_system_country)
 			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
-			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(old_tech_terms_list)) + "|M" + str(len(core["word meaning"])) + "|V" + str(sum(len(value) for value in knowledge.values())))
+			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(core['old_tech_term'])) + "|M" + str(len(core["word meaning"])) + "|V" + str(sum(len(value) for value in knowledge.values())))
 			print('    Linux : ' + str(len(linux_commands)))
 			print('    Astro : ' + "G"+str(len(core["astronomy glossary"])) + "|A" +  str(len(core["asteroid"])) + "|C" +  str(len(core["constelattion"])) + "|S" +  str(len(core["star name"])))
 			print('    World : ' + str(len(core["country"])))
@@ -4900,7 +4915,12 @@ def main():
 
 		elif question == 'weather':
 			dayseason = get_the_season()[0]
-			print ("It's look like we have " + weather_like_season() + " based in the fact we are in the " + dayseason.capitalize() +".\n")
+			hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+			weather_starters = [
+				f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.\n",
+				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}.\n"
+			]
+			print(random.choice(weather_starters))
 
 		elif question[-9:] == 'about you':
 				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of Vorian, this website.\n" + aboutyou + "\n" )
@@ -5075,7 +5095,6 @@ def main():
 			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
 			print ("")
-			print (noun)
 			
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
