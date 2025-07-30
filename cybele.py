@@ -13,9 +13,9 @@ lon = -8.4265
 version = '1.1.0-rc.2'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
+_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '29.07.2025'
+_revise_ = '31.07.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -67,10 +67,10 @@ except ImportError as err:
 				print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
 				try:
 					subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-					print(f"\n{' '*3}'{module_name}' installed successfully. Please restart {_title_}")
+					print(f"\n{' '*3}{_spchar_[8:9]}'{module_name}' installed successfully. Please restart {_title_}")
 					sys.exit(0)
 				except subprocess.CalledProcessError as e:
-					print(f"\n{' '*3}Error installing the module. Try installing it manually: pip install " + module_name)
+					print(f"\n{' '*3}✗ Error installing the module. Try installing it manually: pip install " + module_name)
 					sys.exit(0)
 				break
 			elif install_choice == 'n':
@@ -126,20 +126,22 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
-datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[]
+datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
-dblrconn = ""; idcode=""; cybelecode = []; special_dates_dict = {}; system_country = None
+cybelecode = []; special_dates_dict = {};  asteroids_list = {}; cneos_list={};ncountries = {}; climate_dictionary = {}
+
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
-etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 'Y2xpbWF0ZV9kaWN0',
-		'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==', 'Y291bnRyaWVz', 'ZnVuZmFjdHM=',
-		'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=', 'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==',
-		'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==', 'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==',
-		'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==']
+etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
+			'Y2xpbWF0ZV9kaWN0', 'Y25lb3M=', 'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==',
+			'Y291bnRyaWVz', 'ZnVuZmFjdHM=', 'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=',
+			'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==', 'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==',
+			'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==', 'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==']
+
 #-----------------------------------------------------------
 website = {
 	"home": "https://www.adelinosaldanha.site",
@@ -219,8 +221,7 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;34m''""XXXXX\033[m        ","   \033[1;34m.XXXXXXXXXXXXXX\033[m \033[1;33mXXXX.\033[m  ",
 	"  \033[1;34m.XXXXXXXXXXXXXXX\033[m \033[1;33mXXXXX.\033[m ","  \033[1;34m'XXXXX\033[m \033[1;33mxxxxxxxxxxXXXXX'\033[m ",
 	"   \033[1;34m'XXXX\033[m \033[1;33mXXXXXXXXXXXXXX'\033[m  ","         \033[1;33mXXXXX....\033[m        ",
-	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"
-]
+	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [98,121,32,65,83]
 #------------------------------------------------------------
@@ -277,12 +278,13 @@ core = {
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
-	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","say something","make a sentence","speak"],
+	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","speak"],
+	"asking for a phrase":	["say something","make a sentence","make a phrase"],
 	"asking for a word":	["word","say a word","share a word","speak a word"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
-	"python art":	["py","python","python art"]
+	"python art":	["py","python","python art","art python"]
 }
 #-------------------------------------------------------------
 knowledge = {
@@ -290,11 +292,11 @@ knowledge = {
         "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
         "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
         "noun_abstract": ["idea", "solution", "sadness", "happiness"],
-		# ... (other existing categories) ...
+		# ... (other existing ) ...
 		
-		"pronoun_singular_third": ["he", "she", "it", "one", "this", "that"], # Added more
-		"pronoun_first_second_plural": ["I", "you", "we", "they", "these", "those"], # Added more
-		# ... (other existing categories) ...
+		"pronoun_singular_third":	["he", "she", "it", "him", "her", "his", "hers", "its", "himself", "herself", "itself"],
+		"pronoun_first_second_plural":	["we", "us", "our", "ours", "ourselves", "you", "your", "yours", "yourselves"],
+		# ... (other existing ) ...
 
         "subject": [], # Failsafe key
         "determiner": ["the", "some", "a", "an"], 
@@ -552,7 +554,14 @@ messages = {
 						"%s is a unique event in the year. Have you considered know the number the days till then...\n",
 						"In my knowledge is a year event. I wonder if you know how many days left to %s...\n",
 						"In other words we may say it's a once year event. Do you know how many days are still %s.\n",
-						"Did you consider know how many days are still that unique event that it %s?\n",]
+						"Did you consider know how many days are still that unique event that it %s?\n"],
+
+	"info_intromsg":	["Alright, time for a little peek under my digital hood:","Behold, my magnificent inner workings! (Currently running on 1s and 0s):",
+						"Greetings! My vital statistics, at your service:","Calculating... here's the full lowdown on Cybele:",
+						"Reporting for duty! Here's my current status report:","Commencing self-analysis. The results are in:",
+						"My brain dump, for your viewing pleasure (and analytical needs):","Just the facts, ma'am/sir/user! Here's my core info:",
+						"Let's see what makes Cybele tick. Full specs ahead:","Presenting the official Cybele System Report, hot off the virtual press:",
+						"Alright, let's get down to brass virtual tacks:"]
 }
 #-------------------------------------------------------------------------------------
 weather_season_condiction = {
@@ -563,16 +572,16 @@ weather_season_condiction = {
 }
 #------------------------------------------------------------
 topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types of orbits","asteroids","constelations","information about stars",
-		"distance of planets and from the sun","periodic table elements","visualize the periodic table","where is the ISS","people in space",
+		"distance of planets and from the sun","periodic table elements","visualize the periodic table","where is the ISS","people in space","actual country",
 		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
-		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance"]
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects"]
 
 #------------------------------------------------------------
 help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
-	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
+	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
@@ -580,6 +589,7 @@ help = {
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
+	"help dangerous objects": "Usage <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
@@ -591,6 +601,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",
+	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
@@ -599,6 +610,7 @@ help = {
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
+	"help make a phrase": "Usage <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
@@ -613,18 +625,22 @@ help = {
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
+	"help say something": "Usage <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|constellations|asteroids|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
+	"help show me": "Usage: show me <star names|constellations|<dangerous|asteroids|objects>|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
+	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
+	"help talk": "Usage <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \nex: talk \n    can you speak \n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
+	"help topics": "Usage <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
@@ -701,55 +717,6 @@ planet_data = {
 	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
 	}
 }
-#----------------------------------------------------
-asteroids_list = {
-	"65 cybele": {"type": "minor planet", "dimensions":237.26, "description": "65 Cybele is one of the largest asteroids in the Solar System. Its located in the outer asteroid belt. It is thought to be a emnant primordial body."},
-	"ceres": {"type": "dwarf planet", "dimensions":939.4, "description": "Largest asteroid, potential water ice"},
-    "vesta": {"type": "asteroid", "dimensions":525.4, "description": "Brightest asteroid visible to the naked eye. Second-largest, differentiated structure"},
-    "pallas": {"type": "asteroid", "dimensions":545, "description": "Third-largest, unusual orbit"},
-    "bennu": {"type": "dangerous asteroid", "dimensions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
-    "ryugu": {"type": "asteroid", "dimensions":0.9, "description": "Carbon-rich, explored by Hayabusa2"},
-    "itokawa": {"type": "asteroid", "dimensions":0.33, "description": "Small, S-type, explored by Hayabusa"},
-    "eros": {"type": "asteroid", "dimensions":16.84, "description": "Near-Earth asteroid, extensively studied"},
-    "gaspra": {"type": "asteroid", "dimensions":12.2, "description": "First asteroid imaged close-up"},
-    "ida": {"type": "asteroid", "dimensions":32, "description": "Has a moon (Dactyl)"},
-    "juno": {"type": "asteroid", "dimensions":246.596, "description": "One of the largest main-belt asteroids"},
-    "hebe": {"type": "asteroid", "dimensions":185.18, "description": "One of the most massive asteroids"},
-    "iris": {"type": "asteroid", "dimensions":199.83, "description": "One of the brightest asteroids"},
-    "flora": {"type": "asteroid", "dimensions":147.491, "description": "Largest asteroid in the Flora family"},
-    "metis": {"type": "asteroid", "dimensions":190, "description": "Innermost asteroid in the asteroid belt"},
-    "hygiea": {"type": "asteroid", "dimensions":407.12, "description": "Fourth-largest asteroid"},
-    "interamnia": {"type": "asteroid", "dimensions":306.313, "description": "One of the most massive asteroids"},
-    "europa": {"type": "asteroid", "dimensions":303.918, "description": "Large asteroid with high albedo"},
-	"apophis": {"type": "dangerous asteroid", "dimensions": 0.37, "description": "Potentially hazardous asteroid, close Earth approach in 2029"},
-    "1950 da": {"type": "asteroid", "dimensions": 1.1, "description": "Potentially hazardous asteroid, high risk of Earth impact in 2880"},
-	"psyche": {"type": "metal-rich asteroid", "dimensions": 220, "description": "Potentially iron-nickel core of a protoplanet"},
-	#-----------------------------------------------------------------
-	"thetis": {"type": "main-belt asteroid", "dimensions": 84.899, "description": "A typical main-belt asteroid"},
-	"melpomene": {"type": "main-belt asteroid", "dimensions": 139.594, "description": "A typical main-belt asteroid"},
-	"fortuna": {"type": "main-belt asteroid", "dimensions": 200, "description": "A large main-belt asteroid"},
-	"massalia": {"type": "main-belt asteroid", "dimensions": 135.680, "description": "A typical main-belt asteroid"},
-	"lutetia": {"type": "main-belt asteroid", "dimensions": 95.76, "description": "A large main-belt asteroid"},
-	"kalliope": {"type": "main-belt asteroid", "dimensions": 167.536, "description": "A large main-belt asteroid"},
-	"thalia": {"type": "main-belt asteroid", "dimensions": 107.53, "description": "A typical main-belt asteroid"},
-	"themis": {"type": "main-belt asteroid", "dimensions": 198, "description": "A large main-belt asteroid"},
-	"phocaea": {"type": "main-belt asteroid", "dimensions": 61.054, "description": "A smaller main-belt asteroid"},
-	"proserpina": {"type": "main-belt asteroid", "dimensions": 94.80, "description": "A typical main-belt asteroid"},
-	"euterpe": {"type": "main-belt asteroid", "dimensions": 96, "description": "A typical main-belt asteroid"},
-	"bellona": {"type": "main-belt asteroid", "dimensions": 120.90, "description": "A typical main-belt asteroid"},
-	"amphitrite": {"type": "main-belt asteroid", "dimensions": 189.559, "description": "A large main-belt asteroid"},
-	"urania": {"type": "main-belt asteroid", "dimensions": 92.787, "description": "A typical main-belt asteroid"},
-	"euphrosyne": {"type": "main-belt asteroid", "dimensions": 267.080, "description": "A very large main-belt asteroid"},
-	"pomona": {"type": "main-belt asteroid", "dimensions": 80.76, "description": "A typical main-belt asteroid"},
-	"1950 da": {"type": "dangerous asteroid", "dimensions": 1.1, "description": "This asteroid has a relatively high probability of impact in the distant future, making it a subject of ongoing study."},
-	"4179 toutatis": {"type": "dangerous asteroid", "dimensions": 5.2, "description": "This asteroid is quite large and has had close approaches to Earth in the past, making it a potential concern."},
-	"2007 tu24": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid made a relatively close approach to Earth in 2007, highlighting the need for continued monitoring of near-Earth objects."},
-	"99942 apophis": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid was once considered a significant threat but subsequent observations have reduced the risk. It's still monitored closely."},
-	"2010 al30": {"type": "dangerous asteroid", "dimensions": 15, "description": "This asteroid made a very close approach to Earth in 2010, emphasizing the need for early detection of these objects."},
-	"2011 md": {"type": "dangerous asteroid", "dimensions": 7, "description": "This small asteroid made an exceptionally close Earth flyby in 2011, highlighting the potential for unexpected encounters."},
-	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
-	"unidentified pha": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
-}
 #-------------------------------------------------
 def kdecode(emessage, shift):
     dek_msg = ""
@@ -769,7 +736,7 @@ sqlconn = kdecode(dbconn, shift)
 sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
 for table in etables:
     tables.append(base64.b64decode(table.encode('utf-8')).decode('utf-8'))
-
+	
 #----------------------------------------------------
 def whatgmt():
 	import time
@@ -804,7 +771,6 @@ def chkcoor(lat, lon):
 
 #------------------------------------------------------------
 def internet_onoff():
-
 	try:
 		socket.setdefaulttimeout(1)
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -816,24 +782,23 @@ def internet_onoff():
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
-
 	global dblrconn, dbmsgbl
-	conn = None
-			
+	conn = None		
 	if internet_onoff() == True:
 		if os.path.isfile(db_filename) == True:
 			conn = sqlite3.connect(db_filename)
 			dblrconn= "offline [database files]"
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			max_attempts = 5
 			for attempt in range(1, max_attempts + 1):
 				try:
 					conn = sqlitecloud.connect(sqlconn)
 					dblrconn="online [sqlitecloud]"
-					dbmsgbl = "Connecting with remote database"
+					dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 					break
 				except ValueError as e:
+					print_statusline(f"")
 					modname = f"\n    Unexpected data from the socket connection from a SQLite Cloud database.\n    Please try again. If the error persists, wait for an update."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
@@ -841,6 +806,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					if attempt < max_attempts:
 						sleep(1)
 					else:
+						print_statusline(f"")
 						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
 						print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 						exit(0)
@@ -848,11 +814,14 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		if os.path.isfile(db_filename) == True:
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
+			print_statusline(f"")
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n    I cannot execute properly. Exiting."
 			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
+
+	#dbmsgbl = f"{dbmsgbl} [{table_name}] {_spchar_[7:8]}"
 
 	try:
 		cursor = conn.cursor()
@@ -860,7 +829,8 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		result = [row[0] for row in cursor.fetchall()]
 		return result
 	except Exception as e:
-		modname = f"\n    An unexpected error occurred: {e}"
+		print_statusline(f"")
+		modname = f"\n   An unexpected error occurred: {e}"
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 		exit(0)
 	except sqlite3.Error as e:
@@ -870,24 +840,23 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			conn.close()
 			
 #------------------------------------------------------------
-def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
-	
+def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):	
 	global dblrconn, dbmsgbl
 	conn = None
 	if internet_onoff() == True:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			conn = sqlitecloud.connect(sqlconn)
 			dblrconn="online [sqlitecloud]"
-			dbmsgbl = "Connecting with remote database"
+			dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -908,7 +877,6 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 
 #--------------------------------------------------------
 def check_tables(tables_names):
-	
 	global dbmsgbl
 	db_filename = 'cybele.db'
 	missing_tables = []
@@ -918,14 +886,14 @@ def check_tables(tables_names):
 	if internet_onoff() == True:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			conn = sqlitecloud.connect(sqlconn)
-			dbmsgbl = "Connecting with remote database"
+			dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
-			dbmsgbl = "Connected via local database"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
@@ -976,118 +944,150 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, animation_index
+	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
+			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
+			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_
+
 	if not check_tables(tables):
 		sys.exit(0)
-	else:
-		message = random.choice(messages['loadings'])
-		print_statusline(f"{message}")
+
+	message = random.choice(messages['loadings'])
+	print_statusline(f"{message} {_spchar_[7:8]}")
+
+	try:
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
-		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
-		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
-		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
-		constelations = list(fetch_fromdbfile("cybele.db", "stars", "constelation"))
-		for name, hr, const in zip(star_names, hr_numbers, constelations):
+
+		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
+
+		star_data = zip(
+			fetch_fromdbfile("cybele.db", "stars", "star_name"),
+			fetch_fromdbfile("cybele.db", "stars", "hr_number"),
+			fetch_fromdbfile("cybele.db", "stars", "constelation")
+		)
+		for name, hr, const in star_data:
 			stars_dict[name] = [hr, const]
+		core["star name"] = [key.lower() for key in stars_dict.keys()]
 
-		constelation = list(fetch_fromdbfile("cybele.db", "constelations", "constelation"))
-		meaning = list(fetch_fromdbfile("cybele.db", "constelations", "meaning"))
-		abbr = list(fetch_fromdbfile("cybele.db", "constelations", "abbr"))
-		for constelation, meaning, abbr in zip(constelation, meaning, abbr):
-			constellations_dict[constelation] = meaning, abbr
+		constellation_data = zip(
+			fetch_fromdbfile("cybele.db", "constelations", "constelation"),
+			fetch_fromdbfile("cybele.db", "constelations", "meaning"),
+			fetch_fromdbfile("cybele.db", "constelations", "abbr")
+		)
+		for constelation, meaning, abbr in constellation_data:
+			constellations_dict[constelation] = (meaning, abbr)
 			constellations_abbr[abbr] = constelation
+		core["constelattion"] = list(constellations_dict.keys())
 
-		db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
-		db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
-		db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
-		db_alpha2 = list(fetch_fromdbfile("cybele.db", "countries", "alpha_2"))
-		ncountries = {
-			country.lower(): {"capital": capital, "population": population, "alpha2": alpha_2}
-			for country, capital, population, alpha_2 in zip(db_country, db_capital, db_population, db_alpha2)
-		}
+		asteroid_data = zip(
+			fetch_fromdbfile("cybele.db", "asteroids", "asteroid_name"),
+			fetch_fromdbfile("cybele.db", "asteroids", "type"),
+			fetch_fromdbfile("cybele.db", "asteroids", "mean_diameter"),
+			fetch_fromdbfile("cybele.db", "asteroids", "rotation_period"),
+			fetch_fromdbfile("cybele.db", "asteroids", "albedo"),
+			fetch_fromdbfile("cybele.db", "asteroids", "description")
+		)
+		for name, _type, diameter, rotation, albedo, desc in asteroid_data:
+			asteroids_list[name] = {
+				"type": _type,
+				"mean_diameter": diameter,
+				"rotation_period": rotation,
+				"albedo": albedo,
+				"description": desc,
+			}
+		core["asteroid"] = list(asteroids_list.keys())
+		core["dangerous asteroids"] = [name for name, data in asteroids_list.items() if data['type'] == "dangerous asteroid"]
 
-		ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
-		ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
-		climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
-		meaning_term = fetch_fromdbfile("cybele.db", "meanings", "term")
-		qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
-		cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
-		syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
-		explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
-		examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
+		cneos_data = zip(
+			fetch_fromdbfile("cybele.db", "cneos", "object_designation"),
+			fetch_fromdbfile("cybele.db", "cneos", "year_range"),
+			fetch_fromdbfile("cybele.db", "cneos", "impact_probability"),
+			fetch_fromdbfile("cybele.db", "cneos", "vinfinity_kms"),
+			fetch_fromdbfile("cybele.db", "cneos", "estimated_diameter_km")
+		)
+		for obj, year, imp, dkm, dia in cneos_data:
+			cneos_list[obj.lower()] = {
+				"year": year,
+				"impact": imp,
+				"kms": dkm,
+				"diameter": dia,
+			}
+		core['cneos'] = list(cneos_list.keys())
 
-		for i in range(len(cmd_names)):
-			if cmd_names[i] not in [key[5:] for key in help.keys()]:
-				cmd_name = cmd_names[i]
-				syntax = syntaxes[i]
-				explanation = explanations[i]
-				examples = examples_str_list[i].split(';') if examples_str_list[i] else []
+		country_data = zip(
+			fetch_fromdbfile("cybele.db", "countries", "country"),
+			fetch_fromdbfile("cybele.db", "countries", "capital"),
+			fetch_fromdbfile("cybele.db", "countries", "population"),
+			fetch_fromdbfile("cybele.db", "countries", "alpha_2")
+		)
+		for country, capital, population, alpha_2 in country_data:
+			ncountries[country.lower()] = {"capital": capital, "population": population, "alpha2": alpha_2}
+		core['country'] = list(ncountries.keys())
+		core['capital'] = [country["capital"] for country in ncountries.values()]
+
+		climate_terms = fetch_fromdbfile("cybele.db", "climate_dict", "climate_term")
+		climate_designations = fetch_fromdbfile("cybele.db", "climate_dict", "designation")
+		climate_dictionary.update({term: desig for term, desig in zip(climate_terms, climate_designations)})
+		core["climate dictionary term"] = list(climate_dictionary.keys())
+		core["climate dictionary"] = list(climate_dictionary.values())
+
+		core["word meaning"] = list(fetch_fromdbfile("cybele.db", "meanings", "term"))
+
+		core["qa-astro"] = list(fetch_fromdbfile("cybele.db", "qa_astro", "question"))
+
+		linux_cmd_data = zip(
+			fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "syntax"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "explanation"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "examples")
+		)
+		for cmd_name, syntax, explanation, examples_str in linux_cmd_data:
+			if cmd_name not in [key[5:] for key in help.keys()]:
+				examples = examples_str.split(';') if examples_str else []
 				linux_commands[cmd_name] = {
 					"syntax": syntax,
 					"explanation": explanation,
 					"examples": examples
 				}
-		
-		old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
+		core["linuxcmd"] = list(linux_commands.keys())
+		core['help'] = list(help.keys())
 
-		special_dates_data = fetch_fromdbfile("cybele.db", "special_dates", "sdate")
-		special_dates_events = fetch_fromdbfile("cybele.db", "special_dates", "event")
+		core["old_tech_term"] = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
 
-		for date_str, event_desc in zip(special_dates_data, special_dates_events):
+		special_dates_data = zip(
+			fetch_fromdbfile("cybele.db", "special_dates", "sdate"),
+			fetch_fromdbfile("cybele.db", "special_dates", "event")
+		)
+		for date_str, event_desc in special_dates_data:
 			parsed_date_tuple = parse_date_string(date_str)
 			if parsed_date_tuple:
 				special_dates_dict[parsed_date_tuple] = event_desc
-		midbcounter = midbcounter + (len(special_dates_data))
-		del special_dates_data, special_dates_events
+		midbcounter += len(special_dates_dict)
 
-		dbadjective = fetch_fromdbfile("cybele.db", "adjectivedb", "adjective")
-		dbadverb = fetch_fromdbfile("cybele.db", "adverbdb", "adverb")
-		dbconjunction = fetch_fromdbfile("cybele.db", "conjunctiondb", "conjunction")
-		dbpreposition = fetch_fromdbfile("cybele.db", "prepositiondb", "preposition")
-		dbverb_base = fetch_fromdbfile("cybele.db", "verb_basedb", "verb_base")
-		dbverb_past_participle = fetch_fromdbfile("cybele.db", "verb_past_db", "verb_past_participle")
-		dbnouns = fetch_fromdbfile("cybele.db", "nouns", "noun")
+		knowledge["adjective"] = list(fetch_fromdbfile("cybele.db", "adjectivedb", "adjective"))
+		knowledge["adverb"] = list(fetch_fromdbfile("cybele.db", "adverbdb", "adverb"))
+		knowledge["conjunction"] = list(fetch_fromdbfile("cybele.db", "conjunctiondb", "conjunction"))
+		knowledge["preposition"] = list(fetch_fromdbfile("cybele.db", "prepositiondb", "preposition"))
+		knowledge["verb_base"] = list(fetch_fromdbfile("cybele.db", "verb_basedb", "verb_base"))
+		knowledge["verb_past_participle"] = list(fetch_fromdbfile("cybele.db", "verb_past_db", "verb_past_participle"))
+		knowledge["noun"] = list(fetch_fromdbfile("cybele.db", "nouns", "noun"))
 
-		knowledge["adjective"] = list(dbadjective)
-		knowledge["adverb"] = list(dbadverb)
-		knowledge["conjunction"] = list(dbconjunction)
-		knowledge["preposition"] = list(dbpreposition)
-		knowledge["verb_base"] = list(dbverb_base)
-		knowledge["verb_past_participle"] = list(dbverb_past_participle)
-		knowledge["noun"] = list(dbnouns)
-		del dbadjective, dbadverb, dbconjunction, dbpreposition, dbverb_base, dbverb_past_participle, dbnouns
-
-		core["astronomy glossary"] = list(astronomy_glossary)
-		core["star name"] = [key.lower() for key in stars_dict.keys()]
-		core["constelattion"] = list(constellations_dict.keys())
-		core["asteroid"] = list(asteroids_list.keys())
-		core['country'] = list(ncountries.keys())
-		core['capital'] = [country["capital"] for country in ncountries.values()]
-		core["climate dictionary term"] = list(climate_dictionary.keys())
-		core["climate dictionary"] = list(climate_dictionary.values())
-		core["word meaning"] = list(meaning_term)
-		core["qa-astro"] = list(qa_astro)
-		core['help'] = list(help.keys())
-		core["linuxcmd"] = list(linux_commands)
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
-		core["old_tech_term"] = old_tech_terms_list
+
+		midbcounter = 0 
+		for category_list in knowledge.values():
+			midbcounter += len(category_list)
+		midbcounter += len(questions) + len(answers)
+		for key in core:
+			if isinstance(core[key], list):
+				midbcounter += len(core[key])
+			elif isinstance(core[key], dict):
+				midbcounter += len(core[key])
+
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_short'])}, {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}") 
+		sys.exit(1)
 		
-		core["dangerous asteroids"] = [asteroid_name for asteroid_name, data in asteroids_list.items() 
-										if data['type'] == "dangerous asteroid"]
-										
-		internal_db_array = ["astronomy glossary","star name","constelattion","asteroid","country","capital",
-							"climate dictionary term","climate dictionary","word meaning","qa-astro","help",
-							"linuxcmd","element symbol","element abbr","old_tech_term","dangerous asteroids"]
-		knowledge_db_array = ["adjective","adverb","conjunction","preposition","verb_base","verb_past_participle"]
-
-		for i in range(len(knowledge_db_array)):
-			midbcounter = midbcounter + (len(knowledge[knowledge_db_array[i]]))
-		midbcounter = midbcounter + len(questions) + len(answers)
-		for i in range(len(internal_db_array)):
-			midbcounter = midbcounter + (len(core[internal_db_array[i]]))
-		#sys.stdout.flush()
-
 #----------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -1257,7 +1257,6 @@ if _cybid_ == True:
 #----------------------------------------------------------------------
 if _cybid_ == True:
 	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
-core['help'] = list(help.keys())
 checksum = shift
 
 #------------------------------------------------------------
@@ -1401,6 +1400,15 @@ class MoonPhase:
 			return moon_phase_emoji[4] + " Full Moon"
 
 #---------------------------------------------------
+def print_aligned(items, items_per_line, column_width):
+	for i, item in enumerate(items):
+		print(f"{item:<{column_width}.{column_width}}", end="")
+		if (i + 1) % items_per_line == 0:
+			print()
+	if len(items) % items_per_line != 0:
+		print()
+
+#---------------------------------------------------
 # pre harvesine / pregpsconvert
 def pregpsconvert():
 
@@ -1535,7 +1543,7 @@ def drawart(artname):
         res = ''.join(map(chr, line_bytes))
         if artname == 'art_cybele' and i == config['special_line']:
             suffix_res = ''.join(map(chr, config['special_suffix']))
-            print(art_color + res + kolor[config['special_suffix_color']] + suffix_res)
+            print(art_color + res[:-2] + kolor[config['special_suffix_color']] + "🡾 " + suffix_res)
         else:
             print(art_color + res)
     print(kolor['OFF'])
@@ -1570,7 +1578,7 @@ def leapyear():
 def get_question():
 	qt = input( _title_ + "? 〉")
 	if qt.isupper():
-		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
+		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.")
 		question = qt.lower()
 	try:
 		if str(qt):
@@ -1582,7 +1590,7 @@ def get_question():
 def find_answer(question,whatlist):
 	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
-	outoptions = ["Perhaps you meant: ","It looks like you might have meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
+	outoptions = ["Perhaps you meant the command: ","It looks like you meant the command: ","Is this command that you had in mind: ","Oops! Did you mean the command: ","Looking for the command: "]
 	for p in range(len(pontuation)):
 		question = question.replace(pontuation[p],"")
 	for index, value in enumerate(whatlist):
@@ -1683,6 +1691,16 @@ def get_uptime():
 	minutes = int((total_seconds % 3600) // 60)
 	seconds = int(total_seconds % 60)
 	return (hours,minutes,seconds)
+
+#------------------------------------------------------------
+def get_display_value(value, suffix="", precision=None, replace_hyphen=False):
+	if value is None or (isinstance(value, str) and not value.strip()):
+		return "N/A"
+	if isinstance(value, (float, int)) and precision is not None:
+		return f"{value:.{precision}f}{suffix}"
+	if replace_hyphen and isinstance(value, str):
+		return value.replace('-', ' - ')
+	return f"{value}{suffix}"
 	
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
@@ -1716,23 +1734,18 @@ def find_word_in_dicts(word, core):
 					print (salutation_first + salutation_time + salutation_end + "\n")
 
 			elif list_name == 'seasons':
-				main_season, other_seasons = get_the_season()
 				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
 				allyearseasons = '' + ', '.join(core[list_name]) + ''
-				sentence_starters = [
-					f"As the year unfolds, {word.capitalize()} arrives, distinguished by its unique climate, often bringing {{weather_placeholder}}.",
-					f"Every year brings distinct seasons, and for {word.capitalize()}, you can expect a climate like {{weather_placeholder}}.",
-					f"Out of the year's cycle of seasons, {word.capitalize()} stands out with its distinct climate, typically featuring {{weather_placeholder}}.",
-					f"{word.capitalize()} is a time of year recognized by its special climate, often characterized by {{weather_placeholder}}.",
-					f"When we talk about {word.capitalize()}, we're referring to a season known for its specific climate, such as {{weather_placeholder}}."
-					]	
-				print(random.choice(sentence_starters).format(weather_placeholder=weather_like_season()))
-				print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {get_the_season()[1][0].capitalize()} approach's.\n")
+				current_season = word
+				current_season_index = core['seasons'].index(current_season.lower())
+				next_season_index = (current_season_index + 1) % len(core['seasons'])
+				next_season = core['seasons'][next_season_index]
+				print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {next_season.title()} approach's.")
+				print(f"(Based on current month ({datetime.now().strftime('%B')}) and {hemisphere}, the current season is {get_the_season()[0].title()})\n")
 
 			elif list_name == 'spring' or list_name == 'summer' or list_name == 'autumn' or list_name == 'winter':
 				month_number = core['months'].index(word) + 1
 				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
-				hemisphere_season = get_the_season()[0]
 				leap_year = leapyear()
 				print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
 				
@@ -1843,9 +1856,33 @@ def find_word_in_dicts(word, core):
 				else:
 					dangerast = f"{kolor['BOLD_WHITE']}{asteroid_info['type']}{kolor['OFF']}"
 				print (f"\n [ {kolor['YELLOW']}{list_name.upper()} {word}{kolor['OFF']} | {dangerast} {kolor['OFF']}]")
-				print (" Description: " + asteroid_info['description'].capitalize())
-				print (" Dimentions: " + str(asteroid_info['dimensions']) + " Km ±\n")
-
+				print(f"   Diameter: {asteroid_info['mean_diameter'].replace('.', ',')} km")
+				print(f" Rot.Period: {asteroid_info['rotation_period']} hours")
+				print(f"     Albedo: {asteroid_info['albedo']}")
+				print(f"    Details: {asteroid_info['description']}\n")
+			
+			elif list_name == "cneos":
+				object_key = word
+				object_details = cneos_list[object_key]
+				print (f"\n [ {kolor['BOLD_RED']}{object_key.upper()}{kolor['OFF']} | {kolor['YELLOW']}Dangerous Objects{kolor['OFF']}, data by NASA JPL CNEOS ]")
+				val = len(object_key.upper())
+				print (f"{' '*val:>{val+6}}{_spchar_[10:11]} https://cneos.jpl.nasa.gov/ca/ \n")
+				diameter_value = object_details.get('diameter')
+				print(f"{'Diameter:':>15} {get_display_value(diameter_value, ' Km')}")
+				impact_value = object_details.get('impact')
+				impact_display = "N/A"
+				if impact_value is not None and (isinstance(impact_value, (float, int)) or (isinstance(impact_value, str) and impact_value.strip())):
+					try:
+						impact_display = f"{float(impact_value) * 100:.4f} %"
+					except ValueError: # In case 'impact' is a non-numeric string
+						impact_display = "N/A"
+				print(f"{'Impact Prob:':>15} {impact_display}")
+				year_value = object_details.get('year')
+				print(f"{'Year range:':>15} {get_display_value(year_value, replace_hyphen=True)}")
+				kms_value = object_details.get('kms')
+				print(f"{'V infinity:':>15} {get_display_value(kms_value, ' Km/s', precision=2)}\n")
+				
+				
 			elif list_name == "constelattion":
 				constellation_anwser = constellations_dict[word]
 				random.shuffle(messages['creative matter'])
@@ -1879,6 +1916,7 @@ def find_word_in_dicts(word, core):
 				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
 
 			elif list_name == "season_query":
+				actual_season, next_season = get_the_season()
 				if sysos.lower() == 'windows':
 					if system_country != None:
 						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
@@ -1896,10 +1934,10 @@ def find_word_in_dicts(word, core):
 					else:
 						print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
 	
-				sentence = f"Actualy based on the system date {datemd} it's {get_the_season()[0].capitalize()}"
+				sentence = f"Actualy based on the system date {datemd} it's {actual_season.capitalize()}"
 				if country:
-					sentence = sentence + f" in {country.name}."
-				print (f"{sentence}\n")
+					sentence = sentence + f" in {country.name}"
+				print (f"{sentence} with {next_season[0].capitalize()} approaching.\n")
 
 			elif list_name == "holidays_query":
 				country_holidays()
@@ -1914,7 +1952,7 @@ def find_word_in_dicts(word, core):
 				beginning = random.choice(["I don't use", "my capabilities do not include", "I do not have access to", "I am unable to utilize"])
 				body = random.choice(["NLP speech synthesis, or external AI modules.", "real-time speech generation or third-party AI integrations.", "direct voice output or external neural networks."])
 				ending = random.choice(["Here's what I have:", "This is my current functionality:", "My current features are as follows:"])
-				print(f"{heading_color}{intro} {beginning} {body} {ending}{kolor['OFF']}")
+				print(f"{heading_color}{intro} {beginning} {body}\n{ending}{kolor['OFF']}")
 				for _ in range(5):
 					print(f" - {text_color}{make_text(rw, num_sentences=3, num_paragraphs=1)}{kolor['OFF']}")
 				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
@@ -1924,7 +1962,17 @@ def find_word_in_dicts(word, core):
 			
 			elif list_name == "asking for a word":
 				print("")
-				
+			
+			elif list_name == "asking for a phrase":
+				if "say something" in word:
+					rns = random.randint(1, 10)
+					rnp = random.randint(1, 5)
+					generated_text = make_text(rw, num_sentences=rns, num_paragraphs=rnp)
+					print (f"{generated_text} \n")
+				else:
+					generated_text = make_text(rw, num_sentences=1, num_paragraphs=1)
+					print (f"{generated_text} \n")
+			
 			elif list_name == "asking the uptime":
 				uptime_parts = get_uptime()
 				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
@@ -2460,8 +2508,10 @@ def get_the_season():
 		print (f"{random.choice(messages['trouble_short'])} Could not determine season!\n")
 		return None, None
 
+	season_emoji = ["🌻", "☀️", "🍁", "❄️"]
 	seasons = list(core['seasons'])
-	current_season = seasons[s]
+	#current_season = seasons[s]
+	current_season = f"{seasons[s]} {season_emoji[s]}"
 	next_season_index = (s + 1) % 4
 	other_seasons = seasons[next_season_index:] + seasons[:next_season_index - 1]
 	return current_season, other_seasons
@@ -2707,7 +2757,8 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			dbname = 'astronomy glossary'
 		elif dbname == 'cybele'and dbtable == 'oldtech':
 			filter = "SELECT oldterm, designation FROM oldtech WHERE designation LIKE '%"+str(dbend)+"%'"
-			nchar = _spchar_[7:8]
+			#nchar = _spchar_[7:8]
+			nchar = "↺"
 			dbname = 'old tech'
 		else:
 			print ('Well done ' + _author_.split()[0] +'!. The code has a error. Fix it, you morone!')
@@ -3480,40 +3531,32 @@ def conjugate_verb(verb_type, subject_pronoun, knowledge):
 def make_sentence(rw_instance):
 
 	sentence_structures = [
-		# 1. Simple Present: Subject + Verb + (Object/Complement)
 		["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
 		["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
 		["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
 		["subject", "verb_present_conjugated"],  
 		["subject", "verb_present_conjugated", "adverb"],  
 
-        # 2. To Be Verb: Subject + To Be + Complement (Adjective / Noun)
         ["subject", "aux_be_present_conjugated", "adjective"],  
         ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],  
 
-        # NEW: To Be Verb Negation (fixes "We do not are happy")
         ["subject", "aux_be_present_conjugated", "negation", "adjective"],
         ["subject", "aux_be_present_conjugated", "negation", "determiner", "noun_countable_singular"],
 
-        # 3. Modal Verbs: Subject + Modal + Base Verb + (Object/Complement)
         ["subject", "modal_verb", "verb_base", "determiner", "noun_countable_singular"],
         ["subject", "modal_verb", "verb_base", "determiner", "noun_uncountable"],
         ["subject", "modal_verb", "verb_base", "adverb"],
         ["subject", "modal_verb", "verb_base"],
 
-        # 4. Negatives with 'do/does': Subject + Do/Does Not + Base Verb + (Object/Complement)
-        # The `verb_base` in conjugate_verb() is already filtered for 'be', 'have', 'do' to avoid "do not be" etc.
         ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_countable_singular"],
         ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_uncountable"],
         ["subject", "aux_do_present_neg_conjugated", "verb_base"],
 
-        # 5. Perfect Tense: Subject + Have/Has + Past Participle + (Object/Complement)
         ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_countable_singular"],
         ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
         ["subject", "aux_have_present_conjugated", "verb_past_participle"],
         ["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
-
-        # FIX: Modal + Negation + Base 'be' + Adjective/Noun (e.g., "They may not be a cat.")
+		
         ["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
         ["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
 	]
@@ -3562,21 +3605,15 @@ def make_sentence(rw_instance):
 					word_to_add = random.choice(knowledge["noun_abstract"])
 				else:
 					word_to_add = random.choice(knowledge["noun"])
-			#elif part_type.startswith("noun"):
-			#	temp_word = rw_instance.get_random_word() 
-			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-			#		temp_word = rw_instance.get_random_word()
                 
-				# Use heuristics and fallbacks to ensure it's a reasonable noun
 				if temp_word.lower() in knowledge["noun"] or \
 					temp_word.lower() in knowledge["noun_countable_singular"] or \
 					temp_word.lower() in knowledge["noun_countable_plural"] or \
 					temp_word.lower() in knowledge["noun_uncountable"] or \
 					temp_word.lower() in knowledge["noun_abstract"] or \
-					random.random() < 0.3: # A small chance to use it even if not in our lists (for more variety)
+					random.random() < 0.3:
 					word_to_add = temp_word.lower()
 				else:
-					# Fallback to a random noun from our predefined list for guaranteed correctness
 					if part_type == "noun_countable_singular":
 						word_to_add = random.choice(knowledge["noun_countable_singular"])
 					elif part_type == "noun_countable_plural":
@@ -3585,23 +3622,15 @@ def make_sentence(rw_instance):
 						word_to_add = random.choice(knowledge["noun_uncountable"])
 					elif part_type == "noun_abstract":
 						word_to_add = random.choice(knowledge["noun_abstract"])
-					else: # General noun
+					else: 
 						word_to_add = random.choice(knowledge["noun"])
 
-				# If the structure specifically asks for plural, try to pluralize (simple 's' for now)
 				if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
 					word_to_add += 's'
 			
 			elif part_type == "adjective":
 				word_to_add = random.choice(knowledge["adjective"])
-			
-			#elif part_type == "adjective":
-			#	# Call rw_instance.get_random_word() *here* to get a NEW random word for this adjective slot
-			#	temp_word = rw_instance.get_random_word()
-			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-			#		temp_word = rw_instance.get_random_word()
-                
-				# Heuristic for adjectives + fallback
+			              
 				if temp_word.lower() in knowledge["adjective"] or \
 					temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
 					random.random() < 0.3: 
@@ -3611,13 +3640,7 @@ def make_sentence(rw_instance):
 
 			elif part_type == "adverb":
 				word_to_add = random.choice(knowledge["adverb"])
-
-			#elif part_type == "adverb":
-			#	temp_word = rw_instance.get_random_word()
-			#	while not temp_word or len(temp_word) < 2 or not temp_word.isalpha():
-			#		temp_word = rw_instance.get_random_word()
-                
-				# Heuristic for adverbs + fallback
+               
 				if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
 					random.random() < 0.3: 
 					word_to_add = temp_word.lower()
@@ -3645,7 +3668,6 @@ def make_sentence(rw_instance):
 				elif next_noun_category_in_structure == "noun": 
 					word_to_add = random.choice(["the", "some", "a", "an"]) 
             
-			# handles remaining types like pronouns, prepositions, conjunctions, modal verbs, etc.
 			elif part_type in knowledge:
 				word_to_add = random.choice(knowledge[part_type])
                 
@@ -3660,7 +3682,7 @@ def make_sentence(rw_instance):
 
 		if sentence_words:
 			sentence_words[0] = sentence_words[0].capitalize()
-		final_sentence = " ".join(sentence_words) + "."
+		final_sentence = " ".join(sentence_words) + random.choice([".", "?", "!"])
 		return final_sentence
 
 	except Exception as e:
@@ -3834,7 +3856,6 @@ def protect_image(input_filepath, output_directory="protected_images",
 		enhancer = enhancer_class(img)
 		img = enhancer.enhance(factor)
 
-	# --- ADDING THE ▧ SYMBOL TO THE CORNER ---
 	if add_symbol:
 		draw = ImageDraw.Draw(img)
 		symbol_text = "▧"
@@ -4131,13 +4152,6 @@ def main():
 			cquestion = random.choice(what_creative)
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
-		# Next: extract the category directly
-		#match = re.search(r'(astronomy(?: glossary)?|stars(?: names)?)', question.lower())
-		#if match:
-		#	category = match.group(1)
-		#if 'astronomy' in category:
-        #	call astronomy logic
-		
 		elif question.startswith(('show me', 'tell me', 'list me')):
 			if 'astronomy terms' in question or 'astronomy glossary' in question:
 				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
@@ -4155,10 +4169,10 @@ def main():
 				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
 
 			elif 'asteroids' in question:
-				if not 'dangerous' in question:
-					print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
-				else:
-					print (f"{showlisttell(core["dangerous asteroids"], num_terms=5, category="dangerous asteroids")}.\n")
+				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
+			
+			elif 'dangerous objects' in question:
+				print (f"{showlisttell(core["cneos"], num_terms=5, category="Dangerous Objects")}.\n")
 
 			elif 'old' in question or 'tech' in question:
 				print (f"{showlisttell(core["old_tech_term"], num_terms=5, category="old Tech terms")}.\n")
@@ -4181,33 +4195,30 @@ def main():
 			elif 'linux commands' in question:
 				print (f"{showlisttell(core["linuxcmd"], num_terms=5, category="Linux commands")}.\n")
 				
-			elif 'verbs' or 'english verbs' in question:
+			elif 'verbs' in question or 'english verbs' in question:
 				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
-				
+
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
-				all_astro = core["qa-astro"]
-				random.shuffle(all_astro)
-				astro_random_keys = all_astro[:3]
-				astro_qa = ""
-				for term in astro_random_keys:
-					astro_qa += " "+_spchar_[1:2] + term + "?\n"
-				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
+			all_astro = core["qa-astro"]
+			random.shuffle(all_astro)
+			astro_random_keys = all_astro[:3]
+			astro_qa = ""
+			for term in astro_random_keys:
+				astro_qa += " "+_spchar_[1:2] + term + "?\n"
+			print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
 
 		elif question[0:8] == 'how many' and question.find('glossary')!=-1 or question.find('astronomy terms')!=-1 or question.find('anwser')!=-1:
 			print ("I can tell you the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy glossary terms." + "\n")
 		elif question[0:8] == 'how many' and question.find('asteroids')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet." + "\n")
+			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet.\n")
+		elif question[0:8] == 'how many' and question.find('dangerous')!=-1 and question.find('objects')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
+			print ("I can tell you about " + str(len(core['cneos'])) + " dangerous objects, but there much more beside those we dont know.. yet.\n")
 		elif question[0:8] == 'how many' and question.find('star')!=-1 and question.find('names')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(core['star name'])) + " Stars. " + random.choice(messages['endterm']) + "\n")
-		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 		elif question[0:8] == 'how many' and question.find('linux commands')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(core['linuxcmd'])) + " Linux commands. " + random.choice(messages['endterm']) + "...\n")
 		elif question[0:8] == 'how many' and question.find('verbs')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(knowledge['verb_base'])) + " verbs. " + random.choice(messages['endterm']) + "...\n")	
-
 		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1:
@@ -4248,7 +4259,7 @@ def main():
 
 		elif question[0:22] == 'what do you know about' and question.find('asteroids')!=-1 or question.find('celestial bodys')!=-1:
 			print ("I can tell you about " + str(len(core['asteroid'])) + " asteroids. Only the most basic information.")
-			print ("I think is gonna be a "+ _title_ +" version with a connection to the JPL SSD or datastro.eu"  + "\n")
+			print (f"More extended and comprehensive data can be found in {kolor['BLUE']}https://www.spacereference.org/{kolor['OFF']} or {kolor['BLUE']}https://www.datastro.eu{kolor['OFF']} \n")
 
 		elif question[0:22] == 'what do you know about' and question.find('constellations')!=-1 or question.endswith('?'):
 			print ("I can tell you about " + str(len(constellations_dict)) + " constelations.\n ")
@@ -4256,11 +4267,14 @@ def main():
 		elif question[0:22] == 'what do you know about' and question.find('the')!=-1 and question.find('universe')!=-1 or question.endswith('?'):
 			print ("The solar system, information about planets, distances and the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy terms, " + str(len(core['asteroid'])) + " asteroids (most basic information) and " + str(len(constellations_dict)) + " constelations.\n")
 
-		elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
-			if question[0:4] == 'make':
-				print ("This is a sentence! And I'm even not using NLP.\n")
-			else:
-				print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
+		elif question[0:22] == 'what do you know about' and question.find('dangerous')!=-1 and question.find('objects')!=-1:
+			print ("I can tell you about " + str(len(core['cneos'])) + " celestial dangerous objects known as the list CNEO.\n ")
+
+		#elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
+		#	if question[0:4] == 'make':
+		#		print ("This is a sentence! And I'm even not using NLP.\n")
+		#	else:
+		#		print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
 
 		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
 			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
@@ -4435,17 +4449,29 @@ def main():
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
-			if 'help' in core and isinstance(core['help'], list):
-				print("Here are the available help ordered alphabetically to better help'you. \nJust type help <topic>\n")
-				nhelp = [key[5:] for key in core['help']]
-				nhelp.sort()
-				for i in range(len(nhelp)):
-					print ( "   - " + nhelp[i])
-				del nhelp
-				print ("")
+			print(f"Here are the {str(len(core['help']))} help 🙋 commands ordered alphabetically to better assist you. \nJust type help <desired command> to get a more descriptive help.\n")
+			nhelp = dict(sorted(help.items()))	
+			results = list(nhelp)
+			terminal_width = os.get_terminal_size().columns
+			max_item_width = max(len(str(item)) for item in results)
+			if max_item_width + 1 < terminal_width:
+				items_per_line = terminal_width // (max_item_width + 1)
 			else:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _author_.split()[0] + "'s code is too powerful for me!\n")
-
+				items_per_line = 1
+			items_per_line = max(1, items_per_line)
+			column_widths = [0] * items_per_line
+			for i in range(len(results)):
+				column_index = i % items_per_line
+				column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
+			for i in range(0, len(results), items_per_line):
+				line = results[i:i + items_per_line]
+				output_parts = []
+				for j, item in enumerate(line):
+					padded_item = str(item).ljust(column_widths[min(j, len(column_widths) - 1)])
+					output_parts.append(padded_item)
+				print("  ".join(output_parts))
+			print("")
+			
 		elif any(word in question for word in core['season_query']):
 			print("")	
 
@@ -4574,31 +4600,54 @@ def main():
 			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
 		#elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
-		elif question == 'show core' or question == '#core':
-			print("Here he is my full internal specifications :\n")
-			if node_name:
-				print('   Device : ' + platform.node().upper() + '|' + _cyext_[0:4].replace(" ",""))
-			else:
-			  print ('  Device : unidentified device')
-			if system_country != None:
-				core_system_country = system_country[1]
-			elif country_code == None or country_code == "C" or country_code == "":
+		elif question == 'show info' or question == '#info':
+			print(f"{kolor['BOLD_CYAN']}{random.choice(messages['info_intromsg'])}{kolor['OFF']}\n")
+			try:
+				display_node_name = platform.node().upper() if node_name else "unidentified device"
+				display_cyext = _cyext_[0:4].replace(" ","") if len(_cyext_) >= 4 else "N/A"
 				core_system_country = "Undetectable"
-			#elif country_code != "" or country_code != None or country_code != "C":
-			else:
-				core_system_country = country_code
-			print('     Name : ' + _title_)
-			print('  Version : ' +version)
-			print('  Revised : ' +_revise_)
-			print('   Python : ' + str(pyver[0]) + "." + str(pyver[1]) + "." + str(pyver[2]))
-			print('  Country : ' + core_system_country)
-			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
-			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(core['old_tech_term'])) + "|M" + str(len(core["word meaning"])) + "|V" + str(sum(len(value) for value in knowledge.values())))
-			print('    Linux : ' + str(len(linux_commands)))
-			print('    Astro : ' + "G"+str(len(core["astronomy glossary"])) + "|A" +  str(len(core["asteroid"])) + "|C" +  str(len(core["constelattion"])) + "|S" +  str(len(core["star name"])))
-			print('    World : ' + str(len(core["country"])))
-			print('  Storage : ' + dblrconn)
-			print('  Running : ' + str(days_till_today.days) + ' days.\n')
+				if system_country is not None:
+					core_system_country = system_country[1]
+				elif country_code not in (None, "C", ""):
+					core_system_country = country_code
+				py_version_str = "N/A"
+				if 'pyver' in globals() and isinstance(pyver, tuple) and len(pyver) >= 3:
+					py_version_str = f"{pyver[0]}.{pyver[1]}.{pyver[2]}"
+				elif hasattr(sys, 'version_info'):
+					py_version_str = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+				q_len = len(questions) if 'questions' in globals() and isinstance(questions, (list, tuple)) else 0
+				a_len = len(answers) if 'answers' in globals() and isinstance(answers, (list, tuple)) else 0
+				current_midbcounter = midbcounter if 'midbcounter' in globals() else 0
+				total_core_sum = 0
+				if isinstance(core, dict):
+					for value in core.values():
+						if isinstance(value, (list, dict, tuple, str)):
+							total_core_sum += len(value)
+				total_knowledge_sum = 0
+				if isinstance(knowledge, dict):
+					for value in knowledge.values():
+						if isinstance(value, (list, dict, tuple, str)):
+							total_knowledge_sum += len(value)
+				days_running_str = "N/A days."
+				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
+					days_running_str = f"{days_till_today.days} days."
+
+				print(f"   Device : {display_node_name}|{display_cyext}")
+				print(f"     Name : {_title_}")
+				print(f"  Version : {version}")
+				print(f"  Revised : {_revise_}")
+				print(f"   Python : {py_version_str}")
+				print(f"  Country : {core_system_country}")
+				print(f"   Memory : {q_len}|{a_len}|D{current_midbcounter}")
+				print(f"     Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
+				print(f"    Linux : {len(core.get('linuxcmd', []))}")
+				print(f"    Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
+				print(f"    World : {len(core.get('country', []))}")
+				print(f"  Storage : {dblrconn}")
+				print(f"  Running : {days_running_str}\n")
+
+			except Exception as e:
+				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
 
 		# == "today activity":
 		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
@@ -4677,37 +4726,55 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search askard <word>\n')
 			else:
-				mandb('cybele','askard_db','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','askard_db','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 		
 		elif question[0:11] == 'view askard':
 			getparam = question.split()
 			if len(getparam) != 3 or getparam[2].isnumeric() != True:
 				print ('The correct usage is <view> ' + _spchar_[9:10] + ' askard <id>\n')
 			else:
-				mandb('cybele','askard_db','view',getparam[2],0)
-				print ("")
+				try:
+					mandb('cybele','askard_db','view',getparam[2],0)
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 		
 		elif question == 'fun fact' or question == 'fast fact':
 			if ffctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['nicefun_msg'])}\n")
 			else:
-				mandb('cybele','funfacts','view',0,0)
-				ffctl = ffctl + 1
+				try:
+					mandb('cybele','funfacts','view',0,0)
+					ffctl = ffctl + 1
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 				
 		elif question[0:10] == 'nice thing':
 			if ncctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
 			else:
-				mandb('cybele','nicethings','view',0,0)
-				ncctl = ncctl + 1
+				try:
+					mandb('cybele','nicethings','view',0,0)
+					ncctl = ncctl + 1
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 				
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('cybele','askard_db','list',0,0)
+				try:
+					mandb('cybele','askard_db','list',0,0)
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
-				mandb('cybele','askard_db','list',getparam[2], getparam[3] )
+				try:
+					mandb('cybele','askard_db','list',getparam[2], getparam[3] )
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
@@ -4716,23 +4783,35 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search astronomy <word>\n')
 			else:
-				mandb('cybele','astronomy_glossary','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','astronomy_glossary','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 
 		elif question[0:14] == 'search oldtech':
 			getparam = question.split()
 			if len(getparam) != 3:
 				print ('The correct usage is: search oldtech <word>\n')
 			else:
-				mandb('cybele','oldtech','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','oldtech','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 
 		elif question[0:12] == 'list oldtech':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('cybele','oldtech','list',0,0)
+				try:
+					mandb('cybele','oldtech','list',0,0)
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			elif len(getparam) == 4:
-				mandb('cybele','oldtech','list',getparam[2], getparam[3] )
+				try:
+					mandb('cybele','oldtech','list',getparam[2], getparam[3] )
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
 		
