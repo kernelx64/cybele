@@ -223,7 +223,7 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"   \033[1;34m'XXXX\033[m \033[1;33mXXXXXXXXXXXXXX'\033[m  ","         \033[1;33mXXXXX....\033[m        ",
 	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
-art_byas = [98,121,32,65,83]
+art_byas = [129150,32,98,121,32,65,83]
 #------------------------------------------------------------
 csugestions = []; chkdict = []
 #------------------------------------------------------------
@@ -1559,7 +1559,7 @@ def drawart(artname):
         res = ''.join(map(chr, line_bytes))
         if artname == 'art_cybele' and i == config['special_line']:
             suffix_res = ''.join(map(chr, config['special_suffix']))
-            print(art_color + res[:-2] + kolor[config['special_suffix_color']] + "🡾 " + suffix_res)
+            print(art_color + res[:-2] + kolor[config['special_suffix_color']] + suffix_res)
         else:
             print(art_color + res)
     print(kolor['OFF'])
