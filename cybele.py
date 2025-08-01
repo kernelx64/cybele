@@ -15,7 +15,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '31.07.2025'
+_revise_ = '01.08.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -647,7 +647,7 @@ help = {
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
-	"help your version": "Usage your version | what is \nProvides details about the running instance of Cybele. Includes the version, last update date, unique and a note regarding its source code origin. \nex: what is your version \n    your version \n",
+	"help your version": "Usage your version | what is | #version \nProvides details about the running instance of Cybele. Includes the version, last update date, unique and a note regarding its source code origin. \nex: what is your version \n    your version \n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
 #------------------------------------------------------------
@@ -890,8 +890,22 @@ def check_tables(tables_names):
 			conn = sqlite3.connect(db_filename)
 			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
-			conn = sqlitecloud.connect(sqlconn)
-			dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
+			try:
+				conn = sqlitecloud.connect(sqlconn)
+				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
+			except ValueError as e:
+				print_statusline(f"")
+				modname = f"\n    Unexpected data from the socket connection from a SQLite Cloud database.\n    Please try again. If the error persists, wait for an update."
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)
+			except sqlitecloud.exceptions.SQLiteCloudException as e:
+				if attempt < max_attempts:
+					sleep(1)
+				else:
+					print_statusline(f"")
+					modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)				
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
