@@ -9,6 +9,7 @@ Cybele by AS for www.adelinosaldanha.site ✦
 lat = 41.5454
 lon = -8.4265
 
+# \U0001F132
 # static global cybele variables
 version = '1.1.0-rc.2'
 _title_ = 'Cybele'
@@ -882,6 +883,8 @@ def check_tables(tables_names):
 	global dbmsgbl
 	db_filename = 'cybele.db'
 	missing_tables = []
+	attempt = 0
+	max_attempts = 0
 	conn = None
 	cur = None
 	
@@ -4051,7 +4054,7 @@ def main():
 	print_statusline(f"")
 	#----------------------------
 	drawart('art_cybele')
-	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{_spchar_[0:1]}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
+	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
