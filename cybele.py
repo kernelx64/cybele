@@ -803,7 +803,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					break
 				except ValueError as e:
 					print_statusline(f"")
-					modname = f"\n    Unexpected data from the socket connection from a SQLite Cloud database.\n    Please try again. If the error persists, wait for an update."
+					modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)
 				except sqlitecloud.exceptions.SQLiteCloudException as e:
