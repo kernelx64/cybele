@@ -54,6 +54,7 @@ try:
 	from datetime import date, time, timedelta
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
+	from datetime import datetime, timezone
 
 except ImportError as err:
 	match = re.search(r"'(.*?)'", str(err))
@@ -902,13 +903,10 @@ def check_tables(tables_names):
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
-				if attempt < max_attempts:
-					sleep(1)
-				else:
-					print_statusline(f"")
-					modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
-					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)				
+				print_statusline(f"")
+				modname = random.choice(messages['db_pause_msg']) + f"\n    I made a try for a comunication attempt and it failed. Give another try in 30 sec."
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)				
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
@@ -3979,6 +3977,7 @@ def list_country_details():
 		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
 	print("")
 
+
 #-------------------------------------------------
 def get_remote_version_and_revision_from_file():
 	github_file_url = kdecode(GITHUB, shift)
@@ -5164,7 +5163,7 @@ def main():
 			terminal_width, terminal_height = os.get_terminal_size()
 			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
-		
+			
 		elif question[0:7] == 'protect':
 			piaiparam = question.split()[1:]
 			if len(piaiparam) != 2:
