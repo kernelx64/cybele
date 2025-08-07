@@ -899,12 +899,12 @@ def check_tables(tables_names):
 				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 			except ValueError as e:
 				print_statusline(f"")
-				modname = f"\n    Unexpected data from the socket connection from a SQLite Cloud database.\n    Please try again. If the error persists, wait for an update."
+				modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, contact the developer."
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
 				print_statusline(f"")
-				modname = random.choice(messages['db_pause_msg']) + f"\n    I made a try for a comunication attempt and it failed. Give another try in 30 sec."
+				modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a comunication attempt and it failed. Give another try in 30 sec."
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)				
 	else:
