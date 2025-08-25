@@ -803,15 +803,15 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					break
 				except ValueError as e:
 					print_statusline(f"")
-					modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, wait for an update."
+					modname = random.choice(messages['db_pause_msg']) + f"\n   My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!"
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)
+					exit(0)	
 				except sqlitecloud.exceptions.SQLiteCloudException as e:
 					if attempt < max_attempts:
 						sleep(1)
 					else:
 						print_statusline(f"")
-						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in 30 sec."
+						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in a while."
 						print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 						exit(0)
 	else:
@@ -904,7 +904,7 @@ def check_tables(tables_names):
 				exit(0)	
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
 				print_statusline(f"")
-				modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a comunication attempt and it failed. Give another try in 30 sec."
+				modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a comunication attempt and it failed. Give another try in a while."
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)	
 	else:
