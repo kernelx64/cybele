@@ -16,7 +16,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '01.08.2025'
+_revise_ = '25.08.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -899,14 +899,14 @@ def check_tables(tables_names):
 				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 			except ValueError as e:
 				print_statusline(f"")
-				modname = f"\n   Unexpected data from the socket connection from a SQLite Cloud database.\n   Please try again. If the error persists, contact the developer."
+				modname = random.choice(messages['db_pause_msg']) + f"\n   My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!"
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)
+				exit(0)	
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
 				print_statusline(f"")
 				modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a comunication attempt and it failed. Give another try in 30 sec."
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)				
+				exit(0)	
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
