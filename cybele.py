@@ -460,6 +460,12 @@ messages = {
 					"You brighten my world. Happy Valentine's Day, my love.","I'm so lucky to have you in my life. Happy Valentine's Day!",
 					"Here's to many more Valentine's Days together.","You're the missing piece to my puzzle. Happy Valentine's Day!"],
 
+	"notfree":	["The 'free' tier of SQLiteCloud has gone to sleep. Patience is a virtue, and so is a paid plan.",
+				"My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!",
+				"Looks like the free SQLiteCloud tier has hit the snooze button. Free-mium ain't forever. Try again later.",
+				"The 'free' part of SQLiteCloud comes with a naptime. This is the new reality. Give it another shot soon!",
+				"That's the free plan for you—it requires a gentle nudge. You get what you pay for in this day and age. Try again later."],
+
 	"notplanet":	["Alien technology detected. Trying to locate %s planet...\n","You've discovered a new planet %s! Congratulations, explorer!\n",
 					"Planet %s not found. Did you mean 'Planet Hoth'?\n","Error 404: Planet %s not found. Please try searching for %s again.\n",
 					"That planet sounds like a great sci-fi novel, %s!\n","Well, the %s cristal ball gonna show the planet's name i presume...\n",
@@ -803,7 +809,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					break
 				except ValueError as e:
 					print_statusline(f"")
-					modname = random.choice(messages['db_pause_msg']) + f"\n   My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!"
+					modname = f"{random.choice(messages['db_pause_msg'])} \n   {random.choice(messages['notfree'])}"
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)	
 				except sqlitecloud.exceptions.SQLiteCloudException as e:
@@ -899,7 +905,7 @@ def check_tables(tables_names):
 				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 			except ValueError as e:
 				print_statusline(f"")
-				modname = random.choice(messages['db_pause_msg']) + f"\n   My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!"
+				modname = f"{random.choice(messages['db_pause_msg'])} \n   {random.choice(messages['notfree'])}"
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)	
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
