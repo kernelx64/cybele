@@ -11,12 +11,12 @@ lon = -8.4265
 
 # \U0001F132
 # static global cybele variables
-version = '1.1.0-rc.2'
+version = '1.1.0-rc.3'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '25.08.2025'
+_revise_ = '01.09.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -276,7 +276,7 @@ core = {
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
 	"share":	["sharing about","sharing links"],
 	"sayconvert":	["in full","longhand"],
-	"time_query": ["what time is it", "current time", "time now", "clock time", "what's the time"],
+	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
 	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
@@ -625,6 +625,7 @@ help = {
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
+	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
 	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
@@ -831,8 +832,6 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
 
-	#dbmsgbl = f"{dbmsgbl} [{table_name}] {_spchar_[7:8]}"
-
 	try:
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_name} FROM {table_name}")
@@ -954,7 +953,69 @@ def check_tables(tables_names):
 			cur.close()
 		if conn:
 			conn.close()
-			
+
+#------------------------------------------------------------
+def download_and_convert(connection_string: str, local_db_filename: str):
+
+	cloud_conn = None
+	local_conn = None
+	try:
+		print("")
+		print_statusline("Connecting to SQLite Cloud database...")
+		cloud_conn = sqlitecloud.connect(connection_string)
+		cloud_cursor = cloud_conn.cursor()
+		print_statusline(f"Creating my local database '{local_db_filename}'...")
+		local_conn = sqlite3.connect(local_db_filename)
+		local_cursor = local_conn.cursor()
+		print_statusline("Fetching table schema from the cloud database...")
+		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+		tables_info = cloud_cursor.fetchall()
+		total_tables = len(tables_info)
+		for i, (table_name, create_sql) in enumerate(tables_info):
+			progress = (i + 1) / total_tables * 100
+			bar_length = 20
+			filled_length = int(bar_length * progress // 100)
+			bar = '█' * filled_length + '░' * (bar_length - filled_length)
+			print_statusline(f"Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ...")
+			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
+			local_cursor.execute(create_sql)
+			cloud_cursor.execute(f"SELECT * FROM {table_name};")
+			rows = cloud_cursor.fetchall()
+			columns = [col[0] for col in cloud_cursor.description]
+			placeholders = ', '.join(['?'] * len(columns))
+			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
+			if rows:
+				local_cursor.executemany(insert_sql, rows)
+    
+		local_conn.commit()
+		print_statusline(f"I'm now able to work in offline mode! 🚀.\n")
+		print()
+		
+	except sqlitecloud.SQLiteCloudException as e:
+		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
+	except sqlite3.Error as e:
+		print(f"\nAn SQLite error occurred: {e}", file=sys.stderr)
+	except Exception as e:
+		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
+	finally:
+		if cloud_conn:
+			cloud_conn.close()
+		if local_conn:
+			local_conn.close()
+
+#------------------------------------------------------------
+def delete_cybeledb():
+	file_name = _title_.lower()+".db"
+	if os.path.exists(file_name):
+		try:
+			os.remove(file_name)
+			print(f"My Database '{file_name}' was deleted successfully! ✅")
+		except OSError as e:
+			print(f"Error deleting my database '{file_name}': {e} ❌")
+	else:
+		print(f"My offline database '{file_name}' does not exist. No action taken. 🤷‍♂️")
+	print("")
+
 #------------------------------------------------------------
 def parse_date_string(date_str):
 	try:
@@ -1164,7 +1225,7 @@ answers = [
 	"The numbers are in decimal degrees format and range are from -90 to 90 for latitude using + for North and - for South and -180 to 180 for longitude using + for East and - for West.",
 	"Latitudes are horizontal lines that measure distance north or south of the equator. Longitudes are vertical lines that measure east or west of the meridian in GREENwich, England. Together, latitude and longitude enable cartographers, geographers and others to locate points or places on the globe.",
 	"If you're using a map with longitude and latitude lines, stick a pin where you're located. Then, draw a straight horizontal line from your point to the east or west edge of the map. Then, draw a vertical line from your location to the north or south edge of the map. Put together the 2 coordinates to find your position.",
-	"Yes. At this time and with my core code i can be 100% offline resourceful.",
+	"Yes. At this time and with my core code i can be 98.0% offline resourceful.",
 	"The 1990's was a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"The 90's were a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"You wish! Just type quit it's easier.",
@@ -1226,8 +1287,8 @@ maincommands = [
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
 	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
-	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know",
-	"how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on",
+	"offline mode off","how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -4624,7 +4685,7 @@ def main():
 			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
 		#elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
-		elif question == 'show info' or question == '#info':
+		elif question == 'show info' or question == '#info' or question == "#core":
 			print(f"{kolor['BOLD_CYAN']}{random.choice(messages['info_intromsg'])}{kolor['OFF']}\n")
 			try:
 				display_node_name = platform.node().upper() if node_name else "unidentified device"
@@ -5193,12 +5254,23 @@ def main():
 					protect_image(input_image_path, noise_intensity=custom_noise_intensity,
 									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
-				
+		
+		elif question == 'offline mode on':
+			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
+			output_db_file = _title_.lower() + ".db"
+			if os.path.exists(output_db_file):
+				print(f"I am allready able to be fully functional in offline mode (using '{output_db_file}').")
+			else:
+				download_and_convert(db_url, output_db_file)
+		
+		elif question == 'offline mode off':
+			delete_cybeledb()
+			
 		elif question == 'testing':
 			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
 			print ("")
-			
+				
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 2:
