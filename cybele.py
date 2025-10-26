@@ -4,7 +4,21 @@ Cybele by AS for www.adelinosaldanha.site ✦
 
 # This Python script is licensed under the GNU General Public License, version 2.
 # See the LICENSE file for more details: https://www.gnu.org/licenses/gpl-2.0.en.html
+# Copyright (C) 2023 Adelino Saldanha
+
+# The code is open, but the conscience is not.
+# Remember: Many charge monthly for a mountain I built for free.
 """
+ETHICS_STATEMENT = """
+
+# 💡 Ethics and the Spirit of Cybele (GPL v2)
+# This script is shared under the **GNU GPL v2** to promote learning and freedom. The license permits commercial use, but the spirit of Open Source requires integrity.
+# While some may choose to profit without contributing, the ultimate truth remains:
+# > **"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates."**
+# Please respect the lineage of this project. Contribute back if you can, and always preserve the original 
+# **Copyright (C) 2023 Adelino Saldanha** in all distributed source code.
+"""
+
 # Latitude and longitude of your city. Defaults are:
 lat = 41.5454
 lon = -8.4265
@@ -16,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '01.09.2025'
+_revise_ = '31.10.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -36,12 +50,13 @@ try:
 	import sqlite3
 	import sqlitecloud
 	import requests
-	import json,html,urllib
+	import html,urllib
+	import json
 	import holidays
 	import quote
 	import locale
 	import pycountry
-	import numpy as np
+	#import numpy as np
 	import PIL
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -50,8 +65,7 @@ try:
 	from platform import python_version
 	from time import gmtime, strftime, sleep
 	from inspirational_quotes import quote
-	from datetime import datetime
-	from datetime import date, time, timedelta
+	from datetime import datetime, date, time, timedelta
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
 	from datetime import datetime, timezone
@@ -185,6 +199,7 @@ as_quotes = [
 	"In memory of the 90s, that beloved era, a special time for many.",
 	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete.",
 	"Let's face it, Nature is already scrud'ed.  The question is whether it is possible for us to have a future.",
+	"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates.",
 	"Technology is not revolutionary, it's evolutionary.",
 	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility."
 ]
@@ -603,7 +618,7 @@ help = {
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from vorian website the favorite list.\nex: favorite tvshows\n    fav movies\n",
+	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav movies\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
@@ -634,7 +649,7 @@ help = {
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
-	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from vorian website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
+	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help say something": "Usage <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
@@ -908,10 +923,26 @@ def check_tables(tables_names):
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)	
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
-				print_statusline(f"")
-				modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a comunication attempt and it failed. Give another try in a while."
-				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)	
+				if "has been paused due to inactivity" in str(e):
+					print_statusline(f"")
+					modname = (
+						f"{random.choice(messages['db_pause_msg'])} \n"
+						f"   The remote database is sleeping! Our free node timed out.\n"
+						#f"   Please wake it up from the SQLiteCloud dashboard before trying again: \n"
+						#f"   \033[4mhttps://dashboard.sqlitecloud.io\033[0m"
+					)
+				elif "Database cybele.sqlite does not exist." in str(e):
+					print_statusline(f"")
+					modname = (
+						f"{random.choice(messages['db_pause_msg'])} \n"
+						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
+						f"   Please try again in a few minutes.\n"
+					)
+				else:
+					print_statusline(f"")
+					modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a communication attempt and it failed. Give another try in a while."
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)	
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
@@ -1040,6 +1071,7 @@ def make_intextdb():
 
 	try:
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
+		#idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
 
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
 
@@ -1260,8 +1292,8 @@ others = [
 	"people in space","do you speak","tvshows is he watching","your fav tvshows","seek <topic>","find <topic>","infostar <star name>",
 	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
-	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was vorian created",
-	"play game constelattions","play game capitals","when did vorian went online","difference from <date>","cybele uptime",
+	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
+	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
 	"current system uptime","display uptime"
 ]
 #----------------------------------------------------------
@@ -1270,7 +1302,7 @@ maincommands = [
 	"what can you anwser","what do you know","what can you do","what do you do","what you can do","adelino quote","what is",
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
 	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
-	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","vorian created",
+	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","elysia created",
 	"visualize periodic table","show periodic table","distance from","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
 	"capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me","can you help",
@@ -1285,7 +1317,7 @@ maincommands = [
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations",
+	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
 	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
 	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on",
 	"offline mode off","how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
@@ -2493,7 +2525,7 @@ def get_thepopulation(country_name):
 		return None
 
 #-------------------------------------------------
-def recent_from_vorian():
+def recent_from_elysia():
 	url = website.get('tvshow')
 	if internet_onoff() == False or internet_onoff() == None or not url:
 		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
@@ -2517,7 +2549,7 @@ def recent_from_vorian():
 		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
 
 #-------------------------------------------------
-def extract_from_vorian(content_type):
+def extract_from_elysia(content_type):
 	url = website.get(content_type)
 
 	if internet_onoff() == False or not url:
@@ -2624,7 +2656,7 @@ def special_dates(date_to_check):
 
 	if month_day_key in special_dates_dict:
 		event = special_dates_dict[month_day_key]
-		print(f"And it is also the {event}!")
+		print(f"And it is also the {event}")
 	elif month_day_key in seasonal_start_dates:
 		season_index = seasonal_start_dates[month_day_key]
 		season_name = seasons[season_index]
@@ -2876,7 +2908,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			if row_found and len(zdb) > 0:
 				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
 			else:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for ask_id={ask_id_val}.\n")
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for askard #{ask_id_val}.\n")
 		elif dbname == 'cybele' and dbtable == 'funfacts':
 			filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
 			cursor = conn.execute(filter)
@@ -4361,8 +4393,8 @@ def main():
 		#	else:
 		#		print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
 
-		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
-			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
+		elif question.find('elysia created')!=-1 or question.find('elysia was created')!=-1 or question.find('elysia went online')!=-1:
+			print("The website [elysia] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
 
 		elif any(word in question for word in core['question_word']) and "you born" in question:
 			print ("I borned from the code of my predecessor, Zorie, in early 2023 and I was officially actived " + str(days_till_today.days) + " days ago with an updated in " + _revise_ + ", so you better do the math!\n")
@@ -4576,8 +4608,8 @@ def main():
 				print ("")
 			elif (str(dt)[5:]) == '12-09' and question == 'happy birthday':
 				random.shuffle(messages['birthday_msg'])
-				print ("In name of vorian " + random.choice(messages['birthday_msg']))
-				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
+				print ("In name of elysia " + random.choice(messages['birthday_msg']))
+				print ("elysia, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
 			else:
 				print(f"To who?! To Me ?!")
 				print(random.choice(messages['birthday_short']) + " Are trying to trik me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin().upper() + "!\n")
@@ -4755,7 +4787,7 @@ def main():
 			if special_dates(datetime.now()) != None:
 				print(special_dates(datetime.now()))
 			if is_holiday:
-				print(f"{_spchar_[18:19]} and is : {holiday_name}!")
+				print(f"{_spchar_[18:19]} and is : {holiday_name}")
 			print("")
 			
 		elif question == 'leap year' or question == 'is this year a leap year':
@@ -4984,21 +5016,21 @@ def main():
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-				extract_from_vorian('tvshow')
+				extract_from_elysia('tvshow')
 
 		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
 			if internet_onoff() == False or internet_onoff() == None:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-				extract_from_vorian('movies')
+				extract_from_elysia('movies')
 			
 		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
 			if internet_onoff() == False or internet_onoff() == None:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
-				recent_from_vorian()
+				recent_from_elysia()
 
 		#elif question == "do you talk":
 		elif any(word in question for word in core['asking for talking']):
@@ -5087,7 +5119,7 @@ def main():
 			print(random.choice(weather_starters))
 
 		elif question[-9:] == 'about you':
-				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of Vorian, this website.\n" + aboutyou + "\n" )
+				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
 
 		elif question[0:8] == 'presence':
 			if any(word in question for word in presence_online):
@@ -5273,7 +5305,7 @@ def main():
 				
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
-				if i >= len(__doc__.splitlines()) - 2:
+				if i >= len(__doc__.splitlines()) - 6:
 					if i == 6:
 						line = line.replace("# This","# " + __doc__.splitlines()[1][0:6] + " this")
 					print(line)
