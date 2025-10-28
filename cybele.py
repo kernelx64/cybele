@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '31.10.2025'
+_revise_ = '29.10.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -174,8 +174,8 @@ website = {
 webshare = {
 	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
 	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
-	"movies": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
-	"tvshow": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz"
+	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
+	"tvshow": "https://mega.nz/folder/MqQAwYqB#WgclbEsv_LqvvBAKkWao8"
 }
 presence_online = {
 	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
@@ -1070,9 +1070,20 @@ def make_intextdb():
 	print_statusline(f"{message} {_spchar_[7:8]}")
 
 	try:
+		idvdb = ""
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
-		#idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
-
+		idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
+		if not _revise_:
+			print(f"{random.choice(messages['trouble_short'])} My code integrity was compromised. I can't verify the database schema version.\n")
+			sys.exit(0)
+		else:
+			print_statusline(f"")
+			_revise_idvdb_ = _revise_.replace('.', '')
+			if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
+				print(f"{random.choice(messages['trouble_short'])} This version {idvdb}|{int(_revise_.replace('.', '')[:-4] + _revise_.replace('.', '')[-2:])} of me only works with the very newer code of me and database schema.\n")
+				sys.exit(0)
+		del idvdb
+		
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
 
 		star_data = zip(
