@@ -142,7 +142,7 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
-internals = ["version","_title_","_pcnode_","_spchar_","_active_","revise_","_author_","_cyext_","_cybid_"]
+internals = ["version","_title_","_pcnode_","_spchar_","_active_","_revise_","_author_","_cyext_","_cybid_","lat","lon"]
 datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
@@ -743,8 +743,25 @@ planet_data = {
 	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
 	}
 }
+#----------------------------------------------------
+def chkcoor(lat, lon):
+    try:
+        lat_val = float(lat)
+        if not (-90 <= lat_val <= 90):
+            return False
+    except (ValueError, TypeError):
+        return False
+    try:
+        lon_val = float(lon)
+        if not (-180 <= lon_val <= 180):
+            return False
+    except (ValueError, TypeError):
+        return False
+    return True
+
 #-------------------------------------------------
 def validate_globals():
+	global _poigps_, lat, lon, internals	
 	defined_globals = globals()
 	missing_vars = []
 	for var_name in internals:
@@ -752,10 +769,34 @@ def validate_globals():
 			missing_vars.append(var_name)
 	if missing_vars:
 		print_statusline(f"")
-		mmodname = kdecode(seecoor, shift) + "\n   My code integrity was compromised. I cannot execute properly. Exiting."
+		mmodname = f"\n   My code integrity was compromised doing missing some requirements. \n   Missing components: {missing_vars}. Exiting."
 		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
-		sys.exit(0)
-		
+		sys.exit(0)	
+	if 'lat' in internals and 'lon' in internals:
+		global_lat = defined_globals['lat']
+		global_lon = defined_globals['lon']
+		is_valid_coord = True
+		try:
+			lat_val = float(global_lat)
+			if not (-90 <= lat_val <= 90):
+				is_valid_coord = False
+		except (ValueError, TypeError):
+			is_valid_coord = False
+		try:
+			lon_val = float(global_lon)
+			if not (-180 <= lon_val <= 180):
+				is_valid_coord = False
+		except (ValueError, TypeError):
+			is_valid_coord = False
+		if not is_valid_coord:
+			print_statusline(f"")
+			coord_error_msg = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
+			print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {coord_error_msg}")
+			sys.exit(0)
+		else:
+			_poigps_= [lat,lon,0,1,1]
+			
+	
 #-------------------------------------------------
 def kdecode(emessage, shift):
     dek_msg = ""
@@ -791,22 +832,6 @@ def whatgmt():
 	else:
 		gmt_string = f"GMT-{abs(int(tz_offset_hours)):2d}"
 	return gmt_string.replace(" ","")
-
-#----------------------------------------------------
-def chkcoor(lat, lon):
-    try:
-        lat_val = float(lat)
-        if not (-90 <= lat_val <= 90):
-            return False
-    except (ValueError, TypeError):
-        return False
-    try:
-        lon_val = float(lon)
-        if not (-180 <= lon_val <= 180):
-            return False
-    except (ValueError, TypeError):
-        return False
-    return True
 
 #------------------------------------------------------------
 def internet_onoff():
@@ -4146,7 +4171,7 @@ def check_for_updates():
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global internals, _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -4158,13 +4183,8 @@ def main():
 	tdctl=0;ncctl=0;ffctl=0;kuote=quote()
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
-	if chkcoor(lat,lon) == True:
-		_poigps_= [lat,lon,0,1,1]
-	else:
-		print_statusline(f"")
-		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
-		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
-		sys.exit(0)
+	validate_globals()
+	#_poigps_= [lat,lon,0,1,1]
 	#----------------------------
 	#----------------------------
 	print_statusline(f"")
