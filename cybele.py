@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '29.10.2025'
+_revise_ = '30.10.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -825,7 +825,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					break
 				except ValueError as e:
 					print_statusline(f"")
-					modname = f"{random.choice(messages['db_pause_msg'])} \n   {random.choice(messages['notfree'])}"
+					modname = f"\n    Unexpected invalid value encountered: {e}\n"
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 					exit(0)	
 				except sqlitecloud.exceptions.SQLiteCloudException as e:
@@ -918,31 +918,27 @@ def check_tables(tables_names):
 				conn = sqlitecloud.connect(sqlconn)
 				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 			except ValueError as e:
-				print_statusline(f"")
-				modname = f"{random.choice(messages['db_pause_msg'])} \n   {random.choice(messages['notfree'])}"
+				modname = f"\n    An unexpected error occurred: {e}"
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)	
+				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
-				if "has been paused due to inactivity" in str(e):
+				modname = f"\n    An unexpected error occurred: {e}"
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)
+			except sqlitecloud.exceptions.SQLiteCloudError as e:
+				if "Your free node has been paused due to inactivity." in str(e):
 					print_statusline(f"")
 					modname = (
-						f"{random.choice(messages['db_pause_msg'])} \n"
-						f"   The remote database is sleeping! Our free node timed out.\n"
-						#f"   Please wake it up from the SQLiteCloud dashboard before trying again: \n"
-						#f"   \033[4mhttps://dashboard.sqlitecloud.io\033[0m"
-					)
-				elif "Database cybele.sqlite does not exist." in str(e):
-					print_statusline(f"")
-					modname = (
-						f"{random.choice(messages['db_pause_msg'])} \n"
-						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
-						f"   Please try again in a few minutes.\n"
-					)
-				else:
-					print_statusline(f"")
-					modname = random.choice(messages['db_pause_msg']) + f"\n   I made a try for a communication attempt and it failed. Give another try in a while."
+						f" {random.choice(messages['db_pause_msg'])} \n"
+						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
+						f"   Please try again in a few minutes or email the author asking to wake her up.\n"
+					)	
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)	
+					exit(0)
+				else:
+					modname = f"\n    An unexpected database error occurred: {e}"
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)
 	else:
 		if os.path.isfile (db_filename) == True :
 			conn = sqlite3.connect(db_filename)
