@@ -56,7 +56,6 @@ try:
 	import quote
 	import locale
 	import pycountry
-	#import numpy as np
 	import PIL
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -4184,8 +4183,6 @@ def main():
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	validate_globals()
-	#_poigps_= [lat,lon,0,1,1]
-	#----------------------------
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
