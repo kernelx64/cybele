@@ -142,13 +142,13 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
+internals = ["version","_title_","_pcnode_","_spchar_","_active_","revise_","_author_","_cyext_","_cybid_"]
 datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {};  asteroids_list = {}; cneos_list={};ncountries = {}; climate_dictionary = {}
-
 gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
@@ -744,6 +744,19 @@ planet_data = {
 	}
 }
 #-------------------------------------------------
+def validate_globals():
+	defined_globals = globals()
+	missing_vars = []
+	for var_name in internals:
+		if var_name not in defined_globals:
+			missing_vars.append(var_name)
+	if missing_vars:
+		print_statusline(f"")
+		mmodname = kdecode(seecoor, shift) + "\n   My code integrity was compromised. I cannot execute properly. Exiting."
+		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
+		sys.exit(0)
+		
+#-------------------------------------------------
 def kdecode(emessage, shift):
     dek_msg = ""
     for char in emessage:
@@ -918,16 +931,18 @@ def check_tables(tables_names):
 				conn = sqlitecloud.connect(sqlconn)
 				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 			except ValueError as e:
+				print_statusline(f"")
 				modname = f"\n    An unexpected error occurred: {e}"
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudException as e:
+				print_statusline(f"")
 				modname = f"\n    An unexpected error occurred: {e}"
 				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 				exit(0)
 			except sqlitecloud.exceptions.SQLiteCloudError as e:
+				print_statusline(f"")
 				if "Your free node has been paused due to inactivity." in str(e):
-					print_statusline(f"")
 					modname = (
 						f" {random.choice(messages['db_pause_msg'])} \n"
 						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
@@ -1069,15 +1084,11 @@ def make_intextdb():
 		idvdb = ""
 		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
 		idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
-		if not _revise_:
-			print(f"{random.choice(messages['trouble_short'])} My code integrity was compromised. I can't verify the database schema version.\n")
-			sys.exit(0)
-		else:
+		_revise_idvdb_ = _revise_.replace('.', '')
+		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
 			print_statusline(f"")
-			_revise_idvdb_ = _revise_.replace('.', '')
-			if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
-				print(f"{random.choice(messages['trouble_short'])} This version {idvdb}|{int(_revise_.replace('.', '')[:-4] + _revise_.replace('.', '')[-2:])} of me only works with the very newer code of me and database schema.\n")
-				sys.exit(0)
+			print(f"{random.choice(messages['trouble_short'])} This version {idvdb}|{int(_revise_.replace('.', '')[:-4] + _revise_.replace('.', '')[-2:])} of me only works with the very newer code of me and database schema.\n")
+			sys.exit(0)
 		del idvdb
 		
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
@@ -4135,7 +4146,7 @@ def check_for_updates():
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
+	global internals, _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
 	if not check_tables(tables):
 		exit()
