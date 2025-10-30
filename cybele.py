@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '29.10.2025'
+_revise_ = '30.10.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -880,7 +880,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n    I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
 
@@ -919,7 +919,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 			dblrconn="offline [database files]"
 			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)	
 	try:
@@ -984,7 +984,7 @@ def check_tables(tables_names):
 			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
 		
@@ -2785,7 +2785,7 @@ def random_season_activity():
 			if os.path.isfile(db_filename):
 				conn = sqlite3.connect(db_filename)
 			else:
-				modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n    I cannot execute properly. Exiting."
+				modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 				print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
 				sys.exit(0)
 
@@ -2898,7 +2898,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			conn = sqlite3.connect(db_filename)
 			dblrconn="offline [database files]"
 		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			sys.exit(0)
 	
@@ -4144,24 +4144,25 @@ def get_remote_version_and_revision_from_file():
 
 #-------------------------------------------------
 def check_for_updates():
-	
+
 	if internet_onoff() == True:
 		local_version_str = version    
 		local_revised_str = datetime.now().strftime('%d.%m.%Y')
-		remote_version_str, remote_revised_str = get_remote_version_and_revision_from_file()
+		remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
+		remote_version_str = remote_version_raw.strip() if remote_version_raw else None
+		remote_revised_str = remote_revised_raw.strip() if remote_revised_raw else None
 		if remote_version_str is None:
 			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
 			return
-		try:		
+		try:        
 			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
 				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
 			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
-				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!.{kolor['OFF']} \n")
+				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
 			elif local_version_str < remote_version_str or local_revised_str < remote_revised_str:
 				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {local_revised_str}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
 			else:
-				print(f"{random.choice(messages['trouble_short'])} Could not retrieve remote revision date for comparison.")
-				print(f"{local_version_str} : {remote_version_str} : {local_revised_str} : {remote_revised_str}")
+				print(f"{random.choice(messages['trouble_short'])} Could not retrieve the data from the remote revision for comparison.")
 		except Exception as e:
 			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {e}\n")
 	else:
