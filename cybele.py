@@ -30,13 +30,12 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '30.10.2025'
+_revise_ = '02.11.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
 
 import sys,re
-import subprocess
 try:
 	import os,time
 	import string
@@ -174,7 +173,8 @@ webshare = {
 	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
 	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
 	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
-	"tvshow": "https://mega.nz/folder/MqQAwYqB#WgclbEsv_LqvvBAKkWao8"
+	"tvshow": "https://mega.nz/folder/MqQAwYqB#WgclbEsv_LqvvBAKkWao8",
+	"music": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSCBiHSDqZu7azA6Q8f1WnmOEO5nLXL4i0r"
 }
 presence_online = {
 	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
@@ -200,7 +200,8 @@ as_quotes = [
 	"Let's face it, Nature is already scrud'ed.  The question is whether it is possible for us to have a future.",
 	"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates.",
 	"Technology is not revolutionary, it's evolutionary.",
-	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility."
+	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility.",
+	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will."
 ]
 #-----------------------------------------------------------
 kolor = {
@@ -2582,7 +2583,7 @@ def recent_from_elysia():
 		for show in tv_shows:
 			title_element = show.find('span', class_='C9DxTc')
 			if title_element:
-				items_list.append(title_element.text.strip())           
+				items_list.append(title_element.text.strip())
 		for i in range(82, 87):
 			print (items_list[i])
 	except urllib.error.URLError as e:
@@ -2612,6 +2613,7 @@ def extract_from_elysia(content_type):
 					items_list.append(title_element.text.strip())           
 			for i in range(87, len(items_list)):
 				print (items_list[i])
+			print("")
 		elif content_type == 'movies':
 			classic_movies_section = soup.find('div', id='h.7ea6f691e3c697ae_12')
 			if classic_movies_section:
