@@ -173,7 +173,7 @@ webshare = {
 	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
 	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
 	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
-	"tvshow": "https://mega.nz/folder/MqQAwYqB#WgclbEsv_LqvvBAKkWao8",
+	"tvshow": "ammil://fxzt.gs/yhewxk/FjJTpRjU#PzveuXlo_EjooUTDdPth8",
 	"music": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSCBiHSDqZu7azA6Q8f1WnmOEO5nLXL4i0r"
 }
 presence_online = {
