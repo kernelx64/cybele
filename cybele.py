@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '02.11.2025'
+_revise_ = '08.11.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -201,7 +201,8 @@ as_quotes = [
 	"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates.",
 	"Technology is not revolutionary, it's evolutionary.",
 	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility.",
-	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will."
+	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will.",
+	"Everything is smart now. So, when do we download the patch? 'Cos I don't see it anywhere."
 ]
 #-----------------------------------------------------------
 kolor = {
@@ -1749,7 +1750,7 @@ def get_question():
 def find_answer(question,whatlist):
 	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
-	outoptions = ["Perhaps you meant the command: ","It looks like you meant the command: ","Is this command that you had in mind: ","Oops! Did you mean the command: ","Looking for the command: "]
+	outoptions = ["Perhaps you meant : ","It looks like you meant : ","Is this what you had in mind: ","Oops! Did you mean : ","Looking for : "]
 	for p in range(len(pontuation)):
 		question = question.replace(pontuation[p],"")
 	for index, value in enumerate(whatlist):
