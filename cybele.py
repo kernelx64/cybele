@@ -5330,7 +5330,9 @@ def main():
 			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
 			output_db_file = _title_.lower() + ".db"
 			if os.path.exists(output_db_file):
-				print(f"I am allready able to be fully functional in offline mode (using '{output_db_file}').")
+				print(f"I am allready able to be fully functional in offline mode (using '{output_db_file}') but i will up-to-date.")
+				delete_cybeledb()
+				download_and_convert(db_url, output_db_file)
 			else:
 				download_and_convert(db_url, output_db_file)
 		
