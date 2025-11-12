@@ -23,7 +23,7 @@ ETHICS_STATEMENT = """
 lat = 41.5454
 lon = -8.4265
 
-# \U0001F132
+# \U0001F132 | 129150
 # static global cybele variables
 version = '1.1.0-rc.3'
 _title_ = 'Cybele'
@@ -1113,7 +1113,7 @@ def make_intextdb():
 		_revise_idvdb_ = _revise_.replace('.', '')
 		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
 			print_statusline(f"")
-			print(f"{random.choice(messages['trouble_short'])} This version {idvdb}|{int(_revise_.replace('.', '')[:-4] + _revise_.replace('.', '')[-2:])} of me only works with the very newer code of me and database schema.\n")
+			print(f"{random.choice(messages['trouble_short'])} This version [d{idvdb}] of me only works with the very newer code of me and database schema.\n")
 			sys.exit(0)
 		del idvdb
 		
@@ -1702,7 +1702,7 @@ def drawart(artname):
     for i, line_bytes in enumerate(art):
         res = ''.join(map(chr, line_bytes))
         if artname == 'art_cybele' and i == config['special_line']:
-            suffix_res = ''.join(map(chr, config['special_suffix']))
+            suffix_res =''.join(map(chr, config['special_suffix']))
             print(art_color + res[:-2] + kolor[config['special_suffix_color']] + suffix_res)
         else:
             print(art_color + res)
@@ -1750,7 +1750,7 @@ def get_question():
 def find_answer(question,whatlist):
 	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
-	outoptions = ["Perhaps you meant : ","It looks like you meant : ","Is this what you had in mind: ","Oops! Did you mean : ","Looking for : "]
+	outoptions = ["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
 	for p in range(len(pontuation)):
 		question = question.replace(pontuation[p],"")
 	for index, value in enumerate(whatlist):
