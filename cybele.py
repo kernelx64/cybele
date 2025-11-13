@@ -36,6 +36,7 @@ _cyext_ = " extention"
 _cybid_ = False
 
 import sys,re
+import subprocess
 try:
 	import os,time
 	import string
@@ -55,7 +56,7 @@ try:
 	import quote
 	import locale
 	import pycountry
-	import PIL
+	import PIL	
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -81,7 +82,7 @@ except ImportError as err:
 				print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
 				try:
 					subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-					print(f"\n{' '*3}{_spchar_[8:9]}'{module_name}' installed successfully. Please restart {_title_}")
+					print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
 					sys.exit(0)
 				except subprocess.CalledProcessError as e:
 					print(f"\n{' '*3}✗ Error installing the module. Try installing it manually: pip install " + module_name)
