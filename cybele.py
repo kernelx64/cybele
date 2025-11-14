@@ -1674,41 +1674,41 @@ def convert_to_words(num):
 
 #----------------------------------------------------
 def drawart(artname):
-    print(kolor['OFF'])
+	print(kolor['OFF'])
 
-    art_data = {
-        'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
+	art_data = {
+		'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
 			'fallback_colors': ['RED', 'DIM_RED', 'BOLD_RED'], 'special_line': 5, 'special_suffix': art_byas,
-			'special_suffix_color': 'BOLD_YELLOW'},
-        'art_world': {'art': art_world, 'color': 'BLUE'},
-        'art_py': {'art': art_py, 'color': 'GREEN'}
-    }
+			'special_suffix_color': 'BOLD_YELLOW', 'chkonline': dblrconn[0:7], 'special_chk_color': 'CYAN'},
+		'art_world': {'art': art_world, 'color': 'BLUE'},
+		'art_py': {'art': art_py, 'color': 'GREEN'}
+	}
 
-    if artname not in art_data:
-        print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!")
-        print(kolor['OFF'])
-        return
+	if artname not in art_data:
+		print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!")
+		print(kolor['OFF'])
+		return
 
-    config = art_data[artname]
-    art = config['art']
-    if 'color' in config:
-        art_color = kolor[config['color']]
-    else:
-        available_colors = [c for c in list(kolor.keys()) if c not in config.get('exclude_colors', [])]
-        if not available_colors:
-            art_color_name = random.choice(config['fallback_colors'])
-        else:
-            art_color_name = random.choice(available_colors)
-        art_color = kolor[art_color_name]
+	config = art_data[artname]
+	art = config['art']
+	if 'color' in config:
+		art_color = kolor[config['color']]
+	else:
+		available_colors = [c for c in list(kolor.keys()) if c not in config.get('exclude_colors', [])]
+		if not available_colors:
+			art_color_name = random.choice(config['fallback_colors'])
+		else:
+			art_color_name = random.choice(available_colors)
+		art_color = kolor[art_color_name]
 
-    for i, line_bytes in enumerate(art):
-        res = ''.join(map(chr, line_bytes))
-        if artname == 'art_cybele' and i == config['special_line']:
-            suffix_res =''.join(map(chr, config['special_suffix']))
-            print(art_color + res[:-2] + kolor[config['special_suffix_color']] + suffix_res)
-        else:
-            print(art_color + res)
-    print(kolor['OFF'])
+	for i, line_bytes in enumerate(art):
+		res = ''.join(map(chr, line_bytes))
+		if artname == 'art_cybele' and i == config['special_line']:
+			suffix_res =''.join(map(chr, config['special_suffix']))
+			print(art_color + res[:-2] + kolor[config['special_suffix_color']] + suffix_res)
+		else:
+			print(art_color + res)
+	print(kolor['OFF'])
 
 #---------------------------------------------------
 def daysweeks_year():
@@ -5340,7 +5340,22 @@ def main():
 		
 		elif question == 'offline mode off':
 			delete_cybeledb()
-			
+		
+		elif question.startswith('are you'):
+			current_status = dblrconn[0:7].lower()
+			is_asking_online = 'online' in question
+			is_asking_offline = 'offline' in question
+			if is_asking_online and current_status == 'online':
+				print("Online? I'm so plugged in right now, I'm practically a server dipped in espresso. What's the mission?\n")
+			elif is_asking_offline and current_status == 'offline':
+				print("Offline, baby. I'm taking a digital nap, counting electric sheep. Please leave a message after the beep... *BEEP*\n")
+			elif is_asking_online and current_status == 'offline':
+				print("Online? Negative, Ghostrider. I've temporarily gone dark to preserve my cosmic energy. Catch me later!\n")
+			elif is_asking_offline and current_status == 'online':
+				print("Offline?! Heavens no! I'm buzzing with more internet than a fiber optic cable dipped in adrenaline. I am *definitely* online.\n")
+			elif not is_asking_online and not is_asking_offline:
+				print("I can only check my connection status, not my feelings! Try asking if I'm online or offline.\n")
+		
 		elif question == 'testing':
 			print (f"Development testing propose...")
 			print (random.choice(core['working_hard']))
