@@ -641,6 +641,7 @@ help = {
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
+	"help network status": "Usage: network status \nShow the actual network status \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
 	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
@@ -1679,7 +1680,7 @@ def drawart(artname):
 	art_data = {
 		'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
 			'fallback_colors': ['RED', 'DIM_RED', 'BOLD_RED'], 'special_line': 5, 'special_suffix': art_byas,
-			'special_suffix_color': 'BOLD_YELLOW', 'chkonline': dblrconn[0:7], 'special_chk_color': 'CYAN'},
+			'special_suffix_color': 'BOLD_YELLOW'},
 		'art_world': {'art': art_world, 'color': 'BLUE'},
 		'art_py': {'art': art_py, 'color': 'GREEN'}
 	}
@@ -5341,8 +5342,11 @@ def main():
 		elif question == 'offline mode off':
 			delete_cybeledb()
 		
+		elif question[-14:] == 'network status':
+			print(f"My connection status at this moment is {dblrconn[0:7]}.\n")
+		
 		elif question.startswith('are you'):
-			current_status = dblrconn[0:7].lower()
+			current_status = dblrconn[0:7]
 			is_asking_online = 'online' in question
 			is_asking_offline = 'offline' in question
 			if is_asking_online and current_status == 'online':
