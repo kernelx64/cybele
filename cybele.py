@@ -57,7 +57,6 @@ try:
 	import locale
 	import pycountry
 	import PIL
-	import qrcode
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
