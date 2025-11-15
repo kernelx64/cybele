@@ -25,12 +25,12 @@ lon = -8.4265
 
 # \U0001F132 | 129150
 # static global cybele variables
-version = '1.1.0-rc.3'
+version = '1.1.0-rc.4'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '14.11.2025'
+_revise_ = '15.11.2025'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -56,7 +56,8 @@ try:
 	import quote
 	import locale
 	import pycountry
-	import PIL	
+	import PIL
+	import qrcode
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -1706,7 +1707,11 @@ def drawart(artname):
 		res = ''.join(map(chr, line_bytes))
 		if artname == 'art_cybele' and i == config['special_line']:
 			suffix_res =''.join(map(chr, config['special_suffix']))
-			print(art_color + res[:-2] + kolor[config['special_suffix_color']] + suffix_res)
+			start_of_line = res[:11]
+			new_content = kolor['DIM_YELLOW'] + dblrconn[0:7] + kolor['OFF']
+			new_content_len = len(new_content) 
+			final_line = art_color + start_of_line + new_content + art_color + res[18:-2]
+			print(final_line + kolor[config['special_suffix_color']] + suffix_res)
 		else:
 			print(art_color + res)
 	print(kolor['OFF'])
@@ -4759,7 +4764,7 @@ def main():
 			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
 		#elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
-		elif question == 'show info' or question == '#info' or question == "#core":
+		elif question == 'show core' or question == 'show info' or question == '#info' or question == "#core":
 			print(f"{kolor['BOLD_CYAN']}{random.choice(messages['info_intromsg'])}{kolor['OFF']}\n")
 			try:
 				display_node_name = platform.node().upper() if node_name else "unidentified device"
@@ -5342,28 +5347,11 @@ def main():
 		elif question == 'offline mode off':
 			delete_cybeledb()
 		
-		elif question[-14:] == 'network status':
-			print(f"My connection status at this moment is {dblrconn[0:7]}.\n")
-		
-		elif question.startswith('are you'):
-			current_status = dblrconn[0:7]
-			is_asking_online = 'online' in question
-			is_asking_offline = 'offline' in question
-			if is_asking_online and current_status == 'online':
-				print("Online? I'm so plugged in right now, I'm practically a server dipped in espresso. What's the mission?\n")
-			elif is_asking_offline and current_status == 'offline':
-				print("Offline, baby. I'm taking a digital nap, counting electric sheep. Please leave a message after the beep... *BEEP*\n")
-			elif is_asking_online and current_status == 'offline':
-				print("Online? Negative, Ghostrider. I've temporarily gone dark to preserve my cosmic energy. Catch me later!\n")
-			elif is_asking_offline and current_status == 'online':
-				print("Offline?! Heavens no! I'm buzzing with more internet than a fiber optic cable dipped in adrenaline. I am *definitely* online.\n")
-			elif not is_asking_online and not is_asking_offline:
-				print("I can only check my connection status, not my feelings! Try asking if I'm online or offline.\n")
-		
-		elif question == 'testing':
-			print (f"Development testing propose...")
-			print (random.choice(core['working_hard']))
-			print ("")
+		elif question == 'network status':
+			if dblrconn[0:7] == "online" or dblrconn[0:7] == "offline":
+				print(f"My network status at this moment is {dblrconn[0:7]}.\n")
+			else:
+				print (random.choice(messages['trouble_short']) + " This is a new designation of a connection type! I was not coded for this.\n")
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
