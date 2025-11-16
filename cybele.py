@@ -679,7 +679,6 @@ help = {
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
 #------------------------------------------------------------
-
 orbit_regime = {
 	"geo": "Geostationary Orbit           \n i < 25°, 35586 km < hp < 35986 km, 35586 km < ha < 35986 km",
 	"igo": "Inclined Geosynchronous Orbit \n 37948 km < a < 46380 km, e < 0.25, 25° < i < 180°",
@@ -799,8 +798,7 @@ def validate_globals():
 			sys.exit(0)
 		else:
 			_poigps_= [lat,lon,0,1,1]
-			
-	
+				
 #-------------------------------------------------
 def kdecode(emessage, shift):
     dek_msg = ""
@@ -1031,7 +1029,7 @@ def download_and_convert(connection_string: str, local_db_filename: str):
 	cloud_conn = None
 	local_conn = None
 	try:
-		print("")
+		#print("")
 		print_statusline("Connecting to SQLite Cloud database...")
 		cloud_conn = sqlitecloud.connect(connection_string)
 		cloud_cursor = cloud_conn.cursor()
@@ -1059,8 +1057,8 @@ def download_and_convert(connection_string: str, local_db_filename: str):
 				local_cursor.executemany(insert_sql, rows)
     
 		local_conn.commit()
-		print_statusline(f"I'm now able to work in offline mode! 🚀.\n")
-		print()
+		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
+		print("\n")
 		
 	except sqlitecloud.SQLiteCloudException as e:
 		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
@@ -5337,12 +5335,12 @@ def main():
 			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
 			output_db_file = _title_.lower() + ".db"
 			if os.path.exists(output_db_file):
-				print(f"I am allready able to be fully functional in offline mode (using '{output_db_file}') but i will up-to-date.")
+				print(f"I am allready able to be fully functional in offline mode but i will up-to-date.")
 				delete_cybeledb()
 				download_and_convert(db_url, output_db_file)
 			else:
 				download_and_convert(db_url, output_db_file)
-		
+					
 		elif question == 'offline mode off':
 			delete_cybeledb()
 		
