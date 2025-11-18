@@ -1115,7 +1115,7 @@ def make_intextdb():
 		_revise_idvdb_ = _revise_.replace('.', '')
 		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
 			print_statusline(f"")
-			print(f"{random.choice(messages['trouble_short'])} This version [d{idvdb}] of me only works with the very newer code of me and database schema.\n")
+			print(f" {kolor['RED']}WARNING!{kolor['OFF']} The essential architectural evolution needs that this version be updated. \n I strongly advise a {_title_} upgrade via github to maintain funcionaly and compatibility. \n")
 			sys.exit(0)
 		del idvdb
 		
