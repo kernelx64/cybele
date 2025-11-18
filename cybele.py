@@ -4265,7 +4265,7 @@ def check_for_updates():
 		if remote_version_str is None:
 			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
 			return
-		try:        
+		try:
 			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
 				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
 			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
