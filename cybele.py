@@ -25,7 +25,7 @@ lon = -8.4265
 
 # \U0001F132 | 129150
 # static global cybele variables
-version = '1.1.0-rc.4'
+version = '1.1.0-rc.5'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
@@ -147,15 +147,15 @@ days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
-cybelecode = []; special_dates_dict = {};  asteroids_list = {}; cneos_list={};ncountries = {}; climate_dictionary = {}
-gamescore=[-1,0,0]
+cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
+my_library = []; gamescore=[-1,0,0]
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
 			'Y2xpbWF0ZV9kaWN0', 'Y25lb3M=', 'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==',
 			'Y291bnRyaWVz', 'ZnVuZmFjdHM=', 'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=',
 			'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==', 'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==',
-			'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==', 'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==']
+			'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==', 'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==','dHZzaG93cw==']
 
 #-----------------------------------------------------------
 website = {
@@ -626,6 +626,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
+	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
@@ -1099,7 +1100,7 @@ def parse_date_string(date_str):
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
 			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
-			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_
+			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_, my_library
 
 	if not check_tables(tables):
 		sys.exit(0)
@@ -1234,11 +1235,14 @@ def make_intextdb():
 
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
+		
+		my_library = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
 		midbcounter += len(questions) + len(answers)
+		midbcounter += len(my_library)
 		for key in core:
 			if isinstance(core[key], list):
 				midbcounter += len(core[key])
@@ -4126,6 +4130,105 @@ def list_country_details():
 		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
 	print("")
 
+#-------------------------------------------------
+def _fetch_remote_library():
+
+	WEBSITE_URL = website['tvshow']
+	#if not internet_onoff():
+	#	print(f"✗ {random.choice(messages['trouble_msg'])} Network connection required. Using local list.")
+	#	return []
+
+	try:
+		response = urllib.request.urlopen(WEBSITE_URL, timeout=5)
+		html_content = response.read()
+		html_string = html_content.decode("utf-8")
+		soup = BeautifulSoup(html_string, 'html.parser')
+		items_list = []
+
+		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+		for show in tv_shows:
+			title_element = show.find('span', class_='C9DxTc')
+			if title_element:
+				items_list.append(title_element.text.strip())
+
+		if items_list:
+			print(f"✔  Successfully loaded {len(items_list)} shows from {WEBSITE_URL}\n")
+			return items_list
+		else:
+			print(f"✗ {random.choice(messages['trouble_msg'])} Found page, but no TV shows matched the scrap pattern. Using local list.")
+			return []
+
+	except urllib.error.URLError as e:
+		return []
+	except Exception as e:
+		return []
+
+#-------------------------------------------------
+def get_show_library():
+	global my_library
+
+	remote_list = _fetch_remote_library()
+	if remote_list:
+		my_library = remote_list
+	else:
+		if not my_library or len(my_library) == 0:
+			my_library = ["(Error: No Shows Available)"]
+		else:
+			print(f"✔  Successfully loaded {len(my_library)} shows from the database list.\n")
+	return my_library
+
+#-------------------------------------------------
+def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_duration_minutes=75):
+	MESSAGES = messages
+	try:
+		my_library = get_show_library()	
+		today = datetime.now().date()
+		current_datetime = datetime.combine(today, datetime.min.time())
+		current_datetime = current_datetime.replace(hour=start_hour, minute=start_minute)
+		slot_duration = timedelta(minutes=slot_duration_minutes)
+		schedule = []
+		last_show = None
+		for _ in range(num_slots):
+			available_shows = [s for s in my_library if s != last_show]
+			if not available_shows:
+				next_show = last_show
+			else:
+				next_show = random.choice(available_shows)
+
+			end_datetime = current_datetime + slot_duration
+
+			schedule.append({
+				"start": current_datetime.strftime('%H:%M'),
+				"end": end_datetime.strftime('%H:%M'),
+				"show": next_show
+			})
+
+			current_datetime = end_datetime
+			last_show = next_show
+
+		max_show_length = 20
+		if schedule:
+			max_show_length = max(len(entry['show']) for entry in schedule)
+		show_col_width = max(max_show_length + 2, 20)
+		total_line_width = 2 + 6 + 3 + 6 + 3 + show_col_width + 2
+		print("--- 📺 Gridflow Flow ---")
+		print(f"Start Time: {start_hour:02}:{start_minute:02}")
+		print(f"Slots: {num_slots} | Duration: {slot_duration_minutes} min")
+		print("-" * total_line_width)
+		header_format = f"| {'Start':<6} | {'End':<6} | {'The Flow Pick':<{show_col_width}} |"
+		print(header_format)
+		print("-" * total_line_width)
+		for entry in schedule:
+			row_format = f"| {entry['start']:<6} | {entry['end']:<6} | {entry['show']:<{show_col_width}} |"
+			print(row_format)
+		print("-" * total_line_width)
+		print("")
+		
+		return schedule
+
+	except Exception as e:
+		print(f"\nCRITICAL ERROR during schedule generation: {e}")
+		return None
 
 #-------------------------------------------------
 def get_remote_version_and_revision_from_file():
@@ -5349,6 +5452,9 @@ def main():
 				print(f"My network status at this moment is {dblrconn[0:7]}.\n")
 			else:
 				print (random.choice(messages['trouble_short']) + " This is a new designation of a connection type! I was not coded for this.\n")
+		
+		elif question == 'gridflow':
+			generate_console_schedule()
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
