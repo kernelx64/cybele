@@ -28,10 +28,10 @@ import socket
 
 # --- GLOBAL CONFIGURATION ---
 
-# Corresponds to website.get('tvshow') - Your TV show list URL
+# My website addr with my TV show list URL
 WEBSITE_URL = "http://www.adelinosaldanha.site/tvshows" 
 
-# Corresponds to messages['trouble_msg']
+# Corresponds to messages['trouble_msg'] from cybele script
 MESSAGES = {
 	'trouble_msg': ['Oh snap!', 'Uh oh!', 'Error!', 'Trouble in the Flow!']
 }
@@ -51,7 +51,6 @@ def internet_onoff(host="8.8.8.8", port=53, timeout=3):
 		return False
 
 # --- DEPENDENCY CHECK ---
-
 try:
 	from datetime import datetime, timedelta
 	# We need the BeautifulSoup class from the bs4 library for scraping
@@ -99,7 +98,6 @@ except ImportError as err:
 		sys.exit(0)
 
 # --- APPLICATION CLASS ---
-
 class GridflowScheduler(QMainWindow):
 	"""
 	Gridflow: A PyQt6 Application for Algorithmic TV Scheduling.
@@ -195,6 +193,16 @@ class GridflowScheduler(QMainWindow):
 		
 		print(f"{' '*3}Total shows in library: {len(self.my_library)}")
 
+	def _is_weekend(self):
+		"""
+		Checks if the current day is Saturday (5) or Sunday (6).
+		Returns True if it's the weekend, False otherwise.
+		"""
+		# weekday() returns 0 for Monday, 6 for Sunday
+		current_day = datetime.now().weekday()
+		return current_day >= 5 # 5 is Saturday, 6 is Sunday
+
+
 	def setup_ui(self):
 		"""Sets up the main application layout and widgets."""
 		central_widget = QWidget()
@@ -247,7 +255,16 @@ class GridflowScheduler(QMainWindow):
 		# 2. Schedule Table
 		self.schedule_table = QTableWidget()
 		self.schedule_table.setColumnCount(3)
-		self.schedule_table.setHorizontalHeaderLabels(["Start Time", "End Time", "The Flow Pick"])
+		
+		# --- Start of Custom Header Logic ---
+		# Determine header based on current day
+		if self._is_weekend():
+			header_label = "📺 Weekend Surprise Pick"
+		else:
+			header_label = "🎬 The Flow Pick (The Mystery Channel)"
+		
+		self.schedule_table.setHorizontalHeaderLabels(["Start Time", "End Time", header_label])
+		# --- End of Custom Header Logic ---
 		
 		# Make the show title column stretch to fill the available space
 		header = self.schedule_table.horizontalHeader()
@@ -341,11 +358,31 @@ class GridflowScheduler(QMainWindow):
 			slot_duration = timedelta(minutes=slot_duration_minutes)
 
 			schedule = []
+			is_weekend = self._is_weekend() # Check if it's the weekend
 			
 			# Keep track of the last show to prevent immediate repeats
 			last_show = None
 
-			for _ in range(num_slots):
+			for i in range(num_slots):
+				
+				# --- Start of Popcorn Time Logic ---
+				is_popcorn_slot = is_weekend and (i == num_slots // 2) and (num_slots >= 3)
+				
+				if is_popcorn_slot:
+					# Inject a Popcorn Break in the middle of a weekend schedule (if at least 3 slots)
+					popcorn_duration = timedelta(minutes=15)
+					end_datetime = current_datetime + popcorn_duration
+					
+					schedule.append({
+						"start": current_datetime.strftime('%H:%M'),
+						"end": end_datetime.strftime('%H:%M'),
+						"show": "🍿 POPCORN TIME / INTERMISSION 🍿",
+						"is_special": True
+					})
+					current_datetime = end_datetime
+					continue # Skip the normal slot generation for this iteration
+				# --- End of Popcorn Time Logic ---
+				
 				# Simple algorithm: random choice, but try to avoid immediate repeat
 				available_shows = [s for s in self.my_library if s != last_show]
 				if not available_shows:
@@ -359,7 +396,8 @@ class GridflowScheduler(QMainWindow):
 				schedule.append({
 					"start": current_datetime.strftime('%H:%M'),
 					"end": end_datetime.strftime('%H:%M'),
-					"show": next_show
+					"show": next_show,
+					"is_special": False
 				})
 
 				# Update for the next iteration
@@ -368,6 +406,15 @@ class GridflowScheduler(QMainWindow):
 
 			# 3. Update the QTableWidget
 			self.update_table(schedule)
+
+			# 4. Update the header again after generating, in case the user changes the day during runtime
+			# (though generating a new schedule is usually tied to a click, this ensures consistency)
+			if is_weekend:
+				header_label = "📺 Weekend Surprise Pick"
+			else:
+				header_label = "🎬 The Flow Pick (The Mystery Channel)"
+			self.schedule_table.setHorizontalHeaderLabels(["Start Time", "End Time", header_label])
+
 
 		except Exception as e:
 			# Display any scheduling error in a message box
@@ -395,6 +442,18 @@ class GridflowScheduler(QMainWindow):
 			# Column 2: The Flow Pick (Show Title)
 			item_show = QTableWidgetItem(entry['show'])
 			self.schedule_table.setItem(row_index, 2, item_show)
+			
+			# Highlight special slots (like Popcorn Time)
+			if entry.get('is_special', False):
+				# Set a distinct background color for special events
+				from PyQt6.QtGui import QBrush, QColor
+				highlight_brush = QBrush(QColor("#7C4DFF")) # A vibrant purple
+				item_start.setBackground(highlight_brush)
+				item_end.setBackground(highlight_brush)
+				item_show.setBackground(highlight_brush)
+				# Make the text bold
+				item_show.setFont(QApplication.font())
+
 
 		# Ensure table contents are visible and scrollable if needed
 		self.schedule_table.resizeRowsToContents()
@@ -411,4 +470,3 @@ if __name__ == "__main__":
 	window.show()
 	# The event loop starts here
 	sys.exit(app.exec())
-	
