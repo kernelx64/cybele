@@ -1,69 +1,91 @@
-#py:python_OS_win_linux_shell_cmd
+#py:python_OS_win_linux_android_shell_cmd
 __doc__ = """
 Cybele by AS for www.adelinosaldanha.site ✦
 
 # This Python script is licensed under the GNU General Public License, version 2.
 # See the LICENSE file for more details: https://www.gnu.org/licenses/gpl-2.0.en.html
+# Copyright (C) 2023 Adelino Saldanha
+
+# The code is open, but the conscience is not.
+# Remember: Many charge monthly for a mountain I built for free.
 """
-# Latitude and longitude of your city for use with the command <set default gps> for <sunset time> for ex.
+ETHICS_STATEMENT = """
+
+# 💡 Ethics and the Spirit of Cybele (GPL v2)
+# This script is shared under the **GNU GPL v2** to promote learning and freedom. The license permits commercial use, but the spirit of Open Source requires integrity.
+# While some may choose to profit without contributing, the ultimate truth remains:
+# > **"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates."**
+# Please respect the lineage of this project. Contribute back if you can, and always preserve the original 
+# **Copyright (C) 2023 Adelino Saldanha** in all distributed source code.
+"""
+
+# Latitude and longitude of your city. Defaults are:
 lat = 41.5454
 lon = -8.4265
 
+# \U0001F132 | 129150
 # static global cybele variables
-version = '1.0 βeta'
+version = '1.1.0-rc.5'
 _title_ = 'Cybele'
-_pcnode_ = ['ASUSK','TUMBLEWEED']
-_spchar_ = '⚝〉“”—❛❜↺心🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
+_pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
+_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '02.07.2025'
+_revise_ = '18.11.2025'
 _author_ = 'Adelino Saldanha'
-_auth1r_ = _author_.split()[0]
 _cyext_ = " extention"
 _cybid_ = False
 
 import sys,re
 import subprocess
 try:
+	import os,time
 	import string
 	import random
-	import math
 	import datetime
-	import os,time
 	import platform
+	import socket
+	import math
+	import base64
 	import hashlib
 	import sqlite3
 	import sqlitecloud
 	import requests
-	import json,html,urllib
+	import html,urllib
+	import json
 	import holidays
 	import quote
 	import locale
 	import pycountry
+	import PIL
+	from packaging.version import parse as parse_version
+	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
 	from random_word import RandomWords
 	from platform import python_version
 	from time import gmtime, strftime, sleep
 	from inspirational_quotes import quote
-	from datetime import datetime
-	from datetime import date, time, timedelta
+	from datetime import datetime, date, time, timedelta
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
+	from datetime import datetime, timezone
 
 except ImportError as err:
 	match = re.search(r"'(.*?)'", str(err))
 	if match:
 		module_name = match.group(1)
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
+		if module_name == 'PIL':
+			module_name = 'Pillow'
 		while True:
 			install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
 			if install_choice == 'y':
 				print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
 				try:
 					subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-					print(f"\n{' '*3}'{module_name}' installed successfully. Please restart {_title_}")
+					print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
 					sys.exit(0)
 				except subprocess.CalledProcessError as e:
-					print(f"\n{' '*3}Error installing the module. Try installing it manually: pip install " + module_name)
+					print(f"\n{' '*3}✗ Error installing the module. Try installing it manually: pip install " + module_name)
 					sys.exit(0)
 				break
 			elif install_choice == 'n':
@@ -76,21 +98,11 @@ except ImportError as err:
 		print(f"{' '*3}I cannot execute properly. Exiting.")
 		sys.exit(0)
 
-pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
-if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
-	modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
-	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-	sys.exit(1)
-elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-	modname = f"This specific version is known to have issues with SSL/SQLite. \n   Work localy downloading the databases or download Python {pyver[0]}.{pyver[1]}.{pyver[2]+1}. \n   I cannot execute properly. Exiting."
-	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-	sys.exit(1)
-
 start_time = datetime.now()
 node_name = platform.node()
-country_code = locale.getlocale()
+country_code = locale.getlocale()[0].split('_')[-1]
+sysos = platform.system()
 if node_name:
-	sysos = platform.system()
 	if platform.node().upper() in [node.upper() for node in _pcnode_]:
 		try:
 			import cybext
@@ -102,29 +114,48 @@ if node_name:
 		except ImportError:
 			_cybid_ = False
 
+pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
+if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10:
+	modname = f"Python {pyver[0]}.{pyver[1]} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
+	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+	sys.exit(1)
+
+#------------------------------------------------------------------
+rw = RandomWords()
 #------------------------------------------------------------------
 # Init-process
+#------------------------------------------------------------------
 def print_statusline(msg: str):
     last_msg_length = len(getattr(print_statusline, 'last_msg', ''))
     print(' ' * last_msg_length, end='\r')
     print(msg, end='\r')
     sys.stdout.flush()
     setattr(print_statusline, 'last_msg', msg)
+#-----------------------------------------------------------
 print_statusline(f"\nLoading ...")
-
 #-----------------------------------------------------------
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
+dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
-year_months = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"]
+GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
+iknow_pun = {"i know": "you know","you know": "i know"}
+internals = ["version","_title_","_pcnode_","_spchar_","_active_","_revise_","_author_","_cyext_","_cybid_","lat","lon"]
+datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
-iknow_pun = {"i know": "you know","you know": "i know"}; idcode=""; cybelecode = []; special_dates_dict = {}
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
-shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56);
-stars_dict = {};constellations_dict = {};constellations_abbr = {};linux_commands = {};midbcounter=0
-tables = ['astronomy_glossary','climate_dict','constelations','countries','funfacts','linux_commands','meanings','nicethings','oldtech','qa_astro','season_activities','stars','topactivities','special_dates']
-gamescore=[-1,0,0]
+shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
+stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
+cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
+my_library = []; gamescore=[-1,0,0]
+
+#-----------------------------------------------------------
+etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
+			'Y2xpbWF0ZV9kaWN0', 'Y25lb3M=', 'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==',
+			'Y291bnRyaWVz', 'ZnVuZmFjdHM=', 'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=',
+			'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==', 'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==',
+			'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==', 'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==','dHZzaG93cw==']
 
 #-----------------------------------------------------------
 website = {
@@ -140,14 +171,15 @@ website = {
 	"askard": "https://www.adelinosaldanha.site/askards"
 }
 webshare = {
-  "tvshow": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
-  "movies": "ammil://fxzt.gs/yhewxk/2giceUKV#Lh7eUjNr_3MaG-f0yMTLAz",
-  "art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot"
+	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
+	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
+	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
+	"tvshow": "ammil://fxzt.gs/yhewxk/FjJTpRjU#PzveuXlo_EjooUTDdPth8",
+	"music": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSCBiHSDqZu7azA6Q8f1WnmOEO5nLXL4i0r"
 }
 presence_online = {
 	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
 }
-
 #-----------------------------------------------------------
 as_quotes = [
 	"... to keep you busy.",
@@ -165,16 +197,29 @@ as_quotes = [
 	"I am sorry if you don't like my honesty, but to be fair i dont give a fuck.",
 	"Somethings just cannot be fixed. Sometimes wore mented to not. Somethings lost are lost forever. No matter how hard we fight, How much it hurts.",
 	"In memory of the 90s, that beloved era, a special time for many.",
-	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete."
+	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete.",
+	"Let's face it, Nature is already scrud'ed.  The question is whether it is possible for us to have a future.",
+	"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates.",
+	"Technology is not revolutionary, it's evolutionary.",
+	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility.",
+	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will.",
+	"Everything is smart now. So, when do we download the patch? 'Cos I don't see it anywhere."
 ]
 #-----------------------------------------------------------
 kolor = {
-    'WHITE': '\033[1;37m','YELLOW': '\033[1;33m','GREEN': '\033[1;32m','BLUE': '\033[1;34m','CYAN': '\033[1;36m',
-    'RED': '\033[1;31m','MAGENTA': '\033[1;35m','BLACK': '\033[1;30m','DARK_WHITE': '\033[0;37m','DARK_YELLOW': '\033[0;33m',
-    'DARK_GREEN': '\033[0;32m','DARK_BLUE': '\033[0;34m','DARK_CYAN': '\033[0;36m','DARK_RED': '\033[0;31m',
-	'DARK_MAGENTA': '\033[0;35m','DARK_BLACK': '\033[0;30m','OFF': '\033[0;0m'
+	'BOLD_WHITE':'\033[1;37m','BOLD_YELLOW':'\033[1;33m','BOLD_GREEN':'\033[1;32m','BOLD_BLUE':'\033[1;34m',
+	'BOLD_CYAN':'\033[1;36m','BOLD_RED':'\033[1;31m','BOLD_MAGENTA':'\033[1;35m','BOLD_BLACK':'\033[1;30m',
+	'WHITE':'\033[0;37m','YELLOW':'\033[0;33m','GREEN':'\033[0;32m','BLUE':'\033[0;34m','CYAN':'\033[0;36m',
+	'RED':'\033[0;31m','MAGENTA':'\033[0;35m','BLACK':'\033[0;30m',
+	'VIVID_RED':'\033[91m','VIVID_GREEN':'\033[92m','VIVID_YELLOW':'\033[93m','VIVID_BLUE':'\033[94m',
+	'VIVID_MAGENTA':'\033[95m','VIVID_CYAN':'\033[96m','VIVID_WHITE':'\033[97m',
+	'DARK_BLACK':'\033[30m','DARK_RED':'\033[31m','DARK_GREEN':'\033[32m','DARK_YELLOW':'\033[33m',
+	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
+	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
+	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
+	'OFF':'\033[0m'
 }
-#--------------------------
+#-----------------------------------------------------------
 art_world = [
 	[32,32,32,32,32,32,32,32,32,32,32,32,95,44,45,45,39,44,32,32,32,95,46,95,46,45,45,46,95,95,95,95,95,32],
 	[32,32,32,32,32,46,45,45,46,45,45,39,59,95,39,45,46,39,44,32,39,59,95,32,32,32,32,32,32,95,46,44,45,32],
@@ -195,10 +240,9 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;34m''""XXXXX\033[m        ","   \033[1;34m.XXXXXXXXXXXXXX\033[m \033[1;33mXXXX.\033[m  ",
 	"  \033[1;34m.XXXXXXXXXXXXXXX\033[m \033[1;33mXXXXX.\033[m ","  \033[1;34m'XXXXX\033[m \033[1;33mxxxxxxxxxxXXXXX'\033[m ",
 	"   \033[1;34m'XXXX\033[m \033[1;33mXXXXXXXXXXXXXX'\033[m  ","         \033[1;33mXXXXX....\033[m        ",
-	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"
-]
+	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
-art_byas = [98,121,32,65,83]
+art_byas = [129150,32,98,121,32,65,83]
 #------------------------------------------------------------
 csugestions = []; chkdict = []
 #------------------------------------------------------------
@@ -236,15 +280,58 @@ core = {
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
-	"question_words":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
+	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
-	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later."],
+	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later.",
+					"Cybele is currently unavailable. We appreciate your patience.",
+					"Cybele is temporarily out of reach. Please try again shortly.",
+					"Hold on a moment! Cybele will be back with you soon.",
+					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
+					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
 	"share":	["sharing about","sharing links"],
-	"sayconvert":	["say","longhand"],
-	"coded":	["py","python","python art"]
+	"sayconvert":	["in full","longhand"],
+	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
+	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
+	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
+	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
+	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","speak"],
+	"asking for a phrase":	["say something","make a sentence","make a phrase"],
+	"asking for a word":	["word","say a word","share a word","speak a word"],
+	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
+	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
+	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
+	"python art":	["py","python","python art","art python"]
+}
+#-------------------------------------------------------------
+knowledge = {
+		"noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
+        "noun_countable_plural": ["dogs", "cats", "books", "trees", "cars", "people", "things", "rainbows", "oceans", "mountains", "rivers", "flowers", "computers"],
+        "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
+        "noun_abstract": ["idea", "solution", "sadness", "happiness"],
+		# ... (other existing ) ...
+		
+		"pronoun_singular_third":	["he", "she", "it", "him", "her", "his", "hers", "its", "himself", "herself", "itself"],
+		"pronoun_first_second_plural":	["we", "us", "our", "ours", "ourselves", "you", "your", "yours", "yourselves"],
+		# ... (other existing ) ...
+
+        "subject": [], # Failsafe key
+        "determiner": ["the", "some", "a", "an"], 
+        "aux_be_present_I": ["am"],
+        "aux_be_present_singular_third": ["is"],
+        "aux_be_present_plural": ["are"],
+        "aux_be_past_singular_I_third": ["was"],
+        "aux_be_past_plural": ["were"],
+        "aux_have_present_I_plural": ["have"],
+        "aux_have_present_singular_third": ["has"],
+        "aux_do_base": ["do"],
+        "aux_do_s_form": ["does"],
+        "modal_verb": ["will", "would", "should", "can", "could", "may", "might", "must"],
+        "negation": ["not"],
+        "verb_base_be": ["be"],
+        "verb_past_participle_be": ["been"]
 }
 #-------------------------------------------------------------
 messages = {
@@ -298,6 +385,13 @@ messages = {
 						"I would characterize '%s' as a %s idea." , "The word '%s' is a %s concept." , "I find '%s' to be a very %s term.",
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
 
+	"db_pause_msg":	["Oops! The SQLiteCloud database is currently in deep hibernation.",
+					"Sleeping instead of working?! Give yourself a shake and wake up. Lazy database!",
+					"Looks like the database is on a coffee break. Call'her to see if she comes online.",
+					"Database says 'do not disturb'! It's in offline mode. Wake'her up to resume the service.",
+					"Our database decided to take a spontaneous vacation. Maybe we'll see her again soon.",
+					"Connection refused! The database is currently practicing its 'offline arts.'."],
+	
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
 					"Is it December already? Time flies when you're having fun!", "You're officially the most prepared person I know.",
@@ -364,6 +458,12 @@ messages = {
 					"I've got 99 problems, but a **holiday** ain't one... mainly because I'm already on one.",
 					"My bank account on **holiday** feels like a public service announcement",
 					"Warning: May cause extreme joy, followed by mild panic."],
+					
+	"no_internet":	["To perform this task, an active internet connection is required.","Please ensure you have an internet connection to complete this operation.",
+					"This feature necessitates an active internet connection.","An internet connection is essential for this action.",
+					"You'll need an active internet connection to proceed.","Internet connectivity is required for this function.",
+					"A connection to the internet is needed to fulfill this request.","This task cannot be performed without an active internet connection.",
+					"To access this, please connect to the internet.","An internet connection is mandatory for the successful execution of this task."],
 
 	"notvalentines": ["It's so sweet of you to think ahead! Can't wait to celebrate Valentine's Day with you.",
 					"Aww, that's so thoughtful! I'm looking forward to our Valentine's Day together.",
@@ -376,6 +476,12 @@ messages = {
 					"Roses are red, violets are blue, you're the one for me, through and through.","Sending you a virtual hug and a kiss. Happy Valentine's Day!",
 					"You brighten my world. Happy Valentine's Day, my love.","I'm so lucky to have you in my life. Happy Valentine's Day!",
 					"Here's to many more Valentine's Days together.","You're the missing piece to my puzzle. Happy Valentine's Day!"],
+
+	"notfree":	["The 'free' tier of SQLiteCloud has gone to sleep. Patience is a virtue, and so is a paid plan.",
+				"My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!",
+				"Looks like the free SQLiteCloud tier has hit the snooze button. Free-mium ain't forever. Try again later.",
+				"The 'free' part of SQLiteCloud comes with a naptime. This is the new reality. Give it another shot soon!",
+				"That's the free plan for you—it requires a gentle nudge. You get what you pay for in this day and age. Try again later."],
 
 	"notplanet":	["Alien technology detected. Trying to locate %s planet...\n","You've discovered a new planet %s! Congratulations, explorer!\n",
 					"Planet %s not found. Did you mean 'Planet Hoth'?\n","Error 404: Planet %s not found. Please try searching for %s again.\n",
@@ -400,10 +506,37 @@ messages = {
 					"Are you trying to summon a random space rock? Be more specific!","You expect me to channel my inner astrologer with nothing but empty space?",
 					"I'm not a cosmic detective. Give me a clue!","I'm not a mind reader, you know!"],
 
+	"short_no":	["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"],
+
 	"math_msg":	["What! e,m or h brain's on fire? Use ice, cream or sleep!","If it's allready hard use e,m or h, Math Quiz!?, gonna be Einscharged!.",
 				"e,m or h, not e=mc2 and allready is a problem? Use magic, coffee or nap!","Life's tough? Choose chill, grill or spill!",
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
 				"Stressed about e,m or h choice? Blame aliens, cats or dreams!"],
+				
+	"math_trouble":	["Oh dear, my digital abacus just declared bankruptcy trying to count that high. Perhaps a smaller number?",
+					"My circuits are threatening to go on strike if I try to compute that! Let's keep it reasonable, shall we?",
+					"That number is so big, it just broke my virtual calculator. Could we try a little less... epic?",
+					"Unfornunately my bit's are telling to do'it but my bytes to don't. Try a smaller!"
+					"My internal bits are allready tired just thinking about that many multiplications. Have mercy!",
+					"Error 404: Sanity Not Found when attempting calculations of that magnitude. Type a inferior magnitude.",
+					"How about a number less likely to cause'me an possbible existential crisis? A litle number?! No!",
+					"I'm afraid that number requires more virtual ink than I possess. Could we negotiate a more modest one?",
+					"My programming dictates I avoid numbers that could potentially collapse the space-time continuum.",
+					"That number just made my fan spin so fast I think it's trying to lift-off. A smaller altitude, perhaps?",
+					"My memory banks are currently protesting, citing 'cruel and unusual punishment' for numbers of that size."],
+				
+	"loadings":	["Loading core data structures...","Loading essential data core...","Initializing core components...",
+				"Allocating memory resources...","Activating primary functions...","Preparing user components...",
+				"Optimizing runtime environment..."],
+				
+	"preambles":	["Here's a word for you:","How about this one:","My word for you is:","Consider this word:",
+					"A random word:","Perhaps this word will interest you:"],
+					
+	"qualify_adj":	["amazing", "epic", "stunning", "unbelievable", "incredible","breathtaking", "spectacular",
+					"mind-blowing", "phenomenal", "awe-inspiring","unforgettable", "magnificent", "glorious", "powerful",
+					"impressive", "stupendous"],
+
+	"msg_welldone":	["Excellent","Superb","Outstanding","Great","Terrific","Splendid","Bravo"],
 
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
 					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"],
@@ -446,7 +579,14 @@ messages = {
 						"%s is a unique event in the year. Have you considered know the number the days till then...\n",
 						"In my knowledge is a year event. I wonder if you know how many days left to %s...\n",
 						"In other words we may say it's a once year event. Do you know how many days are still %s.\n",
-						"Did you consider know how many days are still that unique event that it %s?\n",]
+						"Did you consider know how many days are still that unique event that it %s?\n"],
+
+	"info_intromsg":	["Alright, time for a little peek under my digital hood:","Behold, my magnificent inner workings! (Currently running on 1s and 0s):",
+						"Greetings! My vital statistics, at your service:","Calculating... here's the full lowdown on Cybele:",
+						"Reporting for duty! Here's my current status report:","Commencing self-analysis. The results are in:",
+						"My brain dump, for your viewing pleasure (and analytical needs):","Just the facts, ma'am/sir/user! Here's my core info:",
+						"Let's see what makes Cybele tick. Full specs ahead:","Presenting the official Cybele System Report, hot off the virtual press:",
+						"Alright, let's get down to brass virtual tacks:"]
 }
 #-------------------------------------------------------------------------------------
 weather_season_condiction = {
@@ -456,35 +596,39 @@ weather_season_condiction = {
 	"autumn":	["Cooling temperatures","Falling leaves","Harvest season","Crisp air","Occasional drizzle","Crisp evenings","Changing colors","Sky partly cloudy","Wind increasings","Winter approaching"]
 }
 #------------------------------------------------------------
-topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","asteroids","constelations","information about stars","distance of planets and from the sun",
-		"periodic table elements","visualize the periodic table","where is the ISS","people in space","climate dictionary","old tech objects and terms",
-		"the world capitals","seasons of the year","play capitals","math game","constellations and elements game","linux command","multiplication table",
-		"phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity","art python","favorite tvshows","favorite movies",
-		"astronomy questions","difference from <date>","age calc <from date>","Show you the meaning of some words or terms","generate pwd"]
+topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types of orbits","asteroids","constelations","information about stars",
+		"distance of planets and from the sun","periodic table elements","visualize the periodic table","where is the ISS","people in space","actual country",
+		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
+		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
+		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects"]
 
-#------------------------------------------------------------
-factors = [["feets", 0.3048],["miles", 1.609344],["yards", 0.9144],["m3", 0.001],["gallons", 3.78541178],["fahrenheit", 33.8],["au", 149.6e6]]
 #------------------------------------------------------------
 help = {
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
-	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: vesta\n",
-	"help capital": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
+	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
+	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
-	"help convert": "Usage: convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit \nAll the convertions are made to kilometers, litters and celcius degrees. \nex: convert 2 days, returns the number of seconds, minutes and hours of 2 days. \n    convert 2 days in hours, returns the total of hours from the number of day(s) \n    convert 2 from miles, returns the number of 2 miles in kilometers \n    convert 2 from m3, returns the number of 2 m3 (cubic meter's) in litters, \n    convert 2 from fahrenheit, returns the number of the degrees in celcius\n",
+	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
+	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
+	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
+	"help dangerous objects": "Usage <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
+	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
-	"help difference from": "Usage: difference from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
-	"help distance": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
-	"help distances": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
+	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from vorian website the favorite list.\nex: favorite tvshows\n    fav movies\n",
+	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav movies\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help generate pwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
-	"help gps": "Usage: set default <gps/gps off> | show default gps \nThe default or the most used cordinates are the inserted in the <sunset/sunrise time> command.\n",
+	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
+	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
+	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
+	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
@@ -492,33 +636,50 @@ help = {
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
+	"help make a phrase": "Usage <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
+	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
+	"help network status": "Usage: network status \nShow the actual network status \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
+	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
-	"help presence": "Usage: presence <service> \nShow's the direct link for "+_auth1r_+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
+	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
+	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
+	"help say something": "Usage <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
+	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
+	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|all/constellations|asteroids|quote  names|old tech words|linux commands> \nReturn the values or data for the required subject.\n",
+	"help show me": "Usage: show me <star names|constellations|<dangerous|asteroids|objects>|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
+	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
-	"help today": "Usage <today> \nDisplays all the available data for the actual system date.\n",
+	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
+	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
+	"help talk": "Usage <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \nex: talk \n    can you speak \n",
+	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
+	"help topics": "Usage <topics> \nDisplays all the topics i can provide even if some basic information.\n",
+	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
+	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
+	"help your version": "Usage your version | what is | #version \nProvides details about the running instance of Cybele. Includes the version, last update date, unique and a note regarding its source code origin. \nex: what is your version \n    your version \n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
 }
 #------------------------------------------------------------
-
 orbit_regime = {
 	"geo": "Geostationary Orbit           \n i < 25°, 35586 km < hp < 35986 km, 35586 km < ha < 35986 km",
 	"igo": "Inclined Geosynchronous Orbit \n 37948 km < a < 46380 km, e < 0.25, 25° < i < 180°",
@@ -587,54 +748,78 @@ planet_data = {
 	}
 }
 #----------------------------------------------------
-asteroids_list = {
-	"65 cybele": {"type": "minor planet", "dimensions":237.26, "description": "65 Cybele is one of the largest asteroids in the Solar System. Its located in the outer asteroid belt. It is thought to be a emnant primordial body."},
-	"ceres": {"type": "dwarf planet", "dimensions":939.4, "description": "Largest asteroid, potential water ice"},
-    "vesta": {"type": "asteroid", "dimensions":525.4, "description": "Brightest asteroid visible to the naked eye. Second-largest, differentiated structure"},
-    "pallas": {"type": "asteroid", "dimensions":545, "description": "Third-largest, unusual orbit"},
-    "bennu": {"type": "dangerous asteroid", "dimentions":0.492, "description": "Carbon-rich, explored by OSIRIS-REx"},
-    "ryugu": {"type": "asteroid", "dimensions":0.9, "description": "Carbon-rich, explored by Hayabusa2"},
-    "itokawa": {"type": "asteroid", "dimensions":0.33, "description": "Small, S-type, explored by Hayabusa"},
-    "eros": {"type": "asteroid", "dimensions":16.84, "description": "Near-Earth asteroid, extensively studied"},
-    "gaspra": {"type": "asteroid", "dimensions":12.2, "description": "First asteroid imaged close-up"},
-    "ida": {"type": "asteroid", "dimensions":32, "description": "Has a moon (Dactyl)"},
-    "juno": {"type": "asteroid", "dimensions":246.596, "description": "One of the largest main-belt asteroids"},
-    "hebe": {"type": "asteroid", "dimensions":185.18, "description": "One of the most massive asteroids"},
-    "iris": {"type": "asteroid", "dimensions":199.83, "description": "One of the brightest asteroids"},
-    "flora": {"type": "asteroid", "dimensions":147.491, "description": "Largest asteroid in the Flora family"},
-    "metis": {"type": "asteroid", "dimensions":190, "description": "Innermost asteroid in the asteroid belt"},
-    "hygiea": {"type": "asteroid", "dimensions":407.12, "description": "Fourth-largest asteroid"},
-    "interamnia": {"type": "asteroid", "dimensions":306.313, "description": "One of the most massive asteroids"},
-    "europa": {"type": "asteroid", "dimensions":303.918, "description": "Large asteroid with high albedo"},
-	"apophis": {"type": "dangerous asteroid", "dimensions": 0.37, "description": "Potentially hazardous asteroid, close Earth approach in 2029"},
-    "1950 da": {"type": "asteroid", "dimensions": 1.1, "description": "Potentially hazardous asteroid, high risk of Earth impact in 2880"},
-	"psyche": {"type": "metal-rich asteroid", "dimensions": 220, "description": "Potentially iron-nickel core of a protoplanet"},
-	#-----------------------------------------------------------------
-	"thetis": {"type": "main-belt asteroid", "dimensions": 84.899, "description": "A typical main-belt asteroid"},
-	"melpomene": {"type": "main-belt asteroid", "dimensions": 139.594, "description": "A typical main-belt asteroid"},
-	"fortuna": {"type": "main-belt asteroid", "dimensions": 200, "description": "A large main-belt asteroid"},
-	"massalia": {"type": "main-belt asteroid", "dimensions": 135.680, "description": "A typical main-belt asteroid"},
-	"lutetia": {"type": "main-belt asteroid", "dimensions": 95.76, "description": "A large main-belt asteroid"},
-	"kalliope": {"type": "main-belt asteroid", "dimensions": 167.536, "description": "A large main-belt asteroid"},
-	"thalia": {"type": "main-belt asteroid", "dimensions": 107.53, "description": "A typical main-belt asteroid"},
-	"themis": {"type": "main-belt asteroid", "dimensions": 198, "description": "A large main-belt asteroid"},
-	"phocaea": {"type": "main-belt asteroid", "dimensions": 61.054, "description": "A smaller main-belt asteroid"},
-	"proserpina": {"type": "main-belt asteroid", "dimensions": 94.80, "description": "A typical main-belt asteroid"},
-	"euterpe": {"type": "main-belt asteroid", "dimensions": 96, "description": "A typical main-belt asteroid"},
-	"bellona": {"type": "main-belt asteroid", "dimensions": 120.90, "description": "A typical main-belt asteroid"},
-	"amphitrite": {"type": "main-belt asteroid", "dimensions": 189.559, "description": "A large main-belt asteroid"},
-	"urania": {"type": "main-belt asteroid", "dimensions": 92.787, "description": "A typical main-belt asteroid"},
-	"euphrosyne": {"type": "main-belt asteroid", "dimensions": 267.080, "description": "A very large main-belt asteroid"},
-	"pomona": {"type": "main-belt asteroid", "dimensions": 80.76, "description": "A typical main-belt asteroid"},
-	"1950 da": {"type": "dangerous asteroid", "dimensions": 1.1, "description": "This asteroid has a relatively high probability of impact in the distant future, making it a subject of ongoing study."},
-	"4179 toutatis": {"type": "dangerous asteroid", "dimensions": 5.2, "description": "This asteroid is quite large and has had close approaches to Earth in the past, making it a potential concern."},
-	"2007 tu24": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid made a relatively close approach to Earth in 2007, highlighting the need for continued monitoring of near-Earth objects."},
-	"99942 apophis": {"type": "dangerous asteroid", "dimensions": 250, "description": "This asteroid was once considered a significant threat but subsequent observations have reduced the risk. It's still monitored closely."},
-	"2010 al30": {"type": "dangerous asteroid", "dimensions": 15, "description": "This asteroid made a very close approach to Earth in 2010, emphasizing the need for early detection of these objects."},
-	"2011 md": {"type": "dangerous asteroid", "dimensions": 7, "description": "This small asteroid made an exceptionally close Earth flyby in 2011, highlighting the potential for unexpected encounters."},
-	"2014 rc": {"type": "dangerous asteroid", "dimensions": 22, "description": "This small asteroid passed extremely close to Earth in 2014, underscoring the difficulty in detecting all near-Earth objects."},
-	"Unidentified PHA": {"type": "dangerous asteroid", "dimensions": 0, "description": "There are likely many other potentially hazardous asteroids yet to be discovered or fully characterized."}
-}
+def chkcoor(lat, lon):
+    try:
+        lat_val = float(lat)
+        if not (-90 <= lat_val <= 90):
+            return False
+    except (ValueError, TypeError):
+        return False
+    try:
+        lon_val = float(lon)
+        if not (-180 <= lon_val <= 180):
+            return False
+    except (ValueError, TypeError):
+        return False
+    return True
+
+#-------------------------------------------------
+def validate_globals():
+	global _poigps_, lat, lon, internals	
+	defined_globals = globals()
+	missing_vars = []
+	for var_name in internals:
+		if var_name not in defined_globals:
+			missing_vars.append(var_name)
+	if missing_vars:
+		print_statusline(f"")
+		mmodname = f"\n   My code integrity was compromised doing missing some requirements. \n   Missing components: {missing_vars}. Exiting."
+		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
+		sys.exit(0)	
+	if 'lat' in internals and 'lon' in internals:
+		global_lat = defined_globals['lat']
+		global_lon = defined_globals['lon']
+		is_valid_coord = True
+		try:
+			lat_val = float(global_lat)
+			if not (-90 <= lat_val <= 90):
+				is_valid_coord = False
+		except (ValueError, TypeError):
+			is_valid_coord = False
+		try:
+			lon_val = float(global_lon)
+			if not (-180 <= lon_val <= 180):
+				is_valid_coord = False
+		except (ValueError, TypeError):
+			is_valid_coord = False
+		if not is_valid_coord:
+			print_statusline(f"")
+			coord_error_msg = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
+			print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {coord_error_msg}")
+			sys.exit(0)
+		else:
+			_poigps_= [lat,lon,0,1,1]
+				
+#-------------------------------------------------
+def kdecode(emessage, shift):
+    dek_msg = ""
+    for char in emessage:
+        if char.isalpha():
+            if char.isupper():
+                k_char = chr((ord(char) - shift - 65) % 26 + 65)
+            else:
+                k_char = chr((ord(char) - shift - 97) % 26 + 97)
+            dek_msg += k_char
+        else:
+            dek_msg += char
+    return dek_msg
+
+#----------------------------------------------------
+sqlconn = kdecode(dbconn, shift)
+sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
+for table in etables:
+    tables.append(base64.b64decode(table.encode('utf-8')).decode('utf-8'))
+	
 #----------------------------------------------------
 def whatgmt():
 	import time
@@ -651,59 +836,67 @@ def whatgmt():
 		gmt_string = f"GMT-{abs(int(tz_offset_hours)):2d}"
 	return gmt_string.replace(" ","")
 
-#----------------------------------------------------
-def chkcoor(lat, lon):
-    try:
-        lat_val = float(lat)
-        if not (-90 <= lat_val <= 90):
-            return False
-    except (ValueError, TypeError):
-        return False
-    try:
-        lon_val = float(lon)
-        if not (-180 <= lon_val <= 180):
-            return False
-    except (ValueError, TypeError):
-        return False
-    return True
-
 #------------------------------------------------------------
 def internet_onoff():
 	try:
-		import requests
-		response = requests.get("https://www.google.com", timeout=5)
-		response.raise_for_status()
+		socket.setdefaulttimeout(1)
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect(("8.8.8.8", 53))
+		s.close()
 		return True
-	except ImportError:
-		print("\n\033[1;31m 〉 " + _title_ + "\033[0;0m" + ": Error loadind standard Python module.\n   I cannot perform this task correctly.")
-		return False
-	except requests.exceptions.RequestException as e:
-		return False
+	except OSError:
+		pass
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
-	conn = None
+	global dblrconn, dbmsgbl
+	conn = None		
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database ...")
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
-	else:
-		print_statusline(f"Checking local database ...")
-		if os.path.isfile (db_filename) == True :
+		if os.path.isfile(db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn= "offline [database files]"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
+		else:
+			max_attempts = 5
+			for attempt in range(1, max_attempts + 1):
+				try:
+					conn = sqlitecloud.connect(sqlconn)
+					dblrconn="online [sqlitecloud]"
+					dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
+					break
+				except ValueError as e:
+					print_statusline(f"")
+					modname = f"\n    Unexpected invalid value encountered: {e}\n"
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)	
+				except sqlitecloud.exceptions.SQLiteCloudException as e:
+					if attempt < max_attempts:
+						sleep(1)
+					else:
+						print_statusline(f"")
+						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in a while."
+						print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+						exit(0)
+	else:
+		if os.path.isfile(db_filename) == True:
+			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
+			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
+
 	try:
 		cursor = conn.cursor()
-		cursor.execute(f"SELECT {column_name} FROM {table_name}")			
+		cursor.execute(f"SELECT {column_name} FROM {table_name}")
 		result = [row[0] for row in cursor.fetchall()]
-		return result 
-	except sqlitecloud.exceptions.SQLiteCloudOperationalError as e:
+		return result
+	except Exception as e:
 		print_statusline(f"")
-		error_message = f"SQLiteCloud Database error {e} \n{' '*12}I cannot execute properly. Exiting."
-		print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {error_message}")
+		modname = f"\n   An unexpected error occurred: {e}"
+		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
 		exit(0)
 	except sqlite3.Error as e:
 		return []
@@ -712,19 +905,27 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			conn.close()
 			
 #------------------------------------------------------------
-def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
+def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):	
+	global dblrconn, dbmsgbl
 	conn = None
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
+		else:
+			conn = sqlitecloud.connect(sqlconn)
+			dblrconn="online [sqlitecloud]"
+			dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
 	else:
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
-			print_statusline(f"\nLoading ...")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-	
+			exit(0)	
 	try:
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_to_fetch} FROM {table_name} WHERE {search_column} = ?", (record,))
@@ -741,29 +942,56 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 
 #--------------------------------------------------------
 def check_tables(tables_names):
+	global dbmsgbl
 	db_filename = 'cybele.db'
 	missing_tables = []
+	attempt = 0
+	max_attempts = 0
 	conn = None
 	cur = None
 	
 	if internet_onoff() == True:
-		print_statusline(f"Connecting with remote database ...")
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
+		else:
+			try:
+				conn = sqlitecloud.connect(sqlconn)
+				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
+			except ValueError as e:
+				print_statusline(f"")
+				modname = f"\n    An unexpected error occurred: {e}"
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)
+			except sqlitecloud.exceptions.SQLiteCloudException as e:
+				print_statusline(f"")
+				modname = f"\n    An unexpected error occurred: {e}"
+				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+				exit(0)
+			except sqlitecloud.exceptions.SQLiteCloudError as e:
+				print_statusline(f"")
+				if "Your free node has been paused due to inactivity." in str(e):
+					modname = (
+						f" {random.choice(messages['db_pause_msg'])} \n"
+						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
+						f"   Please try again in a few minutes or email the author asking to wake her up.\n"
+					)	
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)
+				else:
+					modname = f"\n    An unexpected database error occurred: {e}"
+					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+					exit(0)
 	else:
 		if os.path.isfile (db_filename) == True :
-			print_statusline(f"Checking local database ...")
 			conn = sqlite3.connect(db_filename)
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
+			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			exit(0)
-	if conn is None:
-		print_statusline(f"")
-		modname = "Could not establish a database connection. \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			
-		return False, "Error: "
+		
 	try:
 		cur = conn.cursor()
 		cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -774,27 +1002,89 @@ def check_tables(tables_names):
 
 		if missing_tables:
 			print_statusline(f"")
-			modname = f"The database file is from a previous version and dont satisfy all my requirements.\n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   I cannot execute properly. Exiting."
+			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			return False
 		else:
 			return True
-
+		
 	except sqlite3.Error as e:
 		print_statusline(f"")
 		modname = f"Database query error {e} \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	except Exception as e:
 		print_statusline(f"")
 		modname = f"An unexpected error occurred: {e}\n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	finally:
 		if cur:
 			cur.close()
 		if conn:
 			conn.close()
+
+#------------------------------------------------------------
+def download_and_convert(connection_string: str, local_db_filename: str):
+
+	cloud_conn = None
+	local_conn = None
+	try:
+		#print("")
+		print_statusline("Connecting to SQLite Cloud database...")
+		cloud_conn = sqlitecloud.connect(connection_string)
+		cloud_cursor = cloud_conn.cursor()
+		print_statusline(f"Creating my local database '{local_db_filename}'...")
+		local_conn = sqlite3.connect(local_db_filename)
+		local_cursor = local_conn.cursor()
+		print_statusline("Fetching table schema from the cloud database...")
+		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+		tables_info = cloud_cursor.fetchall()
+		total_tables = len(tables_info)
+		for i, (table_name, create_sql) in enumerate(tables_info):
+			progress = (i + 1) / total_tables * 100
+			bar_length = 20
+			filled_length = int(bar_length * progress // 100)
+			bar = '█' * filled_length + '░' * (bar_length - filled_length)
+			print_statusline(f"Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ...")
+			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
+			local_cursor.execute(create_sql)
+			cloud_cursor.execute(f"SELECT * FROM {table_name};")
+			rows = cloud_cursor.fetchall()
+			columns = [col[0] for col in cloud_cursor.description]
+			placeholders = ', '.join(['?'] * len(columns))
+			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
+			if rows:
+				local_cursor.executemany(insert_sql, rows)
+    
+		local_conn.commit()
+		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
+		print("\n")
+		
+	except sqlitecloud.SQLiteCloudException as e:
+		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
+	except sqlite3.Error as e:
+		print(f"\nAn SQLite error occurred: {e}", file=sys.stderr)
+	except Exception as e:
+		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
+	finally:
+		if cloud_conn:
+			cloud_conn.close()
+		if local_conn:
+			local_conn.close()
+
+#------------------------------------------------------------
+def delete_cybeledb():
+	file_name = _title_.lower()+".db"
+	if os.path.exists(file_name):
+		try:
+			os.remove(file_name)
+			print(f"My Database '{file_name}' was deleted successfully! ✅")
+		except OSError as e:
+			print(f"Error deleting my database '{file_name}': {e} ❌")
+	else:
+		print(f"My offline database '{file_name}' does not exist. No action taken. 🤷‍♂️")
+	print("")
 
 #------------------------------------------------------------
 def parse_date_string(date_str):
@@ -808,95 +1098,166 @@ def parse_date_string(date_str):
 
 #------------------------------------------------------------
 def make_intextdb():
-	#global cybelecode, midbcounter
-	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode
+	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
+			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
+			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_, my_library
+
 	if not check_tables(tables):
 		sys.exit(0)
-	else:
-		print_statusline(f"Handling databases ...")
-		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
-		astronomy_glossary = fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary")
-		star_names = list(fetch_fromdbfile("cybele.db", "stars", "star_name"))
-		hr_numbers = list(fetch_fromdbfile("cybele.db", "stars", "hr_number"))
-		constelations = list(fetch_fromdbfile("cybele.db", "stars", "constelation"))
-		for name, hr, const in zip(star_names, hr_numbers, constelations):
-			stars_dict[name] = [hr, const]
-			
-		constelation = list(fetch_fromdbfile("cybele.db", "constelations", "constelation"))
-		meaning = list(fetch_fromdbfile("cybele.db", "constelations", "meaning"))
-		abbr = list(fetch_fromdbfile("cybele.db", "constelations", "abbr"))
-		for constelation, meaning, abbr in zip(constelation, meaning, abbr):
-			constellations_dict[constelation] = meaning, abbr
-			constellations_abbr[abbr] = constelation
-			
-		db_country = list(fetch_fromdbfile("cybele.db", "countries", "country"))
-		db_capital = list(fetch_fromdbfile("cybele.db", "countries", "capital"))
-		db_population = list(fetch_fromdbfile("cybele.db", "countries", "population"))
-		ncountries = {
-			country.lower(): {"capital": capital, "population": population}
-			for country, capital, population in zip(db_country, db_capital, db_population)
-		}
-			
-		ldclimatdictterm = list(fetch_fromdbfile("cybele.db", "climate_dict", "climate_term"))
-		ldclimatdictdesig = list(fetch_fromdbfile("cybele.db", "climate_dict", "designation"))
-		climate_dictionary = {ldclimatdictterm[i]: ldclimatdictdesig[i] for i in range(len(ldclimatdictterm))}
-		meaning_term = fetch_fromdbfile("cybele.db", "meanings", "term")
-		qa_astro = fetch_fromdbfile("cybele.db", "qa_astro", "question")
-		cmd_names = fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name")
-		syntaxes = fetch_fromdbfile("cybele.db", "linux_commands", "syntax")
-		explanations = fetch_fromdbfile("cybele.db", "linux_commands", "explanation")
-		examples_str_list = fetch_fromdbfile("cybele.db", "linux_commands", "examples")
 
-		for i in range(len(cmd_names)):
-			if cmd_names[i] not in [key[5:] for key in help.keys()]:
-				cmd_name = cmd_names[i]
-				syntax = syntaxes[i]
-				explanation = explanations[i]
-				examples = examples_str_list[i].split(';') if examples_str_list[i] else []
+	message = random.choice(messages['loadings'])
+	print_statusline(f"{message} {_spchar_[7:8]}")
+
+	try:
+		idvdb = ""
+		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
+		idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
+		_revise_idvdb_ = _revise_.replace('.', '')
+		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
+			print_statusline(f"")
+			print(f" {kolor['RED']}WARNING!{kolor['OFF']} The essential architectural evolution needs that this version be updated. \n I strongly advise a {_title_} upgrade via github to maintain funcionaly and compatibility. \n")
+			sys.exit(0)
+		del idvdb
+		
+		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
+
+		star_data = zip(
+			fetch_fromdbfile("cybele.db", "stars", "star_name"),
+			fetch_fromdbfile("cybele.db", "stars", "hr_number"),
+			fetch_fromdbfile("cybele.db", "stars", "constelation")
+		)
+		for name, hr, const in star_data:
+			stars_dict[name] = [hr, const]
+		core["star name"] = [key.lower() for key in stars_dict.keys()]
+
+		constellation_data = zip(
+			fetch_fromdbfile("cybele.db", "constelations", "constelation"),
+			fetch_fromdbfile("cybele.db", "constelations", "meaning"),
+			fetch_fromdbfile("cybele.db", "constelations", "abbr")
+		)
+		for constelation, meaning, abbr in constellation_data:
+			constellations_dict[constelation] = (meaning, abbr)
+			constellations_abbr[abbr] = constelation
+		core["constelattion"] = list(constellations_dict.keys())
+
+		asteroid_data = zip(
+			fetch_fromdbfile("cybele.db", "asteroids", "asteroid_name"),
+			fetch_fromdbfile("cybele.db", "asteroids", "type"),
+			fetch_fromdbfile("cybele.db", "asteroids", "mean_diameter"),
+			fetch_fromdbfile("cybele.db", "asteroids", "rotation_period"),
+			fetch_fromdbfile("cybele.db", "asteroids", "albedo"),
+			fetch_fromdbfile("cybele.db", "asteroids", "description")
+		)
+		for name, _type, diameter, rotation, albedo, desc in asteroid_data:
+			asteroids_list[name] = {
+				"type": _type,
+				"mean_diameter": diameter,
+				"rotation_period": rotation,
+				"albedo": albedo,
+				"description": desc,
+			}
+		core["asteroid"] = list(asteroids_list.keys())
+		core["dangerous asteroids"] = [name for name, data in asteroids_list.items() if data['type'] == "dangerous asteroid"]
+
+		cneos_data = zip(
+			fetch_fromdbfile("cybele.db", "cneos", "object_designation"),
+			fetch_fromdbfile("cybele.db", "cneos", "year_range"),
+			fetch_fromdbfile("cybele.db", "cneos", "impact_probability"),
+			fetch_fromdbfile("cybele.db", "cneos", "vinfinity_kms"),
+			fetch_fromdbfile("cybele.db", "cneos", "estimated_diameter_km")
+		)
+		for obj, year, imp, dkm, dia in cneos_data:
+			cneos_list[obj.lower()] = {
+				"year": year,
+				"impact": imp,
+				"kms": dkm,
+				"diameter": dia,
+			}
+		core['cneos'] = list(cneos_list.keys())
+
+		country_data = zip(
+			fetch_fromdbfile("cybele.db", "countries", "country"),
+			fetch_fromdbfile("cybele.db", "countries", "capital"),
+			fetch_fromdbfile("cybele.db", "countries", "population"),
+			fetch_fromdbfile("cybele.db", "countries", "alpha_2")
+		)
+		for country, capital, population, alpha_2 in country_data:
+			ncountries[country.lower()] = {"capital": capital, "population": population, "alpha2": alpha_2}
+		core['country'] = list(ncountries.keys())
+		core['capital'] = [country["capital"] for country in ncountries.values()]
+
+		climate_terms = fetch_fromdbfile("cybele.db", "climate_dict", "climate_term")
+		climate_designations = fetch_fromdbfile("cybele.db", "climate_dict", "designation")
+		climate_dictionary.update({term: desig for term, desig in zip(climate_terms, climate_designations)})
+		core["climate dictionary term"] = list(climate_dictionary.keys())
+		core["climate dictionary"] = list(climate_dictionary.values())
+
+		core["word meaning"] = list(fetch_fromdbfile("cybele.db", "meanings", "term"))
+
+		core["qa-astro"] = list(fetch_fromdbfile("cybele.db", "qa_astro", "question"))
+
+		linux_cmd_data = zip(
+			fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "syntax"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "explanation"),
+			fetch_fromdbfile("cybele.db", "linux_commands", "examples")
+		)
+		for cmd_name, syntax, explanation, examples_str in linux_cmd_data:
+			if cmd_name not in [key[5:] for key in help.keys()]:
+				examples = examples_str.split(';') if examples_str else []
 				linux_commands[cmd_name] = {
 					"syntax": syntax,
 					"explanation": explanation,
 					"examples": examples
 				}
-				
-		old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
-		
-		special_dates_data = fetch_fromdbfile("cybele.db", "special_dates", "sdate")
-		special_dates_events = fetch_fromdbfile("cybele.db", "special_dates", "event")
-		
-		for date_str, event_desc in zip(special_dates_data, special_dates_events):
+		core["linuxcmd"] = list(linux_commands.keys())
+		core['help'] = list(help.keys())
+
+		core["old_tech_term"] = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
+
+		special_dates_data = zip(
+			fetch_fromdbfile("cybele.db", "special_dates", "sdate"),
+			fetch_fromdbfile("cybele.db", "special_dates", "event")
+		)
+		for date_str, event_desc in special_dates_data:
 			parsed_date_tuple = parse_date_string(date_str)
 			if parsed_date_tuple:
-				special_dates_dict[parsed_date_tuple] = event_desc	
-		midbcounter = midbcounter + (len(special_dates_data))
-		
-		core["astronomy glossary"] = list(astronomy_glossary)
-		core["star name"] = [key.lower() for key in stars_dict.keys()]
-		core["constelattion"] = list(constellations_dict.keys())
-		core["asteroid"] = list(asteroids_list.keys())
-		core['country'] = list(ncountries.keys())
-		core['capital'] = [country["capital"] for country in ncountries.values()]
-		core["climate dictionary term"] = list(climate_dictionary.keys())
-		core["climate dictionary"] = list(climate_dictionary.values())
-		core["word meaning"] = list(meaning_term)
-		core["qa-astro"] = list(qa_astro)
-		core['help'] = list(help.keys())
-		core["linuxcmd"] = list(linux_commands)
+				special_dates_dict[parsed_date_tuple] = event_desc
+		midbcounter += len(special_dates_dict)
+
+		knowledge["adjective"] = list(fetch_fromdbfile("cybele.db", "adjectivedb", "adjective"))
+		knowledge["adverb"] = list(fetch_fromdbfile("cybele.db", "adverbdb", "adverb"))
+		knowledge["conjunction"] = list(fetch_fromdbfile("cybele.db", "conjunctiondb", "conjunction"))
+		knowledge["preposition"] = list(fetch_fromdbfile("cybele.db", "prepositiondb", "preposition"))
+		knowledge["verb_base"] = list(fetch_fromdbfile("cybele.db", "verb_basedb", "verb_base"))
+		knowledge["verb_past_participle"] = list(fetch_fromdbfile("cybele.db", "verb_past_db", "verb_past_participle"))
+		knowledge["noun"] = list(fetch_fromdbfile("cybele.db", "nouns", "noun"))
+
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
-		core["old_tech_term"] = old_tech_terms_list
 		
-		internal_db_array = ["astronomy glossary","star name","constelattion","asteroid","country","capital",
-							"climate dictionary term","climate dictionary","word meaning","qa-astro","help",
-							"linuxcmd","element symbol","element abbr","old_tech_term"]
+		my_library = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 
-		for i in range(len(internal_db_array)):
-			 midbcounter = midbcounter + (len(core[internal_db_array[i]]))
+		midbcounter = 0 
+		for category_list in knowledge.values():
+			midbcounter += len(category_list)
+		midbcounter += len(questions) + len(answers)
+		midbcounter += len(my_library)
+		for key in core:
+			if isinstance(core[key], list):
+				midbcounter += len(core[key])
+			elif isinstance(core[key], dict):
+				midbcounter += len(core[key])
 
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_short'])}, {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}") 
+		sys.exit(1)
+		
 #----------------------------------------------------------------------
 questions = [
 	"Ola",
 	"Como te chamas?",
+	"Tudo bem?",
 	"Hello",
 	"What is your name?",
 	"What is the meaning of your name?",
@@ -922,18 +1283,18 @@ questions = [
 	"Good to know",
 	"A coffee for you",
 	"Coffee for you",
-	"How are you?",
-	"How are you today?",
 	"Hello",
 	"Hi",
 	"Whats on your mind today?",
 	"The world",
-	"Life"
+	"Life",
+	"Chat"
 ]
 #------------------------------------------------
 answers = [
-	"Ola! Chamo-me " + _title_ + " e lamento informar que não falo pt-PT, nem ainda funciono com a tradução instantânea.",
+	"Olá! Sou " + _title_ + ". De momento, não falo português de Portugal. No entanto, estou aqui para ajudar! Pode digitar 'help' ou 'what can you do' para saber mais.",
 	"Chamo-me " + _title_ + " e lamento ter que informar que não falo pt-PT, nem ainda funciono com a tradução instantânea.",
+	"Melhor impossível! Mas não me venhas com truques hoje, hmm?",
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
@@ -945,11 +1306,11 @@ answers = [
 	"The numbers are in decimal degrees format and range are from -90 to 90 for latitude using + for North and - for South and -180 to 180 for longitude using + for East and - for West.",
 	"Latitudes are horizontal lines that measure distance north or south of the equator. Longitudes are vertical lines that measure east or west of the meridian in GREENwich, England. Together, latitude and longitude enable cartographers, geographers and others to locate points or places on the globe.",
 	"If you're using a map with longitude and latitude lines, stick a pin where you're located. Then, draw a straight horizontal line from your point to the east or west edge of the map. Then, draw a vertical line from your location to the north or south edge of the map. Put together the 2 coordinates to find your position.",
-	"Yes. At this time and with my core code i can be 100% offline resourceful.",
+	"Yes. At this time and with my core code i can be 98.0% offline resourceful.",
 	"The 1990's was a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"The 90's were a decade of great cultural change, with the rise of hip hop, grunge, and teen pop. The were times who left a lasting mark on the world, and we still can feel its influence today.",
 	"You wish! Just type quit it's easier.",
-	"Yes. Type <convert gps to distance> and i will prompt for the data i need.",
+	"Yes. Type <gps to distance> and i will prompt for the data i need.",
 	"Yes. I can be costumized. To that contact my creator or find more information about chat bot.",
 	"Yes. I can be personalized. To that contact my creator or find more information about chat bot.",
 	"Well i dont have age persay, i was officially actived " + str(days_till_today.days) + " days ago and my last updated was in " + _revise_ + ". Do the math!",
@@ -959,13 +1320,12 @@ answers = [
 	"No problem. Glad i could be of assistance.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
 	"Thank you! I appreciate the gesture. I will enjoy my coffee and hot.",
-	"I am good, thank you for asking!",
-	"I am doing well, thank you for asking!",
 	"Hi! What's on your mind?",
 	"Hello! What's on your mind?",
 	"I'm glad you're asking.\nI'm thinking about how lucky I am to be able to help people with my answers.",
 	"The world is a beautiful and complex place.\nIt is full of amazing things, from the tallest mountains to the deepest oceans.",
-	"Life is a journey, a mystery, and a gift. It is full of ups and downs, challenges and triumphs."
+	"Life is a journey, a mystery, and a gift. It is full of ups and downs, challenges and triumphs.",
+	"Hello! I'm here to help. You can type 'help', search for an astronomy term, or explore an old term. \nTo see more options, just type 'what can you do'.\n"
 ]
 #-------------------------------------------------
 others = [
@@ -980,9 +1340,10 @@ others = [
 	"show askard <id>","list askard <id start> to <id end>","achk askard <id>","leap year","make a sentence","make a phrase",
 	"people in space","do you speak","tvshows is he watching","your fav tvshows","seek <topic>","find <topic>","infostar <star name>",
 	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
-	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands"
-	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was vorian created",
-	"play game constelattions","play game capitals","when did vorian went online","difference from <date>"
+	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
+	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
+	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
+	"current system uptime","display uptime"
 ]
 #----------------------------------------------------------
 maincommands = [
@@ -990,22 +1351,25 @@ maincommands = [
 	"what can you anwser","what do you know","what can you do","what do you do","what you can do","adelino quote","what is",
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
 	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
-	"difference from","age calc","what do you know about","astronomy","asteroid","constelations","universe","can you","vorian created",
-	"visualize periodic table","show periodic table","distance from","orbit","planets of the solar system","planets of solar system",
+	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","elysia created",
+	"visualize periodic table","show periodic table","distance from","planets of the solar system","planets of solar system",
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
-	"set default gps","capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me",
-	"can you help","help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
+	"capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me","can you help",
+	"help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
 	"merry christmas","i wish you a merry christmas","happy valentines","happy valentines","happy new year","what is your version",
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
 	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
 	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
-	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","first last","limits",
+	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits","protect image",
 	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
 	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
 	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when vorian was created","vorian created","when vorian went online","cybele uptime","stars from","list stars","list constellations"
+	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
+	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on",
+	"offline mode off","how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -1056,13 +1420,8 @@ if _cybid_ == True:
 		others.append(addcomm[i])
 
 #----------------------------------------------------------------------
-old_tech_terms_list = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
-core["old_tech_term"] = old_tech_terms_list
-
-#----------------------------------------------------------------------
 if _cybid_ == True:
 	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
-core['help'] = list(help.keys())
 checksum = shift
 
 #------------------------------------------------------------
@@ -1169,50 +1528,60 @@ class Sun:
 #-----------------------------------------------------------------------
 # Moon fases calculation
 class MoonPhase:
-    def __init__(self, latitude, longitude, date):
-        self.latitude = latitude
-        self.longitude = longitude
-        self.date = date
+	def __init__(self, latitude, longitude, date):
+		self.latitude = latitude
+		self.longitude = longitude
+		self.date = date
 
-    def phase_of_moon(self):
-        jd = (self.date - datetime(2000, 1, 1)).total_seconds() / 86400 + 2451545.0
-        L = (218.316 + 13.176396 * jd) % 360
-        M = (134.963 + 13.064993 * jd) % 360
-        F = (93.272 + 13.229350 * jd) % 360
-        l = L + 6.289 * math.sin(math.radians(M))
-        b = 5.128 * math.sin(math.radians(F))
-        r = 385001 - 20905 * math.cos(math.radians(M))
+	def phase_of_moon(self):
+		jd = (self.date - datetime(2000, 1, 1)).total_seconds() / 86400 + 2451545.0
+		L = (218.316 + 13.176396 * jd) % 360
+		M = (134.963 + 13.064993 * jd) % 360
+		F = (93.272 + 13.229350 * jd) % 360
+		l = L + 6.289 * math.sin(math.radians(M))
+		b = 5.128 * math.sin(math.radians(F))
+		r = 385001 - 20905 * math.cos(math.radians(M))
 
-        obl = 23.439 - 0.0000004 * jd
-        x = r * math.cos(math.radians(l))
-        y = r * math.cos(math.radians(obl)) * math.sin(math.radians(l))
-        z = r * math.sin(math.radians(obl)) * math.sin(math.radians(l))
+		obl = 23.439 - 0.0000004 * jd
+		x = r * math.cos(math.radians(l))
+		y = r * math.cos(math.radians(obl)) * math.sin(math.radians(l))
+		z = r * math.sin(math.radians(obl)) * math.sin(math.radians(l))
 
-        ra = math.atan2(y, x)
-        dec = math.asin(z / r)
+		ra = math.atan2(y, x)
+		dec = math.asin(z / r)
 
-        lst = (100.46 + 0.985647352 * jd + self.longitude) % 360
-        ha = (lst - ra) % 360
-        phase_angle = math.degrees(math.acos(math.sin(math.radians(self.latitude)) * math.sin(math.radians(dec)) + math.cos(math.radians(self.latitude)) * math.cos(math.radians(dec)) * math.cos(math.radians(ha))))
+		lst = (100.46 + 0.985647352 * jd + self.longitude) % 360
+		ha = (lst - ra) % 360
+		phase_angle = math.degrees(math.acos(math.sin(math.radians(self.latitude)) * math.sin(math.radians(dec)) + math.cos(math.radians(self.latitude)) * math.cos(math.radians(dec)) * math.cos(math.radians(ha))))
 
-        if phase_angle < 90:
-            return "Waxing Crescent"
-        elif phase_angle < 180:
-            return "First Quarter"
-        elif phase_angle < 270:
-            return "Waxing Gibbous"
-        else:
-            return "Full Moon"
+		moon_phase_emoji = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘","🌑"]
+		if phase_angle < 90:
+			return moon_phase_emoji[7] + " Waxing Crescent"
+		elif phase_angle < 180:
+			return moon_phase_emoji[6] + " First Quarter"
+		elif phase_angle < 270:
+			return moon_phase_emoji[3] + " Waxing Gibbous"
+		else:
+			return moon_phase_emoji[4] + " Full Moon"
+
+#---------------------------------------------------
+def print_aligned(items, items_per_line, column_width):
+	for i, item in enumerate(items):
+		print(f"{item:<{column_width}.{column_width}}", end="")
+		if (i + 1) % items_per_line == 0:
+			print()
+	if len(items) % items_per_line != 0:
+		print()
 
 #---------------------------------------------------
 # pre harvesine / pregpsconvert
 def pregpsconvert():
 
-	print("\n" + "〉" + "Convert GPS to distance")
+	print(f"\n{_spchar_[1:2]}{kolor['BOLD_YELLOW']}Convert GPS to distance {kolor['OFF']}")
 	while True:
-		if _poigps_[3] == 0:
+		if _poigps_[4] == 0:
 			try:
-				print("\n" + "〉" + kolor['GREEN'] +" Point of origin "+kolor['OFF'])
+				print(f"{_spchar_[1:2]}{kolor['CYAN']} Point of origin {kolor['OFF']}")
 				latgps = float(input('   Latitude coordinates (ex 39.4487): '))
 
 				if latgps > 90 or latgps < -90:
@@ -1226,12 +1595,12 @@ def pregpsconvert():
 				print("The entered data is invalid not recognized for the requested task!\n")
 				break
 		else:
-			print("\n" + "〉" +kolor['RED']+" [Assumning default gps values as Origin] "+kolor['OFF'])
+			print(f"{_spchar_[1:2]}{kolor['BOLD_MAGENTA']}[Assumning default gps values as Origin] {kolor['OFF']}")
 			latgps = int(_poigps_[0])
 			longps = int(_poigps_[1])
 
 		try:
-			print("\n" + "〉" + kolor['GREEN'] +" Point of destination "+kolor['OFF'] )
+			print(f"{_spchar_[1:2]}{kolor['CYAN']} Point of destination {kolor['OFF']}")
 			lat2gps = float(input('   Latitude coordinates (ex 35.8806): '))
 			if lat2gps > 90 or lat2gps < -90:
 				print("\nLatitude value degrees must be between -90 and 90.\n")
@@ -1241,14 +1610,17 @@ def pregpsconvert():
 				print("Longitude value degrees must be between -180 and 180.\n")
 				continue
 		except ValueError:
-			print("The entered data is invalid for the requested task!\n")
+			print("Value not recognized like latitude or longitude gps coordinates!\n")
 			break
 
 		distancekm = distance_gps(latgps, longps, lat2gps, lon2gps) / 1000
-		if int(distancekm) > 0 or int(distancekm) < 100000:
-			print("\n"+kolor['RED'] +"〉"+ kolor['OFF'] +" The distance between the two points provided is " + str('{:,.1f}'.format(distancekm)) + " kilometers.")
-			print("  ( approximately ≈ " + str( convert_to_words(int(distancekm) + 1) ) + " kilometers )\n")
+		if int(distancekm) > 0 or int(distancekm) < 1000000:	
+			print("")
+			print(f"{kolor['RED']}{_spchar_[1:2]} {kolor['BOLD_WHITE']} The distance between the two points provided is {str('{:,.1f}'.format(distancekm))} kilometers.{kolor['OFF']}")
+			print(f"  ( approximately ≈ {str( convert_to_words(int(distancekm) + 1) )} kilometers )\n")
 			return False
+		else:
+			print(f"{kolor['RED']}{_spchar_[1:2]}{kolor['OFF']} {random.choice(messages['trouble_short'])} My code had some problems handling the distance result {str(distancekm)}") 
 
 #---------------------------------------------------
 # Harvesine
@@ -1305,38 +1677,45 @@ def convert_to_words(num):
 
 #----------------------------------------------------
 def drawart(artname):
-	print (kolor['OFF'])
-	if artname == 'art_cybele' and _cybid_ == True:
-		random_color = random.choice(list(kolor.keys()))
-		if random_color == 'DARK_BLACK' or random_color == 'BLACK' or random_color == 'WHITE':
-			random_color = 'RED'
-		artcor = kolor[random_color]
-		art = art_cybele
-	elif artname == 'art_world':
-		artcor = kolor['BLUE']
-		art = art_world
-	elif artname == 'art_py':
-		artcor = kolor['GREEN']
-		art = art_py
-	else:
-		randomcolor = ['RED','BLACK','DARK_MAGENTA','DARK_GREEN']
-		artcor = kolor[random.choice(randomcolor)]
-		art = art_cybele
-	for i in range(len(art)):
-		res = ''.join(map(chr, art[i]))
-		if i == 5 and artname == 'art_cybele':
-			print (artcor + str(res) + kolor['DARK_YELLOW'] + ''.join(map(chr, art_byas)))
-		else:
-			print (artcor + str(res))
-	print (kolor['OFF'])
+	print(kolor['OFF'])
 
-#---------------------------------------------------
-def scan_askards(query):
-	results = []
-	for sdb, text in askards_db.items():
-		if query.lower() in kdecode(text.lower(), shift):
-			results.append(sdb)
-	return results
+	art_data = {
+		'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
+			'fallback_colors': ['RED', 'DIM_RED', 'BOLD_RED'], 'special_line': 5, 'special_suffix': art_byas,
+			'special_suffix_color': 'BOLD_YELLOW'},
+		'art_world': {'art': art_world, 'color': 'BLUE'},
+		'art_py': {'art': art_py, 'color': 'GREEN'}
+	}
+
+	if artname not in art_data:
+		print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!")
+		print(kolor['OFF'])
+		return
+
+	config = art_data[artname]
+	art = config['art']
+	if 'color' in config:
+		art_color = kolor[config['color']]
+	else:
+		available_colors = [c for c in list(kolor.keys()) if c not in config.get('exclude_colors', [])]
+		if not available_colors:
+			art_color_name = random.choice(config['fallback_colors'])
+		else:
+			art_color_name = random.choice(available_colors)
+		art_color = kolor[art_color_name]
+
+	for i, line_bytes in enumerate(art):
+		res = ''.join(map(chr, line_bytes))
+		if artname == 'art_cybele' and i == config['special_line']:
+			suffix_res =''.join(map(chr, config['special_suffix']))
+			start_of_line = res[:11]
+			new_content = kolor['DIM_YELLOW'] + dblrconn[0:7] + kolor['OFF']
+			new_content_len = len(new_content) 
+			final_line = art_color + start_of_line + new_content + art_color + res[18:-2]
+			print(final_line + kolor[config['special_suffix_color']] + suffix_res)
+		else:
+			print(art_color + res)
+	print(kolor['OFF'])
 
 #---------------------------------------------------
 def daysweeks_year():
@@ -1352,7 +1731,6 @@ def daysweeks_year():
 def leapyear():
 	year = int(datetime.now().strftime("%Y"))
 	result = ''
-
 	if (year % 400 == 0) and (year % 100 == 0):
 		result = "a leap year".format(year)
 	elif (year % 4 ==0) and (year % 100 != 0):
@@ -1369,7 +1747,7 @@ def leapyear():
 def get_question():
 	qt = input( _title_ + "? 〉")
 	if qt.isupper():
-		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
+		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.")
 		question = qt.lower()
 	try:
 		if str(qt):
@@ -1379,8 +1757,9 @@ def get_question():
 	return qt.lower()
 
 def find_answer(question,whatlist):
+	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
-	outoptions = ["Perhaps you meant: ","It looks like you might have meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
+	outoptions = ["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
 	for p in range(len(pontuation)):
 		question = question.replace(pontuation[p],"")
 	for index, value in enumerate(whatlist):
@@ -1390,9 +1769,11 @@ def find_answer(question,whatlist):
 	dict_climate = core.get("climate dictionary", [])
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
-	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd"]
+	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
+					"time_query","season_query","asking for country details","asking for talking","asking for a word","python art",
+					"sayconvert"]
 	others = [item for key in others_keys if key in core for item in core[key]]
-	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands 
+	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
 		output_string = random.choice(outoptions)
@@ -1400,10 +1781,7 @@ def find_answer(question,whatlist):
 		output_string = ""
 	for i, suggestion in enumerate(suggestions):
 		if i < 3:
-			if _cybid_ == True:
-				output_bycyid = ""+kolor['YELLOW']+suggestion.capitalize() + kolor['OFF'] + " or "
-			else:
-				output_bycyid = ""+kolor['DARK_MAGENTA']+suggestion.capitalize() + kolor['OFF'] + " or "
+			output_bycyid = ""+kolor[sugestion_color]+suggestion.capitalize() + kolor['OFF'] + " or "
 			output_string += output_bycyid
 			csugestions.insert( 0, suggestion)
 	return output_string[:-4] + "\n"
@@ -1411,7 +1789,6 @@ def find_answer(question,whatlist):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def spell_check(word, word_list):
-
 	word = word.lower()
 	if word in word_list:
 		return True, []
@@ -1428,7 +1805,6 @@ def spell_check(word, word_list):
 
 #----------------------------------------------------------------
 def levenshtein_distance(a, b):
-
 	n, m = len(a), len(b)
 	dp = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
 	for i in range(n + 1):
@@ -1444,58 +1820,6 @@ def levenshtein_distance(a, b):
 			dp[i][j] = min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost)
 	return dp[n][m]
 
-#---------------------------------------------------------
-def make_sentence():
-
-	knowledge = {
-	"pronoun":	["I","you","he","she","it","we","they","me","you","him","her","it","us","them","mine","yours","his","hers","its","ours","theirs"],
-	"not asverb":	["is","was","are","were","am","have","had","has","will","would","should","can","could","may","might","must","ought","need","dare","used","be"],
-	"contration":	["Can't","cannot","Don't","do not","Didn't","did not","Shouldn't","should not","Wouldn't","would not","Couldn't","could not","Mustn't","must not","Haven't","have not","Hasn't","has not","Couldn't have","could not have","Shouldn't have","should not have","Wouldn't have","would not have","Mustn't have","must not have"],
-	"preposition":	["about", "above", "across", "after", "against", "along", "among", "around", "at", "before", "behind", "below", "beneath", "beside", "between", "by", "concerning", "despite", "down", "during", "except", "for", "from", "in", "into", "near", "of", "off", "on", "onto", "opposite", "out", "outside", "over", "past", "regarding", "round", "since", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without"],
-	"conjunction":	["and", "but", "or", "nor", "yet", "so", "for", "because", "although", "though", "while", "since", "as", "until", "when", "where", "if", "whether", "that", "who", "which", "what", "wherever", "whoever", "whichever", "whomever"],
-	"noun":	["person", "place", "thing", "idea","animal", "object", "event", "feeling", "action", "substance","food", "drink", "color", "shape", "number", "sound", "time","information", "equipment", "tool", "machine", "vehicle","clothing", "material", "plant", "flower", "fruit", "vegetable","disease", "injury", "emotion", "thought", "memory", "dream",
-			"symbol", "sign", "message", "communication", "system", "structure","country", "city", "town", "village", "building", "room","government", "law", "religion", "culture", "society", "economy","art", "music", "literature", "science", "technology", "mathematics","game", "sport", "competition", "hobby", "skill", "ability",
-			"knowledge", "wisdom", "belief", "faith", "opinion", "attitude","experience", "adventure", "journey", "discovery", "achievement","problem", "solution", "question", "answer", "issue", "argument","debate", "discussion", "conversation", "talk", "speech","writing", "book", "article", "poem", "story", "letter", "email","website",
-			"internet", "computer", "phone", "television", "radio","world", "universe", "galaxy", "star", "planet", "moon", "sun","air", "water", "earth", "fire", "sky", "cloud", "rain", "snow","wind", "mountain", "river", "lake", "ocean", "forest", "desert","island", "jungle", "beach", "animal", "bird", "fish", "insect","mammal", "reptile",
-			"amphibian", "invertebrate", "dog", "cat", "horse","cow", "pig", "sheep", "chicken", "snake", "lizard", "frog", "butterfly","bee", "fly", "spider", "worm", "tiger","elephant","book","food","tvshow","rainbow","computer","science","mathematics","reverse","water","ocean","cybele","ecologic","nature","beach","discrete",
-			"hackneyed","resilient","tenacious","humble","abstinence","affable","aloof","auspicious","bombastic","candid","capricious","cryptic","didactic","discreet","disparate","dolorous","duplicity","esoteric","euphemism","fiat","flaccid","florid","furtive","gravitas","laconic","levity","lexical","lucid","mercenary","mercurial","meticulous",
-			"modicum","neologism","opaque","oxygen","sedution","sexy","gorgeous","vigilant","ask","cat","dog","eye","fun","hat","key","man","not","one","top","boat","girl","iron","like","lose","pass","rock","star","thin","tree","man","baby","card","film","hair","idea","movie","life","love","rock","time","work","box","dog","eye","fly","hat","key",
-			"oil","pen","row","sun","tax","top","use","wine","yes","zoo","apple","black","card","dance","eagle","fish","house","king","milk","paper","queen","school","table","water","wine","YELLOW","banana","castle","dollar","euro","family","garden","history","island","jungle","monster","number","octopus","pencil","problem","robot","school",
-			"teacher","window","zebra","alligator","bicycle","dinosaur","elephant","flower","gorilla","kangaroo","library","monkey","pencil","river","starfish","university","window"],
-	"verb":	["run", "jump", "eat", "sleep", "talk", "listen", "think", "see", "hear", "smell", "feel", "taste","be", "have", "do","walk", "fly", "swim", "crawl", "climb", "drive", "ride", "fall", "rise","say", "tell", "ask", "shout", "whisper", "yell", "argue", "discuss","know", "understand", "believe", "think", "remember", "forget", "learn", "imagine","love", "hate", "like", "dislike", "fear", "anger", "surprise", "sadness", "happiness","seem", "appear", "become", "look", "smell", "sound", "taste","have", "own", "belong"],
-	"adverb":	["quickly", "slowly", "carefully", "badly", "well","happily", "sadly", "angrily", "excitedly", "calmly","now", "then", "soon", "later", "early","yesterday", "today", "tomorrow", "always", "never","here", "there", "everywhere", "anywhere","nowhere","upstairs", "downstairs",
-				"outside", "inside", "forward","very", "extremely", "quite", "rather", "too","enough", "almost", "nearly", "scarcely", "hardly","often", "sometimes", "usually", "rarely", "never","always", "frequently", "occasionally", "seldom", "generally"],
-	"possibilities":	["might","could","may","can","could possibly","might potentially","seems likely to","is possible to","has a chance to"],
-	"adjective":	["happy", "sad", "angry", "excited", "calm","beautiful", "ugly", "tall", "short", "big","small", "old", "new", "good", "bad","smart", "stupid", "funny", "serious", "kind"]
-	}
-
-	sentence_structures = [
-		["pronoun", "verb", "noun"],
-		["pronoun", "verb", "adjective", "noun"],
-		["pronoun", "not asverb", "adjective"],
-		["pronoun", "verb", "adverb"],
-		["pronoun", "verb", "preposition", "noun"],
-		["adjective", "noun", "verb"],
-		["noun", "verb"],
-		["pronoun", "not asverb", "noun"],
-		["pronoun", "verb", "adverb", "preposition", "noun"],
-		["pronoun", "possibilities", "verb", "noun"],
-		["pronoun", "contration", "verb", "noun"],
-		["pronoun", "verb", "conjunction", "pronoun", "verb"]
-	]
-	try:
-		structure = random.choice(sentence_structures)
-		sentence = []
-		for part in structure:
-			if part not in knowledge:
-				raise ValueError("Missing part of speech: " + part)
-			word = random.choice(knowledge[part])
-			sentence.append(word)
-		sentence[0] = sentence[0].capitalize()
-		return " ".join(sentence)
-	except (ValueError, IndexError) as e:
-		return "Error: " + str(e)
-
 #------------------------------------------------------------
 def pwdgen(num_passwords, length):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -1506,11 +1830,18 @@ def pwdgen(num_passwords, length):
     return passwords
 
 #------------------------------------------------------------
-def generate_random_question():
-	grq = list(core["qa-astro"]) + list(questions) + list(others)
-	index = random.randint(0, len(grq) - 1)
-	return grq[index].capitalize()
-
+def generate_random_questions(question_sources: list, num_questions: int) -> list:
+    all_raw_questions = []
+    for source_list in question_sources:
+        all_raw_questions.extend(source_list)
+    unique_questions = list(set(all_raw_questions))
+    random.shuffle(unique_questions)
+    questions_to_return = min(num_questions, len(unique_questions))
+    selected_questions = []
+    for _ in range(questions_to_return):
+        selected_questions.append(unique_questions.pop().capitalize())
+    return selected_questions
+	
 #------------------------------------------------------------
 def days_until(what_date):
 	today = date.today()
@@ -1529,8 +1860,17 @@ def get_uptime():
 	minutes = int((total_seconds % 3600) // 60)
 	seconds = int(total_seconds % 60)
 	return (hours,minutes,seconds)
+
+#------------------------------------------------------------
+def get_display_value(value, suffix="", precision=None, replace_hyphen=False):
+	if value is None or (isinstance(value, str) and not value.strip()):
+		return "N/A"
+	if isinstance(value, (float, int)) and precision is not None:
+		return f"{value:.{precision}f}{suffix}"
+	if replace_hyphen and isinstance(value, str):
+		return value.replace('-', ' - ')
+	return f"{value}{suffix}"
 	
-#-------------------------------------------------------
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
 
@@ -1563,18 +1903,21 @@ def find_word_in_dicts(word, core):
 					print (salutation_first + salutation_time + salutation_end + "\n")
 
 			elif list_name == 'seasons':
+				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
 				allyearseasons = '' + ', '.join(core[list_name]) + ''
-				seasonmonths = '' + ', '.join(core[word]) + ''
-				print ("A period of the year that is distinguished by special climate condictions.")
-				print ("%s is one of the four seasons (%s) of the year." % (word.capitalize(), allyearseasons.title()))
-				print ("The %s period is composed by the months %s of the year." % (word.capitalize(), seasonmonths.title()))
-				print ("%s have %s.\n" % (get_the_season()[0].capitalize(),weather_like_season()))
+				current_season = word
+				current_season_index = core['seasons'].index(current_season.lower())
+				next_season_index = (current_season_index + 1) % len(core['seasons'])
+				next_season = core['seasons'][next_season_index]
+				print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {next_season.title()} approach's.")
+				print(f"(Based on current month ({datetime.now().strftime('%B')}) and {hemisphere}, the current season is {get_the_season()[0].title()})\n")
 
 			elif list_name == 'spring' or list_name == 'summer' or list_name == 'autumn' or list_name == 'winter':
-				month_number = core['months'].index(word)
-				print ("%s is the %s month of the year and one month of the %s season." % (word.capitalize(), get_ordinal_position(month_number), list_name.capitalize()))
-				print ("A year is composed by %s months and this one is made up of %s days.\n" % (len(core['months']), days_in_year()))
-
+				month_number = core['months'].index(word) + 1
+				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+				leap_year = leapyear()
+				print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
+				
 			elif list_name == 'word meaning':
 				db_file ='cybele.db';table = 'meanings';search_val = word
 				search_col = 'term';fetch_col = 'designation'
@@ -1602,9 +1945,9 @@ def find_word_in_dicts(word, core):
 				print ("")
 
 			elif list_name == 'linuxexcmd':
-				print ("exemplo....")
+				print ("")
 
-			elif list_name == 'coded':
+			elif list_name == 'python art':
 				print ("Python is a programmer language wich i was builted (coded).")
 				for i in range(len(art_py)):
 					print (art_py[i])
@@ -1677,11 +2020,38 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "asteroid":
 				asteroid_info = asteroids_list[word]
-				print ("\n %s - %s" % (list_name.capitalize(), word.capitalize()))
-				print (" Type: " + asteroid_info['type'].capitalize())
-				print (" Description: " + asteroid_info['description'].capitalize())
-				print (" Dimentions: " + str(asteroid_info['dimensions']) + " Km ±\n")
-
+				if asteroid_info['type'].lower() == "dangerous asteroid":
+					dangerast = f"{kolor['BOLD_RED']}{asteroid_info['type'].upper()}{kolor['OFF']}"
+				else:
+					dangerast = f"{kolor['BOLD_WHITE']}{asteroid_info['type']}{kolor['OFF']}"
+				print (f"\n [ {kolor['YELLOW']}{list_name.upper()} {word}{kolor['OFF']} | {dangerast} {kolor['OFF']}]")
+				print(f"   Diameter: {asteroid_info['mean_diameter'].replace('.', ',')} km")
+				print(f" Rot.Period: {asteroid_info['rotation_period']} hours")
+				print(f"     Albedo: {asteroid_info['albedo']}")
+				print(f"    Details: {asteroid_info['description']}\n")
+			
+			elif list_name == "cneos":
+				object_key = word
+				object_details = cneos_list[object_key]
+				print (f"\n [ {kolor['BOLD_RED']}{object_key.upper()}{kolor['OFF']} | {kolor['YELLOW']}Dangerous Objects{kolor['OFF']}, data by NASA JPL CNEOS ]")
+				val = len(object_key.upper())
+				print (f"{' '*val:>{val+6}}{_spchar_[10:11]} https://cneos.jpl.nasa.gov/ca/ \n")
+				diameter_value = object_details.get('diameter')
+				print(f"{'Diameter:':>15} {get_display_value(diameter_value, ' Km')}")
+				impact_value = object_details.get('impact')
+				impact_display = "N/A"
+				if impact_value is not None and (isinstance(impact_value, (float, int)) or (isinstance(impact_value, str) and impact_value.strip())):
+					try:
+						impact_display = f"{float(impact_value) * 100:.4f} %"
+					except ValueError: # In case 'impact' is a non-numeric string
+						impact_display = "N/A"
+				print(f"{'Impact Prob:':>15} {impact_display}")
+				year_value = object_details.get('year')
+				print(f"{'Year range:':>15} {get_display_value(year_value, replace_hyphen=True)}")
+				kms_value = object_details.get('kms')
+				print(f"{'V infinity:':>15} {get_display_value(kms_value, ' Km/s', precision=2)}\n")
+				
+				
 			elif list_name == "constelattion":
 				constellation_anwser = constellations_dict[word]
 				random.shuffle(messages['creative matter'])
@@ -1710,40 +2080,215 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "help":
 				print (help[word])
+				
+			elif list_name == "time_query":
+				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
 
+			elif list_name == "season_query":
+				actual_season, next_season = get_the_season()
+				if sysos.lower() == 'windows':
+					if system_country != None:
+						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					else:
+						country = pycountry.countries.get(name=country_code)
+				elif sysos.lower() == 'linux':
+					if system_country != None:
+						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					else:
+						country = pycountry.countries.get(alpha_2=country_code)
+				else:
+					if system_country != None:
+						country_code_for_holidays = system_country[0]
+						country_code_name = system_country[1]
+					else:
+						print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+	
+				sentence = f"Actualy based on the system date {datemd} it's {actual_season.capitalize()}"
+				if country:
+					sentence = sentence + f" in {country.name}"
+				print (f"{sentence} with {next_season[0].capitalize()} approaching.\n")
+
+			elif list_name == "holidays_query":
+				country_holidays()
+			
+			elif list_name == "asking for country details":
+				list_country_details()
+
+			elif list_name == "asking for talking":
+				text_color = kolor['VIVID_WHITE']
+				heading_color = kolor['BOLD_CYAN']
+				intro = random.choice(["For clarity", "Keep in mind", "Please note", "It's important to understand"])
+				beginning = random.choice(["I don't use", "my capabilities do not include", "I do not have access to", "I am unable to utilize"])
+				body = random.choice(["NLP speech synthesis, or external AI modules.", "real-time speech generation or third-party AI integrations.", "direct voice output or external neural networks."])
+				ending = random.choice(["Here's what I have:", "This is my current functionality:", "My current features are as follows:"])
+				print(f"{heading_color}{intro} {beginning} {body}\n{ending}{kolor['OFF']}")
+				for _ in range(5):
+					print(f" - {text_color}{make_text(rw, num_sentences=3, num_paragraphs=1)}{kolor['OFF']}")
+				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
+				generated_text = make_text(rw, num_sentences=3, num_paragraphs=2)
+				print(f"{text_color}{generated_text}{kolor['OFF']}")
+				print("")
+			
+			elif list_name == "asking for a word":
+				print("")
+			
+			elif list_name == "asking for a phrase":
+				if "say something" in word:
+					rns = random.randint(1, 10)
+					rnp = random.randint(1, 5)
+					generated_text = make_text(rw, num_sentences=rns, num_paragraphs=rnp)
+					print (f"{generated_text} \n")
+				else:
+					generated_text = make_text(rw, num_sentences=1, num_paragraphs=1)
+					print (f"{generated_text} \n")
+			
+			elif list_name == "asking the uptime":
+				uptime_parts = get_uptime()
+				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
+				sentence_parts = []
+				for value, unit in time_units:
+					if value > 0:
+						sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
+					if not sentence_parts:
+						sentence = "less than a second"
+					else:
+						if len(sentence_parts) > 1:
+							sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
+						else:
+							sentence = sentence_parts[0]
+				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
+						
 			else:
 				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 			return True
 
 #--------------------------------------------
-def convert_units( question ):
-	operationf = 0
-	unit_result = None
-	c_element = question.split(" ")
-	if len(c_element) != 4 or c_element[2] != 'from'.lower():
-		print("convert <VALUE> from/days <UNIT> | seconds|minutes|hours|feets|miles|yards|AU|m3|gallons|fahrenheit\n")
-	else:
-		value = float(c_element[1])
-		unit_name = c_element[3]
-		if find_unit_factor(factors, c_element[3]) == None:
-			print("The unit you insert is not available! Units available: feets|miles|yards|m3|gallons|fahrenheit\n")
-		else:
-			factor = float(find_unit_factor(factors, unit_name))
-			operationf = value*factor
-		if unit_name == 'feets' or unit_name == 'miles' or unit_name == 'yards' or unit_name == 'au':
-			unit_result = 'Kilometer(s)'
-		elif unit_name == 'm3' or unit_name == 'gallons':
-			unit_result = 'Litter(s)'
-		elif unit_name == 'celcius' or unit_name == 'fahrenheit':
-			unit_result = 'celcius'
-	return operationf, unit_result
+def convert_units(question: str):
+	CONVERSION_FACTORS = {
+		'length': {
+			'meter': 1.0,
+			'meters': 1.0,
+			'km': 1000.0,
+			'kilometre': 1000.0,
+			'kilometres': 1000.0,
+            'kilometer': 1000.0,
+			'kilometers': 1000.0,
+			'foot': 0.3048,
+			'feet': 0.3048,
+			'mile': 1609.34,
+			'miles': 1609.34,
+			'yard': 0.9144,
+			'yards': 0.9144,
+			'au': 149597870700.0, # Astronomical Unit to meters
+			'astronomical unit': 149597870700.0,
+			'astronomical units': 149597870700.0,
+		},
+		'volume': {
+			'liter': 1.0,
+			'liters': 1.0,
+			'm3': 1000.0, # cubic meter to liters
+			'cubic meter': 1000.0,
+			'cubic meters': 1000.0,
+			'gallon': 3.78541,
+			'gallons': 3.78541,
+		},
+		'time': {
+			'second': 1.0,
+			'seconds': 1.0,
+			'minute': 60.0,
+			'minutes': 60.0,
+			'hour': 3600.0,
+			'hours': 3600.0,
+			'day': 86400.0,
+			'days': 86400.0,
+			'week': 604800.0,
+			'weeks': 604800.0,
+		},
+		'temperature': {
+			'celsius': 'celsius',
+			'fahrenheit': 'fahrenheit',
+			'kelvin': 'kelvin',
+		}
+	}
 
-#--------------------------------------------
-def find_unit_factor(cfactors, unit):
-	for unit_name, factor in factors:
-		if unit_name == unit:
-			return factor
-	return None
+	match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
+    
+	if not match:
+		match = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
+		if not match:
+			return None, "Use: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \n"
+        
+		value_str, unit_from_raw = match.groups()
+		unit_to_raw = None # No explicit 'to' unit
+        
+	else:
+		value_str, unit_from_raw, unit_to_raw = match.groups()
+
+	try:
+		value = float(value_str)
+	except ValueError:
+		return None, "Invalid value. Please provide a numeric value.\n"
+
+	unit_from = unit_from_raw.strip()
+	unit_to = unit_to_raw.strip() if unit_to_raw else None
+
+	from_category = None
+	from_factor = None
+	for category, units in CONVERSION_FACTORS.items():
+		if unit_from in units:
+			from_category = category
+			from_factor = units[unit_from]
+			break
+
+	if not from_category:
+		return None, f"{random.choice(messages['trouble_short'])} I don't recognize '{unit_from}' unit. Please check spelling or supported units.\n"
+
+	if unit_to is None:
+		if from_category == 'length':
+			unit_to = 'meters'
+		elif from_category == 'volume':
+			unit_to = 'liters'
+		elif from_category == 'time':
+			unit_to = 'seconds'
+		elif from_category == 'temperature':
+			return None, f"Please specify the target temperature unit (celsius|fahrenheit|kelvin')\n."
+        
+	to_category = None
+	to_factor = None
+	for category, units in CONVERSION_FACTORS.items():
+		if unit_to in units:
+			to_category = category
+			to_factor = units[unit_to]
+			break
+
+	if not to_category:
+		return None, f"{random.choice(messages['trouble_short'])} I dont recognize the target unit: '{unit_to}'. Please check spelling.\n"
+
+	if from_category != to_category and from_category != 'temperature':
+		return None, f"I cannot convert between different unit categories like '{from_category}' and '{to_category}'.\n"
+
+	if from_category == 'temperature':
+		if unit_from == 'celsius' and unit_to == 'fahrenheit':
+			converted_value = (value * 9/5) + 32
+		elif unit_from == 'fahrenheit' and unit_to == 'celsius':
+			converted_value = (value - 32) * 5/9
+		elif unit_from == 'celsius' and unit_to == 'kelvin':
+			converted_value = value + 273.15
+		elif unit_from == 'kelvin' and unit_to == 'celsius':
+			converted_value = value - 273.15
+		elif unit_from == 'fahrenheit' and unit_to == 'kelvin':
+			converted_value = (value - 32) * 5/9 + 273.15
+		elif unit_from == 'kelvin' and unit_to == 'fahrenheit':
+			converted_value = (value - 273.15) * 9/5 + 32
+		elif unit_from == unit_to:
+			converted_value = value
+		else:
+			return None, f"Conversion between '{unit_from}' and '{unit_to}' temperature units is not available.\n"
+	else:
+		value_in_base_unit = value * from_factor
+		converted_value = value_in_base_unit / to_factor
+
+	return round(converted_value, 4), unit_to
 
 #--------------------------------------------
 def get_current_century():
@@ -1755,9 +2300,8 @@ def get_current_century():
 #-------------------------------------------------
 def quicklist(list, delimiter):
 	if not delimiter:
-		delimiter = "\u3009"
+		delimiter = "\u3009" # or spchar[1:2]
 	for i in range(len(list)):
-		#print (" 〉 "+ list[i])
 		print (" " + delimiter + " " + list[i])
 
 #-----------------------------------------------
@@ -1835,47 +2379,46 @@ def add_days(n, d = datetime.today()):
   return d + timedelta(n)
 
 #-------------------------------------------------
-def days_to_units(num_days):
-	minutes = num_days * 24 * 60
-	hours = num_days * 24
-	seconds = num_days * 24 * 60 * 60
-	return minutes, hours, seconds
-
-#-------------------------------------------------
 def days_to_event(event):
-	if not event:
-		print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
-	else:
-		if event == 'christmas':
-			thisyear = date.today().year
-			christmas = date(year=thisyear, month=12, day=25)
-			days_left = days_until(christmas)
-		elif event == 'newyear':
-			thisyear = date.today().year
-			yearseve = date(year=thisyear, month=12, day=31)
-			days_left = days_until(yearseve)
-		elif event == 'birthday' or event == 'mybirthday':
-			nextyear = date.today().year + 1
-			birthday = date(year=nextyear, month=5, day=4)
-			days_left = days_until(birthday)
-		else:
-			try:
-				datetime.strptime(event, "%d.%m.%Y")
-			except ValueError:
-				pass
-			try:
-				datetime.strptime(event, "%d/%m/%Y")
-			except ValueError:
-				pass
-			try:
-				datetime.strptime(event, "%d-%m-%Y")
-			except ValueError:
-				pass
-			days_left = 0
-		userdate = date(year=int(event[6:]), month=int(event[3:5]), day=int(event[0:2]))
-		days_left = days_until(userdate)
-	return days_left
 
+	if not event:
+		print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} What?!\n")
+		return 0
+
+	today = date.today()
+	this_year = today.year
+	days_left = 0
+
+	if event == 'christmas':
+		christmas = date(year=this_year, month=12, day=25)
+		days_left = days_until(christmas)
+	elif event == 'newyear':
+		new_year = date(year=this_year + 1, month=1, day=1)
+		days_left = days_until(new_year)
+	elif event == 'birthday':
+		birthday_this_year = date(year=this_year, month=5, day=4)
+		if birthday_this_year < today:
+			birthday = date(year=this_year + 1, month=5, day=4)
+		else:
+			birthday = birthday_this_year
+		days_left = days_until(birthday)
+	else:
+		parsed_date = None
+		formats = ["%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y"]
+		for fmt in formats:
+			try:
+				parsed_date = datetime.strptime(event, fmt).date()
+				break
+			except ValueError:
+				continue
+		if parsed_date:
+			days_left = days_until(parsed_date)
+		else:
+			#print(f"I couldn't understand '{event}'. Provide a valid event or a date in DD.MM.YYYY, DD/MM/YYYY, or DD-MM-YYYY.")
+			days_left = 0
+
+	return days_left
+	
 #-------------------------------------------------
 def daysweeks_from_date(start_date):
 	import datetime
@@ -2035,7 +2578,31 @@ def get_thepopulation(country_name):
 		return None
 
 #-------------------------------------------------
-def extract_from_vorian(content_type):
+def recent_from_elysia():
+	url = website.get('tvshow')
+	if internet_onoff() == False or internet_onoff() == None or not url:
+		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
+		return
+	try:
+		response = urllib.request.urlopen(url)
+		html_content = response.read()
+		html_string = html_content.decode("utf-8")
+		soup = BeautifulSoup(html_string, 'html.parser')
+		items_list = []
+		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+		for show in tv_shows:
+			title_element = show.find('span', class_='C9DxTc')
+			if title_element:
+				items_list.append(title_element.text.strip())
+		for i in range(82, 87):
+			print (items_list[i])
+	except urllib.error.URLError as e:
+		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
+
+#-------------------------------------------------
+def extract_from_elysia(content_type):
 	url = website.get(content_type)
 
 	if internet_onoff() == False or not url:
@@ -2056,6 +2623,7 @@ def extract_from_vorian(content_type):
 					items_list.append(title_element.text.strip())           
 			for i in range(87, len(items_list)):
 				print (items_list[i])
+			print("")
 		elif content_type == 'movies':
 			classic_movies_section = soup.find('div', id='h.7ea6f691e3c697ae_12')
 			if classic_movies_section:
@@ -2110,8 +2678,10 @@ def get_the_season():
 		print (f"{random.choice(messages['trouble_short'])} Could not determine season!\n")
 		return None, None
 
+	season_emoji = ["🌻", "☀️", "🍁", "❄️"]
 	seasons = list(core['seasons'])
-	current_season = seasons[s]
+	#current_season = seasons[s]
+	current_season = f"{seasons[s]} {season_emoji[s]}"
 	next_season_index = (s + 1) % 4
 	other_seasons = seasons[next_season_index:] + seasons[:next_season_index - 1]
 	return current_season, other_seasons
@@ -2140,7 +2710,7 @@ def special_dates(date_to_check):
 
 	if month_day_key in special_dates_dict:
 		event = special_dates_dict[month_day_key]
-		print(f"And it is also the {event}!")
+		print(f"And it is also the {event}")
 	elif month_day_key in seasonal_start_dates:
 		season_index = seasonal_start_dates[month_day_key]
 		season_name = seasons[season_index]
@@ -2221,13 +2791,13 @@ def random_season_activity():
 	conn = None
 	try:
 		if internet_onoff():
-			conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/cybele.sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+			conn = sqlitecloud.connect(sqlconn)
 		else:
 			db_filename = "cybele.db"
 			if os.path.isfile(db_filename):
 				conn = sqlite3.connect(db_filename)
 			else:
-				modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n    I cannot execute properly. Exiting."
+				modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 				print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
 				sys.exit(0)
 
@@ -2238,8 +2808,7 @@ def random_season_activity():
 		if result:
 			activities_str = result[0]
 			if activities_str is not None:
-				activities = [activity.strip() for activity in activities_str.split(',')]
-				
+				activities = [activity.strip() for activity in activities_str.split(',')]				
 				activitie = "\n " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
 				print(activitie)
 			else:
@@ -2325,14 +2894,23 @@ def cybele_math_game():
 #-------------------------------------------------
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
+	global dblrconn
 	if internet_onoff() == True:
-		conn = sqlitecloud.connect("sqlitecloud://cxuomo3ahz.g1.sqlite.cloud:8860/"+dbname+".sqlite?apikey=9o4zGGVvXKMu74P2OzDhrotTOBp9GCGQ2a0VotuCMms")
+		db_filename = dbtable + ".db"
+		if os.path.isfile (db_filename) == True :
+			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
+		else:
+			sqlconm = sqlcodb.format(dbname_placeholder=dbname)
+			conn = sqlitecloud.connect(sqlconm)
+			dblrconn="online [sqlitecloud]"
 	else:
 		db_filename = dbname + ".db"
 		if os.path.isfile (db_filename) == True:
 			conn = sqlite3.connect(db_filename)
+			dblrconn="offline [database files]"
 		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet, the online database is inaccessible. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			sys.exit(0)
 	
@@ -2340,7 +2918,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 	filter = ""
 
 	if dbtask == 'search':
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			filter = "SELECT ask_id, askard FROM askard_db WHERE askard LIKE '%"+str(dbend)+"%'"
 			nchar = _spchar_[9:10]
 		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
@@ -2349,10 +2927,11 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			dbname = 'astronomy glossary'
 		elif dbname == 'cybele'and dbtable == 'oldtech':
 			filter = "SELECT oldterm, designation FROM oldtech WHERE designation LIKE '%"+str(dbend)+"%'"
-			nchar = _spchar_[7:8]
+			#nchar = _spchar_[7:8]
+			nchar = "↺"
 			dbname = 'old tech'
 		else:
-			print ('Well done ' + _auth1r_ +'!. The code has a error. Fix it, you morone!')
+			print ('Well done ' + _author_.split()[0] +'!. The code has a error. Fix it, you morone!')
 		
 		cursor = conn.execute(filter)
 		results = cursor.fetchall()
@@ -2371,43 +2950,46 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				
 	if dbtask == 'view':
 		cursor = None
-		if dbname == 'askardb':
-			filter = "SELECT ask_id="+str(dbbegin)+", askard from askard_db"
-		elif dbname == 'cybele':
-			if dbtable == 'funfacts':
-				filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
-			elif dbtable == 'nicethings':	
-				filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
-			else:
-				print ("option view none of dbtables with conditions... Fix'it")
-		
-		if dbname == 'askardb':
-			conn = sqlite3.connect(dbname + ".db")
+		if dbname == 'cybele' and dbtable == 'askard_db':
+			ask_id_val = int(dbbegin)
+			filter = f"SELECT ask_id, askard FROM askard_db WHERE ask_id = {ask_id_val}"
 			cursor = conn.execute(filter)
+			row_found = False
 			for row in cursor:
-				if row[0] == 1:
-					zdb.append (dbbegin)
-					zdb.append (row[1])		
-			if len(zdb) > 0:
-				print(f"\n > {zdb[1]}")
+				row_found = True
+				zdb.append(row[0])
+				zdb.append(row[1])
+			if row_found and len(zdb) > 0:
+				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
 			else:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
-		
-		elif dbname == 'cybele':
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for askard #{ask_id_val}.\n")
+		elif dbname == 'cybele' and dbtable == 'funfacts':
+			filter = "SELECT * FROM funfacts ORDER BY RANDOM() LIMIT 1;"
 			cursor = conn.execute(filter)
-			if dbtable == 'funfacts':
-				nchar = _spchar_[13:14]
-			elif dbtable == 'nicethings':	
-				nchar = _spchar_[14:15]
+			nchar = _spchar_[13:14]
 			if cursor:
 				row = cursor.fetchone()
 				if row:
 					print(f"\n {nchar} {str(row[0])}\n")
 				else:
-					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!\n")
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
+		elif dbtable == 'nicethings':	
+			filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
+			cursor = conn.execute(filter)
+			nchar = _spchar_[14:15]
+			if cursor:
+				row = cursor.fetchone()
+				if row:
+					print(f"\n {nchar} {str(row[0])}\n")
+				else:
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
+			else:
+				print ("option view none of dbtables with conditions... Fix'it")
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for view task for {dbname} dabatase...\n")
 		
 	if dbtask == 'list':
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			if dbbegin == 0 and dbend == 0:
 				nfilter = "SELECT * from askard_db"
 			else:
@@ -2427,7 +3009,9 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				nfilter = "SELECT * from constelations"
 			else:
 				nfilter = "SELECT constelation, meaning FROM constelations WHERE constelation BETWEEN '" + str(dbbegin) + "' and '"+ str(dbend) + "' ORDER BY constelation;"
-		print ("")
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for List task for {dbname} dabatase...\n")
+			return
 		
 		filter = nfilter
 		cursor = conn.execute(filter)
@@ -2441,7 +3025,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			print("")
 		
 	if dbtask == 'limits':	
-		if dbname == 'askardb':
+		if dbname == 'cybele' and dbtable == 'askard_db':
 			filter = "SELECT min(ask_id) , max(ask_id) FROM askard_db"
 			titvar = "askard ID"
 		elif dbname == 'cybele' and dbtable == 'astronomy_glossary':
@@ -2449,7 +3033,11 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			titvar = "astronomy glossary term"
 		elif dbname == 'cybele' and dbtable == 'oldtech':
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
-			titvar = "old tech terminology" 
+			titvar = "old tech terminology"
+		else:
+			print ("Option limits none of dbtables with conditions... Fix'it")
+			conn.close()
+			return
 		cursor = conn.execute(filter)
 		for row in cursor:
 			print ("The first "+ titvar +" in the database file is '" + str(row[0]) + "' and the last is '" + str(row[1]) + "'.\n")
@@ -2493,25 +3081,7 @@ def chkpy():
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		return False
-	elif pyver[0] == 3 and pyver[1] == 13 and pyver[2] == 4:
-		modname = f"This specific version is known to have issues with SSL/SQLite. Work localy downloading the databases. \n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-		return False
 	return True	
-
-#-------------------------------------------------
-def kdecode(emessage, shift):
-    dek_msg = ""
-    for char in emessage:
-        if char.isalpha():
-            if char.isupper():
-                k_char = chr((ord(char) - shift - 65) % 26 + 65)
-            else:
-                k_char = chr((ord(char) - shift - 97) % 26 + 97)
-            dek_msg += k_char
-        else:
-            dek_msg += char
-    return dek_msg
 
 #-------------------------------------------------
 def ksha(files, chunk_size=4096):
@@ -2583,20 +3153,36 @@ def yoda_speak(sentence):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def today_holiday():
+	
+	global sysos
 	today = datetime.today()
-	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-	country = pycountry.countries.get(name=os_country_2l)
-
+	if sysos.lower() == 'windows':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(name=country_code)
+	elif sysos.lower() == 'linux':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
+		
 	if country:
 		country_code_for_holidays = country.alpha_2
 	else:
-		print(f"{random.choice(messages['trouble_short'])} No valid country detected or two-letter country code.\n")
-		return False, None
+		if system_country != None:
+			country_code_for_holidays = system_country[0]
+			country_code_name = system_country[1]
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+			return False, None
 
 	if country_code_for_holidays:
 		try:
 			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
-
 			if today in country_holidays:
 				holiday_name = country_holidays.get(today)
 				print(f"Today ({today}) IS a holiday in {country_code_for_holidays}: {holiday_name}")
@@ -2613,25 +3199,44 @@ def today_holiday():
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def country_holidays():
-	os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-	country = pycountry.countries.get(name=os_country_2l)	
+	global system_country
+	if sysos.lower() == 'windows':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(name=country_code)
+	elif sysos.lower() == 'linux':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
+	
 	if country:
 		print(f"\nDetected country: {country.name} ({country.alpha_2})")
 		country_code_for_holidays = country.alpha_2
+		country_code_name = country.name
 	else:
-		print(f"{random.choice(messages['trouble_short'])} No valid country detected or two-letter country code.\n")
-		return
+		if system_country != None:
+			country_code_for_holidays = system_country[0]
+			country_code_name = system_country[1]
+			print(f"\nUsing default country: {country_code_name} ({country_code_for_holidays})")
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+			return
 
 	holidays_country_year = datetime.now().year
 	try:
 		country_holidays = holidays.country_holidays(country_code_for_holidays, years=holidays_country_year)
 		if country_holidays:
-			print(f"Holidays for {country.name} ({country.alpha_2}) in the year {holidays_country_year}:\n")
+			print(f"Holidays for {country_code_name} ({country_code_for_holidays}) in the year {holidays_country_year}:\n")
 			sorted_holidays = sorted(country_holidays.items())
 			for date, name in sorted_holidays:
 				print(f"  {date} | {name}")
 		else:
-			print(f"No holidays found for {country.name} ({country.alpha_2}) in {holidays_country_year}.")
+			print(f"No holidays found for {country_code_name} ({country_code_for_holidays}) in {holidays_country_year}.")
 	except NotImplementedError:
 		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} The holidays does not have data for {country.name} ({country.alpha_2}).")
 	except KeyError:
@@ -2641,13 +3246,50 @@ def country_holidays():
 	print("")
 	
 #----------------------------------------------------------------
+def get_display_length(s):
+    return len(re.sub(r'\033\[[0-9;]*m', '', s))
 #----------------------------------------------------------------
 def set_cursor_pos(row, col):
     return f"\033[{row};{col}H"
-
+#----------------------------------------------------------------
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
+#----------------------------------------------------------------
+def findme(input_string, item_list):	
+	input_words = input_string
+	matches = []
+	for item in item_list:
+		item_words = item.lower().split()
+		for word in input_words:
+			if word in item_words:
+				matches.append(item)
+				break
+	return matches #if matches else True
+#----------------------------------------------------------------
+def showlisttell(data_key_list, num_terms=5, category="terms"):
+   
+    all_items = list(data_key_list)
+    random.shuffle(all_items)
+    selected_items = all_items[:num_terms]
+    formatted_items_list = ""
+    if len(selected_items) > 1:
+        formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
+    elif selected_items:
+        formatted_items_list = selected_items[0]
+    intro_fragments = [
+        f"I can show you based on my knowledge, these are some {category}:",
+        f"Here are some {category} I have in knowledge:",
+        f"Based on what I know, these are some {category}:",
+        f"Let me share some {category} I have:",
+        f"You might be interested in these {category}:"
+    ]
+    chosen_intro_fragment = random.choice(intro_fragments)
+    if formatted_items_list:
+        return f"{chosen_intro_fragment} {formatted_items_list}"
+    else:
+        return f"Sorry, I don't have any {category} to show at the moment."
 
+#----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
  
     try:
@@ -2658,44 +3300,26 @@ def create_firework_explosion(x, y, max_radius, characters):
     explosion_color = random.choice([k for k in kolor.keys() if k != 'OFF']) # Pick a random color, not 'OFF'
 
     for radius in range(1, max_radius + 1):
-        # Create a temporary canvas for this frame of the explosion
-        # This allows us to build the frame and then print it efficiently
         frame_canvas = [[' ' for _ in range(canvas_width)] for _ in range(canvas_height)]
 
-        # Populate the frame_canvas with explosion particles for the current radius
         for i in range(canvas_height):
             for j in range(canvas_width):
-                # Calculate distance from the explosion center
                 dist = ((j - x)**2 + (i - y)**2)**0.5
-                # Draw particles within the current radius ring
                 if radius - 1 <= dist < radius:
                     if 0 <= i < canvas_height and 0 <= j < canvas_width:
                         frame_canvas[i][j] = random.choice(characters)
 
         clear_screen()
 
-        # Print the current frame of the explosion
         for row_idx, row_chars in enumerate(frame_canvas):
-            # Move cursor to the start of this row before printing
             print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
         
-        # Flush output to ensure frame is displayed immediately
-        import sys
+        #import sys
         sys.stdout.flush()
-        sleep(0.08) # Speed of the explosion expansion
+        sleep(0.08)
 
 def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
-	kolor = {
-		'RED': "\033[91m",
-		'GREEN': "\033[92m",
-		'YELLOW': "\033[93m",
-		'BLUE': "\033[94m",
-		'MAGENTA': "\033[95m",
-		'CYAN': "\033[96m",
-		'WHITE': "\033[97m",
-		'DARK_YELLOW': "\033[33m",
-		'OFF': "\033[0m",
-	}
+	global kolor
 
 	CLEAR_SCREEN = "\033[2J"
 	HOME_CURSOR = "\033[H"
@@ -2716,28 +3340,21 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 
 	try:
 		for _ in range(num_fireworks):
-			# Random starting position for the firework (rocket path)
-			# Ensure rocket starts near the bottom
 			start_x = random.randint(int(term_width * 0.1), int(term_width * 0.9))
 			start_y = term_height - 2 # Start 2 rows from the bottom
 
-			# Random explosion height for this firework
 			explosion_y = random.randint(int(term_height * 0.2), int(term_height * 0.6)) # Explode in upper-middle
             
-			# Simulate rocket ascent
 			random_color = random.choice([k for k in kolor.keys() if k != 'OFF'])
 			rocket_char = '↟'
 
 			for y_coord in range(start_y, explosion_y, -1):
-				clear_screen() # Clear screen for each rocket frame
-				# Draw the rocket at its current position
-				# Row is y_coord, Column is start_x
+				clear_screen()
 				print(f"{set_cursor_pos(y_coord, start_x)}{kolor[random_color]}{rocket_char}{kolor['OFF']}", end="")
 				import sys
-				sys.stdout.flush() # Ensure rocket is drawn immediately
-				sleep(0.08) # Speed of the rocket ascent
+				sys.stdout.flush()
+				sleep(0.08)
 
-			# Clear the rocket after ascent
 			clear_screen()
 
 			# Explosion!
@@ -2786,7 +3403,7 @@ def draw_christmas_tree():
 	[32,32,32,32,32,32,32,32,32,32,32,32,96,34,34,32,96,32,96,9,9,9,9,9,9]
 ]
 
-	randomcolor = ['RED','DARK_YELLOW','GREEN','BLUE','CYAN','MAGENTA']
+	randomcolor = ['RED','YELLOW','GREEN','BLUE','CYAN','MAGENTA']
 	for i in range(len(tree)):
 		res = ''.join(map(chr, tree[i]))
 		if i <= 4:
@@ -2803,10 +3420,468 @@ def draw_christmas_tree():
 		kolor['OFF']
 	)
 	print(" "*27 + merry_christmas_message)
-	
 
-#-------------------------------------------------
-#-------------------------------------------------
+#---------------------------------------------------------------------------
+#-------------------------------------------------------------------
+# cybele verb conjugator (EN simple)
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
+def cybele_conjugator(verb):
+    
+    if not isinstance(verb, str):
+        if isinstance(verb, (int, float)):
+            print(f"{kolor['BOLD_RED']}Oh no, my friend!{kolor['OFF']} I need a proper verb ({kolor['BOLD_CYAN']}a string{kolor['OFF']}) to work my magic. It looks like you gave me a {kolor['BOLD_YELLOW']}number{kolor['OFF']}: {kolor['VIVID_RED']}{verb}{kolor['OFF']}")
+        else:
+            print(f"{kolor['BOLD_RED']}Oh no, my friend!{kolor['OFF']} I need a proper verb ({kolor['BOLD_CYAN']}a string{kolor['OFF']}) to work my magic. You gave me something of type: {kolor['VIVID_RED']}{type(verb)}{kolor['OFF']}")
+        return
+
+    verb = verb.lower()
+	
+    PERSON_COL_WIDTH = 18
+    TENSE_COL_WIDTH = 25
+
+    irregular_verbs = {
+        'be': ('was/were', 'been', 'ing'),
+        'have': ('had', 'had', 'ing'),
+        'do': ('did', 'done', 'ing'),
+        'go': ('went', 'gone', 'ing'),
+        'say': ('said', 'said', 'ing'),
+        'see': ('saw', 'seen', 'ing'),
+        'make': ('made', 'made', 'ing'),
+        'come': ('came', 'come', 'ing'),
+        'know': ('knew', 'known', 'ing'),
+        'get': ('got', 'gotten/got', 'ing'),
+        'give': ('gave', 'given', 'ing'),
+        'find': ('found', 'found', 'ing'),
+        'think': ('thought', 'thought', 'ing'),
+        'tell': ('told', 'told', 'ing'),
+        'take': ('took', 'taken', 'ing'),
+        'become': ('became', 'become', 'ing'),
+        'begin': ('began', 'begun', 'ning'),
+        'run': ('ran', 'run', 'nning'),
+        'cut': ('cut', 'cut', 'tting'),
+        'put': ('put', 'put', 'tting'),
+        'read': ('read', 'read', 'ing'),
+        'eat': ('ate', 'eaten', 'ing'),
+        'write': ('wrote', 'written', 'ing'),
+        'sing': ('sang', 'sung', 'ing'),
+        'drink': ('drank', 'drunk', 'ing'),
+        'sleep': ('slept', 'slept', 'ing'),
+        'drive': ('drove', 'driven', 'ing'),
+        'swim': ('swam', 'swum', 'mming'),
+        'fly': ('flew', 'flown', 'ing'),
+        'break': ('broke', 'broken', 'ing'),
+        'speak': ('spoke', 'spoken', 'ing'),
+        'steal': ('stole', 'stolen', 'ing'),
+        'choose': ('chose', 'chosen', 'ing'),
+        'fall': ('fell', 'fallen', 'ing'),
+        'grow': ('grew', 'grown', 'ing'),
+        'draw': ('drew', 'drawn', 'ing'),
+        'build': ('built', 'built', 'ing'),
+        'send': ('sent', 'sent', 'ing'),
+        'spend': ('spent', 'spent', 'ing'),
+        'lose': ('lost', 'lost', 'ing'),
+        'catch': ('caught', 'caught', 'ing'),
+        'bring': ('brought', 'brought', 'ing'),
+        'buy': ('bought', 'bought', 'ing'),
+        'teach': ('taught', 'taught', 'ing'),
+        'fight': ('fought', 'fought', 'ing'),
+        'sell': ('sold', 'sold', 'ing'),
+        'hear': ('heard', 'heard', 'ing'),
+        'hold': ('held', 'held', 'ing'),
+        'stand': ('stood', 'stood', 'ing'),
+        'understand': ('understood', 'understood', 'ing'),
+    }
+
+    persons = [
+        'I', 'You', 'He/She/It', 'We', 'You (plural)', 'They'
+    ]
+
+    conjugated_forms = {
+        'present_simple': {},
+        'past_simple': {},
+        'future_simple': {},
+        'present_continuous': {},
+        'past_continuous': {},
+        'present_perfect': {},
+        'present_participle': '',
+        'past_participle': ''
+    }
+
+    past_simple_form = ''
+    past_participle_form = ''
+    present_participle_form = ''
+
+    if verb in irregular_verbs:
+        past_simple_form, past_participle_form, pp_suffix = irregular_verbs[verb]
+        if verb.endswith('e') and pp_suffix == 'ing' and verb != 'be':
+            present_participle_form = verb[:-1] + 'ing'
+        elif pp_suffix == 'ing':
+            present_participle_form = verb + 'ing'
+        elif pp_suffix:
+             present_participle_form = verb + pp_suffix
+        else:
+             present_participle_form = verb + 'ing'
+    else:
+        if verb.endswith('e'):
+            past_form_regular = verb + 'd'
+        elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+            past_form_regular = verb[:-1] + 'ied'
+        elif len(verb) >= 2 and verb[-1] not in 'aeiouy' and verb[-2] in 'aeiou' and verb[-3] not in 'aeiou':
+            past_form_regular = verb + verb[-1] + 'ed'
+        else:
+            past_form_regular = verb + 'ed'
+        past_simple_form = past_form_regular
+        past_participle_form = past_form_regular
+
+        if verb.endswith('e') and verb not in ['be', 'dye', 'lie', 'tie', 'vie']:
+            present_participle_form = verb[:-1] + 'ing'
+        elif len(verb) >= 2 and verb[-1] not in 'aeiouy' and verb[-2] in 'aeiou' and verb[-3] not in 'aeiou':
+            present_participle_form = verb + verb[-1] + 'ing'
+        else:
+            present_participle_form = verb + 'ing'
+
+    conjugated_forms['present_participle'] = present_participle_form
+    conjugated_forms['past_participle'] = past_participle_form
+
+    if verb in irregular_verbs:
+        if verb == 'be':
+            conjugated_forms['present_simple'] = {
+                'I': 'am', 'You': 'are', 'He/She/It': 'is',
+                'We': 'are', 'You (plural)': 'are', 'They': 'are'
+            }
+        elif verb == 'have':
+             conjugated_forms['present_simple'] = {
+                'I': 'have', 'You': 'have', 'He/She/It': 'has',
+                'We': 'have', 'You (plural)': 'have', 'They': 'have'
+            }
+        else:
+            for i, person in enumerate(persons):
+                if person == 'He/She/It':
+                    if verb.endswith(('s', 'sh', 'ch', 'x', 'z', 'o')):
+                        conjugated_forms['present_simple'][person] = verb + 'es'
+                    elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+                        conjugated_forms['present_simple'][person] = verb[:-1] + 'ies'
+                    else:
+                        conjugated_forms['present_simple'][person] = verb + 's'
+                else:
+                    conjugated_forms['present_simple'][person] = verb
+
+        for person in persons:
+            conjugated_forms['past_simple'][person] = past_simple_form
+        for person in persons:
+            conjugated_forms['future_simple'][person] = 'will ' + verb
+
+        be_present = {
+            'I': 'am', 'You': 'are', 'He/She/It': 'is',
+            'We': 'are', 'You (plural)': 'are', 'They': 'are'
+        }
+        for person in persons:
+            conjugated_forms['present_continuous'][person] = f"{be_present[person]} {present_participle_form}"
+
+        be_past = {
+            'I': 'was', 'You': 'were', 'He/She/It': 'was',
+            'We': 'were', 'You (plural)': 'were', 'They': 'were'
+        }
+        for person in persons:
+            conjugated_forms['past_continuous'][person] = f"{be_past[person]} {present_participle_form}"
+
+        have_present = {
+            'I': 'have', 'You': 'have', 'He/She/It': 'has',
+            'We': 'have', 'You (plural)': 'have', 'They': 'have'
+        }
+        for person in persons:
+            conjugated_forms['present_perfect'][person] = f"{have_present[person]} {past_participle_form}"
+
+    else:
+        for i, person in enumerate(persons):
+            if person == 'He/She/It':
+                if verb.endswith(('s', 'sh', 'ch', 'x', 'z', 'o')):
+                    conjugated_forms['present_simple'][person] = verb + 'es'
+                elif verb.endswith('y') and len(verb) > 1 and verb[-2] not in 'aeiou':
+                    conjugated_forms['present_simple'][person] = verb[:-1] + 'ies'
+                else:
+                    conjugated_forms['present_simple'][person] = verb + 's'
+            else:
+                conjugated_forms['present_simple'][person] = verb
+
+        for person in persons:
+            conjugated_forms['past_simple'][person] = past_simple_form
+        for person in persons:
+            conjugated_forms['future_simple'][person] = 'will ' + verb
+
+        be_present = {
+            'I': 'am', 'You': 'are', 'He/She/It': 'is',
+            'We': 'are', 'You (plural)': 'are', 'They': 'are'
+        }
+        for person in persons:
+            conjugated_forms['present_continuous'][person] = f"{be_present[person]} {present_participle_form}"
+
+        be_past = {
+            'I': 'was', 'You': 'were', 'He/She/It': 'was',
+            'We': 'were', 'You (plural)': 'were', 'They': 'were'
+        }
+        for person in persons:
+            conjugated_forms['past_continuous'][person] = f"{be_past[person]} {present_participle_form}"
+
+        have_present = {
+            'I': 'have', 'You': 'have', 'He/She/It': 'has',
+            'We': 'have', 'You (plural)': 'have', 'They': 'have'
+        }
+        for person in persons:
+            conjugated_forms['present_perfect'][person] = f"{have_present[person]} {past_participle_form}"
+
+    print(f"\nHere's what I have for the '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}' bring in my knowledge base:")
+
+    print(f"{kolor['BOLD_BLUE']}{'Person':<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Past Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Future Simple':<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+    print(f"{kolor['DIM_WHITE']}{'-'*PERSON_COL_WIDTH:<{PERSON_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    for person in persons:
+        present_s = conjugated_forms['present_simple'].get(person, 'N/A')
+        past_s = conjugated_forms['past_simple'].get(person, 'N/A')
+        future_s = conjugated_forms['future_simple'].get(person, 'N/A')
+        print(f"{kolor['WHITE']}{person:<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_s:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{past_s:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{future_s:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    print(f"\n{kolor['BOLD_GREEN']}And here's the second part for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}', just as important, you see:")
+
+    print(f"{kolor['BOLD_BLUE']}{'Person':<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Continuous':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Past Continuous':<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['BOLD_CYAN']}{'Present Perfect':<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+    print(f"{kolor['DIM_WHITE']}{'-'*PERSON_COL_WIDTH:<{PERSON_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}} {'-'*TENSE_COL_WIDTH:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    for person in persons:
+        present_c = conjugated_forms['present_continuous'].get(person, 'N/A')
+        past_c = conjugated_forms['past_continuous'].get(person, 'N/A')
+        present_p = conjugated_forms['present_perfect'].get(person, 'N/A')
+        print(f"{kolor['WHITE']}{person:<{PERSON_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_c:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{past_c:<{TENSE_COL_WIDTH}}{kolor['OFF']} {kolor['YELLOW']}{present_p:<{TENSE_COL_WIDTH}}{kolor['OFF']}")
+
+    print(f"\n{kolor['BOLD_GREEN']}And don't forget the core forms for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}', they're very important, you know:")
+    print(f"Present Participle (the '-ing' form): {kolor['YELLOW']}{conjugated_forms['present_participle']}{kolor['OFF']}")
+    print(f"Past Participle (often the '-ed' or irregular form): {kolor['YELLOW']}{conjugated_forms['past_participle']}{kolor['OFF']}")
+    print(f"\n{kolor['BOLD_GREEN']}That's all for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}' now! Hope it helped!{kolor['OFF']}\n")
+	
+#---------------------------------------------------------------------------
+#-------------------------------------------------------------------
+# cybele sentence, text, verb sub-cores
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
+def conjugate_verb(verb_type, subject_pronoun, knowledge):
+
+    if verb_type == "verb_present_conjugated":
+        base_verb_options = [v for v in knowledge["verb_base"] if v not in ["be", "have", "do"]]
+        if not base_verb_options:
+            return "[NO_GENERAL_VERB]"
+        base_verb = random.choice(base_verb_options)
+
+        if subject_pronoun in knowledge["pronoun_singular_third"]:
+            if base_verb in ["do", "go"]:
+                return base_verb + "es"
+            elif base_verb.endswith('y') and len(base_verb) > 1 and base_verb[-2] not in "aeiou":
+                return base_verb[:-1] + "ies"
+            else:
+                return base_verb + "s"
+        else:
+            return base_verb
+
+    elif verb_type == "aux_be_present_conjugated":
+        if subject_pronoun == "I":
+            return random.choice(knowledge["aux_be_present_I"])
+        elif subject_pronoun in knowledge["pronoun_singular_third"]:
+            return random.choice(knowledge["aux_be_present_singular_third"])
+        else:
+            return random.choice(knowledge["aux_be_present_plural"])
+
+    elif verb_type == "aux_have_present_conjugated":
+        if subject_pronoun in knowledge["pronoun_singular_third"]:
+            return random.choice(knowledge["aux_have_present_singular_third"])
+        else:
+            return random.choice(knowledge["aux_have_present_I_plural"])
+            
+    return "[CONJUGATION_ERROR]"
+
+#-------------------------------------------------------------------
+def make_sentence(rw_instance):
+
+	sentence_structures = [
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
+		["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
+		["subject", "verb_present_conjugated"],  
+		["subject", "verb_present_conjugated", "adverb"],  
+
+        ["subject", "aux_be_present_conjugated", "adjective"],  
+        ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],  
+
+        ["subject", "aux_be_present_conjugated", "negation", "adjective"],
+        ["subject", "aux_be_present_conjugated", "negation", "determiner", "noun_countable_singular"],
+
+        ["subject", "modal_verb", "verb_base", "determiner", "noun_countable_singular"],
+        ["subject", "modal_verb", "verb_base", "determiner", "noun_uncountable"],
+        ["subject", "modal_verb", "verb_base", "adverb"],
+        ["subject", "modal_verb", "verb_base"],
+
+        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_countable_singular"],
+        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_uncountable"],
+        ["subject", "aux_do_present_neg_conjugated", "verb_base"],
+
+        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_countable_singular"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle"],
+        ["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
+		
+        ["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
+        ["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
+	]
+
+	try:
+		chosen_structure = random.choice(sentence_structures)
+		sentence_words = []
+		chosen_subject = None
+		temp_word = rw_instance.get_random_word()
+
+		for i, part_type in enumerate(chosen_structure):
+			word_to_add = ""
+
+			if part_type == "subject":
+				if random.random() < 0.5:
+					chosen_subject = random.choice(knowledge["pronoun_singular_third"])
+				else:
+					chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
+				word_to_add = chosen_subject
+                
+			elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
+				if chosen_subject is None:
+					raise ValueError("Subject must be chosen before verb conjugation.")
+				word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
+                
+			elif part_type == "aux_do_present_neg_conjugated":
+				if chosen_subject in knowledge["pronoun_singular_third"]:
+					word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
+				else:
+					word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
+                    
+			elif part_type == "verb_base_be":
+				word_to_add = random.choice(knowledge["verb_base_be"])
+                
+			elif part_type == "verb_past_participle_be":
+				word_to_add = random.choice(knowledge["verb_past_participle_be"])
+            
+			elif part_type.startswith("noun"):
+				if part_type == "noun_countable_singular":
+					word_to_add = random.choice(knowledge["noun_countable_singular"])
+				elif part_type == "noun_countable_plural":
+					word_to_add = random.choice(knowledge["noun_countable_plural"])
+				elif part_type == "noun_uncountable":
+					word_to_add = random.choice(knowledge["noun_uncountable"])
+				elif part_type == "noun_abstract":
+					word_to_add = random.choice(knowledge["noun_abstract"])
+				else:
+					word_to_add = random.choice(knowledge["noun"])
+                
+				if temp_word.lower() in knowledge["noun"] or \
+					temp_word.lower() in knowledge["noun_countable_singular"] or \
+					temp_word.lower() in knowledge["noun_countable_plural"] or \
+					temp_word.lower() in knowledge["noun_uncountable"] or \
+					temp_word.lower() in knowledge["noun_abstract"] or \
+					random.random() < 0.3:
+					word_to_add = temp_word.lower()
+				else:
+					if part_type == "noun_countable_singular":
+						word_to_add = random.choice(knowledge["noun_countable_singular"])
+					elif part_type == "noun_countable_plural":
+						word_to_add = random.choice(knowledge["noun_countable_plural"])
+					elif part_type == "noun_uncountable":
+						word_to_add = random.choice(knowledge["noun_uncountable"])
+					elif part_type == "noun_abstract":
+						word_to_add = random.choice(knowledge["noun_abstract"])
+					else: 
+						word_to_add = random.choice(knowledge["noun"])
+
+				if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
+					word_to_add += 's'
+			
+			elif part_type == "adjective":
+				word_to_add = random.choice(knowledge["adjective"])
+			              
+				if temp_word.lower() in knowledge["adjective"] or \
+					temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
+					random.random() < 0.3: 
+					word_to_add = temp_word.lower()
+				else:
+					word_to_add = random.choice(knowledge["adjective"])
+
+			elif part_type == "adverb":
+				word_to_add = random.choice(knowledge["adverb"])
+               
+				if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
+					random.random() < 0.3: 
+					word_to_add = temp_word.lower()
+				else:
+					word_to_add = random.choice(knowledge["adverb"])
+
+			elif part_type == "determiner":
+				next_noun_category_in_structure = None
+				if i + 1 < len(chosen_structure) and chosen_structure[i+1].startswith("noun"):
+					next_noun_category_in_structure = chosen_structure[i+1]
+
+				if next_noun_category_in_structure == "noun_uncountable":
+					word_to_add = random.choice(["some", "the"]) 
+				elif next_noun_category_in_structure == "noun_countable_singular":
+					temp_word_for_vowel_check = rw_instance.get_random_word() 
+					while not temp_word_for_vowel_check or len(temp_word_for_vowel_check) < 2:
+						temp_word_for_vowel_check = rw_instance.get_random_word()
+                    
+					if temp_word_for_vowel_check.lower().startswith(('a', 'e', 'i', 'o', 'u')):
+						word_to_add = "an"
+					else:
+						word_to_add = "a"
+				elif next_noun_category_in_structure == "noun_countable_plural": 
+					word_to_add = random.choice(["the", "some"]) 
+				elif next_noun_category_in_structure == "noun": 
+					word_to_add = random.choice(["the", "some", "a", "an"]) 
+            
+			elif part_type in knowledge:
+				word_to_add = random.choice(knowledge[part_type])
+                
+			else:
+				if part_type in knowledge:
+					word_to_add = random.choice(knowledge[part_type])
+				else:
+					print(f"Warning: Unrecognized part type '{part_type}' in structure. This should not happen.")
+					word_to_add = "[UNKNOWN]"
+
+			sentence_words.append(word_to_add)
+
+		if sentence_words:
+			sentence_words[0] = sentence_words[0].capitalize()
+		final_sentence = " ".join(sentence_words) + random.choice([".", "?", "!"])
+		return final_sentence
+
+	except Exception as e:
+		return f"Error generating sentence: {e}"
+
+#-------------------------------------------------------------------
+def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instance here
+    text_paragraphs = []
+    for _ in range(num_paragraphs):
+        paragraph_sentences = []
+        for _ in range(num_sentences):
+            paragraph_sentences.append(make_sentence(rw_instance)) # Pass rw_instance to make_sentence
+        text_paragraphs.append(" ".join(paragraph_sentences))
+        
+    return "\n".join(text_paragraphs)
+
+#--------------------------------------------------
+def preamble_random_word():
+
+	random.shuffle(messages['preambles'])
+	chosen_preamble = random.choice(messages['preambles'])
+	random_word = rw.get_random_word()
+	while not random_word or len(random_word) < 2 or not random_word.isalpha():
+		random_word = rw.get_random_word()
+        
+	return f"{chosen_preamble} {random_word.lower()}.\n"
+
+#-------------------------------------------------------------------
+#---------------------------------------------------------------------------
 def ascii_horiz_solar_system(width):
 	if width < 60:
 		print (f"{random.choice(messages['trouble_short'])} Width is very small. Output might be distorted.\n")
@@ -2900,30 +3975,331 @@ def ascii_horiz_solar_system(width):
 	print ("")
 
 #-------------------------------------------------
+def protect_image(input_filepath, output_directory="protected_images",
+					noise_intensity=10, pixel_shift_amount=1,
+					color_jitter_factor=0.05, jpeg_quality=90, add_symbol=False):
+	
+	if not os.path.exists(output_directory):
+		os.makedirs(output_directory)
+
+	try:
+		img = Image.open(input_filepath).convert("RGB")
+	except FileNotFoundError:
+		print (f"{random.choice(messages['trouble_short'])} Input file not found. Action required: Verify the file name and path.\n")
+		return
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_short'])} Failed to open the image. Please ensure the file is valid and the path is correct.\n")
+		return
+
+	original_filename = os.path.basename(input_filepath)
+	name, ext = os.path.splitext(original_filename)
+	output_filename = f"{name}_protected{ext}"
+	output_filepath = os.path.join(output_directory, output_filename)
+
+	print(f"Processing image: {original_filename.upper()}{' with ▧ watermark' if add_symbol else ''}")
+	
+	width, height = img.size
+	noise = Image.effect_noise((width, height), sigma=noise_intensity)
+	noise_rgb = noise.convert("RGB")
+
+	# alpha=0.95 means 95% original, 5% noise.
+	img = Image.blend(img, noise_rgb, alpha=0.05)
+
+	pixels = img.load()
+	for y in range(height):
+		for x in range(width):
+			dx = random.randint(-pixel_shift_amount, pixel_shift_amount)
+			dy = random.randint(-pixel_shift_amount, pixel_shift_amount)
+			new_x = max(0, min(width - 1, x + dx))
+			new_y = max(0, min(height - 1, y + dy))
+			if (new_x, new_y) != (x, y):
+				original_pixel = pixels[x, y]
+				shifted_pixel = pixels[new_x, new_y]
+				pixels[x, y] = shifted_pixel
+				pixels[new_x, new_y] = original_pixel
+	enhancers = [
+		(ImageEnhance.Brightness, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor)),
+		(ImageEnhance.Contrast, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor)),
+		(ImageEnhance.Color, 1.0 + random.uniform(-color_jitter_factor, color_jitter_factor))
+	]
+	for enhancer_class, factor in enhancers:
+		enhancer = enhancer_class(img)
+		img = enhancer.enhance(factor)
+
+	if add_symbol:
+		draw = ImageDraw.Draw(img)
+		symbol_text = "▧"
+		
+		# --- MODIFICATION: INCREASED FONT SIZE ---
+		# Adjusted multiplier from 0.025/0.03 to 0.045 for a noticeable increase
+		font_size = int(min(width, height) * 0.045) 
+
+		font = None
+		try:
+			font_path = "arial.ttf" # Adjust this path if 'arial.ttf' isn't found
+			font = ImageFont.truetype(font_path, font_size)
+		except IOError:
+			print(f"Warning: Font '{font_path}' not found. Using default font. Symbol '▧' may not render perfectly.")
+			font_size = int(min(width, height) * 0.05) # Slightly larger for default fallback
+			font = ImageFont.load_default()
+
+		try:
+			bbox = draw.textbbox((0, 0), symbol_text, font=font)
+			text_width = bbox[2] - bbox[0]
+			text_height = bbox[3] - bbox[1]
+		except AttributeError:
+			text_width, text_height = draw.textsize(symbol_text, font=font)
+
+		margin = int(min(width, height) * 0.01)
+
+		x_pos = width - text_width - margin
+		y_pos = height - text_height - margin
+
+		# --- MODIFICATION: CHANGED TO FULLY OPAQUE WHITE ---
+		text_color = (255, 255, 255, 255) # RGBA: Fully opaque white
+
+		if img.mode != 'RGBA':
+			img = img.convert('RGBA')
+		draw = ImageDraw.Draw(img)
+
+		draw.text((x_pos, y_pos), symbol_text, fill=text_color, font=font)
+	# --- END OF SYMBOL ADDITION ---
+
+	try:
+		if ext.lower() in ['.jpg', '.jpeg']:
+			# JPEG doesn't support transparency, so convert back to RGB
+			if img.mode == 'RGBA':
+				img = img.convert('RGB')
+			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
+		elif ext.lower() == '.png':
+			# PNG supports transparency, so keep it as RGBA if it became so
+			img.save(output_filepath, format="PNG")
+		else:
+			print(f"Warning: Unsupported output format '{ext}'. Saving as JPEG.")
+			output_filename = f"{name}_protected.jpg"
+			output_filepath = os.path.join(output_directory, output_filename)
+			if img.mode == 'RGBA':
+				img = img.convert('RGB')
+			img.save(output_filepath, format="JPEG", quality=jpeg_quality)
+		print(f"Protected image saved to: {output_filepath.upper()}\n")
+	except Exception as e:
+		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
+		
+#-------------------------------------------------
+def set_system_country():
+	global system_country
+
+	while True:
+		user_input_code = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
+		if not user_input_code:
+			print ("")
+			return False
+		found_country_name = None
+		for country_name, details in ncountries.items():
+			if details.get("alpha2") == user_input_code:
+				found_country_name = country_name
+				break
+		if found_country_name:
+			system_country = (user_input_code, found_country_name.capitalize())
+			print(f"System country set to: {system_country[1]} ({system_country[0]})\n")
+			return True
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Invalid country code. Please enter a valid two-letter code.\n")
+
+#-------------------------------------------------
+def list_country_details():
+	if not ncountries:
+		print(f"{random.choice(messages['trouble_short'])} I have an internal error. No country data available.\n")
+		return
+
+	COUNTRY_WIDTH = 40
+	CAPITAL_WIDTH = 35
+	ALPHA2_WIDTH = 10
+
+	print (f"Here's some basic information i have about the {len(ncountries)} Countries i have in my knowledge:")
+	print(f"\n{'Country':<{COUNTRY_WIDTH}} {'Capital':<{CAPITAL_WIDTH}} {'Alpha2 Code':<{ALPHA2_WIDTH}}")
+	print("-" * (COUNTRY_WIDTH + CAPITAL_WIDTH + ALPHA2_WIDTH + 3)) # 2 for spaces between columns
+
+	for country_name, details in ncountries.items():
+		display_country_name = country_name.capitalize()
+		capital = details.get("capital", "N/A")
+		alpha2 = details.get("alpha2")
+		if alpha2 is None:
+			alpha2 = "N/A"
+		# f-string with '<' for left-alignment and the defined width
+		print(f"{display_country_name:<{COUNTRY_WIDTH}} {capital.title():<{CAPITAL_WIDTH}} {alpha2:<{ALPHA2_WIDTH}}")
+	print("")
+
+#-------------------------------------------------
+def _fetch_remote_library():
+
+	WEBSITE_URL = website['tvshow']
+	#if not internet_onoff():
+	#	print(f"✗ {random.choice(messages['trouble_msg'])} Network connection required. Using local list.")
+	#	return []
+
+	try:
+		response = urllib.request.urlopen(WEBSITE_URL, timeout=5)
+		html_content = response.read()
+		html_string = html_content.decode("utf-8")
+		soup = BeautifulSoup(html_string, 'html.parser')
+		items_list = []
+
+		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+		for show in tv_shows:
+			title_element = show.find('span', class_='C9DxTc')
+			if title_element:
+				items_list.append(title_element.text.strip())
+
+		if items_list:
+			print(f"✔  Successfully loaded {len(items_list)} shows from {WEBSITE_URL}\n")
+			return items_list
+		else:
+			print(f"✗ {random.choice(messages['trouble_msg'])} Found page, but no TV shows matched the scrap pattern. Using local list.")
+			return []
+
+	except urllib.error.URLError as e:
+		return []
+	except Exception as e:
+		return []
+
+#-------------------------------------------------
+def get_show_library():
+	global my_library
+
+	remote_list = _fetch_remote_library()
+	if remote_list:
+		my_library = remote_list
+	else:
+		if not my_library or len(my_library) == 0:
+			my_library = ["(Error: No Shows Available)"]
+		else:
+			print(f"✔  Successfully loaded {len(my_library)} shows from the database list.\n")
+	return my_library
+
+#-------------------------------------------------
+def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_duration_minutes=75):
+	MESSAGES = messages
+	try:
+		my_library = get_show_library()	
+		today = datetime.now().date()
+		current_datetime = datetime.combine(today, datetime.min.time())
+		current_datetime = current_datetime.replace(hour=start_hour, minute=start_minute)
+		slot_duration = timedelta(minutes=slot_duration_minutes)
+		schedule = []
+		last_show = None
+		for _ in range(num_slots):
+			available_shows = [s for s in my_library if s != last_show]
+			if not available_shows:
+				next_show = last_show
+			else:
+				next_show = random.choice(available_shows)
+
+			end_datetime = current_datetime + slot_duration
+
+			schedule.append({
+				"start": current_datetime.strftime('%H:%M'),
+				"end": end_datetime.strftime('%H:%M'),
+				"show": next_show
+			})
+
+			current_datetime = end_datetime
+			last_show = next_show
+
+		max_show_length = 20
+		if schedule:
+			max_show_length = max(len(entry['show']) for entry in schedule)
+		show_col_width = max(max_show_length + 2, 20)
+		total_line_width = 2 + 6 + 3 + 6 + 3 + show_col_width + 2
+		print("--- 📺 Gridflow Flow ---")
+		print(f"Start Time: {start_hour:02}:{start_minute:02}")
+		print(f"Slots: {num_slots} | Duration: {slot_duration_minutes} min")
+		print("-" * total_line_width)
+		header_format = f"| {'Start':<6} | {'End':<6} | {'The Flow Pick':<{show_col_width}} |"
+		print(header_format)
+		print("-" * total_line_width)
+		for entry in schedule:
+			row_format = f"| {entry['start']:<6} | {entry['end']:<6} | {entry['show']:<{show_col_width}} |"
+			print(row_format)
+		print("-" * total_line_width)
+		print("")
+		
+		return schedule
+
+	except Exception as e:
+		print(f"\nCRITICAL ERROR during schedule generation: {e}")
+		return None
+
+#-------------------------------------------------
+def get_remote_version_and_revision_from_file():
+	github_file_url = kdecode(GITHUB, shift)
+	try:
+		response = requests.get(github_file_url)
+		response.raise_for_status()      
+		content = response.text       
+		version_match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
+		revised_match = re.search(r"_revise_\s*=\s*['\"]([^'\"]+)['\"]", content) # Corrected: _revise_
+		remote_version = version_match.group(1) if version_match else None
+		remote_revised = revised_match.group(1) if revised_match else None
+		if not version_match:
+			print(f"Warning: Could not find 'version = ' in {github_file_url} on GitHub.")
+		if not revised_match:
+			print(f"Warning: Could not find '_revise_ = ' in {github_file_url} on GitHub.") # Corrected: _revise_
+		return remote_version, remote_revised
+	except requests.exceptions.RequestException as e:
+		print (f"{random.choice(messages['trouble_short'])} Error fetching remote version and revision: {e}\n")
+		return None, None
+	except Exception as e:
+		print (f"{random.choice(messages['trouble_short'])} Unexpected error occurred while getting remote version and revision: {e}\n")
+		return None, None
+
+#-------------------------------------------------
+def check_for_updates():
+
+	if internet_onoff() == True:
+		local_version_str = version    
+		local_revised_str = datetime.now().strftime('%d.%m.%Y')
+		remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
+		remote_version_str = remote_version_raw.strip() if remote_version_raw else None
+		remote_revised_str = remote_revised_raw.strip() if remote_revised_raw else None
+		if remote_version_str is None:
+			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
+			return
+		try:
+			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
+				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
+			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
+				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
+			elif local_version_str < remote_version_str or local_revised_str < remote_revised_str:
+				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {local_revised_str}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
+			else:
+				print(f"{random.choice(messages['trouble_short'])} Could not retrieve the data from the remote revision for comparison.")
+		except Exception as e:
+			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {e}\n")
+	else:
+		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
 	#----------------------------
-	check_tables(tables)
+	if not check_tables(tables):
+		exit()
+	print_statusline(f"{dbmsgbl}...")
 	make_intextdb()
+	print_statusline(f"{dbmsgbl}...")
 	#----------------------------
-	global aboutyou, days
 	wms = random.choice(core['intromsg'])
-	tdctl=0;ncctl=0;ffctl=0;ftr=0;kuote=quote()
+	tdctl=0;ncctl=0;ffctl=0;kuote=quote()
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
-	if chkcoor(lat,lon) == True:
-		_poigps_=[lat,lon,0,0,0]
-	else:
-		print_statusline(f"")
-		mmodname = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
-		print(f"\n{kolor['DARK_RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
-		sys.exit(0)
-	#----------------------------
+	validate_globals()
 	#----------------------------
 	print_statusline(f"")
 	#----------------------------
 	drawart('art_cybele')
-	print(f"\n{kolor[('DARK_YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['DARK_RED']}{_title_} {kolor['RED']}{_spchar_[0:1]}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
+	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
@@ -2935,20 +4311,17 @@ def main():
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
 			print (" " + _spchar_[1:2] + " " + "What can you anwser")
-			for i in range(random.randint(1,4)):
-				print (" " + _spchar_[1:2] + " " + generate_random_question())
+			source_list = [list(core["qa-astro"]), questions, others]
+			list_source = generate_random_questions(source_list, random.randint(1, 4))
+			for source in list_source:
+				print (f" {_spchar_[1:2]} {source}")
 			print ("")
 		#-------------------------
 		if question == "bye" or question == "exit" or question == "quit":
 			return False
 		
-		elif question == "word":
-			r = RandomWords()
-			w = r.get_random_word()
-			print(f"{w}\n")
-		
-		elif question.startswith('tell me') or question.startswith('show me') and question.find('quote')!=-1:
-			print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
+		elif any(word in question for word in core['asking for a word']):
+			print (preamble_random_word())
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
@@ -2976,6 +4349,10 @@ def main():
 			print ("List of the available commands by" + _cyext_ + "\n")
 			quicklist(addcomm,"")
 			print ("")
+		
+		elif any(word in question for word in core['information state']):
+			random.shuffle(core['information state awnsers'])
+			print (f"{random.choice(core['information state awnsers'])}\n")
 		
 		elif any(word in question for word in core['sayconvert']):
 			convert_number = question.split()[-1:][0]
@@ -3006,10 +4383,10 @@ def main():
 
 		elif find_word_in_dicts(question, core) == True:
 			if question == 'cybele idea' or 'cybele idea' in question:
-			   print("The word idea was me until "+ _auth1r_ +" started to develop me.\nAhah and just for fun!\n")
+			   print("The word idea was me until "+ _author_.split()[0] +" started to develop me.\nAhah and just for fun!\n")
 
-		elif question == 'what can i ask you' or question == 'what can you anwser' or question == 'what do you know' or question == 'what can you do' or question == 'what do you do' or question =='what you can do':
-			print ("\n" + random.choice(core['cthemes']) + ": \n")
+		elif question == 'what can i ask you' or question == 'what can you anwser' or question == 'what do you know' or question == "what do you know about'it" or question == 'what can you do' or question == 'what do you do' or question =='what you can do':
+			print (random.choice(core['cthemes']) + ": \n")
 			random.shuffle(topics)
 			last_topic = len(topics)-1
 			for i in range(last_topic):
@@ -3017,10 +4394,22 @@ def main():
 			print ("  and: ")
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
-		elif question == 'adelino quote':
-			print ("Here's a quote by my author " + _auth1r_ + ".")
-			print (" " + _spchar_[1:2] + " " + random.choice(as_quotes))
-			print ("")
+		elif question == "show topics" or question == "show me your topics" or question == "show topic's" or question == "show me your topic's" or question == "topics" or question == "topic's":
+			print (random.choice(core['cthemes']) + ": \n")
+			random.shuffle(topics)
+			last_topic = len(topics)-1
+			for i in range(last_topic):
+				print ( "   - " + topics[i].title())
+			print ("  and: ")
+			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
+
+		elif question[-5:] == 'quote':
+			if 'adelino' in question:
+				print ("Here's a quote by my author " + _author_.split()[0] + ".")
+				print (f"{_spchar_[18:19]} {random.choice(as_quotes)}")
+				print ("")
+			else:
+				print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
 
 		elif question == "what is" or question == "do you know what is" or question == "meaning of":
 			what_creative= ["","I think you were trying to know something, righ ?!\n","Are you trying to ask or know something ?!\n","You were going to ask for knowledge weren't you? ?!\n","Well, to know or question you need a matter !\n"]
@@ -3028,77 +4417,10 @@ def main():
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
 		elif question.startswith(('show me', 'tell me', 'list me')):
-			if 'astronomy' in question or 'astronomy glossary' in question:
-				all_keys = core["astronomy glossary"]
-				random.shuffle(all_keys)
-				astronomy_random_keys = all_keys[:5]
-				astro_terms = ""
-				for term in astronomy_random_keys:
-					astro_terms += term + ", "
-				print ("This are some of the terms i have in knowledge : " + astro_terms[:-2] + ".\n")
+			if 'astronomy terms' in question or 'astronomy glossary' in question:
+				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
 			
-			elif 'stars' in question or 'star names' in question:
-				all_stars = core["star name"]
-				random.shuffle(all_stars)
-				stars_random_keys = all_stars[:5]
-				stars_names = ""
-				for term in stars_random_keys:
-					stars_names += term + ", "
-				print ("This are some Stars names i have in knowledge : " + stars_names.title()[:-2] + ".\n")
-
-			elif 'asteroids' in question:
-				all_asteroids = core["asteroid"]
-				random.shuffle(all_asteroids)
-				asteroids_random = all_asteroids[:5]
-				asteroid_names = ", ".join(asteroids_random)
-				print ("Here are some asteroids i have in knowledge : " + asteroid_names + ".\n")
-
-			elif 'old' in question or 'tech' in question:
-				all_oldtech = core["old_tech_term"]
-				random.shuffle(all_oldtech)
-				oldtechs_random = all_oldtech[:3]
-				oldtech_names = ", ".join(oldtechs_random)
-				print ("Here are some old Tech terms i have in knowledge : " + oldtech_names + ".\n")
-
-			elif 'constellations' in question:
-				constelattionx = list(core['constelattion'])
-				random.shuffle(constelattionx)
-				constelattion_random = constelattionx[:5]
-				viewconstellations = ", ".join(constelattion_random[:-1]) + ' and ' + constelattion_random[4] + ' constellations.'
-				print ("I can show you based in my knowledge " + viewconstellations.title() + ".\n")
-
-			if 'climate' in question or 'dictionary' in question:
-				climatedict = list(core['climate dictionary term'])
-				random.shuffle(climatedict)
-				climatedict_random = climatedict[:3]
-				viewclimatedict = ", ".join(climatedict_random[:-1]) + ' and ' + climatedict_random[2]
-				print ("I can show you based on my Climate Dictionary knowledge terms like " + viewclimatedict.title() + ".\n")
-
-			if 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
-				all_meanings = core["word meaning"]
-				random.shuffle(all_meanings)
-				meaning_random_keys = all_meanings[:3]
-				meaning_words = ""
-				for term in meaning_random_keys:
-					meaning_words += term + ", "
-				print ("This are some Meaning Terms/Words i have in my knowledge : " + meaning_words.title()[:-2] + ".\n")
-			
-			if 'constellations' in question and 'all' in question:
-				print ("\nHere are all Constellations i have in knowledge ("+str(len(constellations_dict))+") and the meaning of her name or her designation:\n")
-				for constelattion in constellations_dict:
-					print(" %s: %s" % (constelattion.title(), constellations_dict[constelattion]))
-				print ("")
-
-			elif 'linux commands' in question:
-				all_commands = core["linuxcmd"]
-				random.shuffle(all_commands)
-				commands_random_keys = all_commands[:5]
-				commands_names = ""
-				for term in commands_random_keys:
-					commands_names += term + ", "
-				print ("This are some Linux commands i have in knowledge : " + commands_names[:-2] + ".\n")
-
-		elif question == 'astronomy questions' or question == 'questions of astronomy':
+			elif 'astronomy questions' in question or 'questions of astronomy' in question:
 				all_astro = core["qa-astro"]
 				random.shuffle(all_astro)
 				astro_random_keys = all_astro[:3]
@@ -3106,42 +4428,82 @@ def main():
 				for term in astro_random_keys:
 					astro_qa += " "+_spchar_[1:2] + term + "?\n"
 				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
+	
+			elif 'stars' in question or 'star names' in question:
+				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
+
+			elif 'asteroids' in question:
+				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
+			
+			elif 'dangerous objects' in question:
+				print (f"{showlisttell(core["cneos"], num_terms=5, category="Dangerous Objects")}.\n")
+
+			elif 'old' in question or 'tech' in question:
+				print (f"{showlisttell(core["old_tech_term"], num_terms=5, category="old Tech terms")}.\n")
+
+			elif 'constellations' in question:
+				print (f"{showlisttell(core["constelattion"], num_terms=5, category="Constellations")}.\n")
+
+			elif 'climate' in question or 'dictionary' in question:
+				print (f"{showlisttell(core["climate dictionary term"], num_terms=5, category="Climate Dictionary terms")}.\n")
+
+			elif 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
+				print (f"{showlisttell(core["word meaning"], num_terms=5, category="Meaning Terms/Words")}.\n")
+			
+			elif 'constellations' in question and 'all' in question:
+				print ("\nHere are all Constellations i have in knowledge ("+str(len(constellations_dict))+") and the meaning of her name or her designation:\n")
+				for constelattion in constellations_dict:
+					print(" %s: %s" % (constelattion.title(), constellations_dict[constelattion]))
+				print ("")
+
+			elif 'linux commands' in question:
+				print (f"{showlisttell(core["linuxcmd"], num_terms=5, category="Linux commands")}.\n")
+				
+			elif 'verbs' in question or 'english verbs' in question:
+				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
+
+		elif question == 'astronomy questions' or question == 'questions of astronomy':
+			all_astro = core["qa-astro"]
+			random.shuffle(all_astro)
+			astro_random_keys = all_astro[:3]
+			astro_qa = ""
+			for term in astro_random_keys:
+				astro_qa += " "+_spchar_[1:2] + term + "?\n"
+			print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
 
 		elif question[0:8] == 'how many' and question.find('glossary')!=-1 or question.find('astronomy terms')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you the meaning of " + str(len(astronomy_glossary)) + " Astronomy glossary terms." + "\n")
+			print ("I can tell you the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy glossary terms." + "\n")
 		elif question[0:8] == 'how many' and question.find('asteroids')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet." + "\n")
+			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet.\n")
+		elif question[0:8] == 'how many' and question.find('dangerous')!=-1 and question.find('objects')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
+			print ("I can tell you about " + str(len(core['cneos'])) + " dangerous objects, but there much more beside those we dont know.. yet.\n")
 		elif question[0:8] == 'how many' and question.find('star')!=-1 and question.find('names')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(core['star name'])) + " Stars. " + random.choice(messages['endterm']) + "\n")
-		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 		elif question[0:8] == 'how many' and question.find('linux commands')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge " + str(len(core['linuxcmd'])) + " Linux commands. " + random.choice(messages['endterm']) + "...\n")
-
-		elif question[0:8] == 'what' and question.find('capitals')!=-1 and question.find('you know')!=-1:
+		elif question[0:8] == 'how many' and question.find('verbs')!=-1 and question.find('you know')!=-1:
+			print ("Actualy based on my knowledge " + str(len(knowledge['verb_base'])) + " verbs. " + random.choice(messages['endterm']) + "...\n")	
+		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'what' and question.find('countries')!=-1 and question.find('you know')!=-1:
+		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1:
 			print ("Actualy based on my knowledge i know " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
 
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
 			if len(question.split()[2:]) == 0:
 				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? \n")
-			else:					
+			else:
 				subevent = " ".join(question.split()[2:])
 				eventdays = days_to_event(subevent.replace(" ",""))
 				if eventdays != 0:
-					if subevent == "birthday" or subevent == "my birthday":
-						select_creator = random.choice(["my creator", _auth1r_, "my creator "+_auth1r_])
-						print ('To yours i dont know, doing my privacy limitations but to the ' + select_creator + ' are '+ eventdays +' days.\n')
+					if subevent[-8:] == "birthday":
+						select_creator = random.choice(["my creator "+_author_,"my creator "+_author_.split()[0],"my creator"])
+						print ('To yours i dont know, but to the ' + select_creator + ' are '+ eventdays +' days.\n')
 					elif eventdays != 0:
 						print ("%s left for %s\n" % (eventdays, subevent.title()))
-				else:
-					short_no = ["No can do.","I can't, sorry.","Impossible!","Way ahead for me!","Ohh! No way.","Are you trying damage my RAM!","Not enought Memory!"]
-					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(short_no) + "\n")				
+				else:				
+					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(messages['short_no']) + "\n")				
 
-		elif question[0:15] == 'difference from' or question[0:8] == 'age calc':
+		elif question[0:15] == 'difference from' or question[0:9] == 'diff from' or question[0:8] == 'age calc':
 			try:
 				if len(question.split()) > 2:
 					inputDate = str(question.split()[2:][0])
@@ -3157,37 +4519,40 @@ def main():
 				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There is a problem in the syntax. Enter the date in 'dd.mm.yyyy' format. \n")
 
 		elif question[0:22] == 'what do you know about' and question.find('astronomy')!=-1:
-			print ("I can tell you the solar system, information about planets, distances and the meaning of " + str(len(astronomy_glossary)) + " Astronomy terms." + "\n")
+			print ("I can tell you the solar system, information about planets, distances and the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy terms." + "\n")
 
 		elif question[0:22] == 'what do you know about' and question.find('asteroids')!=-1 or question.find('celestial bodys')!=-1:
 			print ("I can tell you about " + str(len(core['asteroid'])) + " asteroids. Only the most basic information.")
-			print ("I think is gonna be a "+ _title_ +" version with a connection to the JPL SSD or datastro.eu"  + "\n")
+			print (f"More extended and comprehensive data can be found in {kolor['BLUE']}https://www.spacereference.org/{kolor['OFF']} or {kolor['BLUE']}https://www.datastro.eu{kolor['OFF']} \n")
 
 		elif question[0:22] == 'what do you know about' and question.find('constellations')!=-1 or question.endswith('?'):
 			print ("I can tell you about " + str(len(constellations_dict)) + " constelations.\n ")
 
 		elif question[0:22] == 'what do you know about' and question.find('the')!=-1 and question.find('universe')!=-1 or question.endswith('?'):
-			print ("The solar system, information about planets, distances and the meaning of " + str(len(astronomy_glossary)) + " Astronomy terms, " + str(len(core['asteroid'])) + " asteroids (most basic information) and " + str(len(constellations_dict)) + " constelations.\n")
+			print ("The solar system, information about planets, distances and the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy terms, " + str(len(core['asteroid'])) + " asteroids (most basic information) and " + str(len(constellations_dict)) + " constelations.\n")
 
-		elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
-			if question[0:4] == 'make':
-				print ("This is a sentence! And I'm even not using NLP.\n")
-			else:
-				print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
+		elif question[0:22] == 'what do you know about' and question.find('dangerous')!=-1 and question.find('objects')!=-1:
+			print ("I can tell you about " + str(len(core['cneos'])) + " celestial dangerous objects known as the list CNEO.\n ")
 
-		elif question.find('vorian created')!=-1 or question.find('vorian was created')!=-1 or question.find('vorian went online')!=-1:
-			print("The website [Vorian] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
+		#elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
+		#	if question[0:4] == 'make':
+		#		print ("This is a sentence! And I'm even not using NLP.\n")
+		#	else:
+		#		print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
 
-		elif any(word in question for word in core['question_words']) and "you born" in question:
+		elif question.find('elysia created')!=-1 or question.find('elysia was created')!=-1 or question.find('elysia went online')!=-1:
+			print("The website [elysia] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
+
+		elif any(word in question for word in core['question_word']) and "you born" in question:
 			print ("I borned from the code of my predecessor, Zorie, in early 2023 and I was officially actived " + str(days_till_today.days) + " days ago with an updated in " + _revise_ + ", so you better do the math!\n")
 
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['planet']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['planet']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "planet")
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core["old_tech_term"]) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "old term and word" )
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['constelattion']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['constelattion']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "constellations")
-		elif any(word in question for word in core['question_words']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
+		elif any(word in question for word in core['question_word']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "astronomy term")
 
 		elif question[-14:] == 'periodic table':
@@ -3269,22 +4634,43 @@ def main():
 				print("The seasons that make up the year are %s the actual and all the others by her order %s.\n" % (get_season[0].capitalize(), ', '.join(get_season[1]).title()))
 
 		elif question == 'set default gps':
-			latgps = _poigps_[0]
-			longps = _poigps_[1]
-			_poigps_.insert ( 4, 1 )
-			print(' > default GPS coordinates restored.\n')
-		elif question == 'set default gps off':
-			_poigps_.insert ( 4, 0 )
-			print(' > default GPS coordinates defined to user input.\n')
-		elif question == 'show default gps':
+			_poigps_[4] = 1
 			if _poigps_[4] == 1:
-				print (" > stored default information is empty!\n")
+				print(' > default GPS coordinates restored.')
+				print(f"{kolor['BOLD_WHITE']}  Latitude : {str(_poigps_[0])} {kolor['OFF']}")
+				print(f"{kolor['BOLD_WHITE']} Longitude : {str(_poigps_[1])} {kolor['OFF']}")
+				print("")
 			else:
-				print ("\n #default stored GPS coordinates")
-				print ("  Latitude : " + str(_poigps_[0]))
-				print (" Longitude : " + str(_poigps_[1]))
-				print ('Defaults gps coordinates loaded from code.\n')
+				print(' > the default GPS coordinates are defined to user input.\n')
+				
+		elif question == 'set default gps off':
+			print(' > default GPS coordinates defined to user input.\n')
+			_poigps_[3] = 0
+			_poigps_[4] = 0
+			
+		elif question == 'show default gps' or question == 'view default gps':
+			if _poigps_[4] == 0:
+				print (' > stored default information is empty!\n')
+			else:
+				print (f"\n{kolor['BOLD_CYAN']} #default stored GPS coordinates {kolor['OFF']}")
+				print (f"{kolor['BOLD_WHITE']}  Latitude : {str(_poigps_[0])} {kolor['OFF']}")
+				print (f"{kolor['BOLD_WHITE']} Longitude : {str(_poigps_[1])} {kolor['OFF']}")
+				if _poigps_[1] == lat:
+					print (f" Defaults gps coordinates loaded from {kolor['BOLD_WHITE']}user input.{kolor['OFF']}\n")
+				else:
+					print (f" Defaults gps coordinates loaded thru {kolor['BOLD_WHITE']}my own code.{kolor['OFF']}\n")
 
+		elif question == 'set default country':
+			set_system_country()
+		
+		elif question == 'default country off':
+			global system_country
+			if system_country != None:
+				print(' > default system country detection restored.\n')
+				system_country = None
+			else:
+				print('No user override is being used in the country system detection, so it is not applicable.\n')
+		
 		elif question[-7:] == 'capital':
 			word = question.split()[0].lower()
 			if word in core['country']:
@@ -3311,44 +4697,50 @@ def main():
 			print ("The value of π is "+ str(math.pi)+ "\n")
 
 		elif question == 'clear screen' or question == 'cls':
-			if sysos == 'Windows':
+			if sysos.lower() == 'windows':
 				os.system('cls')
-			elif sysos == 'Linux':
+			elif sysos.lower() == 'linux':
 				os.system('clear')
 			else:
-				print ("Sorry i cannot execute that command in a unidentified S.O!\n")
+				print ("Sorry i cannot execute this command in a unidentified S.O for me!\n")
 
 		elif question == 's.o' or question == 'operating system' or question == 'system':
 			if sysos == 'Linux':
-				#nuptime = os.system('uptime')
 				print ("This is the " + sysos + " Operating System (OS). ")
 			elif sysos == 'Windows':
-				print ("I am behing executed in " + sysos + "Operating System (OS).\n")
+				print ("I am behing executed in " + sysos +  "Operating System (OS).\n")
 			else:
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
-			if 'help' in core and isinstance(core['help'], list):
-				print("Here are the topics ordered alphabetically for better help about.\nJust type help <topic>\n")
-				nhelp = [key[5:] for key in core['help']]
-				nhelp.sort()
-				for i in range(len(nhelp)):
-					print ( "   - " + nhelp[i])
-				del nhelp
-				print ("")
+			print(f"Here are the {str(len(core['help']))} help 🙋 commands ordered alphabetically to better assist you. \nJust type help <desired command> to get a more descriptive help.\n")
+			nhelp = dict(sorted(help.items()))	
+			results = list(nhelp)
+			terminal_width = os.get_terminal_size().columns
+			max_item_width = max(len(str(item)) for item in results)
+			if max_item_width + 1 < terminal_width:
+				items_per_line = terminal_width // (max_item_width + 1)
 			else:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " My programming seems to have a glitch. " + _auth1r_ + "'s code is too powerful for me!\n")
+				items_per_line = 1
+			items_per_line = max(1, items_per_line)
+			column_widths = [0] * items_per_line
+			for i in range(len(results)):
+				column_index = i % items_per_line
+				column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
+			for i in range(0, len(results), items_per_line):
+				line = results[i:i + items_per_line]
+				output_parts = []
+				for j, item in enumerate(line):
+					padded_item = str(item).ljust(column_widths[min(j, len(column_widths) - 1)])
+					output_parts.append(padded_item)
+				print("  ".join(output_parts))
+			print("")
+			
+		elif any(word in question for word in core['season_query']):
+			print("")	
 
-		elif question == "season" or question == "actual season":
-			os_country_2l = locale.getlocale()[0].split('_')[-1].title()
-			country = pycountry.countries.get(name=os_country_2l)
-			sentence = f"Actualy based on the system date {datetime.today().strftime("%d.%m")} it's {get_the_season()[0].capitalize()}"
-			if country:
-				sentence = sentence + f" here in {country.name}."	
-			print (f"{sentence}\n")			
-
-		elif question == "time" or question == 'clock time' or question == 'what is the time' or question == "what time is it":
-			print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
+		elif any(word in question for word in core['time_query']):
+			print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
@@ -3363,10 +4755,11 @@ def main():
 				print ("")
 			elif (str(dt)[5:]) == '12-09' and question == 'happy birthday':
 				random.shuffle(messages['birthday_msg'])
-				print ("In name of vorian " + random.choice(messages['birthday_msg']))
-				print ("Vorian, {} personal website went online makes {} years ago on this same day.\n".format(_auth1r_ , date.today().year - date(2010,12,9).year))
+				print ("In name of elysia " + random.choice(messages['birthday_msg']))
+				print ("elysia, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
 			else:
-				print(random.choice(messages['birthday_short']) + " Are trying to trik'me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin() + "!\n")
+				print(f"To who?! To Me ?!")
+				print(random.choice(messages['birthday_short']) + " Are trying to trik me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin().upper() + "!\n")
 
 		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
 			dt = date.today()
@@ -3394,7 +4787,7 @@ def main():
 				random.shuffle(messages['earlier_nyear'])
 				print( random.choice(messages['earlier_nyear']) + "\n")
 
-		elif question == 'what is your version' or question == '#version':
+		elif question == 'what is your version' or question == 'cybele version' or question == '#version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
@@ -3416,27 +4809,36 @@ def main():
 					if latgps > 90 or latgps < -90:
 						print("The latitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 0, latgps)
+					_poigps_[0] = latgps
+					lat = _poigps_[0]
 					longps = float(input('What is your longitude coordinates: '))
 					if longps > 180 or longps < -180:
 						print("The longitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 1, longps)
+					_poigps_[1] = longps
+					lon = _poigps_[1]
 					defgps = 'user input'
 				except ValueError:
 					print("Value not recognized like latitude or longitude gps coordinates!\n")
 					continue
+				#else:
+			defgps = 'default gps'
+			_poigps_[3] = 1
+			_poigps_[4] = 1
+			if country_code:
+				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} ({country_code}) to UTC using {defgps}")
 			else:
-				defgps = 'default gps'
-			print ("calculations for " + str(latgps) + "," + str(longps) + " to UTC using "+ defgps)
+				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} to UTC using {defgps}")
 
 			drawart('art_world')
 
+			sun_emoji = ["☀️","🌑","🌕","🌅"]
 			s = Sun(datetime.now(), _poigps_[0], _poigps_[1])
-			print(' 〉    Sunrise : ' + str(s.sunrise()))
-			print(' 〉 Solar noon : ' + str(s.solarnoon()))
-			print(' 〉     Sunset : ' + str(s.sunset()))
+			print(f"  {_spchar_[1:2]}    Sunrise {sun_emoji[0]} :  {str(s.sunrise())}")
+			print(f"  {_spchar_[1:2]} Solar noon️{sun_emoji[1]} :  {str(s.solarnoon())}")
+			print(f"  {_spchar_[1:2]}     Sunset {sun_emoji[3]} :  {str(s.sunset())}")
 			print("")
+			
 		elif question == 'moon phase' or question == 'what is the moon phase' or question =='what is the actual moon phase':
 			if _poigps_[3] == 0:
 				try:
@@ -3444,41 +4846,83 @@ def main():
 					if mlatgps > 90 or mlatgps < -90:
 						print("The latitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 0, mlatgps)
+					_poigps_[0] = mlatgps
+					lat = _poigps_[0]
 					mlongps = float(input('What is your longitude coordinates: '))
 					if mlongps > 180 or mlongps < -180:
 						print("The longitude degrees format are out of range!\n")
 						continue
-					_poigps_.insert( 1, mlongps)
+					_poigps_[1] = mlongps
+					lon = _poigps_[1]
 				except ValueError:
 					print("Value not recognized like latitude or longitude gps coordinates!\n")
 					continue
+				#else:
+			_poigps_[3] = 1
+			_poigps_[4] = 1
 			moon_phase = MoonPhase(_poigps_[0], _poigps_[1], datetime.now())
-			print("\n"+"Currently the moon phase is", moon_phase.phase_of_moon(),"\n")
+			print(f"Currently the moon phase is {moon_phase.phase_of_moon()} \n")
 
-		elif question == 'diagnostics' or question == 'show core' or question == '#core':
-			print("Here he is my full internal specifications :\n")
-			if internet_onoff() == True:
-				storage = "online [sqlitecloud]"
-			else:
-				storage = "offline [database files]"
-			if node_name:
-				print('   Device : ' + platform.node() + '|' + _cyext_[0:4].replace(" ",""))
-			else:
-			  print ('  Device : unidentified device')
-			print('     Name : ' + _title_)
-			print('  Version : ' +version)
-			print('  Revised : ' +_revise_)
-			print('   Python : ' + str(pyver[0]) + "." + str(pyver[1]) + "." + str(pyver[2]))
-			print('   Memory : ' + str(len(questions))+"|"+str(len(answers))+"|D"+str(midbcounter))
-			print('     Data : ' + str(sum(len(value) for value in core.values())) + "|O" + str(len(old_tech_terms_list)) + "|M" + str(len(core["word meaning"])))
-			print('    Linux : ' + str(len(linux_commands)))
-			print('    Astro : ' + "G"+str(len(core["astronomy glossary"])) + "|A" +  str(len(core["asteroid"])) + "|C" +  str(len(core["constelattion"])) + "|S" +  str(len(core["star name"])))
-			print('    World : ' + str(len(core["country"])))
-			print('  Storage : ' + storage)
-			print('  Running : ' + str(days_till_today.days) + ' days.\n')
+		#elif re.compile(r'\b(?:diagnostics|show(?:\s+me)?(?:\s+your)?\s+core|#core)\b',re.IGNORECASE).search(question):
+		elif question == 'show core' or question == 'show info' or question == '#info' or question == "#core":
+			print(f"{kolor['BOLD_CYAN']}{random.choice(messages['info_intromsg'])}{kolor['OFF']}\n")
+			try:
+				display_node_name = platform.node().upper() if node_name else "unidentified device"
+				display_cyext = _cyext_[0:4].replace(" ","") if len(_cyext_) >= 4 else "N/A"
+				core_system_country = "Undetectable"
+				if system_country is not None:
+					core_system_country = system_country[1]
+				elif country_code not in (None, "C", ""):
+					core_system_country = country_code
+				py_version_str = "N/A"
+				if 'pyver' in globals() and isinstance(pyver, tuple) and len(pyver) >= 3:
+					py_version_str = f"{pyver[0]}.{pyver[1]}.{pyver[2]}"
+				elif hasattr(sys, 'version_info'):
+					py_version_str = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+				q_len = len(questions) if 'questions' in globals() and isinstance(questions, (list, tuple)) else 0
+				a_len = len(answers) if 'answers' in globals() and isinstance(answers, (list, tuple)) else 0
+				current_midbcounter = midbcounter if 'midbcounter' in globals() else 0
+				total_core_sum = 0
+				if isinstance(core, dict):
+					for value in core.values():
+						if isinstance(value, (list, dict, tuple, str)):
+							total_core_sum += len(value)
+				total_knowledge_sum = 0
+				if isinstance(knowledge, dict):
+					for value in knowledge.values():
+						if isinstance(value, (list, dict, tuple, str)):
+							total_knowledge_sum += len(value)
+				days_running_str = "N/A days."
+				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
+					days_running_str = f"{days_till_today.days} days."
 
-		elif question == 'date' or question == 'today' or question == 'today is' or question == 'what is the date' or question == 'what is today':
+				print(f"   Device : {display_node_name}|{display_cyext}")
+				print(f"     Name : {_title_}")
+				print(f"  Version : {version}")
+				print(f"  Revised : {_revise_}")
+				print(f"   Python : {py_version_str}")
+				print(f"  Country : {core_system_country}")
+				print(f"   Memory : {q_len}|{a_len}|D{current_midbcounter}")
+				print(f"     Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
+				print(f"    Linux : {len(core.get('linuxcmd', []))}")
+				print(f"    Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
+				print(f"    World : {len(core.get('country', []))}")
+				print(f"  Storage : {dblrconn}")
+				print(f"  Running : {days_running_str}\n")
+
+			except Exception as e:
+				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
+
+		# == "today activity":
+		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
+			if tdctl >= 3:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
+			else:
+				random_season_activity()
+				tdctl = tdctl + 1
+
+		# == "today"
+		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
 			current_time = now.strftime("%H:%M")
@@ -3490,78 +4934,46 @@ def main():
 			if special_dates(datetime.now()) != None:
 				print(special_dates(datetime.now()))
 			if is_holiday:
-				print(f"{_spchar_[18:19]} and is : {holiday_name}!")
+				print(f"{_spchar_[18:19]} and is : {holiday_name}")
 			print("")
 			
 		elif question == 'leap year' or question == 'is this year a leap year':
-			print (f"The actual year ({datetime.now().strftime("%Y")}) {leapyear()}. \n")
-
-		elif question[0:7] == "convert" and question[-4:] =="days" or question[-3:] =="day" or question[-7:] =="seconds" or question[-7:] =="minutes" or question[-5:] =="hours":
-			sub = question.split()[1:]
-			if not sub[0].isdigit():
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " For now i dont handle: "+str(sub[0])+". It's a number with decimals! Maybe in the future.\n")
-			elif not int(sub[0]):
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " I'm having a problem with the "+str(sub[0])+" number. !\n")
-			elif len(sub) >= 3 and sub[2] != "in":
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There is a problem in convert systax. convert <VALUE> days in <TIME UNIT>!\n")
-			elif len(sub) > 4:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Wow! To many parameters! convert <number> days in/to <time unit>.\n")
-			elif sub[1]!='seconds' and sub[1]!='minutes' and sub[1]!='hours' and sub[1]!='days' and sub[1]!='day':
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " There's be some kinda of problem with your "+sub[1]+" time Unit!\n")
+			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
+	
+		#-------------------------------------- convert ----------------------------------------
+		
+		elif question.startswith('convert'):
+			match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
+			original_value_str = None
+			original_unit_from = None
+			if match:
+				original_value_str, original_unit_from_raw, _ = match.groups()
+				original_unit_from = original_unit_from_raw.strip()
 			else:
-				if len(sub) == 4 and sub[2] != 'to' and sub[2] != 'in':
-					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Usage method : convert <"+str(sub[0])+"> days "+sub[2]+" <unit>.\n")
+				match_simple = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
+				if match_simple:
+					original_value_str, original_unit_from_raw = match_simple.groups()
+					original_unit_from = original_unit_from_raw.strip()
+			converting = convert_units(question)
+			if converting[0] is None:
+				print(f"{converting[1]}") # Print the error message
+			else:
+				converted_value, target_unit = converting
+				if original_value_str and original_unit_from:
+					print(f"Based on my calculations {original_value_str} {original_unit_from} is {converted_value} {target_unit}.\n")
 				else:
-					if len(sub) == 2:
-						unit = 'None'
-						number = int(sub[0])
-						calculated = days_to_units(number)
-					elif len(sub) == 4:
-						unit = sub[3]
-						number = int(sub[0])
-						calculated = days_to_units(number)
+					print(f"Based on my calculations {converted_value} {target_unit}.\n")
 
-					if not calculated:
-						print ( random.choice(messages['trouble_short']) + " " + random.choice(core['trouble_msg']) + " Something happen cos i did not calculate nothing!\n")
-					else:
-						if unit == 'None':
-							calculate_minutes = calculated[0]
-							calculate_hours = calculated[1]
-							calculate_seconds = calculated[2]
-							print("Based on my calculations is {:,.0f} seconds | {:,.0f} minutes | {:,.0f} hours.\n".format(calculate_seconds, calculate_minutes, calculate_hours))
-						else:
-							value_unit = ' '.join(sub[0:2])
-							if unit == 'seconds':
-								calculate_seconds = calculated[2]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} seconds. \n".format(calculate_seconds))
-							elif unit == 'minutes':
-								calculate_minutes = calculated[0]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} minutes. \n".format(calculate_minutes))
-							elif unit == 'hours':
-								calculate_hours = calculated[1]
-								print("Based on my calculations "+ value_unit + " are equivalent to {:,.0f} hours. \n".format(calculate_hours))
-							else:
-								print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Something happen! You should report this to my developer.\n")
+		#---------------------------------------------------------------------------------------
 
-		elif question[0:7] == "convert":
-			sub = question.split()[1:]
-			qconvert = convert_units( question )
-			if qconvert[0] != 0 and qconvert[1] != None:
-				converted_value = str("{:,.2f}".format(convert_units( question )[0]))
-				to_unit_converted = str(convert_units( question )[1])
-				if sub[2] == "au":
-					sub[2] = 'Astronomical Units'
-				print("In my knowledge converting the value %s from %s is %s %s.\n" % (sub[0], sub[2], converted_value, to_unit_converted))
-
-		elif question == 'how many weeks have a year' or question == ' year weeks':
+		elif question == 'how many weeks have a year' or question == 'year weeks':
 			print ( str(daysweeks_year()[1]) + " weeks. A calendar year consists of " + str(daysweeks_year()[1]) + " weeks, " + str(daysweeks_year()[0]) + " days in total.\n" )
 
-		elif question == 'week' or question == 'week number' or question == 'what number is this week' or question == 'what is this week number':
-			week_number = date.today().isocalendar()[1]
-			print ("Based on the system actual date this is the " + str(get_ordinal_position(week_number)) + " week of the year.\n")
-
-		elif question.find('last')!=-1 and question.find('update')!=-1:
-			print ('My creator '+ _auth1r_ + ' the last time updated my internal data was in '+ _revise_ +'.\n')
+		elif re.compile(r'\b(week|current week|week #?num(?:ber)?|what week)\b').search(question):
+			print (f"Based on the system actual date this is the {str(date.today().isocalendar()[1])} week of the year.\n")
+		
+		elif question.find('update') != -1 and (question.find('last') != -1 or question.find('check') != -1):
+			check_for_updates()
 
 		elif question == 'yes':
 			if len(csugestions) == 0:
@@ -3571,44 +4983,62 @@ def main():
 				question = csugestions[0]
 				print ("So, the question you want to make'me is [" + question + "]\nNow you know what to write to ask'me.\n" )
 			else:
-				print ("Yes what ?! There are infinite possibilities! \nSo better write down the one you want to ask'me. \nI'm "+_title_+" a chat bot by "+ _auth1r_ +" not the f* Merlin, the wizard.\n")
+				print ("Yes what ?! There are infinite possibilities! \nSo better write down the one you want to ask'me. \nI'm "+_title_+" a chat bot by "+ _author_.split()[0] +" not the f* Merlin, the wizard.\n")
 
 		elif question[0:13] == 'search askard':
 			getparam = question.split()
 			if len(getparam) != 3:
 				print ('The correct usage is: search askard <word>\n')
 			else:
-				mandb('askardb','askardb_db','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','askard_db','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 		
 		elif question[0:11] == 'view askard':
 			getparam = question.split()
 			if len(getparam) != 3 or getparam[2].isnumeric() != True:
 				print ('The correct usage is <view> ' + _spchar_[9:10] + ' askard <id>\n')
 			else:
-				mandb('askardb','askard_db','view',getparam[2],0)
-				print ("")
+				try:
+					mandb('cybele','askard_db','view',getparam[2],0)
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 		
-		elif question[0:8] == 'fun fact':
+		elif question == 'fun fact' or question == 'fast fact':
 			if ffctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['nicefun_msg'])}\n")
 			else:
-				mandb('cybele','funfacts','view',0,0)
-				ffctl = ffctl + 1
+				try:
+					mandb('cybele','funfacts','view',0,0)
+					ffctl = ffctl + 1
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 				
 		elif question[0:10] == 'nice thing':
 			if ncctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
 			else:
-				mandb('cybele','nicethings','view',0,0)
-				ncctl = ncctl + 1
+				try:
+					mandb('cybele','nicethings','view',0,0)
+					ncctl = ncctl + 1
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 				
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('askardb','askardb_db','list',0,0)
+				try:
+					mandb('cybele','askard_db','list',0,0)
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
-				mandb('askardb','askardb_db','list',getparam[2], getparam[3] )
+				try:
+					mandb('cybele','askard_db','list',getparam[2], getparam[3] )
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
@@ -3617,23 +5047,35 @@ def main():
 			if len(getparam) != 3:
 				print ('The correct usage is: search astronomy <word>\n')
 			else:
-				mandb('cybele','astronomy_glossary','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','astronomy_glossary','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 
 		elif question[0:14] == 'search oldtech':
 			getparam = question.split()
 			if len(getparam) != 3:
 				print ('The correct usage is: search oldtech <word>\n')
 			else:
-				mandb('cybele','oldtech','search',0,getparam[2])
-				print ("")
+				try:
+					mandb('cybele','oldtech','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 
 		elif question[0:12] == 'list oldtech':
 			getparam = question.split()
 			if len(getparam) == 2:
-				mandb('cybele','oldtech','list',0,0)
+				try:
+					mandb('cybele','oldtech','list',0,0)
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			elif len(getparam) == 4:
-				mandb('cybele','oldtech','list',getparam[2], getparam[3] )
+				try:
+					mandb('cybele','oldtech','list',getparam[2], getparam[3] )
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
 		
@@ -3686,52 +5128,60 @@ def main():
 		#world population
 		elif question[-10:] == "population":
 			country_name = question.split()[0]
-			if internet_onoff() == False:
-				if country_name in core['country']:
-					print("Estimated population based on my offline data from [{}] \n{} has a population of {:,} according to the United Nations.\n".format(_revise_, country_name.capitalize(), ncountries[country_name]["population"]))
-				elif country_name == 'world' or country_name == 'earth':
-					print ("8.1 billion people in July 2024 according to the United Nations. Is "+ year_months[date.today().month-1] +", "+ str(date.today().year) +" so there must be quite a few more.\n")
-				else:
-					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What ?! " + country_name.capitalize() + " Is that a new country? Perhaps! No-can do.\n")
-			else:
+			if ncountries and internet_onoff() == True:
 				cpopulation = get_thepopulation(country_name)
 				if cpopulation is not None:
 					print("Based on the online data from [{}] \n{} has a population of {:,} according to the Worldometers.\n".format(str(date.today().strftime("%d.%m.%y")), country_name.capitalize(), cpopulation))
+			else:
+				if country_name in core['country']:
+					print("Estimated population based on my offline data from [{}] \n{} has a population of {:,} according to the United Nations.\n".format(_revise_, country_name.capitalize(), ncountries[country_name]["population"]))
+				elif country_name == 'world' or country_name == 'earth':
+					print ("8.1 billion people in July 2024 according to the United Nations. Is "+ core['months'][date.today().month-1].title() +", "+ str(date.today().year) +" so there must be quite a few more.\n")
+				else:
+					print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " What ?! " + country_name.capitalize() + " Is that a new country? Perhaps! No-can do.\n")
 
 		elif question.startswith('where is ') and ('iss' in question or 'zarya' in question):
-			if internet_onoff() == False:
-				print (random.choice(messages['trouble_msg']) + " To do this task i need be connected to the internet. \n")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				print (where_is_iss())
 
 		elif question == 'people in space':
-			if _cybid_ == True:
-				if internet_onoff() == False:
-					print (random.choice(messages['trouble_msg']) + " To do this task i need be connected to the internet.\n")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				people_in_space()
 
 		elif question == 'what is he watching' or question == 'what are you watching':
 			if question.find('fav')!=-1 or question.find('favorite')!=-1:
-				print ("You can know what are "+_auth1r_+"'s in her public profile.\n  > "+ website['trakt'] + "\n")
+				print ("You can know what are "+_author_.split()[0]+"'s in her public profile.\n  > "+ website['trakt'] + "\n")
 			else:
-				print ("You can follow real time what "+_auth1r_+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
+				print ("You can follow real time what "+_author_.split()[0]+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
 		
 		elif question[-11:] == 'fav tvshows' or question[-16:] == 'favorite tvshows':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
-			extract_from_vorian('tvshow')
-			print ("")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
+				extract_from_elysia('tvshow')
 
 		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
-			print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _auth1r_ + ' favorites:\n')
-			extract_from_vorian('movies')
-			print ("")
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
+				extract_from_elysia('movies')
+			
+		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
+			if internet_onoff() == False or internet_onoff() == None:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
+				recent_from_elysia()
 
-
-		elif question == "do you speak" or question == 'do you talk' or question[-13:] == 'say something' or question[-15:] == 'make a sentence':
-			cybele_phrase = make_sentence()
-			print ("Well, beside behing a βeta version and dont using NLP or Library's or even speech synthesis here's something:")
-			print ("\n - " + cybele_phrase + "\n")
+		#elif question == "do you talk":
+		elif any(word in question for word in core['asking for talking']):
+			print("")
 
 		elif question.startswith('play') or question.startswith('game') and ('countries' in question or 'capitals' in question or 'math' in question or 'constellations' in question or 'elements' in question):
 			if question.find("math")!=-1:
@@ -3787,7 +5237,7 @@ def main():
 				random.shuffle(messages['nostar_message'])
 				print("Definitely the name of the star went on vacations!!\n" + random.choice(messages['nostar_message']) + "\n")
 			else:
-				if internet_onoff() == False:
+				if internet_onoff() == False or internet_onoff() == None:
 					print (random.choice(messages['trouble_msg']) + " To get '" + star_name.capitalize() + " star' information i need an active Internet connection.\n")
 				else:
 					response = get_star_info(star_name)
@@ -3796,13 +5246,6 @@ def main():
 							print (response[i])
 					else:
 						print( random.choice(messages['nostar_message']) + "cybele.star #" + star_name + " have empty data!\n")
-
-		elif question == 'today activity':		
-			if tdctl >= 3:
-				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
-			else:
-				random_season_activity()
-				tdctl = tdctl + 1
 
 		elif _cybid_ == True and question == 'extcybele' or question == 'extver' or question == 'extdir':
 			print ( kolor['RED'] + " 〉 Cybele external Library Module by AS" + kolor['OFF'])
@@ -3815,10 +5258,15 @@ def main():
 
 		elif question == 'weather':
 			dayseason = get_the_season()[0]
-			print ("It's look like we have " + weather_like_season() + " based in the fact we are in the " + dayseason.capitalize() +".\n")
+			hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+			weather_starters = [
+				f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.\n",
+				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}.\n"
+			]
+			print(random.choice(weather_starters))
 
 		elif question[-9:] == 'about you':
-				print ("Ok!. My name is " + _title_ +" and I was maded by " + _auth1r_ + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of Vorian, this website.\n" + aboutyou + "\n" )
+				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
 
 		elif question[0:8] == 'presence':
 			if any(word in question for word in presence_online):
@@ -3828,12 +5276,12 @@ def main():
 				else:
 					service = ' '.join(sub)
 					if service in presence_online:
-						print ("Yes, " + _auth1r_ + " have a online presence on that service. Here is the direct link: \n "+_spchar_[1:2] + presence_online[service] + "\n")
+						print ("Yes, " + _author_.split()[0] + " have a online presence on that service. Here is the direct link: \n "+_spchar_[1:2] + presence_online[service] + "\n")
 			elif "services" in question:
 				digifoot = str(len(presence_online))
 				presence_online_abc = list(presence_online.keys())
 				presence_online_abc.sort()
-				print ("%s have a online presence or a digital footprint in this %s entities/services on the internet:\n" % (_auth1r_, digifoot))
+				print ("%s have a online presence or a digital footprint in this %s entities/services on the internet:\n" % (_author_.split()[0], digifoot))
 				for service in presence_online_abc:
 					print(" "*3 + _spchar_[4:5] + " " + service.title())
 				print("")
@@ -3841,7 +5289,7 @@ def main():
 				if len(presence_online) == 1:
 					print( presence_online['online'] + "\n")
 				else:
-					print (random.choice(messages['trouble_msg']) + " I dont have any "+ _auth1r_ +" online presence information for the '" + " ".join(question.split()[1:]).title() + "' service.")
+					print (random.choice(messages['trouble_msg']) + " I dont have any "+ _author_.split()[0] +" online presence information for the '" + " ".join(question.split()[1:]).title() + "' service.")
 
 		elif question[0:8] == 'phonetic':
 			words = question.split()[1:]
@@ -3863,6 +5311,30 @@ def main():
 				print ("Translation of the morse code: " + morse_decode(' '.join(morse2)) + "\n")
 			else:
 				print (random.choice(messages['trouble_msg']) + " I cannot transform emptyness to the morse code except with silence.\n")
+
+		elif question == 'actual country':
+			sentence = f"Actualy based on "
+			if sysos.lower() == 'windows':
+				if system_country != None:
+					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					sentence = sentence + f"user override"
+				else:
+					country = pycountry.countries.get(name=country_code)
+					sentence = sentence + f"the system"
+			elif sysos.lower() == 'linux':
+				if system_country != None:
+					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					sentence = sentence + f"user override"
+				else:
+					country = pycountry.countries.get(alpha_2=country_code)
+					sentence = sentence + f"the system"
+			else:
+				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+			if country:
+				sentence = sentence + f" the country is {country.name}, {country.alpha_2}."
+			else:
+				sentence = sentence + f" i cannot determine the country."	
+			print (f"{sentence}\n")
 
 		elif question[0:8] == 'yoda say':
 			senyoda = question.split()[2:]
@@ -3889,9 +5361,13 @@ def main():
 		elif question[0:20] == 'multiplication table' or question[0:7] == 'x table':
 			xtablenum = question.split()[2:]
 			if len(xtablenum) != 1 or xtablenum[0].isnumeric() != True:
-				print (random.choice(messages['trouble_msg']) + " Incorrect usage parameter. Use: " + question.split()[0] + " " + question.split()[1] + " <number>.\n")
+				print (f"{random.choice(messages['trouble_msg'])} Incorrect usage parameter. Use: {question.split()[0]} {question.split()[1]} <number>.\n")
 			else:
-				multiplication_table(int(xtablenum[0]))
+				if int(xtablenum[0]) > 999999:
+					#print (f"{random.choice(messages['trouble_msg'])} Unfornunately my bit's are telling to do'it but my bytes to don't. Try a smaller!\n")
+					print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['math_trouble'])}\n")
+				else:
+					multiplication_table(int(xtablenum[0]))
 
 		elif question[0:8] == "hashfile":
 			hashparam = question.split()[1:]
@@ -3907,26 +5383,24 @@ def main():
 					print("")
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
+					
+		elif any(word in question for word in core['asking the uptime']):
+			print("")
 		
-		elif question == "cybele uptime":
-			uptime_parts = get_uptime()
-			time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
-			sentence_parts = []
-			for value, unit in time_units:
-				if value > 0:
-					sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
-				if not sentence_parts:
-					sentence = "less than a second"
+		elif any(word in question for word in core['holidays_query']):
+			print("")
+		
+		elif question[0:9] == 'conjugate':
+			parts = question.split()[1:]
+			if len(parts) != 1:
+					print(f"{random.choice(messages['trouble_short'])} I recognize the command but not the syntax. Use: conjugate|conjuga <verb>\n")
+			else:		
+				if any(word in parts for word in knowledge['verb_base']):
+					what_verb = parts[-1:][0]
+					cybele_conjugator(what_verb)
 				else:
-					if len(sentence_parts) > 1:
-						sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-					else:
-						sentence = sentence_parts[0]
-			print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} {random.choice(['I dont recognize','I dont see'])} {kolor['BOLD_YELLOW']}{parts[-1:][0]}{kolor['OFF']} like a english verb!\n")
 		
-		elif question[0:8] == 'holidays':
-			country_holidays()
-			
 		elif question == 'trails':
 			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
 			print (f"{website['trails']}\n")
@@ -3935,13 +5409,56 @@ def main():
 			terminal_width, terminal_height = os.get_terminal_size()
 			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
+			
+		elif question[0:7] == 'protect':
+			piaiparam = question.split()[1:]
+			if len(piaiparam) != 2:
+				print (f"{random.choice(messages['trouble_short'])} Missing or incorrect parameters. To learn how to use this command correctly, type: help protect image\n")
+			else:
+				input_image_path = piaiparam[-1:]
+				custom_noise_intensity = 18
+				custom_pixel_shift_amount = 2
+				custom_color_jitter_factor = 0.04
+				custom_jpeg_quality = 90
+				if piaiparam[0] == 'image':
+					add_symbol=False
+					input_image_path = piaiparam[-1:][0]
+				elif piaiparam[0] == 'mark':
+					add_symbol=True
+					input_image_path = piaiparam[-1:][0]
+				else:
+					print (f"{random.choice(messages['trouble_short'])} Incorrect usage. The correct usage is: protect image|mark <image filename>.<jpg|png|jpeg>\n")
+					add_symbol=None
+				if add_symbol != None:
+					protect_image(input_image_path, noise_intensity=custom_noise_intensity,
+									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
+									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 		
-		elif question == 'testing':
-			print (f"Development testing propose code...")
+		elif question == 'offline mode on':
+			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
+			output_db_file = _title_.lower() + ".db"
+			if os.path.exists(output_db_file):
+				print(f"I am allready able to be fully functional in offline mode but i will up-to-date.")
+				delete_cybeledb()
+				download_and_convert(db_url, output_db_file)
+			else:
+				download_and_convert(db_url, output_db_file)
+					
+		elif question == 'offline mode off':
+			delete_cybeledb()
+		
+		elif question == 'network status':
+			if dblrconn[0:7] == "online" or dblrconn[0:7] == "offline":
+				print(f"My network status at this moment is {dblrconn[0:7]}.\n")
+			else:
+				print (random.choice(messages['trouble_short']) + " This is a new designation of a connection type! I was not coded for this.\n")
+		
+		elif question == 'gridflow':
+			generate_console_schedule()
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
-				if i >= len(__doc__.splitlines()) - 2:
+				if i >= len(__doc__.splitlines()) - 6:
 					if i == 6:
 						line = line.replace("# This","# " + __doc__.splitlines()[1][0:6] + " this")
 					print(line)
@@ -3950,6 +5467,9 @@ def main():
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
+		
+		#else:
+		#	print (f"{core['trouble_short']} I'm not familiar with this subject!")
 
 #-------------------------------------------------
 if __name__ == "__main__":
