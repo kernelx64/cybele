@@ -945,6 +945,7 @@ def check_tables(tables_names):
 	global dbmsgbl
 	db_filename = 'cybele.db'
 	missing_tables = []
+	github_file_url = kdecode(GITHUB, shift)
 	attempt = 0
 	max_attempts = 0
 	conn = None
@@ -1002,7 +1003,7 @@ def check_tables(tables_names):
 
 		if missing_tables:
 			print_statusline(f"")
-			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   I cannot execute properly. Exiting."
+			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   Please update from github via addr {github_file_url}\n   I cannot execute properly. Exiting.\n"
 			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			return False
 		else:
