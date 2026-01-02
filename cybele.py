@@ -4933,7 +4933,7 @@ def main():
 				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} [{_spchar_[18:19]} {holiday_name}] and currently {current_time} - {whatgmt()}")					
 			else:
 				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
-			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {int(days_left) + 1} days left until the end of {date.today().year} ({leapyear()}).")
+			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
 			if special_dates(datetime.now()) != None:
 				print(special_dates(datetime.now()))
 			print("")
