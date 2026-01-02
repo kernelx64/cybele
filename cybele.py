@@ -25,7 +25,7 @@ lon = -8.4265
 
 # \U0001F132 | 129150
 # static global cybele variables
-version = '1.1.0-rc.6'
+version = '1.1.0-rc.7'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
@@ -670,6 +670,7 @@ help = {
 	"help talk": "Usage <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \nex: talk \n    can you speak \n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
+	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
 	"help topics": "Usage <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
@@ -2711,13 +2712,13 @@ def special_dates(date_to_check):
 
 	if month_day_key in special_dates_dict:
 		event = special_dates_dict[month_day_key]
-		print(f"{_spchar_[18:19]} And it is also the {event}")
+		return f"the {event}"
 	elif month_day_key in seasonal_start_dates:
 		season_index = seasonal_start_dates[month_day_key]
 		season_name = seasons[season_index]
-		print(f"{_spchar_[18:19]} And it is also the Beginning of the {season_name}.")
+		return f"the Beginning of the {season_name}."
 	elif month_day_key in seasonal_start_dates and month_day_key.year == datetime.now().year:
-		print(f"{_spchar_[18:19]} And especially this year will exist {event}.")
+		return f"especially this year will exist {event}."
 
 #--------------------------------------------------
 def weather_like_season():
@@ -4108,6 +4109,37 @@ def set_system_country():
 			print(f"{random.choice(messages['trouble_short'])} Invalid country code. Please enter a valid two-letter code.\n")
 
 #-------------------------------------------------
+def view_system_country():
+	
+	global system_country
+	global sysos
+	
+	if sysos.lower() == 'windows':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(name=country_code)
+	elif sysos.lower() == 'linux':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
+	else:
+		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		return
+	
+	if country:
+		country_2l = country.alpha_2
+		country_name = country.name
+		country_name_official = country.official_name
+	else:
+		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+		return False, None
+		
+	if country != None:
+		print(f"The default country is {country_name} - {country_2l}, {country_name_official}.\n")
+
+#-------------------------------------------------
 def list_country_details():
 	if not ncountries:
 		print(f"{random.choice(messages['trouble_short'])} I have an internal error. No country data available.\n")
@@ -4664,6 +4696,9 @@ def main():
 		elif question == 'set default country':
 			set_system_country()
 		
+		elif question == 'default country':
+			view_system_country()
+		
 		elif question == 'default country off':
 			global system_country
 			if system_country != None:
@@ -4923,21 +4958,45 @@ def main():
 				tdctl = tdctl + 1
 
 		# == "today"
-		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b', re.IGNORECASE).search(question):
+		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
 			current_time = now.strftime("%H:%M")
 			days_left = days_until(date(year=date.today().year, month=12, day=31))
 			is_holiday, holiday_name = today_holiday()
-			if is_holiday:
-				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} [{_spchar_[18:19]} {holiday_name}] and currently {current_time} - {whatgmt()}")					
-			else:
-				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
-			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
-			if special_dates(datetime.now()) != None:
-				print(special_dates(datetime.now()))
-			print("")
 			
+			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
+			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
+			
+			special_info = special_dates(datetime.now())
+			
+			if is_holiday == True:
+				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
+				if special_info is not None:
+					mensagem += f" and also is {special_info}."
+			else:
+				if special_info is not None:
+					mensagem = f"{_spchar_[18:19]} Today is {special_info}"
+			if is_holiday == True or special_info is not None:
+				print(f"{mensagem} \n")
+			else:
+				print("")
+		
+		elif question == 'today holiday':
+			is_holiday, holiday_name = today_holiday()
+			special_info = special_dates(datetime.now())
+			if is_holiday == True:
+				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
+				if special_info is not None:
+					mensagem += f" and also is {special_info}."
+			else:
+				if special_info is not None:
+					mensagem = f"{_spchar_[18:19]} Today is {special_info}"
+			if is_holiday == True or special_info is not None:
+				print(f"{mensagem} \n")
+			else:
+				print(f"Today is neither a holiday nor a 'special' date.\n")
+		
 		elif question == 'leap year' or question == 'is this year a leap year':
 			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
 	
