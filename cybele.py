@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '01.01.2026'
+_revise_ = '02.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -2711,13 +2711,13 @@ def special_dates(date_to_check):
 
 	if month_day_key in special_dates_dict:
 		event = special_dates_dict[month_day_key]
-		print(f"And it is also the {event}")
+		print(f"{_spchar_[18:19]} And it is also the {event}")
 	elif month_day_key in seasonal_start_dates:
 		season_index = seasonal_start_dates[month_day_key]
 		season_name = seasons[season_index]
-		print(f"And it is also the Beginning of the {season_name}.")
-	elif month_day_key in seasonal_start_dates and month_day_key.year == 2026:
-		print(f"And especially this year will exist {event}.")
+		print(f"{_spchar_[18:19]} And it is also the Beginning of the {season_name}.")
+	elif month_day_key in seasonal_start_dates and month_day_key.year == datetime.now().year:
+		print(f"{_spchar_[18:19]} And especially this year will exist {event}.")
 
 #--------------------------------------------------
 def weather_like_season():
@@ -3186,8 +3186,7 @@ def today_holiday():
 			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
 			if today in country_holidays:
 				holiday_name = country_holidays.get(today)
-				print(f"{_spchar_[18:19]} Today in {country_code_for_holidays} is {holiday_name}")
-				#print(f"Today ({today}) IS a holiday in {country_code_for_holidays}: {holiday_name}")
+				#print(f"{_spchar_[18:19]} Today in {country_code_for_holidays} is {holiday_name}")
 				return True, holiday_name
 			else:
 				return False, None
@@ -4929,10 +4928,12 @@ def main():
 			iniyeardays = date.today() - date( date.today().year, 1, 1)
 			current_time = now.strftime("%H:%M")
 			days_left = days_until(date(year=date.today().year, month=12, day=31))
-
-			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
-			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {int(days_left)+ 1} days left until the end of {date.today().year} ({leapyear()}).")
 			is_holiday, holiday_name = today_holiday()
+			if is_holiday:
+				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} [{_spchar_[18:19]} {holiday_name}] and currently {current_time} - {whatgmt()}")					
+			else:
+				print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
+			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {int(days_left) + 1} days left until the end of {date.today().year} ({leapyear()}).")
 			if special_dates(datetime.now()) != None:
 				print(special_dates(datetime.now()))
 			print("")
