@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '02.01.2026'
+_revise_ = '14.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -42,6 +42,7 @@ try:
 	import string
 	import random
 	import datetime
+	import calendar
 	import platform
 	import socket
 	import math
@@ -4960,16 +4961,15 @@ def main():
 		# == "today"
 		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
-			iniyeardays = date.today() - date( date.today().year, 1, 1)
+			iniyeardays = datetime.now().timetuple().tm_yday
 			current_time = now.strftime("%H:%M")
-			days_left = days_until(date(year=date.today().year, month=12, day=31))
+			days_left = days_in_year() - iniyeardays
 			is_holiday, holiday_name = today_holiday()
 			
 			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
-			print(f"Is the day {iniyeardays.days + 1} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
+			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
 			
 			special_info = special_dates(datetime.now())
-			
 			if is_holiday == True:
 				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
 				if special_info is not None:
