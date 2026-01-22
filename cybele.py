@@ -25,15 +25,18 @@ lon = -8.4265
 
 # \U0001F132 | 129150
 # static global cybele variables
-version = '1.1.0-rc.7'
+version = '1.1.0-rc.8'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '14.01.2026'
+_revise_ = '22.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
+
+# Change here your MPPT COM port number for all the OS system's
+_serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
 import sys,re
 import subprocess
@@ -50,6 +53,8 @@ try:
 	import hashlib
 	import sqlite3
 	import sqlitecloud
+	import serial
+	import serial.tools.list_ports
 	import requests
 	import html,urllib
 	import json
@@ -149,7 +154,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-my_library = []; gamescore=[-1,0,0]
+my_library = []; gamescore=[-1,0,0]; _portac_ = None
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
@@ -848,6 +853,16 @@ def internet_onoff():
 		return True
 	except OSError:
 		pass
+
+#------------------------------------------------------------------
+def get_default_port():
+    system = platform.system().lower()
+    mapping = {
+        'windows': _serial_[0],
+        'linux': _serial_[1],
+        'darwin': _serial_[2]
+    }  
+    return mapping.get(system, None)
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
@@ -1566,6 +1581,111 @@ class MoonPhase:
 			return moon_phase_emoji[3] + " Waxing Gibbous"
 		else:
 			return moon_phase_emoji[4] + " Full Moon"
+
+#---------------------------------------------------
+class VictronMonitor:
+	def __init__(self, porta=get_default_port(), baudrate=19200):
+		self.porta = porta
+		self.baudrate = baudrate
+		# Estrutura de dados equivalente ao MpptData em Rust
+		self.data = {
+			'V': 0, 'VPV': 0, 'PPV': 0, 'I': 0,
+			'H19': 0, 'H21': 0, 'H17': 0
+		}
+
+	def monitorizacao_ativa(self):
+		#print("\033[H\033[J", end="")
+
+		try:
+			# Tentar abrir a porta serial
+			with serial.Serial(self.porta, self.baudrate, timeout=3) as ser:
+				#print("\033[H\033[J", end="")
+				print("\r\033[92m>>> MONITORIZAÇÃO ATIVA (prima Ctrl+C para sair) <<<\033[0m")
+
+				while True:
+					linha = ser.readline().decode('utf-8', errors='ignore').strip()
+
+					if not linha:
+						continue
+
+					# Lógica do Parsing
+					if linha.startswith("Checksum"):
+						self._exibir_dados()
+						self._salvar_db()
+						continue
+
+					partes = linha.split('\t')
+					if len(partes) == 2:
+						chave, valor = partes[0].strip(), partes[1].strip()
+						if chave in self.data:
+							try:
+								self.data[chave] = int(valor)
+							except ValueError:
+								pass
+
+		except (serial.SerialException) as e:
+			print("\n")
+
+	def _exibir_dados(self):
+		agora = datetime.now().strftime("%H:%M:%S")
+		# Formatação idêntica à usada no VRust
+		print(
+			f"\r[{agora}] Bateria: {self.data['V']/1000:.2f}V | "
+			f"Pan: {self.data['VPV']/1000:.2f}V | "
+			f"Pot: {self.data['PPV']}W | "
+			f"Rendimento: {self.data['H19']/100:.2f}kWh    ",
+			end="", flush=True
+		)
+
+	def calcular_checksum_hex(self, comando):
+		# Checksum para comandos em modo HEX (VE.Direct)
+		soma = 0
+		# Remove o ':' inicial e processa os pares de bytes
+		payload = comando[1:]
+		for i in range(0, len(payload), 2):
+			soma += int(payload[i:i+2], 16)
+        
+		# O checksum é o valor que, somado à 'soma', resulta em 0x55 (modulo 256)
+		check = (0x55 - soma) & 0xFF
+		return f"{check:02X}"
+
+	def get_historico_dia(self, dia=1):
+		registo_invertido = "8DED"
+		comando_base = f":8{registo_invertido}00"
+		checksum = self.calcular_checksum_hex(comando_base)
+		comando_final = f"{comando_base}{checksum}\n"
+
+		try:
+			with serial.Serial(_portac_, 19200, timeout=1.5) as ser:
+				ser.reset_input_buffer()
+				ser.reset_output_buffer()
+				ser.setDTR(True) 
+				
+				sleep(0.5)
+				ser.write(comando_final.encode())
+                
+				for _ in range(15):
+					linha = ser.readline().decode('ascii', errors='ignore').strip()
+					if linha.startswith(":7"):
+						return f"{kolor['BOLD_GREEN']}HISTÓRICO ENCONTRADO:{kolor['OFF']} {linha}\n"
+					elif linha.startswith(":4"):
+						return f"{kolor['BOLD_RED']}AVISO:{kolor['OFF']} O MPPT rejeitou o registo {registo_invertido}.\n"
+                
+			return f"{kolor['BOLD_YELLOW']}TIMEOUT:{kolor['OFF']} Sem resposta HEX.\n"
+		except Exception as e:
+			return f"Erro: {e} \n"
+
+	def importar_30_dias(self):
+		# Loop de busca dos últimos 30 dias e preparar para a BD"""
+		print(f"{kolor['BOLD_BLUE']}A descarregar histórico de 30 dias para a Cybele...{kolor['OFF']}")
+		for d in range(1, 31):
+			dados = self.get_historico_dia(d)
+			print(dados)
+			sleep(0.1) # Pausa control saturação do bus
+			
+	def _salvar_db(self):
+		# Aqui lógica de base de dados
+		pass
 
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
@@ -4314,9 +4434,23 @@ def check_for_updates():
 		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
 
 #-------------------------------------------------
+def validate_connection(port):
+	# Obtém lista de todas as portas série ativas
+	active_ports = [p.device for p in serial.tools.list_ports.comports()]
+    
+	if not port:
+		return False
+  
+	if port in active_ports:
+		return True
+	else:
+		#available = ", ".join(active_ports) if active_ports else "Nenhuma"
+		return False
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -4331,6 +4465,7 @@ def main():
 	validate_globals()
 	#----------------------------
 	print_statusline(f"")
+	_portac_ = get_default_port()
 	#----------------------------
 	drawart('art_cybele')
 	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
@@ -5523,7 +5658,22 @@ def main():
 						line = line.replace("# This","# " + __doc__.splitlines()[1][0:6] + " this")
 					print(line)
 			print ("")
-
+		
+		elif question =='mppt' or question == 'solar':
+			if validate_connection(_portac_):
+				victron = VictronMonitor()
+				victron.monitorizacao_ativa()
+			else:
+				print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
+		
+		elif question =='mppt history':
+			victron = VictronMonitor()
+			print(victron.get_historico_dia())
+			
+		elif question =='mppt 30':
+			victron = VictronMonitor()
+			victron.importar_30_dias()
+		
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
