@@ -39,13 +39,12 @@ _pydr3_ = False
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
-import sys,re
+import sys, re
 import subprocess
 try:
-	import os,time
+	import os, time
 	import string
 	import random
-	import datetime
 	import calendar
 	import platform
 	import socket
@@ -54,9 +53,8 @@ try:
 	import hashlib
 	import sqlite3
 	import sqlitecloud
-	import serial
 	import requests
-	import html,urllib
+	import html, urllib
 	import json
 	import holidays
 	import quote
@@ -73,36 +71,39 @@ try:
 	from datetime import datetime, date, time, timedelta
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-	from datetime import datetime, timezone
+	from datetime import datetime, date, time, timedelta, timezone
+	
+	import serial
 
 except ImportError as err:
 	match = re.search(r"'(.*?)'", str(err))
 	if match:
 		module_name = match.group(1)
-		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-		if module_name == 'PIL':
-			module_name = 'Pillow'
-		if module_name.lower() in ['serial', 'pyserial', 'pyusb']:
-			is_pydroid = "pydroid3" in sys.executable.lower() or "ru.iiec.pydroid3" in os.environ.get("PATH", "")
-			is_android = hasattr(os, "uname") and "Android" in os.uname().release
-			if is_pydroid or is_android:
-				_pydr3_ = True
-		while True:
-			install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
-			if install_choice == 'y':
-				print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
-				try:
-					subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-					print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
+		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
+		serial_mods = ["serial", "pyserial", "pyusb"]
+		if is_pydroid and module_name in serial_mods:
+			_pydr3_ = True
+			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
+		else:
+			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
+			if module_name == 'PIL':
+				module_name = 'Pillow'               
+			while True:
+				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
+				if install_choice == 'y':
+					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
+					try:
+						subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
+						print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
+						sys.exit(0)
+					except subprocess.CalledProcessError:
+						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
+						sys.exit(0)
+				elif install_choice == 'n':
+					print(f"{' '*3}Cannot execute properly. Exiting.")
 					sys.exit(0)
-				except subprocess.CalledProcessError as e:
-					print(f"\n{' '*3}✗ Error installing the module. Try installing it manually: pip install " + module_name)
-					sys.exit(0)
-			elif install_choice == 'n':
-				print(f"{' '*3}Cannot execute properly. Exiting.")
-				sys.exit(0)
-			else:
-				print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
+				else:
+					print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
 	else:
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 		print(f"{' '*3}I cannot execute properly. Exiting.")
@@ -5670,24 +5671,24 @@ def main():
 		elif question[0:4] == "mppt" or question[0:5] == 'solar':
 			if _pydr3_ == True:
 				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR command is not supported in this Python system.{kolor['OFF']}\n")
-				return True
-			args = question.split()[1:]
-			victron = VictronMonitor()
-			if 'history' in args:
-				print(victron.get_historico_dia())
-			elif 'last30' in args:
-				victron.importar_30_dias()
-			elif 'monitor' in args:
-				if validate_connection(_portac_):
-					victron = VictronMonitor()
-					victron.monitorizacao_ativa()
+			else:	
+				args = question.split()[1:]
+				victron = VictronMonitor()
+				if 'history' in args:
+					print(victron.get_historico_dia())
+				elif 'last30' in args:
+					victron.importar_30_dias()
+				elif 'monitor' in args:
+					if validate_connection(_portac_):
+						victron = VictronMonitor()
+						victron.monitorizacao_ativa()
+					else:
+						print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
 				else:
-					print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
-			else:
-				if len(args) == 0:
-					print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} The command {question.upper()} is not suported without parameters. get help typing: help {question.lower()}{kolor['OFF']}\n")			
-				else:
-					print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Parameter {args} is not valid or recognized. Use the command: help mppt|solar{kolor['OFF']}\n")			
+					if len(args) == 0:
+						print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} The command {question.upper()} is not suported without parameters. get help typing: help {question.lower()}{kolor['OFF']}\n")			
+					else:
+						print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Parameter {args} is not valid or recognized. Use the command: help mppt|solar{kolor['OFF']}\n")			
 			
 		elif question != '':
 			answer = find_answer(question,questions)
