@@ -1600,20 +1600,24 @@ class VictronMonitor:
 
 	def monitorizacao_ativa(self):
 		#print("\033[H\033[J", end="")
+		old_settings = termios.tcgetattr(sys.stdin)
 
 		try:
-			# Tentar abrir a porta serial
-			with serial.Serial(self.porta, self.baudrate, timeout=3) as ser:
-				#print("\033[H\033[J", end="")
+			tty.setcbreak(sys.stdin.fileno())
+			with serial.Serial(self.porta, self.baudrate, timeout=0.1) as ser:
 				print("\r\033[92m>>> ACTIVE MONITORING (press Ctrl+C to exit) <<<\033[0m")
-
 				while True:
+					dr, _, _ = select.select([sys.stdin], [], [], 0)
+					if dr:
+						sys.stdin.read(1)
+						print(f"\n{kolor['CYAN']}Stopped instantly!{kolor['OFF']}")
+						break
+					
 					linha = ser.readline().decode('utf-8', errors='ignore').strip()
 
 					if not linha:
 						continue
 
-					# Lógica do Parsing
 					if linha.startswith("Checksum"):
 						self._exibir_dados()
 						self._salvar_db()
@@ -1630,6 +1634,8 @@ class VictronMonitor:
 
 		except (serial.SerialException) as e:
 			print("\n")
+		finally:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 	def _exibir_dados(self):
 		agora = datetime.now().strftime("%H:%M:%S")
@@ -5668,7 +5674,7 @@ def main():
 				
 		elif question.startswith(('mppt', 'solar')):
 			if sysos == "Pydroid3":
-				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR not supported by this system.\n")
+				print(f"I'm currently running on {sysos}, where MPPT|Solar commands are unavailable.\nI'm ready to handle these once we're back on a compatible Linux setup!\n")
 			elif len(question.split()[1:]) > 1:
 				print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} '{question.split()[0]}' received {len(question.split()[1:])} parameters, which is more than expected.")
 				print(f"Check usage with: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
