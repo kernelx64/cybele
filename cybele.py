@@ -30,10 +30,11 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '22.01.2026'
+_revise_ = '23.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
+_pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
@@ -54,7 +55,6 @@ try:
 	import sqlite3
 	import sqlitecloud
 	import serial
-	import serial.tools.list_ports
 	import requests
 	import html,urllib
 	import json
@@ -82,6 +82,11 @@ except ImportError as err:
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 		if module_name == 'PIL':
 			module_name = 'Pillow'
+		if module_name.lower() in ['serial', 'pyserial', 'pyusb']:
+			is_pydroid = "pydroid3" in sys.executable.lower() or "ru.iiec.pydroid3" in os.environ.get("PATH", "")
+			is_android = hasattr(os, "uname") and "Android" in os.uname().release
+			if is_pydroid or is_android:
+				_pydr3_ = True
 		while True:
 			install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
 			if install_choice == 'y':
@@ -93,7 +98,6 @@ except ImportError as err:
 				except subprocess.CalledProcessError as e:
 					print(f"\n{' '*3}✗ Error installing the module. Try installing it manually: pip install " + module_name)
 					sys.exit(0)
-				break
 			elif install_choice == 'n':
 				print(f"{' '*3}Cannot execute properly. Exiting.")
 				sys.exit(0)
@@ -607,7 +611,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
-		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects"]
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar"]
 
 #------------------------------------------------------------
 help = {
@@ -646,7 +650,8 @@ help = {
 	"help make a phrase": "Usage <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
-	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",
+	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
+	"help mppt": "Usage: mppt|solar <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: mppt monitor \n    mppt history\n    mppt last30 \n    solar monitor\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
 	"help network status": "Usage: network status \nShow the actual network status \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
@@ -669,6 +674,7 @@ help = {
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
 	"help show me": "Usage: show me <star names|constellations|<dangerous|asteroids|objects>|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
+	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
@@ -1385,8 +1391,8 @@ maincommands = [
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update",
-	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on",
+	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update","solar",
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on","mppt",
 	"offline mode off","how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
 ]
 #----------------------------------------------------------
@@ -1673,7 +1679,8 @@ class VictronMonitor:
                 
 			return f"{kolor['BOLD_YELLOW']}TIMEOUT:{kolor['OFF']} Sem resposta HEX.\n"
 		except Exception as e:
-			return f"Erro: {e} \n"
+			error_msg = str(e).split(':')[0]
+			return f"{kolor['BOLD_RED']}Erro:{kolor['OFF']} {error_msg} \n"
 
 	def importar_30_dias(self):
 		# Loop de busca dos últimos 30 dias e preparar para a BD"""
@@ -4436,6 +4443,7 @@ def check_for_updates():
 #-------------------------------------------------
 def validate_connection(port):
 	# Obtém lista de todas as portas série ativas
+	import serial.tools.list_ports
 	active_ports = [p.device for p in serial.tools.list_ports.comports()]
     
 	if not port:
@@ -4450,7 +4458,7 @@ def validate_connection(port):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5658,22 +5666,29 @@ def main():
 						line = line.replace("# This","# " + __doc__.splitlines()[1][0:6] + " this")
 					print(line)
 			print ("")
-		
-		elif question =='mppt' or question == 'solar':
-			if validate_connection(_portac_):
-				victron = VictronMonitor()
-				victron.monitorizacao_ativa()
+				
+		elif question[0:4] == "mppt" or question[0:5] == 'solar':
+			if _pydr3_ == True:
+				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR command is not supported in this Python system.{kolor['OFF']}\n")
+				return True
+			args = question.split()[1:]
+			victron = VictronMonitor()
+			if 'history' in args:
+				print(victron.get_historico_dia())
+			elif 'last30' in args:
+				victron.importar_30_dias()
+			elif 'monitor' in args:
+				if validate_connection(_portac_):
+					victron = VictronMonitor()
+					victron.monitorizacao_ativa()
+				else:
+					print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
 			else:
-				print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
-		
-		elif question =='mppt history':
-			victron = VictronMonitor()
-			print(victron.get_historico_dia())
+				if len(args) == 0:
+					print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} The command {question.upper()} is not suported without parameters. get help typing: help {question.lower()}{kolor['OFF']}\n")			
+				else:
+					print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Parameter {args} is not valid or recognized. Use the command: help mppt|solar{kolor['OFF']}\n")			
 			
-		elif question =='mppt 30':
-			victron = VictronMonitor()
-			victron.importar_30_dias()
-		
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
