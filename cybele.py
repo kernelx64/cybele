@@ -86,8 +86,7 @@ except ImportError as err:
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-			if module_name == 'PIL':
-				module_name = 'Pillow'               
+			module_name = 'Pillow' if module_name == 'PIL' else module_name              
 			while True:
 				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
 				if install_choice == 'y':
@@ -1607,7 +1606,7 @@ class VictronMonitor:
 			# Tentar abrir a porta serial
 			with serial.Serial(self.porta, self.baudrate, timeout=3) as ser:
 				#print("\033[H\033[J", end="")
-				print("\r\033[92m>>> MONITORIZAÇÃO ATIVA (prima Ctrl+C para sair) <<<\033[0m")
+				print("\r\033[92m>>> ACTIVE MONITORING (press Ctrl+C to exit) <<<\033[0m")
 
 				while True:
 					linha = ser.readline().decode('utf-8', errors='ignore').strip()
@@ -1637,10 +1636,10 @@ class VictronMonitor:
 		agora = datetime.now().strftime("%H:%M:%S")
 		# Formatação idêntica à usada no VRust
 		print(
-			f"\r[{agora}] Bateria: {self.data['V']/1000:.2f}V | "
-			f"Pan: {self.data['VPV']/1000:.2f}V | "
-			f"Pot: {self.data['PPV']}W | "
-			f"Rendimento: {self.data['H19']/100:.2f}kWh    ",
+			f"\r[{agora}] Batery: {self.data['V']/1000:.2f}V | "
+			f"PV: {self.data['VPV']/1000:.2f}V | "
+			f"PWR: {self.data['PPV']}W | "
+			f"Total income: {self.data['H19']/100:.2f}kWh    ",
 			end="", flush=True
 		)
 
@@ -5668,28 +5667,31 @@ def main():
 					print(line)
 			print ("")
 				
-		elif question[0:4] == "mppt" or question[0:5] == 'solar':
-			if _pydr3_ == True:
-				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR command is not supported in this Python system.{kolor['OFF']}\n")
-			else:	
+		elif question.startswith(('mppt', 'solar')):
+			if _pydr3_:
+				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR not supported by this system.\n")
+			elif len(question.split()[1:]) > 1:
+				print(f"\r{kolor['CYAN']}Hint:{kolor['OFF']} '{question.split()[0]}' received {len(question.split()[1:])} parameters, which is more than expected.")
+				print(f"Check usage with: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
+			else:
 				args = question.split()[1:]
+				
 				victron = VictronMonitor()
-				if 'history' in args:
-					print(victron.get_historico_dia())
-				elif 'last30' in args:
-					victron.importar_30_dias()
-				elif 'monitor' in args:
-					if validate_connection(_portac_):
-						victron = VictronMonitor()
-						victron.monitorizacao_ativa()
-					else:
-						print (f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Verifica se o cabo VE.Direct está conectado {kolor['BOLD_RED']}{_portac_}{kolor['OFF']} e bem encaixado!\n")
-				else:
-					if len(args) == 0:
-						print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} The command {question.upper()} is not suported without parameters. get help typing: help {question.lower()}{kolor['OFF']}\n")			
-					else:
-						print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} Parameter {args} is not valid or recognized. Use the command: help mppt|solar{kolor['OFF']}\n")			
-			
+				match args:
+					case ['history', *_]:
+						print(victron.get_historico_dia())   
+					case ['last30', *_]:
+						victron.importar_30_dias()  
+					case ['monitor', *_]:
+						if validate_connection(_portac_):
+							victron.monitorizacao_ativa()
+						else:
+							print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} VE.Direct cable in {_portac_} not detected!\n")
+					case []:
+						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: help {question.lower()}\n") 
+					case _:
+						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter {args} is invalid. Try: help mppt|solar\n")			
+					
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
