@@ -34,7 +34,6 @@ _revise_ = '23.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
-_pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
@@ -82,7 +81,7 @@ except ImportError as err:
 		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
 		serial_mods = ["serial", "pyserial", "pyusb"]
 		if is_pydroid and module_name in serial_mods:
-			_pydr3_ = True
+			sysos = "Pydroid3"
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
@@ -4458,7 +4457,7 @@ def validate_connection(port):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5076,7 +5075,7 @@ def main():
 				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
 					days_running_str = f"{days_till_today.days} days."
 
-				print(f"   Device : {display_node_name}|{display_cyext}")
+				print(f"   Device : {display_node_name}|{display_cyext} on {sysos}")
 				print(f"     Name : {_title_}")
 				print(f"  Version : {version}")
 				print(f"  Revised : {_revise_}")
@@ -5668,10 +5667,10 @@ def main():
 			print ("")
 				
 		elif question.startswith(('mppt', 'solar')):
-			if _pydr3_:
+			if sysos == "Pydroid3":
 				print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} MPPT|SOLAR not supported by this system.\n")
 			elif len(question.split()[1:]) > 1:
-				print(f"\r{kolor['CYAN']}Hint:{kolor['OFF']} '{question.split()[0]}' received {len(question.split()[1:])} parameters, which is more than expected.")
+				print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} '{question.split()[0]}' received {len(question.split()[1:])} parameters, which is more than expected.")
 				print(f"Check usage with: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
 			else:
 				args = question.split()[1:]
@@ -5688,9 +5687,9 @@ def main():
 						else:
 							print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} VE.Direct cable in {_portac_} not detected!\n")
 					case []:
-						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: help {question.lower()}\n") 
+						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
 					case _:
-						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter {args} is invalid. Try: help mppt|solar\n")			
+						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
 					
 		elif question != '':
 			answer = find_answer(question,questions)
