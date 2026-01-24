@@ -1635,7 +1635,7 @@ class VictronMonitor:
 		except (serial.SerialException) as e:
 			print("\n")
 		finally:
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+			termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
 
 	def _exibir_dados(self):
 		agora = datetime.now().strftime("%H:%M:%S")
