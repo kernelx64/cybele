@@ -34,6 +34,7 @@ _revise_ = '23.01.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
+_pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
@@ -81,7 +82,7 @@ except ImportError as err:
 		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
 		serial_mods = ["serial", "pyserial", "pyusb"]
 		if is_pydroid and module_name in serial_mods:
-			sysos = "Pydroid3"
+			_pydr3_ = True
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
@@ -4463,7 +4464,7 @@ def validate_connection(port):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5080,6 +5081,10 @@ def main():
 				days_running_str = "N/A days."
 				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
 					days_running_str = f"{days_till_today.days} days."
+				if _pydr3_ == True:
+					sysos = "Pydroid3"
+				else:
+					_pydr3_ = _pydr3_
 
 				print(f"   Device : {display_node_name}|{display_cyext} on {sysos}")
 				print(f"     Name : {_title_}")
@@ -5673,8 +5678,8 @@ def main():
 			print ("")
 				
 		elif question.startswith(('mppt', 'solar')):
-			if sysos == "Pydroid3":
-				print(f"I'm currently running on {sysos}, where MPPT|Solar commands are unavailable.\nI'm ready to handle these once we're back on a compatible Linux setup!\n")
+			if _pydr3_ == True:
+				print(f"I'm currently running on Pydroid, where MPPT|Solar commands are unavailable.\nI'm ready to handle these once we're back on a compatible Linux setup!\n")
 			elif len(question.split()[1:]) > 1:
 				print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} '{question.split()[0]}' received {len(question.split()[1:])} parameters, which is more than expected.")
 				print(f"Check usage with: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
