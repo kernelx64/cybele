@@ -42,7 +42,9 @@ _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 import sys, re
 import subprocess
 try:
-	import os, time
+	import os
+	import sys
+	import time
 	import string
 	import random
 	import calendar
@@ -4466,7 +4468,7 @@ def validate_connection(port):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -4589,7 +4591,7 @@ def main():
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
 		elif question[-5:] == 'quote':
-			if 'adelino' in question:
+			if 'adelino' in question or 'as' in question:
 				print ("Here's a quote by my author " + _author_.split()[0] + ".")
 				print (f"{_spchar_[18:19]} {random.choice(as_quotes)}")
 				print ("")
