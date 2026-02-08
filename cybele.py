@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
 _active_ = '01.08.2024'
-_revise_ = '23.01.2026'
+_revise_ = '08.02.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -213,7 +213,9 @@ as_quotes = [
 	"Technology is not revolutionary, it's evolutionary.",
 	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility.",
 	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will.",
-	"Everything is smart now. So, when do we download the patch? 'Cos I don't see it anywhere."
+	"Everything is smart now. So, when do we download the patch? 'Cos I don't see it anywhere.",
+	"The ultimate irony will be realizing we calculated the risk but forgot that nature follows patterns, not algorithms. Science's greatest mistake is believing that tomorrow was merely a variable of yesterday.",
+	"However great our errors, nature will surpass them—with us or without us."
 ]
 #-----------------------------------------------------------
 kolor = {
