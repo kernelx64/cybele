@@ -1828,7 +1828,7 @@ def drawart(artname):
 	}
 
 	if artname not in art_data:
-		print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!")
+		print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!\n")
 		print(kolor['OFF'])
 		return
 
@@ -3124,7 +3124,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				else:
 					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
 			else:
-				print ("option view none of dbtables with conditions... Fix'it")
+				print ("option view none of dbtables with conditions... Fix'it\n")
 		else:
 			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for view task for {dbname} dabatase...\n")
 		
@@ -3175,7 +3175,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
 			titvar = "old tech terminology"
 		else:
-			print ("Option limits none of dbtables with conditions... Fix'it")
+			print ("Option limits none of dbtables with conditions... Fix'it\n")
 			conn.close()
 			return
 		cursor = conn.execute(filter)
@@ -5344,7 +5344,7 @@ def main():
 			getparam = question.split()
 			if len(getparam) == 2:
 				if getparam[1] == "askard":
-					mandb('askardb','','limits',0,0)
+					mandb('cybele','askard_db','limits',0,0)
 				elif getparam[1] == "astronomy":
 					mandb('cybele','astronomy_glossary','limits',0,0)
 				elif getparam[1] == "oldtech":
