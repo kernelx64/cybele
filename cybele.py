@@ -1384,7 +1384,7 @@ maincommands = [
 	"solar system planets order","solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year",
 	"capital","capital of","value of pi","pi value","pi","s.o","operating system","system","can you help me","can you help",
 	"help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
-	"merry christmas","i wish you a merry christmas","happy valentines","happy valentines","happy new year","what is your version",
+	"merry christmas","i wish you a merry christmas","happy valentines","happy new year","what is your version",
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
 	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
 	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
@@ -4976,7 +4976,17 @@ def main():
 			else:
 				random.shuffle(messages['earlier_nyear'])
 				print( random.choice(messages['earlier_nyear']) + "\n")
-
+		
+		elif question.find('happy valentines')!=-1 or question.find('happy valentine')!=-1:
+			dt = date.today()
+			if (str(dt)[5:]) == '02-14':
+				ascii_vday = ["˚˖𓍢ִ໋🌷͙֒✧˚.🎀༘⋆","𓍢ִ໋🌷͙֒₊˚*ੈ♡⸝⸝🪐༘⋆","˚˖𓍢ִႋ🌷͙֒✧🩷˚.🎀༘⋆","🏹⁀➴'","🍒💌♥️🌹","🎀🧸💕"]
+				random.shuffle(messages['valentinesmsg'])
+				print (f"{random.choice(messages['valentinesmsg'])} {random.choice(ascii_vday)}\n")
+			else:
+				random.shuffle(messages['notvalentines'])
+				print( random.choice(messages['notvalentines']) + "\n")
+		
 		elif question == 'what is your version' or question == 'cybele version' or question == '#version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
