@@ -2740,12 +2740,13 @@ def recent_from_elysia():
 			title_element = show.find('span', class_='C9DxTc')
 			if title_element:
 				items_list.append(title_element.text.strip())
-		for i in range(82, 87):
-			print (items_list[i])
+		for i in range(14, 24):
+			print (f"{items_list[i]}")
 	except urllib.error.URLError as e:
 		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
+	print ("")
 
 #-------------------------------------------------
 def extract_from_elysia(content_type):
