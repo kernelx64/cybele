@@ -25,12 +25,12 @@ lon = -8.4265
 
 # \U0001F132 | 129150
 # static global cybele variables
-version = '1.1.0-rc.8'
+version = '1.1.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
-_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞'
+_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬'
 _active_ = '01.08.2024'
-_revise_ = '14.02.2026'
+_revise_ = '10.03.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -49,6 +49,8 @@ try:
 	import random
 	import calendar
 	import platform
+	import zoneinfo
+	import pytz
 	import socket
 	import math
 	import base64
@@ -59,7 +61,6 @@ try:
 	import html, urllib
 	import json
 	import holidays
-	import quote
 	import locale
 	import pycountry
 	import PIL
@@ -69,11 +70,11 @@ try:
 	from random_word import RandomWords
 	from platform import python_version
 	from time import gmtime, strftime, sleep
-	from inspirational_quotes import quote
 	from datetime import datetime, date, time, timedelta
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
 	from datetime import datetime, date, time, timedelta, timezone
+	from zoneinfo import ZoneInfo
 	
 	import serial
 
@@ -1376,7 +1377,7 @@ others = [
 #----------------------------------------------------------
 maincommands = [
 	"bye","exit","quit","do you know anything about","know anything on","find","seek","what can i ask you","how many linux commands you know",
-	"what can you anwser","what do you know","what can you do","what do you do","what you can do","adelino quote","what is",
+	"what can you anwser","what do you know","what can you do","what do you do","what you can do","quote","what is",
 	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms","constellations",
 	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
 	"difference from","age calc","what do you know about","astronomy","constelations","universe","can you","elysia created",
@@ -1386,7 +1387,7 @@ maincommands = [
 	"help","help me","time","what time it is","clock time","happy birthday cybele","cybele happy birthday","happy birthday",
 	"merry christmas","i wish you a merry christmas","happy valentines","happy new year","what is your version",
 	"#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time","set default gps",
-	"diagnostics","show core","#core","date","today","today is","what day is today","what is the date","what is today","convert",
+	"diagnostics","show core","#core","date","today","today is","what day it is","what day is today","what is the date","what is today","convert",
 	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
 	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits","protect image",
 	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
@@ -2232,6 +2233,11 @@ def find_word_in_dicts(word, core):
 					else:
 						country = pycountry.countries.get(name=country_code)
 				elif sysos.lower() == 'linux':
+					if system_country != None:
+						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					else:
+						country = pycountry.countries.get(alpha_2=country_code)
+				elif sysos.lower() == 'pydroid3':
 					if system_country != None:
 						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 					else:
@@ -3306,6 +3312,11 @@ def today_holiday():
 			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
 			country = pycountry.countries.get(alpha_2=country_code)
+	elif sysos.lower() == 'pydroid3':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
@@ -3346,6 +3357,11 @@ def country_holidays():
 		else:
 			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
+	elif sysos.lower() == 'pydroid3':
 		if system_country != None:
 			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
@@ -4226,6 +4242,39 @@ def protect_image(input_filepath, output_directory="protected_images",
 		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
 		
 #-------------------------------------------------
+def verificar_dst(iso_code):
+	if not iso_code:
+		return ""
+
+	try:
+		tz_name = pytz.country_timezones.get(iso_code.upper())[0]
+		tz = zoneinfo.ZoneInfo(tz_name)
+		agora = datetime.now(tz).replace(hour=12, minute=0, second=0, microsecond=0)
+		offset_agora = agora.utcoffset()
+
+		for i in range(1, 4):
+			futuro = agora + timedelta(days=i)
+			offset_futuro = futuro.utcoffset()
+			if offset_agora != offset_futuro:
+				dias_falta = i
+				c_off = kolor.get('OFF', '')
+				if dias_falta == 1:
+					cor = kolor.get('VIVID_RED', '')
+					tempo_str = "tomorrow"
+				else:
+					cor = kolor.get('BOLD_YELLOW', '')
+					tempo_str = f"in {dias_falta} days"
+
+				if offset_agora < offset_futuro:
+					return f"{cor}⏰ Attention: {tempo_str} the clock moves forward for Daylight Saving Time!{c_off}\n"
+				else:
+					return f"{cor}⏰ Attention: {tempo_str} the clock goes back, entering Winter time!{c_off}\n"
+
+	except Exception:
+		pass
+	return ""
+
+#-------------------------------------------------
 def set_system_country():
 	global system_country
 
@@ -4258,6 +4307,11 @@ def view_system_country():
 		else:
 			country = pycountry.countries.get(name=country_code)
 	elif sysos.lower() == 'linux':
+		if system_country != None:
+			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+		else:
+			country = pycountry.countries.get(alpha_2=country_code)
+	elif sysos.lower() == 'pydroid3':
 		if system_country != None:
 			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 		else:
@@ -4477,7 +4531,7 @@ def main():
 	print_statusline(f"{dbmsgbl}...")
 	#----------------------------
 	wms = random.choice(core['intromsg'])
-	tdctl=0;ncctl=0;ffctl=0;kuote=quote()
+	tdctl=0;ncctl=0;ffctl=0
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	validate_globals()
@@ -4590,13 +4644,10 @@ def main():
 			print ("  and: ")
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
-		elif question[-5:] == 'quote':
-			if 'adelino' in question or 'as' in question:
+		elif question.find('quote')!=-1:
 				print ("Here's a quote by my author " + _author_.split()[0] + ".")
-				print (f"{_spchar_[18:19]} {random.choice(as_quotes)}")
+				print (f"{_spchar_[21:22]} {random.choice(as_quotes)}")
 				print ("")
-			else:
-				print(f"\n{_spchar_[2:3]}{kuote['quote']}{_spchar_[3:4]}\n{kuote['author']}\n")
 
 		elif question == "what is" or question == "do you know what is" or question == "meaning of":
 			what_creative= ["","I think you were trying to know something, righ ?!\n","Are you trying to ask or know something ?!\n","You were going to ask for knowledge weren't you? ?!\n","Well, to know or question you need a matter !\n"]
@@ -5115,7 +5166,7 @@ def main():
 				print(f"    Linux : {len(core.get('linuxcmd', []))}")
 				print(f"    Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
 				print(f"    World : {len(core.get('country', []))}")
-				print(f"  Storage : {dblrconn}")
+				print(f"  Storage : {dblrconn} [{midbcounter}]")
 				print(f"  Running : {days_running_str}\n")
 
 			except Exception as e:
@@ -5130,17 +5181,20 @@ def main():
 				tdctl = tdctl + 1
 
 		# == "today"
-		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today)\b(?!.*holiday)', re.IGNORECASE).search(question):
+		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = datetime.now().timetuple().tm_yday
 			current_time = now.strftime("%H:%M")
 			days_left = days_in_year() - iniyeardays
 			is_holiday, holiday_name = today_holiday()
+
+			##hoje = datetime.now().date()
 			
 			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
 			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
 			
 			special_info = special_dates(datetime.now())
+
 			if is_holiday == True:
 				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
 				if special_info is not None:
@@ -5149,7 +5203,34 @@ def main():
 				if special_info is not None:
 					mensagem = f"{_spchar_[18:19]} Today is {special_info}"
 			if is_holiday == True or special_info is not None:
-				print(f"{mensagem} \n")
+				print(f"{mensagem}")
+
+			#if (system_country and len(system_country) > 0) or country_code:
+			#	s_val = system_country[0].upper() if (system_country and len(system_country) > 0) else ""
+			#	c_val = country_code.upper() if country_code else ""
+
+			#	if s_val == 'PT' or c_val == 'PT':
+			#		if hoje == proximas_mudancas['summer'] - timedelta(days=1):
+			#			print("⏰ Tomorrow the clock moves forward one hour for Daylight Saving Time!\n")
+			#		elif hoje == proximas_mudancas['winter'] - timedelta(days=1):
+			#			print("⏰ Tomorrow the clock goes back one hour, entering Winter time!\n")
+			#		else:
+			#			print("")
+			#else:
+			#	print("")
+
+			if country_code:
+				final_iso = country_code
+			elif (system_country and len(system_country) > 0):
+				# Assume que system_country[0] já é a string do país
+				final_iso = system_country[0].upper()
+
+			if final_iso:
+				aviso = verificar_dst(final_iso)
+				if aviso:
+					print(aviso)
+				else:
+					print("")
 			else:
 				print("")
 		
@@ -5553,6 +5634,13 @@ def main():
 					country = pycountry.countries.get(name=country_code)
 					sentence = sentence + f"the system"
 			elif sysos.lower() == 'linux':
+				if system_country != None:
+					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
+					sentence = sentence + f"user override"
+				else:
+					country = pycountry.countries.get(alpha_2=country_code)
+					sentence = sentence + f"the system"
+			elif sysos.lower() == 'pydroid3':
 				if system_country != None:
 					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
 					sentence = sentence + f"user override"
