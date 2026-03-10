@@ -671,7 +671,7 @@ help = {
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help say something": "Usage <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
-	"help set default country": "Usage: set default country \nUsers can manually override the automatically detected country by entering its two-letter code in the input field.\n",
+	"help set default country": "Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
