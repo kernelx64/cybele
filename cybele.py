@@ -183,11 +183,12 @@ website = {
 	"askard": "https://www.adelinosaldanha.site/askards"
 }
 webshare = {
-	"art of sight": "ammil://ppp.twxebghltewtgat.lbmx/wot",
 	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
 	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
 	"tvshow": "ammil://fxzt.gs/yhewxk/FjJTpRjU#PzveuXlo_EjooUTDdPth8",
-	"music": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSCBiHSDqZu7azA6Q8f1WnmOEO5nLXL4i0r"
+	"myMixs": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dS2jkGSuO5T1eKxCF0R6GV9lLNeZutDIVrQ",
+	"music weekly episodes": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSsjA3S2lYUTkgOEAryJtKH4Ikbv4jJ8QrQ"
+	
 }
 presence_online = {
 	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
