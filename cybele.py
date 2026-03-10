@@ -635,7 +635,8 @@ help = {
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help favorite": "Usage: favorite|fav  tvshows|movies \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav movies\n",
+	"help fav tvshows": "Usage: fav|favorite  tvshows \nCommand to extract from elysia website the favorite list.\nex: fav tvshows\n    favorite tvshows\n    <tvshow name> in fav \n    <tvshow name> in tvshows\n",
+	"help favorite tvshows": "Usage: favorite|fav  tvshows \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav tvshows\n    <tvshow name> in fav\n    <tvshow name> in tvshows\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
@@ -2779,9 +2780,6 @@ def extract_from_elysia(content_type):
 	url = website.get(content_type)
 	
 	if content_type == 'tvshow' and len(tvshows_cache) > 0:
-		source_icon = _spchar_[22:23]
-		print(f"Based on my memory {source_icon}, here are the favorites:\n")
-		_print_tv_list(tvshows_cache)
 		return
 	if not internet_onoff() or not url:
 		print(f"{random.choice(messages['trouble_msg'])} Connection required. You are offline.")
@@ -2801,11 +2799,6 @@ def extract_from_elysia(content_type):
 					if text:
 						raw_items.append(" ".join(text.split()))
 			tvshows_cache = raw_items[14:]
-			if tvshows_cache:
-				print(f"\nSyncing {content_type.upper()}'s from Elysia {source_icon}...\n")
-				_print_tv_list(tvshows_cache)
-			else:
-				print(f"{random.choice(messages['trouble_msg'])} Structure changed or list is empty.\n")
 	except Exception as e:
 		print(f"Unexpected error: {e}\n")
 
@@ -5507,11 +5500,15 @@ def main():
 			if internet_onoff() == False or internet_onoff() == None:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
-				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-				extract_from_elysia('tvshow')
+				if tvshows_cache:
+					print(f"\nBased on Elysia and my memory {_spchar_[22:23]}, here are the favorites:\n")
+					_print_tv_list(tvshows_cache)
+				else:
+					print(f"\nBased on Elysia here are mine/{_author_.split()[0]} favorites {_spchar_[23:24]}...\n")
+					extract_from_elysia('tvshow')
+					_print_tv_list(tvshows_cache)
 		
-		# Raciocínio: <nome> in fav | <nome> in tvshows | <nome> in fav tvshows
-		elif "in fav" in question.lower() or "in tvshow" in question.lower():
+		elif "in fav" in question or "in tvshows" in question or "in favorites" in question:
 			if len(tvshows_cache) == 0:
 				extract_from_elysia('tvshow')
 			parts = question.lower().split(" in ")
@@ -5527,7 +5524,7 @@ def main():
 						print(f"   📺 [{i:03d}] {match}")
 					print("")
 				else:
-					print(f"No matches for '{search_term.upper()}' in your favorites.")
+					print(f"No matches for '{search_term.upper()}' in your favorites.\n")
 			else:
 				_print_tv_list(tvshows_cache)
 			
