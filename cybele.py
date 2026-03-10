@@ -28,7 +28,7 @@ lon = -8.4265
 version = '1.1.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
-_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬'
+_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
 _revise_ = '10.03.2026'
 _author_ = 'Adelino Saldanha'
@@ -5614,20 +5614,22 @@ def main():
 				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
 
 		elif question.startswith('presence'):
-			presence_online = mystory_from_elysia()
-			sub = question.split()[1:] # Pega em tudo depois de "presence"
-    
+			source_icon = f" {_spchar_[22:23]} [RAM]"
+			if len(presence_online) == 0:
+				presence_online = mystory_from_elysia()
+				source_icon = f" {_spchar_[23:24]} [NET]"		
+			sub = question.split()[1:]
 			if len(sub) == 0:
 				digifoot = str(len(presence_online))
 				presence_online_abc = sorted(presence_online.keys())
-				print("%s has a digital footprint in these %s services:\n" % (_author_.split()[0], digifoot))
+				print("%s has a digital footprint%s in these %s services:\n" % (_author_.split()[0], source_icon, digifoot))
 				for service in presence_online_abc:
 					print(" " * 3 + _spchar_[4:5] + " " + service.title())
 				print("")        
 			else:
 				service = ' '.join(sub).lower().strip()
 				if service in presence_online:
-					print("Yes, " + _author_.split()[0] + " has an online presence on that service. Direct link: \n " + _spchar_[1:2] + presence_online[service] + "\n")
+					print(f"Yes {_author_.split()[0]} has an online presence{source_icon} on that service. Direct link: \n  {_spchar_[1:2]} {presence_online[service]}\n")
 				else:
 					print(random.choice(messages['trouble_msg']) + " I don't have info for the '" + service.title() + "' service.")
 					
