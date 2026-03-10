@@ -190,9 +190,8 @@ webshare = {
 	"music weekly episodes": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSsjA3S2lYUTkgOEAryJtKH4Ikbv4jJ8QrQ"
 	
 }
-presence_online = {
-	"online": "Visit www.adelinosaldanha.site/mystory to view all my online presence services."
-}
+#-----------------------------------------------------------
+presence_online = {}
 #-----------------------------------------------------------
 as_quotes = [
 	"... to keep you busy.",
@@ -2749,6 +2748,31 @@ def recent_from_elysia():
 	print ("")
 
 #-------------------------------------------------
+def mystory_from_elysia():
+	url = website.get('mystory')
+	if internet_onoff() == False or internet_onoff() == None or not url:
+		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
+		return
+	global presence_online
+    
+	try:
+		response = urllib.request.urlopen(url)
+		soup = BeautifulSoup(response.read().decode("utf-8"), 'html.parser')
+		paragraphs = soup.find_all('p', class_='zfr3Q CDt4Ke')
+		for p in paragraphs:
+			text = p.get_text(separator=" ").strip()
+			if " : " in text and "http" in text:
+				parts = text.split(" : ", 1)
+				if len(parts) == 2:
+					name = parts[0].strip().lower()
+					link = parts[1].strip()
+				presence_online[name] = link    
+		return presence_online
+	except Exception as e:
+		print(f"Erro ao atualizar presença: {e}")
+		return {}
+
+#-------------------------------------------------
 def extract_from_elysia(content_type):
 	url = website.get(content_type)
 
@@ -4545,7 +4569,7 @@ def validate_connection(port):
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
 	detect_country()
 	#----------------------------
 	if not check_tables(tables):
@@ -5589,29 +5613,24 @@ def main():
 		elif question[-9:] == 'about you':
 				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
 
-		elif question[0:8] == 'presence':
-			if any(word in question for word in presence_online):
-				sub = question.split()[1:]
-				if len(sub) == 0:
-					print( random.choice(messages['trouble_msg']) + " I really have to learn or with AI to read users mind's!")
-				else:
-					service = ' '.join(sub)
-					if service in presence_online:
-						print ("Yes, " + _author_.split()[0] + " have a online presence on that service. Here is the direct link: \n "+_spchar_[1:2] + presence_online[service] + "\n")
-			elif "services" in question:
+		elif question.startswith('presence'):
+			presence_online = mystory_from_elysia()
+			sub = question.split()[1:] # Pega em tudo depois de "presence"
+    
+			if len(sub) == 0:
 				digifoot = str(len(presence_online))
-				presence_online_abc = list(presence_online.keys())
-				presence_online_abc.sort()
-				print ("%s have a online presence or a digital footprint in this %s entities/services on the internet:\n" % (_author_.split()[0], digifoot))
+				presence_online_abc = sorted(presence_online.keys())
+				print("%s has a digital footprint in these %s services:\n" % (_author_.split()[0], digifoot))
 				for service in presence_online_abc:
-					print(" "*3 + _spchar_[4:5] + " " + service.title())
-				print("")
+					print(" " * 3 + _spchar_[4:5] + " " + service.title())
+				print("")        
 			else:
-				if len(presence_online) == 1:
-					print( presence_online['online'] + "\n")
+				service = ' '.join(sub).lower().strip()
+				if service in presence_online:
+					print("Yes, " + _author_.split()[0] + " has an online presence on that service. Direct link: \n " + _spchar_[1:2] + presence_online[service] + "\n")
 				else:
-					print (random.choice(messages['trouble_msg']) + " I dont have any "+ _author_.split()[0] +" online presence information for the '" + " ".join(question.split()[1:]).title() + "' service.")
-
+					print(random.choice(messages['trouble_msg']) + " I don't have info for the '" + service.title() + "' service.")
+					
 		elif question[0:8] == 'phonetic':
 			words = question.split()[1:]
 			if len(words) != 0:
