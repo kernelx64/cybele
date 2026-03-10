@@ -1397,7 +1397,7 @@ maincommands = [
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
 	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update","solar",
-	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","cls","how many capitals do you know","offline mode on","mppt",
+	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","clean","how many capitals do you know","offline mode on","mppt",
 	"offline mode off","how many countries do you know","show topics","show me your topics","show topic's","show me your topic's","topics","topic's"
 ]
 #----------------------------------------------------------
@@ -4960,7 +4960,7 @@ def main():
 		elif question == 'value of pi' or question == 'pi value' or question == 'pi':
 			print ("The value of π is "+ str(math.pi)+ "\n")
 
-		elif question == 'clear screen' or question == 'cls':
+		elif question == 'clear screen' or question == 'clean':
 			if sysos.lower() == 'windows':
 				os.system('cls')
 			elif sysos.lower() == 'linux':
@@ -5423,7 +5423,7 @@ def main():
 		elif question[0:19] == 'list constellations':
 			getparam = question.split()
 			if len(getparam) == 2:
-				print (f"{creative_random_anwser()} Here he is the list of constellations i have in knowledge.")
+				print (f"{creative_random_anwser()} Here he is the list of constellations i have in knowledge.\n")
 				mandb('cybele','constelations','list',0,0)
 			elif len(getparam) == 4:
 				print (f"{creative_random_anwser()} Here he is the list of constellations from '{getparam[2]}' to '{getparam[3]}' i have in knowledge.")
