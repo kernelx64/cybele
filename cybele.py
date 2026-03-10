@@ -192,6 +192,7 @@ webshare = {
 }
 #-----------------------------------------------------------
 presence_online = {}
+tvshows_cache = []
 #-----------------------------------------------------------
 as_quotes = [
 	"... to keep you busy.",
@@ -2774,46 +2775,45 @@ def mystory_from_elysia():
 
 #-------------------------------------------------
 def extract_from_elysia(content_type):
+	global tvshows_cache
 	url = website.get(content_type)
-
-	if internet_onoff() == False or not url:
-		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
+	
+	if content_type == 'tvshow' and len(tvshows_cache) > 0:
+		source_icon = _spchar_[22:23]
+		print(f"Based on my memory {source_icon}, here are the favorites:\n")
+		_print_tv_list(tvshows_cache)
 		return
-
+	if not internet_onoff() or not url:
+		print(f"{random.choice(messages['trouble_msg'])} Connection required. You are offline.")
+		return
 	try:
+		source_icon = _spchar_[23:24]
 		response = urllib.request.urlopen(url)
-		html_content = response.read()
-		html_string = html_content.decode("utf-8")
-		soup = BeautifulSoup(html_string, 'html.parser')
-		items_list = []
+		soup = BeautifulSoup(response.read().decode("utf-8"), 'html.parser')
+		raw_items = []
+
 		if content_type == 'tvshow':
-			tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
-			for show in tv_shows:
+			shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
+			for show in shows:
 				title_element = show.find('span', class_='C9DxTc')
 				if title_element:
-					items_list.append(title_element.text.strip())           
-			for i in range(87, len(items_list)):
-				print (items_list[i])
-			print("")
-		elif content_type == 'movies':
-			classic_movies_section = soup.find('div', id='h.7ea6f691e3c697ae_12')
-			if classic_movies_section:
-				movies = classic_movies_section.find_all('li', class_='zfr3Q TYR86d eD0Rn')
-				for movie in movies:
-					title_element = movie.find('span', class_='C9DxTc')
-					if title_element:
-						items_list.append(title_element.text.strip())
-			if items_list:
-				for item in items_list:
-					print(item)
+					text = title_element.get_text().strip()
+					if text:
+						raw_items.append(" ".join(text.split()))
+			tvshows_cache = raw_items[14:]
+			if tvshows_cache:
+				print(f"\nSyncing {content_type.upper()}'s from Elysia {source_icon}...\n")
+				_print_tv_list(tvshows_cache)
 			else:
-				print(f"{random.choice(messages['trouble_msg'])} No {content_type.replace('_', ' ')} found or the structure has changed.")
-		else:
-			print(f"{random.choice(messages['trouble_msg'])} Unknown content type: {content_type}")
-	except urllib.error.URLError as e:
-		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
+				print(f"{random.choice(messages['trouble_msg'])} Structure changed or list is empty.\n")
 	except Exception as e:
-		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
+		print(f"Unexpected error: {e}\n")
+
+#-------------------------------------------------
+def _print_tv_list(items):
+    for i, item in enumerate(items, 1):
+        print(f"[{i:03d}] {item}")
+    print(f"\nTotal: {len(items)} favorites in memory.\n")
 		
 #-------------------------------------------------
 def get_the_season():
@@ -5509,13 +5509,27 @@ def main():
 			else:
 				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
 				extract_from_elysia('tvshow')
+		
+		# Raciocínio: <nome> in fav | <nome> in tvshows | <nome> in fav tvshows
+		elif "in fav" in question.lower() or "in tvshow" in question.lower():
+			if len(tvshows_cache) == 0:
+				extract_from_elysia('tvshow')
+			parts = question.lower().split(" in ")
+			search_term = parts[0].strip()
+			search_term = search_term.replace("what are", "").replace("is", "").strip()
 
-		elif question[-10:] == 'fav movies' or question[-15:] == 'favorite movies':
-			if internet_onoff() == False or internet_onoff() == None:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			if search_term:
+				results = [item for item in tvshows_cache if search_term in item.lower()]
+        
+				if results:
+					print(f"\nI found {len(results):02d} match(es) for '{search_term.upper()}' in your library 🧠:")
+					for i, match in enumerate(results, 1):
+						print(f"   📺 [{i:03d}] {match}")
+					print("")
+				else:
+					print(f"No matches for '{search_term.upper()}' in your favorites.")
 			else:
-				print ('Based on the [' + website['tvshow'] + '] here are mine/'+ _author_.split()[0] + ' favorites:\n')
-				extract_from_elysia('movies')
+				_print_tv_list(tvshows_cache)
 			
 		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
 			if internet_onoff() == False or internet_onoff() == None:
@@ -5614,22 +5628,22 @@ def main():
 				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
 
 		elif question.startswith('presence'):
-			source_icon = f" {_spchar_[22:23]} [RAM]"
+			source_icon = f"{_spchar_[22:23]}"
 			if len(presence_online) == 0:
 				presence_online = mystory_from_elysia()
-				source_icon = f" {_spchar_[23:24]} [NET]"		
+				source_icon = f"{_spchar_[23:24]}"		
 			sub = question.split()[1:]
 			if len(sub) == 0:
 				digifoot = str(len(presence_online))
 				presence_online_abc = sorted(presence_online.keys())
-				print("%s has a digital footprint%s in these %s services:\n" % (_author_.split()[0], source_icon, digifoot))
+				print("%s has a digital footprint %s in these %s services:\n" % (_author_.split()[0], source_icon, digifoot))
 				for service in presence_online_abc:
 					print(" " * 3 + _spchar_[4:5] + " " + service.title())
 				print("")        
 			else:
 				service = ' '.join(sub).lower().strip()
 				if service in presence_online:
-					print(f"Yes {_author_.split()[0]} has an online presence{source_icon} on that service. Direct link: \n  {_spchar_[1:2]} {presence_online[service]}\n")
+					print(f"Yes {_author_.split()[0]} has an online presence {source_icon} on that service. Direct link: \n  {_spchar_[1:2]} {presence_online[service]}\n")
 				else:
 					print(random.choice(messages['trouble_msg']) + " I don't have info for the '" + service.title() + "' service.")
 					
