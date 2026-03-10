@@ -113,7 +113,6 @@ except ImportError as err:
 
 start_time = datetime.now()
 node_name = platform.node()
-country_code = locale.getlocale()[0].split('_')[-1]
 sysos = platform.system()
 if node_name:
 	if platform.node().upper() in [node.upper() for node in _pcnode_]:
@@ -2792,44 +2791,35 @@ def extract_from_elysia(content_type):
 		
 #-------------------------------------------------
 def get_the_season():
-	
-	today = datetime.today()
-	m = today.month * 100
-	d = today.day
-	md = m + d
-	s = -1
-	
-	if lat >= 0:
-		# Northern Hemisphere
-		if ((md >= 301) and (md <= 531)):
-			s = 0  # spring
-		elif ((md > 531) and (md < 901)):
-			s = 1  # summer
-		elif ((md >= 901) and (md <= 1130)):
-			s = 2  # autumn
-		elif ((md > 1130) and (md <= 1229)):
-			s = 3  # winter
+	global system_country
+    
+	today = datetime.now()
+	doy = today.timetuple().tm_yday
+    
+	h_sul = ['AO', 'AR', 'AU', 'BO', 'BR', 'BW', 'CL', 'CK', 'KM', 'CG', 'CD', 'FK', 'FJ', 
+    'GF', 'PF', 'TF', 'GA', 'ID', 'KE', 'LS', 'MG', 'MW', 'MY', 'MU', 'YT', 'MZ', 
+    'NA', 'NR', 'NC', 'NZ', 'NU', 'PG', 'PY', 'PE', 'PN', 'RW', 'WS', 'ST', 'SC', 
+    'SB', 'ZA', 'GS', 'TL', 'TG', 'TK', 'TO', 'TV', 'UG', 'UY', 'VU', 'WF', 'ZM', 'ZW']
+	norte = True
+	if system_country[0] in h_sul:
+		norte = False
+	if norte:
+		if 79 <= doy < 172:    s = 0 # Primavera
+		elif 172 <= doy < 265: s = 1 # Verão
+		elif 265 <= doy < 355: s = 2 # Outono
+		else:                  s = 3 # Inverno (Dez, Jan, Fev)
 	else:
-		# Southern Hemisphere
-		if (md >= 901) and (md <= 1130):
-			s = 0  # spring
-		elif (md > 1130) or (md <= 228): # Handles December to February
-			s = 1  # summer
-		elif (md >= 301) and (md <= 531):
-			s = 2  # autumn
-		elif (md > 531) and (md < 901):
-			s = 3  # winter
-
-	if s == -1:
-		print (f"{random.choice(messages['trouble_short'])} Could not determine season!\n")
-		return None, None
+		if 79 <= doy < 172:    s = 2 # Outono
+		elif 172 <= doy < 265: s = 3 # Inverno
+		elif 265 <= doy < 355: s = 0 # Primavera
+		else:                  s = 1 # Verão
 
 	season_emoji = ["🌻", "☀️", "🍁", "❄️"]
-	seasons = list(core['seasons'])
-	#current_season = seasons[s]
-	current_season = f"{seasons[s]} {season_emoji[s]}"
+	seasons_names = list(core['seasons']) 
+	current_season = f"{seasons_names[s]} {season_emoji[s]}"
 	next_season_index = (s + 1) % 4
-	other_seasons = seasons[next_season_index:] + seasons[:next_season_index - 1]
+	other_seasons = seasons_names[next_season_index:] + seasons_names[:next_season_index]
+    
 	return current_season, other_seasons
 
 #--------------------------------------------------
@@ -4275,13 +4265,44 @@ def verificar_dst(iso_code):
 	return ""
 
 #-------------------------------------------------
+def detect_country():
+	global system_country
+	iso_code = None
+
+	try:
+		loc_info = locale.getlocale(locale.LC_MESSAGES)       
+		if loc_info[0]:
+			iso_code = loc_info[0].split('_')[-1].upper()
+		if not iso_code:
+			for env_var in ['LANG', 'LC_ALL', 'LC_CTYPE']:
+				val = os.environ.get(env_var)
+				if val and '_' in val:
+					iso_code = val.split('_')[-1].split('.')[0].upper()
+					break
+		if not iso_code:
+			user_lang = locale.getgetlocale()[0]
+			if user_lang:
+				iso_code = user_lang.split('_')[-1].upper()
+		if iso_code and len(iso_code) == 2:
+			pais_obj = pycountry.countries.get(alpha_2=iso_code)
+			if pais_obj:
+				system_country[0] = iso_code
+				system_country[1] = pais_obj.name
+				return
+		system_country = ["PT", "Portugal"]
+	except Exception:
+		system_country = ["PT", "Portugal"]
+
+#-------------------------------------------------
 def set_system_country():
 	global system_country
 
 	while True:
 		user_input_code = input("Enter a two-letter country code to override (e.g., PT, US): ").upper()
 		if not user_input_code:
-			print ("")
+			detect_country()
+			#print ("")
+			print(f"System country set the actual country: {system_country[1]} ({system_country[0]})\n")
 			return False
 		found_country_name = None
 		for country_name, details in ncountries.items():
@@ -4523,6 +4544,7 @@ def validate_connection(port):
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos
+	detect_country()
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5205,24 +5227,9 @@ def main():
 			if is_holiday == True or special_info is not None:
 				print(f"{mensagem}")
 
-			#if (system_country and len(system_country) > 0) or country_code:
-			#	s_val = system_country[0].upper() if (system_country and len(system_country) > 0) else ""
-			#	c_val = country_code.upper() if country_code else ""
-
-			#	if s_val == 'PT' or c_val == 'PT':
-			#		if hoje == proximas_mudancas['summer'] - timedelta(days=1):
-			#			print("⏰ Tomorrow the clock moves forward one hour for Daylight Saving Time!\n")
-			#		elif hoje == proximas_mudancas['winter'] - timedelta(days=1):
-			#			print("⏰ Tomorrow the clock goes back one hour, entering Winter time!\n")
-			#		else:
-			#			print("")
-			#else:
-			#	print("")
-
-			if country_code:
-				final_iso = country_code
+			if system_country:
+				final_iso = system_country
 			elif (system_country and len(system_country) > 0):
-				# Assume que system_country[0] já é a string do país
 				final_iso = system_country[0].upper()
 
 			if final_iso:
