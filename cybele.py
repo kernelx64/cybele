@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '10.03.2026'
+_revise_ = '11.03.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -160,7 +160,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-my_library = []; gamescore=[-1,0,0]; _portac_ = None
+tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
@@ -192,7 +192,6 @@ webshare = {
 }
 #-----------------------------------------------------------
 presence_online = {}
-tvshows_cache = []
 #-----------------------------------------------------------
 as_quotes = [
 	"... to keep you busy.",
@@ -1130,7 +1129,7 @@ def parse_date_string(date_str):
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
 			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
-			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_, my_library
+			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_, tvshows_cache
 
 	if not check_tables(tables):
 		sys.exit(0)
@@ -1266,13 +1265,13 @@ def make_intextdb():
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 		
-		my_library = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
+		tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
 		midbcounter += len(questions) + len(answers)
-		midbcounter += len(my_library)
+		midbcounter += len(tvshows_cache)
 		for key in core:
 			if isinstance(core[key], list):
 				midbcounter += len(core[key])
@@ -4396,57 +4395,42 @@ def list_country_details():
 	print("")
 
 #-------------------------------------------------
-def _fetch_remote_library():
+def get_show_library():
+	global tvshows_cache
 
-	WEBSITE_URL = website['tvshow']
-	#if not internet_onoff():
-	#	print(f"✗ {random.choice(messages['trouble_msg'])} Network connection required. Using local list.")
-	#	return []
-
-	try:
-		response = urllib.request.urlopen(WEBSITE_URL, timeout=5)
-		html_content = response.read()
-		html_string = html_content.decode("utf-8")
-		soup = BeautifulSoup(html_string, 'html.parser')
-		items_list = []
-
-		tv_shows = soup.find_all('li', class_='zfr3Q TYR86d eD0Rn')
-		for show in tv_shows:
-			title_element = show.find('span', class_='C9DxTc')
-			if title_element:
-				items_list.append(title_element.text.strip())
-
-		if items_list:
-			print(f"✔  Successfully loaded {len(items_list)} shows from {WEBSITE_URL}\n")
-			return items_list
+	if len(tvshows_cache) == 0:
+		extract_from_elysia('tvshow')
+	else:
+		if not tvshows_cache or len(tvshows_cache) == 0:
+			tvshows_cache = ["(Error: No Shows Available)"]
 		else:
-			print(f"✗ {random.choice(messages['trouble_msg'])} Found page, but no TV shows matched the scrap pattern. Using local list.")
-			return []
-
-	except urllib.error.URLError as e:
-		return []
-	except Exception as e:
-		return []
+			print(f"✔  Successfully loaded {len(tvshows_cache)} shows from the database list.\n")
+	return tvshows_cache
 
 #-------------------------------------------------
-def get_show_library():
-	global my_library
-
-	remote_list = _fetch_remote_library()
-	if remote_list:
-		my_library = remote_list
+def commands_by_explanation(linux_commands, keyword):
+	keyword = keyword.lower()
+	results = []
+	for cmd_name, data in linux_commands.items():
+		explanation = data.get('explanation', "")
+		if keyword in explanation.lower():
+			results.append((cmd_name, explanation))
+	if not results:
+		print(f"{random.choice(messages['trouble_short'])} I did not find nothing for '{keyword}'...")
 	else:
-		if not my_library or len(my_library) == 0:
-			my_library = ["(Error: No Shows Available)"]
-		else:
-			print(f"✔  Successfully loaded {len(my_library)} shows from the database list.\n")
-	return my_library
-
+		print(f"\nBased on my {_spchar_[16:17]} {len(linux_commands)} commands knowledge:\n")
+		max_len = max(len(name) for name, _ in results) + 2 
+		for name, expl in results:
+			cmd_explanation = expl if expl else "Without data"
+			formatted_name = f"'{name}'"
+			print(f"{formatted_name:<{max_len}} - {cmd_explanation}")
+	print("")
+	
 #-------------------------------------------------
 def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_duration_minutes=75):
 	MESSAGES = messages
 	try:
-		my_library = get_show_library()	
+		tvshows_cache = get_show_library()	
 		today = datetime.now().date()
 		current_datetime = datetime.combine(today, datetime.min.time())
 		current_datetime = current_datetime.replace(hour=start_hour, minute=start_minute)
@@ -4454,7 +4438,7 @@ def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_d
 		schedule = []
 		last_show = None
 		for _ in range(num_slots):
-			available_shows = [s for s in my_library if s != last_show]
+			available_shows = [s for s in tvshows_cache if s != last_show]
 			if not available_shows:
 				next_show = last_show
 			else:
@@ -4607,7 +4591,11 @@ def main():
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
-			
+		
+		elif " in linux" in question:
+			keyword = question.replace(" in linux", "").strip()
+			commands_by_explanation(linux_commands, keyword)
+		
 		elif any(word in question for word in core['share']):
 			if internet_onoff() == True:
 				netchk = True
