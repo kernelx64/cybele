@@ -644,7 +644,7 @@ help = {
 	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
-	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",	
+	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
@@ -670,6 +670,7 @@ help = {
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
+	"help query in linux": "Usage: <query <in linux>> \nDisplay all linux commands who contain the query words. \nex: rename in linux \n    cp in linux\n",	
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help say something": "Usage <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help set default country": "Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
@@ -4416,7 +4417,7 @@ def commands_by_explanation(linux_commands, keyword):
 		if keyword in explanation.lower():
 			results.append((cmd_name, explanation))
 	if not results:
-		print(f"{random.choice(messages['trouble_short'])} I did not find nothing for '{keyword}'...")
+		print(f"{random.choice(messages['trouble_short'])} I did not find nothing for '{keyword}'...\n")
 	else:
 		print(f"\nBased on my {_spchar_[16:17]} {len(linux_commands)} commands knowledge:\n")
 		max_len = max(len(name) for name, _ in results) + 2 
@@ -4424,7 +4425,7 @@ def commands_by_explanation(linux_commands, keyword):
 			cmd_explanation = expl if expl else "Without data"
 			formatted_name = f"'{name}'"
 			print(f"{formatted_name:<{max_len}} - {cmd_explanation}")
-	print("")
+		print(f"\nFor detailed information on each command '', type it and press enter.\n")
 	
 #-------------------------------------------------
 def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_duration_minutes=75):
@@ -4592,7 +4593,7 @@ def main():
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
 		
-		elif " in linux" in question:
+		elif " in linux" in question and question != 'help query in linux':
 			keyword = question.replace(" in linux", "").strip()
 			commands_by_explanation(linux_commands, keyword)
 		
