@@ -10,4 +10,7 @@ Disclaimer
 
 ⓘ Note:
 You can find the main documentation, including installation guides, at https://www.adelinosaldanha.site/cybele
-</p>
+
+## 🚀 How to Run
+
+You don't need to worry about complex installations. Cybele manages its own facilities!
