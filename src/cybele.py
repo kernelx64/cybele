@@ -64,7 +64,6 @@ try:
 	import locale
 	import pycountry
 	import PIL
-	import re
 	import numpy as np
 	import netCDF4 as nc
 	from walkdir import filtered_walk
