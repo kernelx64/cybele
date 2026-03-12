@@ -179,7 +179,7 @@ website = {
 	"thamix": "https://www.adelinosaldanha.site/thamix",
 	"deserted": "https://www.adelinosaldanha.site/deserted",
 	"trails": "https://www.adelinosaldanha.site/trails",
-	"trakt": "https://simkl.com/4378279/tv/watching/",
+	"simlk": "https://simkl.com/4378279/tv/watching/",
 	"askard": "https://www.adelinosaldanha.site/askards"
 }
 webshare = {
@@ -538,7 +538,16 @@ messages = {
 					"My programming dictates I avoid numbers that could potentially collapse the space-time continuum.",
 					"That number just made my fan spin so fast I think it's trying to lift-off. A smaller altitude, perhaps?",
 					"My memory banks are currently protesting, citing 'cruel and unusual punishment' for numbers of that size."],
-				
+
+	"empty_number":		 ["What?! The number is being created by the Universe right now? It's invisible!",
+					"Error 404: Number not found in this dimension.",
+					"You gave me 'longhand' and then... silence. My circuits are crying.",
+					"A bit shy, are we? I need a number to work my magic!"],
+    "not_a_number":	 ["I asked for a number, but you gave me poetry. I'm a calculator, not a philosopher!",
+					"That's not a number, that's a collection of symbols. Try again, human.",
+					"My math sensors are tingling, and not in a good way. Give me digits!",
+					"Is that a secret code? Because it definitely isn't a number I recognize."],
+
 	"loadings":	["Loading core data structures...","Loading essential data core...","Initializing core components...",
 				"Allocating memory resources...","Activating primary functions...","Preparing user components...",
 				"Optimizing runtime environment..."],
@@ -696,7 +705,7 @@ help = {
 	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help your version": "Usage your version | what is | #version \nProvides details about the running instance of Cybele. Includes the version, last update date, unique and a note regarding its source code origin. \nex: what is your version \n    your version \n",
-	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \nex: Yoda say the force is strong with this one\n"
+	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \n    ex: Yoda say the force is strong with this one\n"
 }
 #------------------------------------------------------------
 orbit_regime = {
@@ -1055,28 +1064,32 @@ def check_tables(tables_names):
 			conn.close()
 
 #------------------------------------------------------------
-def download_and_convert(connection_string: str, local_db_filename: str):
+def download_and_convert(connection_string: str, local_db_filename: str, verbose):
 
 	cloud_conn = None
 	local_conn = None
 	try:
-		#print("")
 		print_statusline("Connecting to SQLite Cloud database...")
 		cloud_conn = sqlitecloud.connect(connection_string)
 		cloud_cursor = cloud_conn.cursor()
 		print_statusline(f"Creating my local database '{local_db_filename}'...")
 		local_conn = sqlite3.connect(local_db_filename)
+		local_conn.execute("PRAGMA synchronous = FULL;")
 		local_cursor = local_conn.cursor()
 		print_statusline("Fetching table schema from the cloud database...")
 		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
 		tables_info = cloud_cursor.fetchall()
 		total_tables = len(tables_info)
+		if verbose:
+			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ({table_name})..."
+		else:
+			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ..."
 		for i, (table_name, create_sql) in enumerate(tables_info):
 			progress = (i + 1) / total_tables * 100
 			bar_length = 20
 			filled_length = int(bar_length * progress // 100)
 			bar = '█' * filled_length + '░' * (bar_length - filled_length)
-			print_statusline(f"Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ...")
+			print_statusline(msg_template.format(bar=bar, progress=progress, table_name=table_name))
 			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
 			local_cursor.execute(create_sql)
 			cloud_cursor.execute(f"SELECT * FROM {table_name};")
@@ -1085,12 +1098,12 @@ def download_and_convert(connection_string: str, local_db_filename: str):
 			placeholders = ', '.join(['?'] * len(columns))
 			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
 			if rows:
-				local_cursor.executemany(insert_sql, rows)
-    
+				local_cursor.executemany(insert_sql, rows)    
 		local_conn.commit()
+		if hasattr(os, 'sync'):
+			os.sync()
 		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
 		print("\n")
-		
 	except sqlitecloud.SQLiteCloudException as e:
 		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
 	except sqlite3.Error as e:
@@ -1098,10 +1111,8 @@ def download_and_convert(connection_string: str, local_db_filename: str):
 	except Exception as e:
 		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
 	finally:
-		if cloud_conn:
-			cloud_conn.close()
-		if local_conn:
-			local_conn.close()
+		if cloud_conn: cloud_conn.close()
+		if local_conn: local_conn.close()
 
 #------------------------------------------------------------
 def delete_cybeledb():
@@ -1889,7 +1900,7 @@ def leapyear():
 def get_question():
 	qt = input( _title_ + "? 〉")
 	if qt.isupper():
-		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.")
+		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
 		question = qt.lower()
 	try:
 		if str(qt):
@@ -4419,7 +4430,7 @@ def commands_by_explanation(linux_commands, keyword):
 	if not results:
 		print(f"{random.choice(messages['trouble_short'])} I did not find nothing for '{keyword}'...\n")
 	else:
-		print(f"\nBased on my {_spchar_[16:17]} {len(linux_commands)} commands knowledge:\n")
+		print(f"Based on my {_spchar_[16:17]} {len(linux_commands)} commands knowledge:\n")
 		max_len = max(len(name) for name, _ in results) + 2 
 		for name, expl in results:
 			cmd_explanation = expl if expl else "Without data"
@@ -4626,11 +4637,17 @@ def main():
 			print (f"{random.choice(core['information state awnsers'])}\n")
 		
 		elif any(word in question for word in core['sayconvert']):
-			convert_number = question.split()[-1:][0]
-			if not convert_number.isdigit():
-				print (f"""{" ".join(question.split()[1:]).title()}.\n""")
+			conteudo_depois = question.partition("longhand")[2].strip()
+			if not conteudo_depois:
+				msg = random.choice(messages["empty_number"])
+				print(f"{random.choice(messages['trouble_msg'])} {msg}\n")
 			else:
-				print (f"{convert_to_words(int(convert_number)).capitalize()}. \n")
+				if "." in conteudo_depois or "-" in conteudo_depois or not conteudo_depois.isdigit():
+					msg = random.choice(messages["not_a_number"])
+					print(f"{random.choice(messages['trouble_msg'])} {msg}\n")
+				else:
+					result = convert_to_words(int(conteudo_depois)).capitalize()
+					print(f"{result}.\n")
 
 		elif question[0:26] == 'do you know anything about' or question[0:16] == 'know anything on' or question[0:4] == 'find' or question[0:4] == 'seek':
 			if question[0:4] == 'seek' or question[0:4] == 'find':
@@ -5783,15 +5800,16 @@ def main():
 									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 		
-		elif question == 'offline mode on':
+		elif question.startswith('offline mode on'):
+			verbose = 'verbose' in question
 			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
 			output_db_file = _title_.lower() + ".db"
 			if os.path.exists(output_db_file):
-				print(f"I am allready able to be fully functional in offline mode but i will up-to-date.")
+				print(f"I am already able to be fully functional in offline mode but i but I will update.")
 				delete_cybeledb()
-				download_and_convert(db_url, output_db_file)
+				download_and_convert(db_url, output_db_file, verbose)
 			else:
-				download_and_convert(db_url, output_db_file)
+				download_and_convert(db_url, output_db_file, verbose)
 					
 		elif question == 'offline mode off':
 			delete_cybeledb()
