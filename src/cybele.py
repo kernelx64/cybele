@@ -64,9 +64,6 @@ try:
 	import locale
 	import pycountry
 	import PIL
-	import numpy as np
-	import netCDF4 as nc
-	from walkdir import filtered_walk
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -86,7 +83,7 @@ except ImportError as err:
 	if match:
 		module_name = match.group(1)
 		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
-		serial_mods = ["serial", "pyserial", "pyusb","numpy"."np","nc","netCDF4","filtered_walk","walkdir"]
+		serial_mods = ["serial", "pyserial", "pyusb"]
 		if is_pydroid and module_name in serial_mods:
 			_pydr3_ = True
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
@@ -4562,137 +4559,6 @@ def validate_connection(port):
 		return False
 
 #-------------------------------------------------
-def calcular_sha1(filepath):
-    sha1 = hashlib.sha1()
-    try:
-        with open(filepath, 'rb') as f:
-            while True:
-                data = f.read(8192)
-                if not data: break
-                sha1.update(data)
-        return sha1.hexdigest()
-    except:
-        return "HASH_ERROR"
-
-#-------------------------------------------------
-def extract_date_range_from_filename(fname):
-    matches = re.findall(r"(\d{8}|\d{6})", fname)
-    if not matches: return "UNDATED"
-    if len(matches) >= 2:
-        last, penult = matches[-1], matches[-2]
-        if len(last) == 6 and len(penult) == 8:
-            return f"{penult}_{last}"
-    dates = [m for m in matches if len(m) == 8]
-    return dates[-1] if dates else "UNDATED"
-
-#-------------------------------------------------
-def processar_nasa(path, fname, sha1_hash):
-    ds = nc.Dataset(path)
-    try:
-        data_final = ds.time_coverage_start[:10].replace("-", "")
-    except:
-        data_final = extract_date_range_from_filename(fname)
-
-    print(f"{kolor['GREEN']}{'-'*75}{kolor['OFF']}")
-    print(f"🚀 {kolor['BOLD_WHITE']}NASA MUR DETETADO{kolor['OFF']}")
-    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
-    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
-    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_final}{kolor['OFF']}\n")
-
-    if "analysed_sst" in ds.variables:
-        var = ds.variables["analysed_sst"]
-        lat_idx = int((59.5 + 90.0) * 100)
-        lon_idx = int((-35.0 + 180.0) * 100)
-        val_raw = var[0, lat_idx, lon_idx]
-
-        if val_raw is not np.ma.masked:
-            c = float(val_raw) * 0.001
-            if c > 100.0: c -= 273.15
-            anomalia = c - (-19.28)
-            icone = "🔥" if anomalia > 0 else "❄️ "
-            print(f"🌡  {kolor['BOLD_WHITE']}NASA Cold Blob (59.5N, 35.0W):{kolor['OFF']}")
-            print(f"   -> 🌡  Absoluta: {c:.2f}°C")
-            print(f"   -> 📉 Anomalia: {kolor['VIVID_CYAN'] if anomalia < 0 else kolor['VIVID_RED']}{anomalia:+.2f}°C {icone}{kolor['OFF']}")
-
-    print(f"\n{kolor['GREEN']}{'-'*75}{kolor['OFF']}")
-    ds.close()
-
-#-------------------------------------------------
-def processar_ifremer(path, fname, sha1_hash):
-    ds = nc.Dataset(path)
-    data_final = extract_date_range_from_filename(fname)
-
-    print(f"{kolor['BLUE']}{'-'*75}{kolor['OFF']}")
-    print(f"🚀 {kolor['BOLD_WHITE']}IFREMER VIIRS DETETADO{kolor['OFF']}")
-    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
-    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
-    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_final}{kolor['OFF']}\n")
-
-    print(f"{kolor['BOLD_MAGENTA']}{'Latitude':<10} | {'SST (K)':<10} | {'Celsius (°C)':<15}{kolor['OFF']}")
-    print("-" * 45)
-
-    lats, lons = ds.variables['lat'][:], ds.variables['lon'][:]
-    sst_var = ds.variables['sea_surface_temperature']
-
-    for lat_alvo in range(40, 70, 5):
-        diff = np.abs(lats - float(lat_alvo)) + np.abs(lons - (-15.0))
-        idx = np.unravel_index(np.argmin(diff), lats.shape)
-
-        if diff[idx] < 0.2:
-            raw = sst_var[0, idx[0], idx[1]]
-            if raw is not np.ma.masked:
-                c = float(raw) * 0.01
-                if c > 100: c -= 273.15
-                cor = kolor['VIVID_BLUE'] if c < 9.0 else kolor['VIVID_YELLOW'] if c < 12.0 else kolor['VIVID_GREEN']
-                print(f"{float(lat_alvo):<10.1f} | {c + 273.15:<10.2f} | {cor}{c:<+15.2f}{kolor['OFF']}")
-                continue
-        print(f"{float(lat_alvo):<10.1f} | {'---':<10} | {kolor['DIM_WHITE']}☁️ Nuvens / Out of Orbit{kolor['OFF']}")
-
-    print(f"{kolor['BLUE']}{'-'*75}{kolor['OFF']}")
-    ds.close()
-
-#-------------------------------------------------
-def processar_copernicus(path, fname, sha1_hash):
-    ds = nc.Dataset(path)
-    data_range = extract_date_range_from_filename(fname)
-
-    print(f"{kolor['MAGENTA']}{'-'*75}{kolor['OFF']}")
-    print(f"🚀 {kolor['BOLD_WHITE']}COPERNICUS DATA DETETADO{kolor['OFF']}")
-    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
-    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
-    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_range}{kolor['OFF']}\n")
-
-    lats, lons = ds.variables.get('lat', ds.variables.get('latitude'))[:], ds.variables.get('lon', ds.variables.get('longitude'))[:]
-    var_name = "analysed_sst" if "analysed_sst" in ds.variables else "adt"
-    var = ds.variables[var_name]
-    unidade = "°C" if var_name == "analysed_sst" else "m"
-
-    print(f"{kolor['BOLD_WHITE']}{'Latitude':<10} | {f'Valor ({unidade})':<12} | {'Tipo'}{kolor['OFF']}")
-    print("-" * 45)
-
-    v40, v60 = None, None
-    lon_idx = (np.abs(lons - (-15.0))).argmin()
-
-    for l_step in range(40, 70, 5):
-        lat_idx = (np.abs(lats - float(l_step))).argmin()
-        val_raw = var[0, lat_idx, lon_idx]
-
-        if val_raw is not np.ma.masked and val_raw > -1000:
-            valor = float(val_raw)
-            if var_name == "analysed_sst" and valor > 100.0: valor -= 273.15
-            print(f"{float(l_step):<10.1f} | {valor:<12.3f} | {kolor['VIVID_CYAN']}📡 ALTIMETRY{kolor['OFF']}")
-            if l_step == 40: v40 = valor
-            if l_step == 60: v60 = valor
-        else:
-            print(f"{float(l_step):<10.1f} | {'---':<12} | {kolor['DIM_RED']}🛰️ No signal / Terra{kolor['OFF']}")
-
-    if v40 is not None and v60 is not None:
-        print(f"\n📊 {kolor['BOLD_WHITE']}Diagnostic Delta (40N - 60N): {kolor['VIVID_GREEN']}{v40 - v60:.3f} {unidade}{kolor['OFF']}")
-
-    print(f"{kolor['MAGENTA']}{'-'*75}{kolor['OFF']}")
-    ds.close()
-
-#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -5992,28 +5858,6 @@ def main():
 						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
 					case _:
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
-					
-		elif question == 'process amoc files' or question == 'process amoc':
-			if _pydr3_ == True:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_RED']}This operation is disabled for this Python 3 IDE!{kolor['OFF']}\n")
-				return True
-			files = [f for f in os.listdir('./') if f.endswith('.nc')]
-			files.sort()
-			if not files:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_YELLOW']}I couldn't find any '.nc' file(s) in the directory I'm in.!{kolor['OFF']}\n")
-			else:
-				print(f"\n{kolor['BOLD_BLUE']}🌊 AMOC MULTI-SOURCE ANALYSIS [v1.9.5-PY]{kolor['OFF']}")
-				print(f"{kolor['BOLD_CYAN']}🖥️ Cybele Research Engine © 2026 AS{kolor['OFF']}\n")
-				for fname in files:
-					path = os.path.join('./', fname)
-					sha1 = calcular_sha1(path)
-					try:
-						if "JPL-L4_GHRSST" in fname: processar_nasa(path, fname, sha1)
-						elif "OSISAF-L3C" in fname: processar_ifremer(path, fname, sha1)
-						else: processar_copernicus(path, fname, sha1)
-					except Exception as e:
-						print(f"❌ {kolor['BOLD_RED']}Error in {fname}: {e}{kolor['OFF']}")
-				print(f"\n{kolor['BOLD_GREEN']}✅ Processing Completed. 🦖{kolor['OFF']}\n")
 
 		elif question != '':
 			answer = find_answer(question,questions)
