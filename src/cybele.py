@@ -5994,7 +5994,7 @@ def main():
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
 					
 		elif question == 'process amoc files' or question == 'process amoc':
-			if _pydr3_ == True
+			if _pydr3_ == True:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_RED']}This operation is disabled for this Python 3 IDE!{kolor['OFF']}\n")
 				return True
 			files = [f for f in os.listdir('./') if f.endswith('.nc')]
