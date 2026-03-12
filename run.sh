@@ -3,7 +3,7 @@ clear
 # 1. Verifica se a diretoria venv existe, se não, cria-a
 if [ ! -d "venv" ]; then
     echo "[!] Creating virtual environment (venv)..."
-    python -m venv venv
+    python3 -m venv venv
 fi
 # 2. Ativa o ambiente virtual
 source venv/bin/activate
