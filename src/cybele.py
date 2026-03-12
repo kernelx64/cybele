@@ -64,6 +64,7 @@ try:
 	import locale
 	import pycountry
 	import PIL
+	import re
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -4559,6 +4560,39 @@ def validate_connection(port):
 		return False
 
 #-------------------------------------------------
+def run_amoc_engine():
+	engines = {
+		"Linux": "./amoc-msdat",
+		"Windows": "amoc-msdat.exe",
+		"Darwin": "./amoc-msdat-mac"
+	}
+
+	current_os = platform.system()
+	engine = engines.get(current_os)
+
+	if not engine:
+		print(f"\n{kolor['BOLD_RED']}❌ Error: No compatible AMOC engine for {current_os}.{kolor['OFF']}")
+		return
+
+	if current_os == "Linux" and os.path.exists(engine):
+		os.chmod(engine, 0o755)
+
+	if os.path.exists(engine):
+		print(f"Launching {kolor['BOLD_CYAN']}AMOC Engine {kolor['RED']}(powered by Rust 🦀){kolor['OFF']}")
+		try:
+			is_win = (current_os == "Windows")
+			process = subprocess.Popen(engine, shell=is_win, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+			for line in process.stdout:
+				print(line, end="")
+
+			process.wait()
+		except Exception as e:
+			print(f"{random.choice(messages['trouble_msg'])}{kolor['BOLD_RED']}❌ Engine Crash: {e}{kolor['OFF']}")
+	else:
+		print(f"{random.choice(messages['trouble_short'])}{kolor['BOLD_YELLOW']} ⚠️ Engine '{engine}' not found.{kolor['OFF']}")
+		print(f"{kolor['DIM_WHITE']}Please place the Rust binary in the Cybele root folder.{kolor['OFF']}\n")
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -5858,6 +5892,12 @@ def main():
 						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
 					case _:
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
+					
+		elif question == 'process amoc files' or question == 'process amoc':
+			if _pydr3_ == True:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ I've detected I'm running on the Pydroid IDE.\n{kolor['BOLD_YELLOW']}While I'd love to crunch those numbers, my AMOC heavy-lift engine requires a Desktop environment.{kolor['OFF']}\n")
+			else:
+				run_amoc_engine()
 
 		elif question != '':
 			answer = find_answer(question,questions)
