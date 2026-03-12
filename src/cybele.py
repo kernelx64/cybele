@@ -86,7 +86,7 @@ except ImportError as err:
 	if match:
 		module_name = match.group(1)
 		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
-		serial_mods = ["serial", "pyserial", "pyusb"]
+		serial_mods = ["serial", "pyserial", "pyusb","numpy","netCDF4"]
 		if is_pydroid and module_name in serial_mods:
 			_pydr3_ = True
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
@@ -5994,16 +5994,16 @@ def main():
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
 					
 		elif question == 'process amoc files' or question == 'process amoc':
+			if _pydr3_ == True
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_RED']}This operation is disabled for this Python 3 IDE!{kolor['OFF']}\n")
+				return True
 			files = [f for f in os.listdir('./') if f.endswith('.nc')]
 			files.sort()
-
 			if not files:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_YELLOW']}I couldn't find any '.nc' file(s) in the directory I'm in.!{kolor['OFF']}\n")
 			else:
-
 				print(f"\n{kolor['BOLD_BLUE']}🌊 AMOC MULTI-SOURCE ANALYSIS [v1.9.5-PY]{kolor['OFF']}")
 				print(f"{kolor['BOLD_CYAN']}🖥️ Cybele Research Engine © 2026 AS{kolor['OFF']}\n")
-
 				for fname in files:
 					path = os.path.join('./', fname)
 					sha1 = calcular_sha1(path)
@@ -6013,7 +6013,6 @@ def main():
 						else: processar_copernicus(path, fname, sha1)
 					except Exception as e:
 						print(f"❌ {kolor['BOLD_RED']}Error in {fname}: {e}{kolor['OFF']}")
-
 				print(f"\n{kolor['BOLD_GREEN']}✅ Processing Completed. 🦖{kolor['OFF']}\n")
 
 		elif question != '':
