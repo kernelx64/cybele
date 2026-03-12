@@ -86,7 +86,7 @@ except ImportError as err:
 	if match:
 		module_name = match.group(1)
 		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
-		serial_mods = ["serial", "pyserial", "pyusb","numpy","netCDF4"]
+		serial_mods = ["serial", "pyserial", "pyusb","numpy"."np","nc","netCDF4","filtered_walk","walkdir"]
 		if is_pydroid and module_name in serial_mods:
 			_pydr3_ = True
 			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
