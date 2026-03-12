@@ -64,6 +64,10 @@ try:
 	import locale
 	import pycountry
 	import PIL
+	import re
+	import numpy as np
+	import netCDF4 as nc
+	from walkdir import filtered_walk
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -675,9 +679,10 @@ help = {
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
 	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
-	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
+	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
+	"help process amoc": "Usage: process amoc|process amoc files\nStarts the Multi-Source Data Analysis engine (IFREMER/NASA/COPERNICUS).\nThe system scans for .nc files, validates SHA1 integrity, and extracts SST values for AMOC monitoring latitudes. \n    ex: process amoc\n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help query in linux": "Usage: <query <in linux>> \nDisplay all linux commands who contain the query words. \nex: rename in linux \n    cp in linux\n",	
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
@@ -689,7 +694,9 @@ help = {
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
 	"help show me": "Usage: show me <star names|constellations|<dangerous|asteroids|objects>|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
+	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
+	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \n    ex: reset my score\n",
 	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
@@ -4556,6 +4563,137 @@ def validate_connection(port):
 		return False
 
 #-------------------------------------------------
+def calcular_sha1(filepath):
+    sha1 = hashlib.sha1()
+    try:
+        with open(filepath, 'rb') as f:
+            while True:
+                data = f.read(8192)
+                if not data: break
+                sha1.update(data)
+        return sha1.hexdigest()
+    except:
+        return "HASH_ERROR"
+
+#-------------------------------------------------
+def extract_date_range_from_filename(fname):
+    matches = re.findall(r"(\d{8}|\d{6})", fname)
+    if not matches: return "UNDATED"
+    if len(matches) >= 2:
+        last, penult = matches[-1], matches[-2]
+        if len(last) == 6 and len(penult) == 8:
+            return f"{penult}_{last}"
+    dates = [m for m in matches if len(m) == 8]
+    return dates[-1] if dates else "UNDATED"
+
+#-------------------------------------------------
+def processar_nasa(path, fname, sha1_hash):
+    ds = nc.Dataset(path)
+    try:
+        data_final = ds.time_coverage_start[:10].replace("-", "")
+    except:
+        data_final = extract_date_range_from_filename(fname)
+
+    print(f"{kolor['GREEN']}{'-'*75}{kolor['OFF']}")
+    print(f"🚀 {kolor['BOLD_WHITE']}NASA MUR DETETADO{kolor['OFF']}")
+    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
+    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
+    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_final}{kolor['OFF']}\n")
+
+    if "analysed_sst" in ds.variables:
+        var = ds.variables["analysed_sst"]
+        lat_idx = int((59.5 + 90.0) * 100)
+        lon_idx = int((-35.0 + 180.0) * 100)
+        val_raw = var[0, lat_idx, lon_idx]
+
+        if val_raw is not np.ma.masked:
+            c = float(val_raw) * 0.001
+            if c > 100.0: c -= 273.15
+            anomalia = c - (-19.28)
+            icone = "🔥" if anomalia > 0 else "❄️ "
+            print(f"🌡  {kolor['BOLD_WHITE']}NASA Cold Blob (59.5N, 35.0W):{kolor['OFF']}")
+            print(f"   -> 🌡  Absoluta: {c:.2f}°C")
+            print(f"   -> 📉 Anomalia: {kolor['VIVID_CYAN'] if anomalia < 0 else kolor['VIVID_RED']}{anomalia:+.2f}°C {icone}{kolor['OFF']}")
+
+    print(f"\n{kolor['GREEN']}{'-'*75}{kolor['OFF']}")
+    ds.close()
+
+#-------------------------------------------------
+def processar_ifremer(path, fname, sha1_hash):
+    ds = nc.Dataset(path)
+    data_final = extract_date_range_from_filename(fname)
+
+    print(f"{kolor['BLUE']}{'-'*75}{kolor['OFF']}")
+    print(f"🚀 {kolor['BOLD_WHITE']}IFREMER VIIRS DETETADO{kolor['OFF']}")
+    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
+    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
+    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_final}{kolor['OFF']}\n")
+
+    print(f"{kolor['BOLD_MAGENTA']}{'Latitude':<10} | {'SST (K)':<10} | {'Celsius (°C)':<15}{kolor['OFF']}")
+    print("-" * 45)
+
+    lats, lons = ds.variables['lat'][:], ds.variables['lon'][:]
+    sst_var = ds.variables['sea_surface_temperature']
+
+    for lat_alvo in range(40, 70, 5):
+        diff = np.abs(lats - float(lat_alvo)) + np.abs(lons - (-15.0))
+        idx = np.unravel_index(np.argmin(diff), lats.shape)
+
+        if diff[idx] < 0.2:
+            raw = sst_var[0, idx[0], idx[1]]
+            if raw is not np.ma.masked:
+                c = float(raw) * 0.01
+                if c > 100: c -= 273.15
+                cor = kolor['VIVID_BLUE'] if c < 9.0 else kolor['VIVID_YELLOW'] if c < 12.0 else kolor['VIVID_GREEN']
+                print(f"{float(lat_alvo):<10.1f} | {c + 273.15:<10.2f} | {cor}{c:<+15.2f}{kolor['OFF']}")
+                continue
+        print(f"{float(lat_alvo):<10.1f} | {'---':<10} | {kolor['DIM_WHITE']}☁️ Nuvens / Out of Orbit{kolor['OFF']}")
+
+    print(f"{kolor['BLUE']}{'-'*75}{kolor['OFF']}")
+    ds.close()
+
+#-------------------------------------------------
+def processar_copernicus(path, fname, sha1_hash):
+    ds = nc.Dataset(path)
+    data_range = extract_date_range_from_filename(fname)
+
+    print(f"{kolor['MAGENTA']}{'-'*75}{kolor['OFF']}")
+    print(f"🚀 {kolor['BOLD_WHITE']}COPERNICUS DATA DETETADO{kolor['OFF']}")
+    print(f"📂 {kolor['CYAN']}CAMINHO: {path}{kolor['OFF']}")
+    print(f"🔒 {kolor['YELLOW']}SHA1: {sha1_hash}{kolor['OFF']}")
+    print(f"📅 DATA: {kolor['BOLD_YELLOW']}{data_range}{kolor['OFF']}\n")
+
+    lats, lons = ds.variables.get('lat', ds.variables.get('latitude'))[:], ds.variables.get('lon', ds.variables.get('longitude'))[:]
+    var_name = "analysed_sst" if "analysed_sst" in ds.variables else "adt"
+    var = ds.variables[var_name]
+    unidade = "°C" if var_name == "analysed_sst" else "m"
+
+    print(f"{kolor['BOLD_WHITE']}{'Latitude':<10} | {f'Valor ({unidade})':<12} | {'Tipo'}{kolor['OFF']}")
+    print("-" * 45)
+
+    v40, v60 = None, None
+    lon_idx = (np.abs(lons - (-15.0))).argmin()
+
+    for l_step in range(40, 70, 5):
+        lat_idx = (np.abs(lats - float(l_step))).argmin()
+        val_raw = var[0, lat_idx, lon_idx]
+
+        if val_raw is not np.ma.masked and val_raw > -1000:
+            valor = float(val_raw)
+            if var_name == "analysed_sst" and valor > 100.0: valor -= 273.15
+            print(f"{float(l_step):<10.1f} | {valor:<12.3f} | {kolor['VIVID_CYAN']}📡 ALTIMETRY{kolor['OFF']}")
+            if l_step == 40: v40 = valor
+            if l_step == 60: v60 = valor
+        else:
+            print(f"{float(l_step):<10.1f} | {'---':<12} | {kolor['DIM_RED']}🛰️ No signal / Terra{kolor['OFF']}")
+
+    if v40 is not None and v60 is not None:
+        print(f"\n📊 {kolor['BOLD_WHITE']}Diagnostic Delta (40N - 60N): {kolor['VIVID_GREEN']}{v40 - v60:.3f} {unidade}{kolor['OFF']}")
+
+    print(f"{kolor['MAGENTA']}{'-'*75}{kolor['OFF']}")
+    ds.close()
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -4984,7 +5122,7 @@ def main():
 		elif question == 'value of pi' or question == 'pi value' or question == 'pi':
 			print ("The value of π is "+ str(math.pi)+ "\n")
 
-		elif question == 'clear screen' or question == 'clean':
+		elif question == 'clear screen' or question == 'clean' or question == 'cls':
 			if sysos.lower() == 'windows':
 				os.system('cls')
 			elif sysos.lower() == 'linux':
@@ -5856,6 +5994,29 @@ def main():
 					case _:
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
 					
+		elif question == 'process amoc files' or question == 'process amoc':
+			files = [f for f in os.listdir('./') if f.endswith('.nc')]
+			files.sort()
+
+			if not files:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ {kolor['BOLD_YELLOW']}I couldn't find any '.nc' file(s) in the directory I'm in.!{kolor['OFF']}\n")
+			else:
+
+				print(f"\n{kolor['BOLD_BLUE']}🌊 AMOC MULTI-SOURCE ANALYSIS [v1.9.5-PY]{kolor['OFF']}")
+				print(f"{kolor['BOLD_CYAN']}🖥️ Cybele Research Engine © 2026 AS{kolor['OFF']}\n")
+
+				for fname in files:
+					path = os.path.join('./', fname)
+					sha1 = calcular_sha1(path)
+					try:
+						if "JPL-L4_GHRSST" in fname: processar_nasa(path, fname, sha1)
+						elif "OSISAF-L3C" in fname: processar_ifremer(path, fname, sha1)
+						else: processar_copernicus(path, fname, sha1)
+					except Exception as e:
+						print(f"❌ {kolor['BOLD_RED']}Error in {fname}: {e}{kolor['OFF']}")
+
+				print(f"\n{kolor['BOLD_GREEN']}✅ Processing Completed. 🦖{kolor['OFF']}\n")
+
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
