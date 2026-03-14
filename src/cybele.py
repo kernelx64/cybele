@@ -161,7 +161,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None
+country_code = None; tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
@@ -4326,6 +4326,7 @@ def detect_country():
 		system_country = ["PT", "Portugal"]
 	except Exception:
 		system_country = ["PT", "Portugal"]
+	country_code = system_country[0]
 
 #-------------------------------------------------
 def set_system_country():
