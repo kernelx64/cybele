@@ -150,7 +150,7 @@ print_statusline(f"\nLoading ...")
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
-GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/vruxex.ir"
+GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 iknow_pun = {"i know": "you know","you know": "i know"}
@@ -161,7 +161,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None
+country_code = None; tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
@@ -4326,6 +4326,7 @@ def detect_country():
 		system_country = ["PT", "Portugal"]
 	except Exception:
 		system_country = ["PT", "Portugal"]
+	country_code = system_country[0]
 
 #-------------------------------------------------
 def set_system_country():
@@ -5164,11 +5165,8 @@ def main():
 			defgps = 'default gps'
 			_poigps_[3] = 1
 			_poigps_[4] = 1
-			if country_code:
-				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} ({country_code}) to UTC using {defgps}")
-			else:
-				print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} to UTC using {defgps}")
-
+			
+			print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} to UTC using {defgps}")
 			drawart('art_world')
 
 			sun_emoji = ["☀️","🌑","🌕","🌅"]
@@ -5271,8 +5269,6 @@ def main():
 			current_time = now.strftime("%H:%M")
 			days_left = days_in_year() - iniyeardays
 			is_holiday, holiday_name = today_holiday()
-
-			##hoje = datetime.now().date()
 			
 			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
 			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
