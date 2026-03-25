@@ -636,6 +636,7 @@ help = {
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
+	"help well": "Usage: <DIAMETER> <HEIGHT> <UNIT (m|cm) \nEx: well 1.5 8 m \n    well 150 800 cm",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
@@ -740,7 +741,7 @@ planet_data = {
 	"moons": "No moons.","rings": "No rings.","temperature": "462°C (864°F)"
 	},
 	"earth": {"orbital_period": 1.00,"semi_major_axis": 1.00,"orbital_eccentricity": 0.017,"orbital_inclination": 0.00,
-	"rotation_period": 24.00,"axial_tilt": 23.44,"mass": 5.9722e24,
+	"rotation_period": 1,"axial_tilt": 23.44,"mass": 5.9722e24,
 	"atmosphere": "Primarily nitrogen (78%) and oxygen (21%), with argon and trace gases.",
 	"moons": "One moon: Moon","rings": "No rings.","temperature": "15°C (59°F)"
 	},
@@ -753,13 +754,13 @@ planet_data = {
 	"rotation_period": 0.41,"axial_tilt": 3.13,"mass": 1.8981e27,
 	"atmosphere": "Primarily hydrogen and helium, with methane, ammonia, and trace amounts of other gases.",
 	"moons": "Over 80 moons, with the four largest being Io, Europa, Ganymede, and Callisto.",
-	"rings": "Prominent ring system composed mainly of ice particles.","temperature": "-145°C (-229°F)"
+	"rings": "Faint and dusty ring system, difficult to see from Earth.","temperature": "-145°C (-229°F)"
 	},
   	"saturn": {"orbital_period": 29.46,"semi_major_axis": 9.54,"orbital_eccentricity": 0.056,"orbital_inclination": 2.49,
 	"rotation_period": 0.43,"axial_tilt": 26.73,"mass": 5.6834e26,
 	"atmosphere": "Primarily hydrogen and helium, with methane and ammonia.",
 	"moons": "Over 80 moons, with the largest being Titan.",
-	"rings": "Extensive and complex ring system composed mostly of ice particles.","temperature": "-185°C (-299°F)"
+	"rings": "Rominent ring system composed mainly of ice particles.","temperature": "-185°C (-299°F)"
 	},
   	"uranus": {"orbital_period": 84.01,"semi_major_axis": 19.18,"orbital_eccentricity": 0.046,"orbital_inclination": 0.77,
 	"rotation_period": -0.72,"axial_tilt": 97.77,"mass": 8.6810e25,
@@ -1297,7 +1298,7 @@ def make_intextdb():
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_short'])}, {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}") 
 		sys.exit(1)
-		
+
 #----------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -2451,6 +2452,47 @@ def convert_units(question: str):
 		converted_value = value_in_base_unit / to_factor
 
 	return round(converted_value, 4), unit_to
+
+#--------------------------------------------
+def calcular_volume_poco():
+    """
+    Solicita inputs, valida os dados e calcula o volume de um poço cilíndrico.
+    """
+    try:
+        print("--- Calculadora de Volume de Poço (Cilíndrico) ---")
+        
+        # 1. Inputs do utilizador
+        d_input = float(input("Digite o diâmetro (ex: 1.5): "))
+        h_input = float(input("Digite a profundidade/altura (ex: 8): "))
+        
+        # 2. Escolha da unidade para evitar confusão (m ou cm)
+        unidade = input("Os dados estão em metros (m) ou centímetros (cm)? ").strip().lower()
+
+        # 3. Conversão de medidas (Normaliza tudo para metros)
+        if unidade == 'cm':
+            diametro = d_input / 100
+            altura = h_input / 100
+        else:
+            diametro = d_input
+            altura = h_input
+
+        # 4. Validação lógica (Garantir que os números são positivos)
+        if diametro <= 0 or altura <= 0:
+            return "Erro: O diâmetro e a altura devem ser maiores que zero."
+
+        # 5. Cálculo Matemático
+        raio = diametro / 2
+        area_base = math.pi * (raio ** 2)
+        volume_m3 = area_base * altura
+        litros = volume_m3 * 1000
+
+        # 6. Retorno formatado
+        return (f"\nResultados para {diametro}m de diâmetro e {altura}m de altura:\n"
+                f"- Volume: {volume_m3:.3f} m³\n"
+                f"- Capacidade Total: {litros:,.0f} Litros")
+
+    except ValueError:
+        return "Erro: Por favor, insira apenas números (use ponto em vez de vírgula)."
 
 #--------------------------------------------
 def get_current_century():
@@ -5340,6 +5382,9 @@ def main():
 					print(f"Based on my calculations {original_value_str} {original_unit_from} is {converted_value} {target_unit}.\n")
 				else:
 					print(f"Based on my calculations {converted_value} {target_unit}.\n")
+
+		elif question == 'well':	
+			print(calcular_volume_poco())
 
 		#---------------------------------------------------------------------------------------
 
