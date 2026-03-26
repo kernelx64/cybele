@@ -49,6 +49,21 @@ Sporting a **retro-inspired design** reminiscent of classic consoles and termina
 
 ⓘ **Note**: You can find the main documentation, including installation guides, at [adelinosaldanha.site/cybele](https://www.adelinosaldanha.site/cybele)
 
+docs: finalize Cybele v1.1.1 and legacy notes.
+```markdown
+# 🏺 Cybele v1.1.1
+
+### 📅 Project Status: End of Life (EOL)
+**Date:** 26.03.2026  
+**Cycle:** Final Maintenance  
+
+This repository is now in its final form. No further updates or support will be provided.
+
+---
+
+### ✨ Special Thanks
+A huge shoutout to **[Maya]** for illuminating this code. Without that spark, the logic wouldn't shine half as bright. 💡
+
 ---
 *Developed with a focus on freedom and functionality.*
 ⓘ Note:
