@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '25.03.2026'
+_revise_ = '26.03.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -636,7 +636,7 @@ help = {
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
-	"help well": "Usage: <DIAMETER> <HEIGHT> <UNIT (m|cm) \nEx: well 1.5 8 m \n    well 150 800 cm",
+	"help well": "Usage: <DIAMETER> <HEIGHT> <UNIT (m|cm)> \nEx: well 1.5 8 m \n    well 150 800 cm\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
@@ -709,7 +709,7 @@ help = {
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
-	"help your version": "Usage your version | what is | #version \nProvides details about the running instance of Cybele. Includes the version, last update date, unique and a note regarding its source code origin. \nex: what is your version \n    your version \n",
+	"help your version": "Usage your version | what is | this version \nProvides details about the running instance of Cybele.\nIncludes the version, last update date, unique ID and a note regarding its source code origin. \nex: what is your version \n    your version \n    this version \n",
 	"help yoda say": "Usage yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \n    ex: Yoda say the force is strong with this one\n"
 }
 #------------------------------------------------------------
@@ -1389,7 +1389,7 @@ others = [
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
 	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
-	"current system uptime","display uptime"
+	"current system uptime","display uptime","github version","my version","this version"
 ]
 #----------------------------------------------------------
 maincommands = [
@@ -2883,7 +2883,7 @@ def get_the_season():
 		if 79 <= doy < 172:    s = 0 # Primavera
 		elif 172 <= doy < 265: s = 1 # Verão
 		elif 265 <= doy < 355: s = 2 # Outono
-		else:                  s = 3 # Inverno (Dez, Jan, Fev)
+		else:                  s = 3 # Inverno
 	else:
 		if 79 <= doy < 172:    s = 2 # Outono
 		elif 172 <= doy < 265: s = 3 # Inverno
@@ -2990,16 +2990,8 @@ def cybele_play_quiz(quizdata,game):
 def random_season_activity():
 	now = date.today()
 	month = now.month
-
-	if 3 <= month <= 5:  # Spring (March, April, May)
-		season = "spring"
-	elif 6 <= month <= 8:  # Summer (June, July, August)
-		season = "summer"
-	elif 9 <= month <= 11: # Autumn (September, October, November)
-		season = "autumn"
-	else:  # Winter (December, January, February)
-		season = "winter"
-
+	
+	season = get_the_season()[0].lower()
 	conn = None
 	try:
 		if internet_onoff():
@@ -4544,49 +4536,55 @@ def get_remote_version_and_revision_from_file():
 	try:
 		response = requests.get(github_file_url)
 		response.raise_for_status()      
-		content = response.text       
+		content = response.text        
 		version_match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
-		revised_match = re.search(r"_revise_\s*=\s*['\"]([^'\"]+)['\"]", content) # Corrected: _revise_
+		revised_match = re.search(r"_revise_\s*=\s*['\"]([^'\"]+)['\"]", content)
 		remote_version = version_match.group(1) if version_match else None
 		remote_revised = revised_match.group(1) if revised_match else None
 		if not version_match:
 			print(f"Warning: Could not find 'version = ' in {github_file_url} on GitHub.")
 		if not revised_match:
-			print(f"Warning: Could not find '_revise_ = ' in {github_file_url} on GitHub.") # Corrected: _revise_
+			print(f"Warning: Could not find '_revise_ = ' in {github_file_url} on GitHub.")
 		return remote_version, remote_revised
 	except requests.exceptions.RequestException as e:
-		print (f"{random.choice(messages['trouble_short'])} Error fetching remote version and revision: {e}\n")
+		error_parts = str(e).split(':', 1)
+		clean_error = error_parts[1].strip() if len(error_parts) > 1 else str(e)
+		print (f"{random.choice(messages['trouble_short'])} Error fetching remote version: {clean_error}\n")
 		return None, None
 	except Exception as e:
-		print (f"{random.choice(messages['trouble_short'])} Unexpected error occurred while getting remote version and revision: {e}\n")
+		error_parts = str(e).split(':', 1)
+		clean_error = error_parts[1].strip() if len(error_parts) > 1 else str(e)
+		print (f"{random.choice(messages['trouble_short'])} Unexpected error: {clean_error}\n")
 		return None, None
 
 #-------------------------------------------------
 def check_for_updates():
-
 	if internet_onoff() == True:
 		local_version_str = version    
-		local_revised_str = datetime.now().strftime('%d.%m.%Y')
+		local_revised_dt = datetime.strptime(_revise_, '%d.%m.%Y')
 		remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
 		remote_version_str = remote_version_raw.strip() if remote_version_raw else None
-		remote_revised_str = remote_revised_raw.strip() if remote_revised_raw else None
-		if remote_version_str is None:
+		remote_revised_str_raw = remote_revised_raw.strip() if remote_revised_raw else None
+		if remote_version_str is None or remote_revised_str_raw is None:
 			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
-			return
+			return    
 		try:
-			if local_version_str == remote_version_str and local_revised_str == remote_revised_str:
-				print (f"You have the latest available {remote_version_str} from {remote_revised_str} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
-			elif local_version_str > remote_version_str or local_revised_str > remote_revised_str:
-				print (f"You have a superior version {remote_version_str} from {remote_revised_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
-			elif local_version_str < remote_version_str or local_revised_str < remote_revised_str:
-				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {local_revised_str}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
+			remote_revised_dt = datetime.strptime(remote_revised_str_raw, '%d.%m.%Y')
+			if local_version_str == remote_version_str and local_revised_dt == remote_revised_dt:
+				print (f"You have the latest available {remote_version_str} from {remote_revised_str_raw} version. {kolor['BOLD_GREEN']}{random.choice(messages['msg_welldone']).upper()}!{kolor['OFF']}\n")
+			elif local_version_str < remote_version_str or local_revised_dt < remote_revised_dt:
+				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {_revise_}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
+			elif local_version_str > remote_version_str or local_revised_dt > remote_revised_dt:
+				print (f"You have a superior version {local_version_str} than {remote_version_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
 			else:
-				print(f"{random.choice(messages['trouble_short'])} Could not retrieve the data from the remote revision for comparison.")
+				print(f"{random.choice(messages['trouble_short'])} Unexpected comparison state.")
 		except Exception as e:
-			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {e}\n")
+			error_parts = str(e).split(':', 1)
+			clean_error = error_parts[1].strip() if len(error_parts) > 1 else str(e)
+			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {clean_error}\n")
 	else:
 		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
-
+		
 #-------------------------------------------------
 def validate_connection(port):
 	# Obtém lista de todas as portas série ativas
@@ -5169,7 +5167,7 @@ def main():
 				random.shuffle(messages['notvalentines'])
 				print( random.choice(messages['notvalentines']) + "\n")
 		
-		elif question == 'what is your version' or question == 'cybele version' or question == '#version':
+		elif question == 'what is your version' or question == 'cybele version' or question == 'your version' or question == 'this version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkwww_ = 'online' if internet_onoff() else 'offline'
@@ -5933,7 +5931,14 @@ def main():
 						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
 					case _:
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
-					
+		
+		elif question == 'github version':
+			 remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
+			 print (f"The github version is the {remote_version_raw} from {remote_revised_raw}.\n")
+		
+		elif question == '#version':
+			print (f"I'm running in the {version} from {_revise_}.\n")
+		
 		elif question == 'process amoc files' or question == 'process amoc':
 			if _pydr3_ == True:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ I've detected I'm running on the Pydroid IDE.\n{kolor['BOLD_YELLOW']}While I'd love to crunch those numbers, my AMOC heavy-lift engine requires a Desktop environment.{kolor['OFF']}\n")
