@@ -652,7 +652,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
-	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
+	"help gridflow": "Usage: gridflow|gridflow <start time> <slots> <slot duration>\nA creative way to bring a dash of algorithmic mystery to your leisure time. \nex: gridflow 21:30 5 60\n    gridflow\n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
@@ -4478,10 +4478,18 @@ def commands_by_explanation(linux_commands, keyword):
 		print(f"\nFor detailed information on each command '', type it and press enter.\n")
 	
 #-------------------------------------------------
-def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_duration_minutes=75):
+def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=60):
+
+	if num_slots > 12:
+		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slots number cannot be higher than 12.\n")
+		return None
+	if slot_duration_minutes > 60:
+		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slot duration minutes can't be higher than 240.\n")
+		return None
+
 	MESSAGES = messages
 	try:
-		tvshows_cache = get_show_library()	
+		tvshows_cache = get_show_library()
 		today = datetime.now().date()
 		current_datetime = datetime.combine(today, datetime.min.time())
 		current_datetime = current_datetime.replace(hour=start_hour, minute=start_minute)
@@ -4495,16 +4503,15 @@ def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_d
 			else:
 				next_show = random.choice(available_shows)
 
-			end_datetime = current_datetime + slot_duration
+		end_datetime = current_datetime + slot_duration
+		schedule.append({
+			"start": current_datetime.strftime('%H:%M'),
+			"end": end_datetime.strftime('%H:%M'),
+			"show": next_show
+		})
 
-			schedule.append({
-				"start": current_datetime.strftime('%H:%M'),
-				"end": end_datetime.strftime('%H:%M'),
-				"show": next_show
-			})
-
-			current_datetime = end_datetime
-			last_show = next_show
+		current_datetime = end_datetime
+		last_show = next_show
 
 		max_show_length = 20
 		if schedule:
@@ -4527,7 +4534,7 @@ def generate_console_schedule(start_hour=20, start_minute=0, num_slots=4, slot_d
 		return schedule
 
 	except Exception as e:
-		print(f"\nCRITICAL ERROR during schedule generation: {e}")
+		print(f"{random.choice(messages['trouble_short'])} ERROR in scheduled generation: {e}\n")
 		return None
 
 #-------------------------------------------------
@@ -5896,8 +5903,25 @@ def main():
 			else:
 				print (random.choice(messages['trouble_short']) + " This is a new designation of a connection type! I was not coded for this.\n")
 		
-		elif question == 'gridflow':
-			generate_console_schedule()
+		elif question[0:8] == 'gridflow':
+			parts = question.split()
+			args = {
+				'start_hour': 21,
+				'start_minute': 30,
+				'num_slots': 5,
+				'slot_duration_minutes': 60			}
+			if len(parts) > 1:
+				try:
+					time_part = parts[1].split(':')
+					args['start_hour'] = int(time_part[0])
+					args['start_minute'] = int(time_part[1])
+					if len(parts) > 2:
+						args['num_slots'] = int(parts[2])
+					if len(parts) > 3:
+						args['slot_duration_minutes'] = int(parts[3])
+				except (ValueError, IndexError):
+					print(f"{kolor['YELLOW']}{random.choice(messages['trouble_short'])} Invalid usage syntax! I'll use my default values. Type: help glidflow {kolor['OFF']}\n")
+			generate_console_schedule(**args)
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
