@@ -30,7 +30,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '26.03.2026'
+_revise_ = '31.03.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -64,7 +64,7 @@ try:
 	import locale
 	import pycountry
 	import PIL
-	import re
+	import tzdata
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 	from bs4 import BeautifulSoup
@@ -652,7 +652,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
-	"help gridflow": "Usage: gridflow|gridflow <start time> <slots> <slot duration>\nA creative way to bring a dash of algorithmic mystery to your leisure time. \nex: gridflow 21:30 5 60\n    gridflow\n",	
+	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
@@ -675,6 +675,7 @@ help = {
 	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
+	"help panels tilt": "Usage: panels tilt|panels angle \nCalculates the optimal solar panel inclination based on seasonal solar declination.\nThe system uses the current season and your global latitude to optimize energy capture. \nex: panels tilt\n    panels angle\n",
 	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
@@ -4188,6 +4189,66 @@ def ascii_horiz_solar_system(width):
 	print(f"  {COLOR_YELLOW}# Sun{COLOR_RESET}   {COLOR_GRAY}. Mer{COLOR_RESET}   {COLOR_ORANGE}o Ven{COLOR_RESET}   {COLOR_BLUE}E Ear{COLOR_RESET}   {COLOR_RED}m Mar{COLOR_RESET}   {COLOR_LIGHT_BROWN}@ Jup{COLOR_RESET}   {COLOR_BROWN}=&={COLOR_RESET} Sat   {COLOR_CYAN}* Ura{COLOR_RESET}   {COLOR_DARK_BLUE}N Nep{COLOR_RESET}")
 	print ("")
 
+
+def calcular_solar_dinamico():
+    # Verifica se as globais existem, caso contrário assume Lisboa (Exemplo)
+    lat_val = globals().get('lat', 38.7223)
+    lon_val = globals().get('lon', -9.1393)
+
+    # Obtém a estação da tua função
+    estacao_full, _ = get_the_season()
+    estacao_nome = estacao_full.lower()
+
+    # 1. Orientação e Azimute (Norte/Sul)
+    if lat_val >= 0:
+        orientacao = "Sul"
+        azimute = 180
+    else:
+        orientacao = "Norte"
+        azimute = 0
+
+    lat_abs = abs(lat_val)
+
+    # 2. Cálculo da Inclinação (Lógica aproximada à do teu print)
+    if "verão" in estacao_nome or "summer" in estacao_nome:
+        inclinacao = lat_abs - 15
+    elif "inverno" in estacao_nome or "winter" in estacao_nome:
+        inclinacao = lat_abs + 15
+    else:
+        # Primavera ou Outono
+        inclinacao = lat_abs * 0.9
+
+    inclinacao = max(0, min(90, inclinacao))
+
+    return round(inclinacao, 1), orientacao, azimute
+
+#-------------------------------------------------
+def calcular_solar_sazonal():
+
+	lat_val = globals().get('lat', 41.5454)
+	estacao = get_the_season()[0].lower()
+
+	if lat_val > 0:
+		orientacao = "South"
+	elif lat_val < 0:
+		orientacao = "North"
+	else:
+		orientacao = "Zenith (Horizontal)"
+
+	# Calculo da Inclinaçao Sazonal
+	# Regra padrão da indústria para otimização sazonal:
+	lat_abs = abs(lat_val)
+	if 'verão' in estacao or 'summer' in estacao:
+		inclinacao = lat_abs * 0.9 - 23.5
+	elif 'inverno' in estacao or 'winter' in estacao:
+		inclinacao = lat_abs * 0.9 + 23.5
+	else:
+		inclinacao = lat_abs - 2.5
+	inclinacao = max(0, inclinacao)
+
+	pais = system_country[1] if system_country and len(system_country) > 1 else "this location"
+	print (f"For the {estacao.capitalize()}, the best solar capture in {pais} is {round(inclinacao, 2)}° facing {orientacao}.\n")
+
 #-------------------------------------------------
 def protect_image(input_filepath, output_directory="protected_images",
 					noise_intensity=10, pixel_shift_amount=1,
@@ -4478,13 +4539,13 @@ def commands_by_explanation(linux_commands, keyword):
 		print(f"\nFor detailed information on each command '', type it and press enter.\n")
 	
 #-------------------------------------------------
-def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=60):
+def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=120):
 
-	if num_slots > 12:
-		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slots number cannot be higher than 12.\n")
+	if num_slots > 20:
+		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slots number cannot be higher than 20.\n")
 		return None
-	if slot_duration_minutes > 60:
-		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slot duration minutes can't be higher than 240.\n")
+	if slot_duration_minutes > 240:
+		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The duration minutes can't be higher than 240.\n")
 		return None
 
 	MESSAGES = messages
@@ -5333,16 +5394,9 @@ def main():
 				print(f"{mensagem}")
 
 			if system_country:
-				final_iso = system_country
-			elif (system_country and len(system_country) > 0):
 				final_iso = system_country[0].upper()
-
-			if final_iso:
 				aviso = verificar_dst(final_iso)
-				if aviso:
-					print(aviso)
-				else:
-					print("")
+				print(aviso if aviso else "")
 			else:
 				print("")
 		
@@ -5909,18 +5963,21 @@ def main():
 				'start_hour': 21,
 				'start_minute': 30,
 				'num_slots': 5,
-				'slot_duration_minutes': 60			}
+				'slot_duration_minutes': 120			}
 			if len(parts) > 1:
 				try:
 					time_part = parts[1].split(':')
 					args['start_hour'] = int(time_part[0])
 					args['start_minute'] = int(time_part[1])
+
 					if len(parts) > 2:
 						args['num_slots'] = int(parts[2])
+
 					if len(parts) > 3:
 						args['slot_duration_minutes'] = int(parts[3])
+
 				except (ValueError, IndexError):
-					print(f"{kolor['YELLOW']}{random.choice(messages['trouble_short'])} Invalid usage syntax! I'll use my default values. Type: help glidflow {kolor['OFF']}\n")
+					print(f"{kolor['YELLOW']}{random.choice(messages['trouble_short'])} Invalid usage syntax! I'll use my default values. <Type: help glidflow> {kolor['OFF']}\n")
 			generate_console_schedule(**args)
 		
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
@@ -5962,6 +6019,9 @@ def main():
 		
 		elif question == '#version':
 			print (f"I'm running in the {version} from {_revise_}.\n")
+
+		elif "panels tilt" in question or "panels angle" in question:
+			calcular_solar_sazonal()
 		
 		elif question == 'process amoc files' or question == 'process amoc':
 			if _pydr3_ == True:
