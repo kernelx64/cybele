@@ -24,13 +24,15 @@ lat = 41.5454
 lon = -8.4265
 
 # \U0001F132 | 129150
+# \U+276F
 # static global cybele variables
 version = '1.1.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
+_cysymb_ = "\u276f"
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '31.03.2026'
+_revise_ = '01.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -1898,13 +1900,29 @@ def leapyear():
 		result = "not a leap year".format(year)
 	return result
 
+#---------------------------------------------------
+def symb_prompt():
+	primary_icon = _spchar_[1:2]
+	alternative_icon = "\u27e9"
+	safety_icon = "\u276f"
+
+	try:
+		primary_icon.encode(sys.stdout.encoding)
+		return primary_icon
+	except (UnicodeEncodeError, AttributeError):
+		try:
+			alternative_icon.encode(sys.stdout.encoding)
+			return alternative_icon
+		except:
+			return safety_icon
+
 #---------------------------------------------------------------------------
 #-------------------------------------------------------------------
 # cybele Core and sub-cores
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
 def get_question():
-	qt = input( _title_ + "? 〉")
+	qt = input(f"{_title_} ? {symb_prompt()}")
 	if qt.isupper():
 		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
 		question = qt.lower()
