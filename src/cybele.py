@@ -1922,7 +1922,7 @@ def symb_prompt():
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
 def get_question():
-	qt = input(f"{_title_} ? {symb_prompt()}")
+	qt = input(f"{_title_}? {symb_prompt()}")
 	if qt.isupper():
 		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
 		question = qt.lower()
