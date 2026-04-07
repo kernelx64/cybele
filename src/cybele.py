@@ -730,6 +730,7 @@ help = {
 	"help orbit acronym": "Usage <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
 	"help panels tilt": "Usage: panels tilt|panels angle \nCalculates the optimal solar panel inclination based on seasonal solar declination.\nThe system uses the current season and your global latitude to optimize energy capture. \nex: panels tilt\n    panels angle\n",
+	"help people in space": "Usage: people in space\nReturns the names of the individuals currently aboard spacecraft in orbit.\n",
 	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
@@ -2618,21 +2619,24 @@ def link_status(url):
 
 #-----------------------------------------------
 def people_in_space():
+	url = 'http://api.open-notify.org/astros.json'
 	try:
-		import json
-		import urllib.request
-		url = 'http://api.open-notify.org/astros.json'
-		response = urllib.request.urlopen(url)
-		result = json.loads(response.read())
+		response = urllib.request.urlopen(url, timeout=10)
+		result = json.loads(response.read().decode('utf-8'))
 
+		print('\nPeople in Space: {}\n'.format(result['number']))
+		for p in result['people']:
+			print('{} in {}'.format(p['name'], p['craft']))
+		print ("")
 	except urllib.error.HTTPError as err:
-		print('A HTTPError was thrown: {} {}'.format(err['code'], err['reason']))
-
-	print('\nPeople in Space: {}\n'.format(result['number']))
-	people = result['people']
-	for p in people:
-		print('{} in {}'.format(p['name'], p['craft']))
-	print("")
+		print(f'HTTP Error: {err.code}')
+	except urllib.error.URLError as err:
+		if isinstance(err.reason, socket.timeout):
+			print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond.")
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Connection Error")
+	except Exception as err:
+		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred!!!")
 
 #-------------------------------------------------
 def where_is_iss():
