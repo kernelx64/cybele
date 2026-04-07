@@ -673,9 +673,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar"]
 
 #------------------------------------------------------------
-help = {
-	"help ?": "Usage <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
-	"help help": "Usage <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
+help = {	
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
@@ -683,7 +681,6 @@ help = {
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
-	"help well": "Usage: <DIAMETER> <HEIGHT> <UNIT (m|cm)> \nEx: well 1.5 8 m \n    well 150 800 cm\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
@@ -701,6 +698,7 @@ help = {
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
 	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
+	"help help": "Usage <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
 	"help infostar": "Usage: infostar <name of the star> \nQueries the SIMBAD database to retrieve physical data,coordinates, and identifiers for a specific celestial object. \nex: infostar polaris \n    infostar alpha centauri\n",
@@ -710,6 +708,7 @@ help = {
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help make a phrase": "Usage <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
@@ -744,8 +743,9 @@ help = {
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
-	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \n    ex: reset my score\n",
-	"help star": "Usage <star name> \nDisplays basic information about the star. \n    ex: Polaris (knowed by north star)\n",
+	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
+	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032",
+	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
@@ -757,6 +757,7 @@ help = {
 	"help types of orbits": "Usage <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
+	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
 	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help your version": "Usage your version | what is | this version \nProvides details about the running instance of Cybele.\nIncludes the version, last update date, unique ID and a note regarding its source code origin. \nex: what is your version \n    your version \n    this version \n",
@@ -2547,45 +2548,39 @@ def convert_units(question: str):
 	return round(converted_value, 4), unit_to
 
 #--------------------------------------------
-def calcular_volume_poco():
-    """
-    Solicita inputs, valida os dados e calcula o volume de um poço cilíndrico.
-    """
-    try:
-        print("--- Calculadora de Volume de Poço (Cilíndrico) ---")
-        
-        # 1. Inputs do utilizador
-        d_input = float(input("Digite o diâmetro (ex: 1.5): "))
-        h_input = float(input("Digite a profundidade/altura (ex: 8): "))
-        
-        # 2. Escolha da unidade para evitar confusão (m ou cm)
-        unidade = input("Os dados estão em metros (m) ou centímetros (cm)? ").strip().lower()
+def calc_well_volume():
+	try:
+		d_input = float(input("Enter the diameter (ex: 1.5): "))
+		h_input = float(input("Enter the depth/height (e.g., 8): "))
+		unidade = input("Is the data in meters (m) or centimeters (cm)?").strip().lower()
+		if unidade == 'cm':
+			diametro = d_input / 100
+			altura = h_input / 100
+		else:
+			diametro = d_input
+			altura = h_input
+		if diametro <= 0 or altura <= 0:
+			return f"{random.choice(messages['trouble_short'])} The diameter and height must be greater than zero.\n"
+		raio = diametro / 2
+		area_base = math.pi * (raio ** 2)
+		volume_m3 = area_base * altura
+		litros = volume_m3 * 1000
+		return (f"\nResults for {diametro}m in diameter and {altura}m from the height:\n"
+				f"{symb_prompt()} Volume: {round(volume_m3, 1)} m{"\u00B3"}\n"
+				f"{symb_prompt()} Total Capacity: {litros:,.0f} Liters\n")
+	except ValueError:
+		return f"{random.choice(messages['trouble_short'])} Enter only numbers (use a period instead of a comma).\n"
 
-        # 3. Conversão de medidas (Normaliza tudo para metros)
-        if unidade == 'cm':
-            diametro = d_input / 100
-            altura = h_input / 100
-        else:
-            diametro = d_input
-            altura = h_input
-
-        # 4. Validação lógica (Garantir que os números são positivos)
-        if diametro <= 0 or altura <= 0:
-            return "Erro: O diâmetro e a altura devem ser maiores que zero."
-
-        # 5. Cálculo Matemático
-        raio = diametro / 2
-        area_base = math.pi * (raio ** 2)
-        volume_m3 = area_base * altura
-        litros = volume_m3 * 1000
-
-        # 6. Retorno formatado
-        return (f"\nResultados para {diametro}m de diâmetro e {altura}m de altura:\n"
-                f"- Volume: {volume_m3:.3f} m³\n"
-                f"- Capacidade Total: {litros:,.0f} Litros")
-
-    except ValueError:
-        return "Erro: Por favor, insira apenas números (use ponto em vez de vírgula)."
+#--------------------------------------------
+def get_solstices(year):
+    summer_base = 21.02
+    summer_day = int(summer_base + (0.2422 * (year - 1980)) - int((year - 1980) / 4))
+    winter_base = 21.94
+    winter_day = int(winter_base + (0.2422 * (year - 1980)) - int((year - 1980) / 4))
+    return {
+        "longest_day": f"June {summer_day}",
+        "shortest_day": f"December {winter_day}"
+    }
 
 #--------------------------------------------
 def get_current_century():
@@ -5629,6 +5624,19 @@ def main():
 		elif question == 'leap year' or question == 'is this year a leap year':
 			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
 	
+		elif match := re.search(r'(longest|shortest) day', question, re.IGNORECASE):
+			type_asked = match.group(1).lower() 
+			year_match = re.search(r'\b(\d{4})\b', question)
+			solstices_year = int(year_match.group(1)) if year_match else datetime.now().year
+			ldy = get_solstices(solstices_year)
+			if type_asked == "longest":
+				label = "☀️ Longest day (Summer Solstice)"
+				date_value = ldy['longest_day']
+			else:
+				label = "❄️ Shortest day (Winter Solstice)"
+				date_value = ldy['shortest_day']    
+			print(f"In {solstices_year} Solar Cycle the {label} is {date_value}.\n")
+	
 		#-------------------------------------- convert ----------------------------------------
 		
 		elif question.startswith('convert'):
@@ -5653,8 +5661,8 @@ def main():
 				else:
 					print(f"Based on my calculations {converted_value} {target_unit}.\n")
 
-		elif question == 'well':	
-			print(calcular_volume_poco())
+		elif question == 'well calc':	
+			print(calc_well_volume())
 
 		#---------------------------------------------------------------------------------------
 
