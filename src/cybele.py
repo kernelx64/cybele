@@ -648,7 +648,14 @@ messages = {
 						"Reporting for duty! Here's my current status report:","Commencing self-analysis. The results are in:",
 						"My brain dump, for your viewing pleasure (and analytical needs):","Just the facts, ma'am/sir/user! Here's my core info:",
 						"Let's see what makes Cybele tick. Full specs ahead:","Presenting the official Cybele System Report, hot off the virtual press:",
-						"Alright, let's get down to brass virtual tacks:"]
+						"Alright, let's get down to brass virtual tacks"],
+
+	"withonlyaL":		["Is this the low-calorie version of the night sky? Constellations Lite™.","The second 'L' took one look at the Milky Way and decided to move out.",
+						"Somewhere, a telescope just lost its focus and started crying.","Inflation is getting wild; now we can't even afford the full spelling of space.",
+						"That 'L' didn't disappear; it fell into a black hole. It’s gone, Dave.","You’re just one letter away from being a star! Right now, you’re a planetoid.",
+						"Without that extra 'L,' the Big Dipper is officially leaking.","It’s a 'con-stellar-vacation'—a holiday where you forget how to spell.",
+						"Warning: Removing letters may cause stars to collapse into comic sans.","Don't worry, the stars still recognize you. They just think you're whispering.",
+						"It’s like the 'Lite' version of the night sky.","All the same stars, but with half calories and slightly less gravitational pull."]
 }
 #-------------------------------------------------------------------------------------
 weather_season_condiction = {
@@ -667,6 +674,8 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 
 #------------------------------------------------------------
 help = {
+	"help ?": "Usage <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
+	"help help": "Usage <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
 	"help askard": "Usage <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
@@ -5161,11 +5170,14 @@ def main():
 		elif question[0:22] == 'what do you know about' and question.find('dangerous')!=-1 and question.find('objects')!=-1:
 			print ("I can tell you about " + str(len(core['cneos'])) + " celestial dangerous objects known as the list CNEO.\n ")
 
-		#elif question == 'can you' and question.find("sentence")!=-1 or question.find("phrase")!=-1:
-		#	if question[0:4] == 'make':
-		#		print ("This is a sentence! And I'm even not using NLP.\n")
-		#	else:
-		#		print ("Yes, I can! See? This is a sentence! And I'm even not using NLP.\n")
+		elif question == 'constelations':
+			print (f"{random.choice(messages['withonlyaL'])}\n")
+
+		elif question == "can you make a sentence":
+			if question[0:4] == 'make':
+				print ("This is a sentence! And I'm even not using NLP. But you can allways use the comand 'speak'.\n")
+			else:
+				print ("Yes, I can! See? This is a sentence! And I'm even not using NLP. type 'speak'.\n")
 
 		elif question.find('elysia created')!=-1 or question.find('elysia was created')!=-1 or question.find('elysia went online')!=-1:
 			print("The website [elysia] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
@@ -5772,7 +5784,8 @@ def main():
 			if len(getparam) == 3:
 				constelation_name = str(getparam[2])
 				if constelation_name not in constellations_dict:
-					print (f"There is no '{constelation_name}' in the {len(constellations_dict)} constelations i have in my knowledge!.\n")
+					print (f"There is no '{constelation_name}' in the {len(constellations_dict)} constellations i have in my knowledge!.")
+					print (f"You can allways type 'list constellations' to list the ones I know.\n")
 				else:
 					getconstellationabbr = constellations_dict[constelation_name]
 					print (f"{creative_random_anwser()} Here he is the list of stars from the constelattion '{constelation_name.title()}'.")
