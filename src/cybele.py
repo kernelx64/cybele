@@ -19,6 +19,9 @@ ETHICS_STATEMENT = """
 # **Copyright (C) 2023 Adelino Saldanha** in all distributed source code.
 """
 
+# To run cybele without the 'satellite track' option and to not install the Windows C++ BUILD TOOLS && 
+# comment the line 102 with the char "#" making the line exactly like this: #import predict
+
 # Latitude and longitude of your city. Defaults are:
 lat = 41.5454
 lon = -8.4265
@@ -96,7 +99,7 @@ import time
 
 try:
 	import serial
-	import predict
+	import predict 
 
 except ImportError as err:
 	match = re.search(r"'(.*?)'", str(err))
@@ -6238,8 +6241,11 @@ def main():
 				run_amoc_engine()
 
 		elif question == 'satellite tracker' or question == 'sat track' or  question == 'tracker':
-			if _pydr3_ == True:
-				print(f"I'm currently running on Pydroid, where my satellite tracker command is unavailable.\nI'm ready to handle these once we're back on a compatible Linux|windows setup!\n")
+			if _pydr3_:
+				print("I'm currently running on Pydroid, where my satellite tracker command is unavailable.")
+				print("I'm ready to handle these once we're back on a compatible Linux|Windows setup!\n")
+			elif 'predict' not in sys.modules:
+				print("I'm currently running without the modules for satellite tracker command works.\n")
 			else:
 				predict_passes()
 
