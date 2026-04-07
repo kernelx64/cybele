@@ -40,10 +40,8 @@ _pydr3_ = False
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
 import sys
-import os
 import re
 import subprocess
-import platform
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 
 try:
@@ -62,11 +60,12 @@ def check_msvc_installed():
 	except:
 		return False
 
-import time
+import os
 import time as sys_time
 import string
 import random
 import calendar
+import platform
 import zoneinfo
 import pytz
 import socket
@@ -83,6 +82,7 @@ import locale
 import pycountry
 import PIL
 import tzdata
+import predict
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
@@ -94,6 +94,7 @@ from math import degrees as deg, radians as rad
 from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
 from datetime import datetime, date, time, timedelta, timezone
 from zoneinfo import ZoneInfo
+import time
 
 try:
 	import serial
@@ -5551,7 +5552,7 @@ def main():
 			days_left = days_in_year() - iniyeardays
 			is_holiday, holiday_name = today_holiday()
 			
-			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()}")					
+			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()[0]}")
 			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
 			
 			special_info = special_dates(datetime.now())
