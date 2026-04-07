@@ -329,7 +329,10 @@ core = {
 	"exitmsg":	['It was a pleasure.','Until next time!.','Until we meet again!','Looking forward.','Have a good one.','Take care.',
 				'Catch you later!','Peace Out.','Farewell.'],
 	"intromsg":	["Welcome.","Greeatings.","Entertain.","Glad you're here!","Delighted to have you!","Fantastic to see you!",
-				"Awesome you're here!","Stoked you're here!","Pleasure to have you!","Delighted to welcome you!","Is a privilege to host you!"],
+				"Awesome you're here!","Stoked you're here!","Pleasure to have you!","Delighted to welcome you!","Is a privilege to host you!",
+				"Honored to have you join us.","A warm welcome to you.","Truly a pleasure to meet you.","So glad you could make it!",
+				"Great to see you in the mix!","Look who decided to drop by!","Hi! Let’s get started.","Make yourself at home!",
+				"Step right in!","The man/woman/legend has arrived!","Your presence makes this better.","Welcome to the party."],
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
@@ -601,7 +604,10 @@ messages = {
 	"msg_welldone":	["Excellent","Superb","Outstanding","Great","Terrific","Splendid","Bravo"],
 
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
-					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"],
+					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"
+					"Operation failed to execute.","Critical failure detected.","Looks like we're in a bit of a pickle.",
+					"Things just went south","We’ve hit a bit of a speed bump.","Houston, we’re sinking.","Well, that’s not right.",
+					"Glitch in the matrix.","Abandon ship!","Brace for impact."],
 
 	"trouble_short":	["Ah-oh.","Uh-oh.","Oops.","Yikes.","Oh dear.","Crikey!","Darn it.","Holy!","Whoa!","Ouch!","Gulp!","Blimey!",
 						"Darn!","Shoot!","Crud!","Oh no!","Goodness gracious!","Heavens to Betsy!","Good grief!","Well, I'll be!",
@@ -670,7 +676,8 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
-		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar"]
+		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
+		"longest day","shortest day","satellite tracker","process amoc","offline mode","network status"]
 
 #------------------------------------------------------------
 help = {	
@@ -1383,6 +1390,7 @@ questions = [
 	"Tudo bem?",
 	"Hello",
 	"What is your name?",
+	"Who are you?",
 	"What is the meaning of your name?",
 	"Who built the pyramids?",
 	"Clock time",
@@ -1420,6 +1428,7 @@ answers = [
 	"Melhor impossível! Mas não me venhas com truques hoje, hmm?",
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
+	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
 	"The exact builders of the pyramids are still debated...",
 	"The current time in the system clock is "+datetime.now().strftime("%H:%M"),
