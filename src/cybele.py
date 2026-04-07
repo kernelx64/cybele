@@ -2623,21 +2623,29 @@ def people_in_space():
 	try:
 		response = urllib.request.urlopen(url, timeout=10)
 		result = json.loads(response.read().decode('utf-8'))
-
-		print('\nPeople in Space: {}\n'.format(result['number']))
+		print(f"\n👨‍🚀 Total People in Space: {result['number']}")
+		crafts = {}
 		for p in result['people']:
-			print('{} in {}'.format(p['name'], p['craft']))
-		print ("")
+			craft_name = p['craft']
+			person_name = p['name']
+			if craft_name not in crafts:
+				crafts[craft_name] = []
+			crafts[craft_name].append(person_name)
+		for craft, members in crafts.items():
+			print(f"\n🚀 {craft} ({len(members)})")
+			for name in members:
+				print(f"  - {name}")
+		print("")
 	except urllib.error.HTTPError as err:
 		print(f'HTTP Error: {err.code}')
 	except urllib.error.URLError as err:
 		if isinstance(err.reason, socket.timeout):
-			print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond.")
+			print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond. Try again {random.choice(['in a while','later'])}.\n")
 		else:
 			print(f"{random.choice(messages['trouble_short'])} Connection Error")
 	except Exception as err:
-		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred!!!")
-
+		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred! Try again {random.choice(['in a while','later'])}.\n")
+		
 #-------------------------------------------------
 def where_is_iss():
 	try:
