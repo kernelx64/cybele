@@ -27,7 +27,6 @@ lon = -8.4265
 version = '1.1.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
-_cysymb_ = "\u276f"
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
 _revise_ = '01.04.2026'
@@ -39,6 +38,7 @@ _pydr3_ = False
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
+import os
 import sys
 import re
 import subprocess
@@ -60,7 +60,6 @@ def check_msvc_installed():
 	except:
 		return False
 
-import os
 import time as sys_time
 import string
 import random
@@ -82,7 +81,6 @@ import locale
 import pycountry
 import PIL
 import tzdata
-import predict
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
@@ -765,6 +763,37 @@ orbit_regime = {
 	"heo": "Highly Eccentric Earth Orbit  \n hp < 31570 km, ha > 40002 km",
 	"lmo": "LEO-MEO Crossing Orbits       \n hp < 2000 km, 2000 km < ha < 31570 km",
 	"sso": "Sun-synchronous orbit         \n i = 98°, hp < 600 km, < ha < 800 km",
+}
+#------------------------------------------------------------
+orbit_data = {
+	"Heliocentric": {
+		"type": "Natural / Planetary",
+		"reference": "The Sun",
+		"examples": ["Earth (Nearly Circular Terrestrial Orbit)", "Mars", "Asteroids"],
+		"notes": "Solar System scale."
+	},
+	"Geocentric": {
+		"type": "Artificial / Satellites",
+		"reference": "The Earth",
+		"primary_regimes": {
+			"LEO": "Low Earth Orbit (Altitude: 160-2,000 km)",
+			"MEO": "Medium Earth Orbit (Altitude: 2,000-35,786 km)",
+			"GEO": "Geostationary Orbit (Fixed altitude: 35,786 km)",
+			"SSO": "Sun-synchronous Orbit (LEO with constant solar lighting)"
+		},
+		"transition_regimes": {
+			"GTO": "GEO Transfer Orbit (Transition to GEO)",
+			"LMO": "LEO-MEO Crossing (Transition between Low and Medium)",
+			"MGO": "MEO-GEO Crossing (Transition between Medium and Geo)",
+			"GHO": "GEO-superGEO Crossing (Orbits crossing above Geo)"
+		},
+		"others": {
+			"HEO": "Highly Eccentric Orbit (Very elliptical orbits)",
+			"HAO": "High Altitude Earth Orbit (Above GEO)",
+			"IGO": "Inclined Geosynchronous Orbit (Tilted Geo orbit)",
+			"NSO": "Navigation Satellites Orbit (Specific for GPS/Galileo)"
+		}
+	}
 }
 #----------------------------------------------------
 planet_data = {
@@ -2773,34 +2802,23 @@ def planet_orbit(planet_name):
 		return None
 
 #-------------------------------------------------
-def planet_orbit_info(planet_name):
-
-	planet_types = {
-		"mercury": "Terrestrial",
-		"venus": "Terrestrial",
-		"earth": "Terrestrial",
-		"mars": "Terrestrial",
-		"jupiter": "Gas Giant",
-		"saturn": "Gas Giant",
-		"uranus": "Ice Giant",
-		"neptune": "Ice Giant"
+def get_planet_orbit_type(planet_name):
+	planet = planet_name.lower().strip()
+	planets_data = {
+		"mercury": "Heliocentric (Highly Eccentric / Elliptical)",
+		"venus": "Heliocentric (Nearly Circular)",
+		"earth": "Heliocentric (Nearly Circular Terrestrial)",
+		"mars": "Heliocentric (Elliptical)",
+		"jupiter": "Heliocentric (Gas Giant Elliptical)",
+		"saturn": "Heliocentric (Gas Giant Elliptical)",
+		"uranus": "Heliocentric (Ice Giant Elliptical)",
+		"neptune": "Heliocentric (Nearly Circular Ice Giant)"
 	}
-	orbit_types = {
-		"mercury": "Elliptical",
-		"venus": "Nearly Circular",
-		"earth": "Nearly Circular",
-		"mars": "Elliptical",
-		"jupiter": "Elliptical",
-		"saturn": "Elliptical",
-		"uranus": "Nearly Circular",
-		"neptune": "Nearly Circular"
-	}
-
-	if planet_name in planet_types and orbit_types:
-		return planet_types[planet_name], orbit_types[planet_name]
+	if planet in planets_data:
+		return f"{planet.capitalize()} has a {planets_data[planet]} orbit around the Sun."
 	else:
-		return False
-
+		return f"{random.choice(messages['notplanet']) % planet_name}"
+		
 #-------------------------------------------------
 def get_thepopulation(country_name):
 	country_slug = "us" if country_name.lower() == "united states" else country_name.lower().replace(" ", "-")
@@ -4878,7 +4896,7 @@ def predict_passes():
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
-	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
+	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online#, orbit_data
 	detect_country()
 	#----------------------------
 	if not check_tables(tables):
@@ -5202,17 +5220,15 @@ def main():
 
 		elif question.endswith('orbit'):
 			sub = question.split()
-			planet_name = sub[0]
-			valid_planets = core['planet'] + ['moon']
-			if len(sub) == 2 and sub[1].startswith('orbit'):
-				if planet_name in valid_planets:
-					order = get_ordinal_position(valid_planets.index(planet_name))
-					orbit_data = ', '.join(planet_orbit_info(planet_name))
-					orbit_answer = (f"{planet_name.capitalize()} behind the {order} planet "
-									f"from our Solar System has a {orbit_data} orbit.\n")
-					print(orbit_answer)
-				else:
-					print(f"{random.choice(messages['notplanet'])} {planet_name}\n")
+			planet_name = sub[0].lower()
+			valid_planets = ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune']
+			if planet_name in valid_planets:
+				result = get_planet_orbit_type(planet_name)
+				print(f"{symb_prompt()} {result}")
+				order = get_ordinal_position(valid_planets.index(planet_name) + 1)
+				print(f"It is the {order} planet from the Sun.\n")
+			else:
+				print(f"{random.choice(messages['trouble_short'])} I don't have orbital data for: {planet_name}\n")
 
 		elif question == 'planets of the solar system' or question == 'planets of solar system' or question == "solar system planets order" or question == "solar system planets":
 			planets = core['planet']
@@ -5224,11 +5240,25 @@ def main():
 			else:
 				print ("The planets are " + sanwser)
 
-		elif question == 'types of orbits' or question == 'orbital regimes':
-			print ("The orbital regimes or types of orbit's i have in my knowledge are:\n")
-			for regime, orbital in orbit_regime.items():
-				print(" > ", regime.upper(), ": ", orbital[0:28])
-			print ("")
+		elif question == 'types of orbits' or question == 'orbital regimes'  or question == 'type of orbits':
+			print("The 'orbital regimes' or 'types of orbits' I have in my knowledge are:\n")
+			for category, content in orbit_data.items():
+				print(f"{symb_prompt()}  {category.upper()} ({content['type']}) ---")
+				print(f"    Reference Body: {content['reference']}")
+			if category == "Heliocentric":
+				print(f"    Examples: {', '.join(content['examples'])}")
+				print(f"    Note: {content['notes']}")
+			else:
+				sub_sections = {
+					"primary_regimes": "Primary Regimes",
+					"transition_regimes": "Transition/Crossing Zones",
+					"others": "Specialized & Other Orbits"
+				}
+				for key, title in sub_sections.items():
+					print(f"\n   [{title}]:")
+					for acronym, description in content[key].items():
+						print(f"    > {acronym} : {description}")
+				print(f"\nHelp: (LEO, GEO, HEO, etc.) define the regions of near-Earth space intended for the operation of artificial satellites and spacecraft.\n")
 
 		elif question.find('seasons')!=-1 and question.find('year')!=-1:
 			get_season = get_the_season()
