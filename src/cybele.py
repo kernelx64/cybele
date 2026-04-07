@@ -6259,8 +6259,8 @@ def main():
 			answer = find_answer(question,questions)
 			print(answer)
 		
-		#else:
-		#	print (f"{core['trouble_short']} I'm not familiar with this subject!")
+		else:
+			print (f"{core['trouble_short']} I'm not familiar with this subject!")
 
 #-------------------------------------------------
 if __name__ == "__main__":
