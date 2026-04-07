@@ -5200,20 +5200,19 @@ def main():
 				response_list.append("At their farthest point, they are about {:,.2f} kilometers ({:.3f} AU) apart.".format(max_km, max_au))
 				print ( "\n".join(response_list) + '\n')
 
-		elif question[-5:] =='orbit':
-			valid_planets = core['planet'] + ['moon']
+		elif question.endswith('orbit'):
 			sub = question.split()
-			if sub[1] == 'orbit' and len(question.split()) == 2:
-				planet_name = sub[0]
-			else:
-				print (random.choice(notplanet) + " " + '\n')
-			if planet_name in valid_planets:
-				order = get_ordinal_position(valid_planets.index(planet_name))
-				orbit_anwser = ( planet_name.capitalize() + ' behing the ' + order + ' planet from our Solar System have a ' + ' orbit, '.join(planet_orbit_info(planet_name)) + '.\n')
-				print(orbit_anwser)
-			else:
-				random.shuffle(messages['notplanet'])
-				print ( random.choice(messages['notplanet']) % (planet_name))
+			planet_name = sub[0]
+			valid_planets = core['planet'] + ['moon']
+			if len(sub) == 2 and sub[1].startswith('orbit'):
+				if planet_name in valid_planets:
+					order = get_ordinal_position(valid_planets.index(planet_name))
+					orbit_data = ', '.join(planet_orbit_info(planet_name))
+					orbit_answer = (f"{planet_name.capitalize()} behind the {order} planet "
+									f"from our Solar System has a {orbit_data} orbit.\n")
+					print(orbit_answer)
+				else:
+					print(f"{random.choice(messages['notplanet'])} {planet_name}\n")
 
 		elif question == 'planets of the solar system' or question == 'planets of solar system' or question == "solar system planets order" or question == "solar system planets":
 			planets = core['planet']
