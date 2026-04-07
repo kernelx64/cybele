@@ -134,7 +134,7 @@ except ImportError as err:
 						sys.exit(0)
 				elif install_choice == 'n':
 					if module_name == 'predict':
-						print(f"\n{' '*3}{"\u26A0"}  Ignoring the installing of the module '{module_name}'")
+						print(f"\n{' '*3}{"\u26A0"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
 						break
 					else:
 						print(f"{' '*3}Cannot execute properly. Exiting.")
@@ -703,6 +703,7 @@ help = {
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
+	"help infostar": "Usage: infostar <name of the star> \nQueries the SIMBAD database to retrieve physical data,coordinates, and identifiers for a specific celestial object. \nex: infostar polaris \n    infostar alpha centauri\n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
@@ -744,11 +745,11 @@ help = {
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \n    ex: reset my score\n",
-	"help star": "Usage <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
+	"help star": "Usage <star name> \nDisplays basic information about the star. \n    ex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
-	"help talk": "Usage <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \nex: talk \n    can you speak \n",
+	"help talk": "Usage <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \n    ex: talk \n    can you speak \n",
 	"help today": "Usage <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
@@ -2650,25 +2651,16 @@ def where_is_iss():
 
 #--------------------------------------------------
 def get_star_info(star_name):
+	safe_name = requests.utils.quote(star_name)
+	url = f"https://simbad.cds.unistra.fr/simbad/sim-id?output.format=ASCII&Ident={safe_name}" 
 	try:
-		import urllib.parse
-		import urllib.request
-		url = "https://simbad.cds.unistra.fr/simbad/sim-id?output.format=ASCII&Ident=" + star_name
-		with urllib.request.urlopen(url) as response:
-			text_result = response.read().decode('utf-8')
-		if text_result:
-			datastar = []
-			processed_data = text_result
-		if len(text_result) > 1:
-			data_lines = processed_data.splitlines()
-			for i in range(len(data_lines)):
-				datastar.append(data_lines[i])
-		else:
-			datastar.append('emptydata')
-
-	except urllib.error.HTTPError as err:
-		print('The cybele.Star module thrown the error : {} {}'.format(err['code'], err['reason']))
-	return datastar
+		response = requests.get(url)
+		response.raise_for_status() # Checks for HTTP errors
+		return response.text.splitlines()
+	except requests.exceptions.RequestException as e:
+		clean_msg = str(e).split(':')[-1].strip()
+		print(f"{random.choice(messages['trouble_short'])} {kolor['RED']}{clean_msg}{kolor['OFF']}")
+		return ['emptydata']
 
 #------------------------------------------------
 def add_days(n, d = datetime.today()):
@@ -5237,7 +5229,7 @@ def main():
 		elif question.endswith('orbit'):
 			sub = question.split()
 			planet_name = sub[0].lower()
-			valid_planets = ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune']
+			valid_planets = core['planet']
 			if planet_name in valid_planets:
 				result = get_planet_orbit_type(planet_name)
 				print(f"{symb_prompt()} {result}")
