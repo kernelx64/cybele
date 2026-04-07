@@ -23,7 +23,7 @@ ETHICS_STATEMENT = """
 lat = 41.5454
 lon = -8.4265
 
-# static global cybele variables
+# some static global cybele variables
 version = '1.1.1'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
