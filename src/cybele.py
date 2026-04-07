@@ -19,9 +19,6 @@ ETHICS_STATEMENT = """
 # **Copyright (C) 2023 Adelino Saldanha** in all distributed source code.
 """
 
-# To run cybele without the 'satellite track' option and to not install the Windows C++ BUILD TOOLS && 
-# comment the line 102 with the char "#" making the line exactly like this: #import predict
-
 # Latitude and longitude of your city. Defaults are:
 lat = 41.5454
 lon = -8.4265
@@ -109,7 +106,6 @@ except ImportError as err:
 		serial_mods = ["serial", "pyserial", "pyusb","predict"]
 		if is_pydroid and module_name in serial_mods:
 			_pydr3_ = True
-			#print(f"\nPydroid3 detected: Skipping '{module_name}' module.")
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 			module_name = 'Pillow' if module_name == 'PIL' else module_name              
@@ -125,6 +121,7 @@ except ImportError as err:
 						print(f"{' '*3}2. Select 'Desktop development with C++'")
 						print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
 						print(f"{' ' * 3}{'':=^60}")
+						print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
 						sys.exit(0)
 
 					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
@@ -136,8 +133,12 @@ except ImportError as err:
 						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
 						sys.exit(0)
 				elif install_choice == 'n':
-					print(f"{' '*3}Cannot execute properly. Exiting.")
-					sys.exit(0)
+					if module_name == 'predict':
+						print(f"\n{' '*3}{"\u26A0"}  Ignoring the installing of the module '{module_name}'")
+						break
+					else:
+						print(f"{' '*3}Cannot execute properly. Exiting.")
+						sys.exit(0)
 				else:
 					print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
 	else:
