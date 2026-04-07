@@ -39,15 +39,18 @@ _pydr3_ = False
 # Change here your MPPT COM port number for all the OS system's
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
-import sys, re
+import sys
+import os
+import re
 import subprocess
+import platform
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 
 try:
     import winreg
 except ImportError:
     winreg = None
-	
+
 def check_msvc_installed():
 	if winreg is None: # Non Windows
 		return True
@@ -59,14 +62,11 @@ def check_msvc_installed():
 	except:
 		return False
 
-import os
-import sys
 import time
 import time as sys_time
 import string
 import random
 import calendar
-import platform
 import zoneinfo
 import pytz
 import socket
@@ -83,7 +83,6 @@ import locale
 import pycountry
 import PIL
 import tzdata
-import winreg
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
