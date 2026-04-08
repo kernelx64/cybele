@@ -113,39 +113,43 @@ except ImportError as err:
 			_pydr3_ = True
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-			module_name = 'Pillow' if module_name == 'PIL' else module_name              
-			while True:
-				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
-				if install_choice == 'y':
-					
-					if module_name in ["predict", "numpy"] and not check_msvc_installed():
-						print("")
-						print(f"{' ' * 3}{' ERROR: MISSING C++ BUILD TOOLS ':=^60}")
-						print(f"{' '*3}This module '{module_name}' on Python {'.'.join(map(str, pyver))}, REQUIRES MSVC 2022.")
-						print(f"{' '*3}1. Open Visual Studio Installer")
-						print(f"{' '*3}2. Select 'Desktop development with C++'")
-						print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
-						print(f"{' ' * 3}{'':=^60}")
-						print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
-						sys.exit(0)
+			module_name = 'Pillow' if module_name == 'PIL' else module_name
+			try:
+				while True:
+					install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
+					if install_choice == 'y':
+						if module_name in ["predict", "numpy"] and not check_msvc_installed():
+							print("")
+							print(f"{' ' * 3}{' ERROR: MISSING C++ BUILD TOOLS ':=^60}")
+							print(f"{' '*3}This module '{module_name}' on Python {'.'.join(map(str, pyver))}, REQUIRES MSVC 2022.")
+							print(f"{' '*3}1. Open Visual Studio Installer")
+							print(f"{' '*3}2. Select 'Desktop development with C++'")
+							print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
+							print(f"{' ' * 3}{'':=^60}")
+							print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
+							sys.exit(0)
 
-					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
-					try:
-						subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-						print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
-						sys.exit(0)
-					except subprocess.CalledProcessError:
-						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
-						sys.exit(0)
-				elif install_choice == 'n':
-					if module_name == 'predict':
-						print(f"\n{' '*3}{"\u26A0"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
-						break
+						print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
+						try:
+							subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
+							print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
+							sys.exit(0)
+						except subprocess.CalledProcessError:
+							print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
+							sys.exit(0)
+					elif install_choice == 'n':
+						if module_name == 'predict':
+							print(f"\n{' '*3}{"\u2139"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
+							break
+						else:
+							print(f"{' '*3}Cannot execute properly. Exiting.")
+							sys.exit(0)
 					else:
-						print(f"{' '*3}Cannot execute properly. Exiting.")
-						sys.exit(0)
-				else:
-					print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
+						print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
+			except KeyboardInterrupt:
+				print("")
+				globals().clear()
+				exit()
 	else:
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 		print(f"{' '*3}I cannot execute properly. Exiting.")
@@ -487,7 +491,7 @@ messages = {
 					"Way so many formalities! Just type directly the %s and see the magic happen!.\n",
 					"While I can't pull a real rabbit out of a hat i can tell you about %s if you type directly.\n",
 					"I can't pull a planet out of thin air!, I can definitely help you in %s if you type directly.\n",
-					"Think of me as a magical library full of %s knowledge, waiting to be unleashed! Type directly!.\n"],
+					"Think in me as a small attic knowledge helper of %s knowledge! Type directly!.\n"],
 
 	"newyear_msg":	["Cheers to a new beginning!","Wishing you a fantastic year ahead.","Let's make " + next_year + " unforgettable!",
 					"Grateful for another year with you. Happy New Year!", "You're the best part of my year. Can't wait to make more memories with you.",
@@ -527,6 +531,10 @@ messages = {
 					"You'll need an active internet connection to proceed.","Internet connectivity is required for this function.",
 					"A connection to the internet is needed to fulfill this request.","This task cannot be performed without an active internet connection.",
 					"To access this, please connect to the internet.","An internet connection is mandatory for the successful execution of this task."],
+
+	"trouble_knew": ["Woow! that's new for me!","I'm not familiar with that subject!","That's definitely a new one on me!",
+					"I haven't come across that before!","You've got me there—that's totally new!","Interesting! I'm still learning about that.",
+					"That's news to me!","Oh, I haven't heard of that! Tell me more?","I don't have any info on that topic yet.","Total news to me, but I'm intrigued!"],
 
 	"notvalentines": ["It's so sweet of you to think ahead! Can't wait to celebrate Valentine's Day with you.",
 					"Aww, that's so thoughtful! I'm looking forward to our Valentine's Day together.",
@@ -684,7 +692,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
-		"longest day","shortest day","satellite tracker","process amoc","offline mode","network status"]
+		"longest day","shortest day","satellite tracker","process amoc","offline mode","meteorology terms"]
 
 #------------------------------------------------------------
 help = {	
@@ -697,7 +705,7 @@ help = {
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
-	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
+	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
@@ -732,7 +740,7 @@ help = {
 	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
 	"help mppt": "Usage: mppt|solar <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: mppt monitor \n    mppt history\n    mppt last30 \n    solar monitor\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
-	"help network status": "Usage: network status \nShow the actual network status \nex: network status\n",
+	"help network status": "Usage: network status \nShow the actual "+_title_.lower()+" working mode and status based on internet activity. \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
 	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
@@ -775,6 +783,7 @@ help = {
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
+	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm (work in progress).\nex: weather for today\n",
 	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help your version": "Usage: your version | what is | this version \nProvides details about the running instance of Cybele.\nIncludes the version, last update date, unique ID and a note regarding its source code origin. \nex: what is your version \n    your version \n    this version \n",
@@ -1403,6 +1412,7 @@ questions = [
 	"Hello",
 	"What is your name?",
 	"Who are you?",
+	"What are you?",
 	"What is the meaning of your name?",
 	"Who built the pyramids?",
 	"Clock time",
@@ -1431,7 +1441,12 @@ questions = [
 	"Whats on your mind today?",
 	"The world",
 	"Life",
-	"Chat"
+	"Chat",
+	"Good",
+	"Smart",
+	"Dumb",
+	"What do you mean?",
+	"Say something smart"
 ]
 #------------------------------------------------
 answers = [
@@ -1441,6 +1456,7 @@ answers = [
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
 	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.",
+	"I am "+ _title_+" a small python script. Think of me as a litle digital small attic knowledge helper.",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
 	"The exact builders of the pyramids are still debated...",
 	"The current time in the system clock is "+datetime.now().strftime("%H:%M"),
@@ -1469,7 +1485,12 @@ answers = [
 	"I'm glad you're asking.\nI'm thinking about how lucky I am to be able to help people with my answers.",
 	"The world is a beautiful and complex place.\nIt is full of amazing things, from the tallest mountains to the deepest oceans.",
 	"Life is a journey, a mystery, and a gift. It is full of ups and downs, challenges and triumphs.",
-	"Hello! I'm here to help. You can type 'help', search for an astronomy term, or explore an old term. \nTo see more options, just type 'what can you do'.\n"
+	"Hello! I'm here to help. You can type 'help', search for an astronomy term, or explore an old term. \nTo see more options, just type 'what can you do'.",
+	"I'm glad. At the end is all what matter's.",
+	"'Smart' is a slippery word because it functions less like a fixed measurement and more like a moving target.",
+	"'Dumb' is often just as misunderstood as 'smart'. Usually, what we call 'dumb' isn't a lack of brainpower—it's a breakdown in the system."
+	"I'm not referring to anything or anyone.",
+	"Complexity is often just a failure of imagination. When we can't explain something simply, it’s usually because we don’t understand the boundaries of the concept well enough to see where it connects to everything else."
 ]
 #-------------------------------------------------
 others = [
@@ -1820,6 +1841,60 @@ class VictronMonitor:
 	def _salvar_db(self):
 		# Aqui lógica de base de dados
 		pass
+
+#---------------------------------------------------
+class aetherNeural:
+	def __init__(self):
+		self.zones = {
+			"AR": [15, 10, 0.3, True],  "AU": [20, 12, 0.2, True],  "BR": [26, 4, 0.7, True],
+			"CA": [5, 20, 0.4, False], "CN": [15, 15, 0.4, False], "DE": [10, 12, 0.5, False],
+			"EG": [22, 12, 0.1, False], "ES": [18, 12, 0.2, False], "FI": [3, 18, 0.5, False],
+			"FR": [12, 10, 0.5, False], "GB": [10, 8, 0.6, False],  "IN": [28, 7, 0.6, False],
+			"JP": [15, 12, 0.5, False], "MX": [22, 8, 0.3, False],  "NO": [4, 15, 0.5, False],
+			"PT": [17, 10, 0.3, False], "RU": [2, 22, 0.4, False],  "US": [13, 15, 0.4, False],
+			"ZA": [17, 10, 0.3, True],  "TH": [28, 3, 0.8, False], "DEFAULT": [20, 10, 0.4, False]
+		}
+
+	def _get_emoji(self, status, temp):
+		status_lower = status.lower()
+		if "rain" in status_lower: 
+			return "🌧️"
+		if "cloudy" in status_lower: 
+			return "⛅" if temp > 15 else "☁️"
+		if temp > 28: 
+			return "🔥"
+		if temp < 0:  
+			return "❄️"
+		return "☀️"
+
+	def predict(self):
+		code = system_country[0]
+		name = system_country[1]
+		profile = self.zones.get(code, self.zones["DEFAULT"])
+		base_temp, swing, humidity, is_south = profile
+		now = datetime.now()
+		day_of_year = now.timetuple().tm_yday
+		phase_shift = 0.5 if is_south else 0.0
+		seasonal_effect = math.sin(2 * math.pi * ((day_of_year / 365.0) - 0.25 - phase_shift))
+		temp = base_temp + (swing * seasonal_effect)
+		hour = now.hour
+		hour_effect = math.cos(2 * math.pi * ((hour - 15) / 24.0)) * 4
+		final_temp = temp + hour_effect
+		state_seed = (day_of_year * 7) % 100
+		if state_seed < (humidity * 100):
+			status = "Cloudy with a chance of rain"
+		elif state_seed > 80:
+			status = "Partly Cloudy"
+		else:
+			status = "Clear Skies"
+		icon = self._get_emoji(status, final_temp)
+		#return f"aetherNeural ✧ Weather for {name}: {icon} {round(final_temp)}°C, {status}."
+		return (
+			f"{kolor['BOLD_CYAN']}aetherNeural {kolor['BOLD_YELLOW']}✧ "
+			f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
+			f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp)}°C{kolor['WHITE']}, "
+			f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}."
+		)
 
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
@@ -4549,7 +4624,6 @@ def view_system_country():
 	
 	global system_country
 	global sysos
-	
 	if sysos.lower() == 'windows':
 		if system_country != None:
 			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
@@ -4568,7 +4642,6 @@ def view_system_country():
 	else:
 		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
 		return
-	
 	if country:
 		country_2l = country.alpha_2
 		country_name = country.name
@@ -4576,7 +4649,6 @@ def view_system_country():
 	else:
 		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
 		return False, None
-		
 	if country != None:
 		print(f"The default country is {country_name} - {country_2l}, {country_name_official}.\n")
 
@@ -4607,7 +4679,6 @@ def list_country_details():
 #-------------------------------------------------
 def get_show_library():
 	global tvshows_cache
-
 	if len(tvshows_cache) == 0:
 		extract_from_elysia('tvshow')
 	else:
@@ -5129,7 +5200,9 @@ def main():
 
 			elif 'meteo' in question or 'meteorology' in question:
 				print (f"{showlisttell(core["meteo"], num_terms=5, category="meteorology terms")}.\n")
-
+			else:
+				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_knew'])}\n")
+			
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
 			random.shuffle(all_astro)
@@ -5627,8 +5700,13 @@ def main():
 				random_season_activity()
 				tdctl = tdctl + 1
 
+		elif re.compile(r'\b(weather\s+(?:for\s+)?today|today\s+weather|weather\s+now)\b', re.IGNORECASE).search(question):
+			oracle = aetherNeural()
+			print(f"{oracle.predict()}\n")
+		
 		# == "today"
-		elif re.compile(r'\b(date|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
+		#elif re.compile(r'\b(today(?:\s+date)?|now|what\s+day\s+it\s+is)\b', re.IGNORECASE).search(question):
+		elif re.compile(r'\b(?!.*weather)(date|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = datetime.now().timetuple().tm_yday
 			current_time = now.strftime("%H:%M")
@@ -5730,11 +5808,10 @@ def main():
 			if len(csugestions) == 0:
 				print ("Yes! what ? What do you mean ?\n")
 			elif len(csugestions) == 1:
-				print ("Yes! hmm...")
 				question = csugestions[0]
-				print ("So, the question you want to make'me is [" + question + "]\nNow you know what to write to ask'me.\n" )
+				print (f"Yes! hmm... So, the question you want to make'me is: {question}.\nNow you know what to write in the prompt to ask'me.\n" )
 			else:
-				print ("Yes what ?! There are infinite possibilities! \nSo better write down the one you want to ask'me. \nI'm "+_title_+" a chat bot by "+ _author_.split()[0] +" not the f* Merlin, the wizard.\n")
+				print (f"Yes what ?! There are infinite possibilities! So better write down the one you want to ask'me. \nI'm {_title_} a chat bot by {_author_.split()[0]} not the f* Merlin, the wizard.\n")
 
 		elif question[0:13] == 'search askard':
 			getparam = question.split()
@@ -6030,10 +6107,12 @@ def main():
 			dayseason = get_the_season()[0]
 			hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
 			weather_starters = [
-				f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.\n",
-				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}.\n"
+				f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.",
+				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}."
 			]
 			print(random.choice(weather_starters))
+			oracle = aetherNeural()
+			print(f"{oracle.predict()}\n")
 
 		elif question[-9:] == 'about you':
 				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
@@ -6313,13 +6392,13 @@ def main():
 				print("I'm currently running without the modules for satellite tracker command works.\n")
 			else:
 				predict_passes()
-
+		
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
-		
-		#else:
-		#	print (f"{core['trouble_short']} I'm not familiar with this subject!")
+			
+		else:
+			print (f"{random.choice(messages['trouble_short'])} Woow! that's new for me.!\n")
 
 #-------------------------------------------------
 if __name__ == "__main__":
