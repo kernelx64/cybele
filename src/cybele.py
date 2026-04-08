@@ -756,7 +756,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|constellations|asteroids|dangerous objects>|verbs \n       old tech words|linux commands|climate change terms.\nReturn the values or the data for the required subject.\nex: show me verbs \n    show me dangerous objects\n    show me linux commands\n    show me old tech\n",
+	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs \n"+(" "*15)+"old tech words|linux commands|climate change terms|meteorology \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
@@ -1335,6 +1335,8 @@ def make_intextdb():
 		core["word meaning"] = list(fetch_fromdbfile("cybele.db", "meanings", "term"))
 
 		core["qa-astro"] = list(fetch_fromdbfile("cybele.db", "qa_astro", "question"))
+
+		core["meteo"] = list(fetch_fromdbfile("cybele.db", "meteo", "term"))
 
 		linux_cmd_data = zip(
 			fetch_fromdbfile("cybele.db", "linux_commands", "cmd_name"),
@@ -2218,6 +2220,12 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == 'linuxexcmd':
 				print ("")
+
+			elif list_name == 'meteo':
+				db_file ='cybele.db';table = 'meteo';search_val = word
+				search_col = 'term';fetch_col = 'definition'
+				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+				print( '%s\n' % (dbsearch))
 
 			elif list_name == 'python art':
 				print ("Python is a programmer language wich i was builted (coded).")
@@ -5118,6 +5126,9 @@ def main():
 				
 			elif 'verbs' in question or 'english verbs' in question:
 				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
+
+			elif 'meteo' in question or 'meteorology' in question:
+				print (f"{showlisttell(core["meteo"], num_terms=5, category="meteorology terms")}.\n")
 
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
