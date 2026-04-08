@@ -3586,55 +3586,54 @@ def findme(input_string, item_list):
 #----------------------------------------------------------------
 def showlisttell(data_key_list, num_terms=5, category="terms"):
    
-    all_items = list(data_key_list)
-    random.shuffle(all_items)
-    selected_items = all_items[:num_terms]
-    formatted_items_list = ""
-    if len(selected_items) > 1:
-        formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
-    elif selected_items:
-        formatted_items_list = selected_items[0]
-    intro_fragments = [
-        f"I can show you based on my knowledge, these are some {category}:",
-        f"Here are some {category} I have in knowledge:",
-        f"Based on what I know, these are some {category}:",
-        f"Let me share some {category} I have:",
-        f"You might be interested in these {category}:"
-    ]
-    chosen_intro_fragment = random.choice(intro_fragments)
-    if formatted_items_list:
-        return f"{chosen_intro_fragment} {formatted_items_list}"
-    else:
-        return f"Sorry, I don't have any {category} to show at the moment."
+	all_items = list(data_key_list)
+	random.shuffle(all_items)
+	selected_items = all_items[:num_terms]
+	formatted_items_list = ""
+	if len(selected_items) > 1:
+		formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
+	elif selected_items:
+		formatted_items_list = selected_items[0]
+	intro_fragments = [
+		f"I can show you based on my knowledge, these are some {category}:",
+		f"Here are some {category} I have in knowledge:",
+		f"Based on what I know, these are some {category}:",
+		f"Let me share some {category} I have:",
+		f"You might be interested in these {category}:"
+	]
+	chosen_intro_fragment = random.choice(intro_fragments)
+	if formatted_items_list:
+		return f"{chosen_intro_fragment} {formatted_items_list}"
+	else:
+		return f"Sorry, I don't have any {category} to show at the moment."
 
 #----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
- 
-    try:
-        canvas_width, canvas_height = os.get_terminal_size()
-    except OSError:
-        canvas_width, canvas_height = 80, 24 # Fallback if size cannot be determined
+	try:
+		canvas_width, canvas_height = os.get_terminal_size()
+	except OSError:
+		canvas_width, canvas_height = 80, 24 # Fallback if size cannot be determined
 
-    explosion_color = random.choice([k for k in kolor.keys() if k != 'OFF']) # Pick a random color, not 'OFF'
+	explosion_color = random.choice([k for k in kolor.keys() if k != 'OFF']) # Pick a random color, not 'OFF'
 
-    for radius in range(1, max_radius + 1):
-        frame_canvas = [[' ' for _ in range(canvas_width)] for _ in range(canvas_height)]
+	for radius in range(1, max_radius + 1):
+		frame_canvas = [[' ' for _ in range(canvas_width)] for _ in range(canvas_height)]
 
-        for i in range(canvas_height):
-            for j in range(canvas_width):
-                dist = ((j - x)**2 + (i - y)**2)**0.5
-                if radius - 1 <= dist < radius:
-                    if 0 <= i < canvas_height and 0 <= j < canvas_width:
-                        frame_canvas[i][j] = random.choice(characters)
+		for i in range(canvas_height):
+			for j in range(canvas_width):
+				dist = ((j - x)**2 + (i - y)**2)**0.5
+				if radius - 1 <= dist < radius:
+					if 0 <= i < canvas_height and 0 <= j < canvas_width:
+						frame_canvas[i][j] = random.choice(characters)
 
-        clear_screen()
+		clear_screen()
 
-        for row_idx, row_chars in enumerate(frame_canvas):
-            print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
+		for row_idx, row_chars in enumerate(frame_canvas):
+			print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
         
-        #import sys
-        sys.stdout.flush()
-        sleep(0.08)
+		#import sys
+		sys.stdout.flush()
+		sleep(0.08)
 
 def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 	global kolor
@@ -4025,28 +4024,28 @@ def make_sentence(rw_instance):
 		["subject", "verb_present_conjugated"],  
 		["subject", "verb_present_conjugated", "adverb"],  
 
-        ["subject", "aux_be_present_conjugated", "adjective"],  
-        ["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],  
+		["subject", "aux_be_present_conjugated", "adjective"],
+		["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],
 
-        ["subject", "aux_be_present_conjugated", "negation", "adjective"],
-        ["subject", "aux_be_present_conjugated", "negation", "determiner", "noun_countable_singular"],
+		["subject", "aux_be_present_conjugated", "negation", "adjective"],
+		["subject", "aux_be_present_conjugated", "negation", "determiner", "noun_countable_singular"],
 
-        ["subject", "modal_verb", "verb_base", "determiner", "noun_countable_singular"],
-        ["subject", "modal_verb", "verb_base", "determiner", "noun_uncountable"],
-        ["subject", "modal_verb", "verb_base", "adverb"],
-        ["subject", "modal_verb", "verb_base"],
+		["subject", "modal_verb", "verb_base", "determiner", "noun_countable_singular"],
+		["subject", "modal_verb", "verb_base", "determiner", "noun_uncountable"],
+		["subject", "modal_verb", "verb_base", "adverb"],
+		["subject", "modal_verb", "verb_base"],
 
-        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_countable_singular"],
-        ["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_uncountable"],
-        ["subject", "aux_do_present_neg_conjugated", "verb_base"],
+		["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_countable_singular"],
+		["subject", "aux_do_present_neg_conjugated", "verb_base", "determiner", "noun_uncountable"],
+		["subject", "aux_do_present_neg_conjugated", "verb_base"],
 
-        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_countable_singular"],
-        ["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
-        ["subject", "aux_have_present_conjugated", "verb_past_participle"],
-        ["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
+		["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_countable_singular"],
+		["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
+		["subject", "aux_have_present_conjugated", "verb_past_participle"],
+		["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
 		
-        ["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
-        ["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
+		["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
+		["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
 	]
 
 	try:
@@ -4178,24 +4177,21 @@ def make_sentence(rw_instance):
 
 #-------------------------------------------------------------------
 def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instance here
-    text_paragraphs = []
-    for _ in range(num_paragraphs):
-        paragraph_sentences = []
-        for _ in range(num_sentences):
-            paragraph_sentences.append(make_sentence(rw_instance)) # Pass rw_instance to make_sentence
-        text_paragraphs.append(" ".join(paragraph_sentences))
-        
-    return "\n".join(text_paragraphs)
+	text_paragraphs = []
+	for _ in range(num_paragraphs):
+		paragraph_sentences = []
+		for _ in range(num_sentences):
+			paragraph_sentences.append(make_sentence(rw_instance)) # Pass rw_instance to make_sentence
+		text_paragraphs.append(" ".join(paragraph_sentences))
+	return "\n".join(text_paragraphs)
 
 #--------------------------------------------------
 def preamble_random_word():
-
 	random.shuffle(messages['preambles'])
 	chosen_preamble = random.choice(messages['preambles'])
 	random_word = rw.get_random_word()
 	while not random_word or len(random_word) < 2 or not random_word.isalpha():
 		random_word = rw.get_random_word()
-        
 	return f"{chosen_preamble} {random_word.lower()}.\n"
 
 #-------------------------------------------------------------------
@@ -4963,11 +4959,12 @@ def main():
 		#-------------------------
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
-			print (" " + _spchar_[1:2] + " " + "What can you anwser")
+			print (f" {symb_prompt()}What can you anwser?")
 			source_list = [list(core["qa-astro"]), questions, others]
 			list_source = generate_random_questions(source_list, random.randint(1, 4))
 			for source in list_source:
-				print (f" {_spchar_[1:2]} {source}")
+				source_qmark = source if source.endswith("?") else f"{source}?"
+				print (f" {symb_prompt()}{source_qmark}")
 			print ("")
 		#-------------------------
 		if question == "bye" or question == "exit" or question == "quit":
@@ -5390,7 +5387,7 @@ def main():
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
 		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
-			print(f"Here are the {str(len(core['help']))} help 🙋 commands ordered alphabetically to better assist you. \nJust type help <desired command> to get a more descriptive help.\n")
+			print(f"Here are the {str(len(core['help']))} help 🙋 commands ordered alphabetically to better assist you. \nJust type help <desired command> or Hit <Enter {chr(0x21B5)}> to get a more descriptive help.\n")
 			nhelp = dict(sorted(help.items()))	
 			results = list(nhelp)
 			terminal_width = os.get_terminal_size().columns
@@ -5581,6 +5578,9 @@ def main():
 						if isinstance(value, (list, dict, tuple, str)):
 							total_knowledge_sum += len(value)
 				days_running_str = "N/A days."
+
+				num_sats = len(load_from_disk())
+
 				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
 					days_running_str = f"{days_till_today.days} days."
 				if _pydr3_ == True:
@@ -5588,19 +5588,20 @@ def main():
 				else:
 					_pydr3_ = _pydr3_
 
-				print(f"   Device : {display_node_name}|{display_cyext} on {sysos}")
-				print(f"     Name : {_title_}")
-				print(f"  Version : {version}")
-				print(f"  Revised : {_revise_}")
-				print(f"   Python : {py_version_str}")
-				print(f"  Country : {core_system_country}")
-				print(f"   Memory : {q_len}|{a_len}|D{current_midbcounter}")
-				print(f"     Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
-				print(f"    Linux : {len(core.get('linuxcmd', []))}")
-				print(f"    Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
-				print(f"    World : {len(core.get('country', []))}")
-				print(f"  Storage : {dblrconn} [{midbcounter}]")
-				print(f"  Running : {days_running_str}\n")
+				print(f"    Device : {display_node_name}|{display_cyext} on {sysos}")
+				print(f"      Name : {_title_}")
+				print(f"   Version : {version}")
+				print(f"   Revised : {_revise_}")
+				print(f"    Python : {py_version_str}")
+				print(f"   Country : {core_system_country}")
+				print(f"    Memory : {q_len}|{a_len}|D{current_midbcounter}")
+				print(f"      Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
+				print(f"     Linux : {len(core.get('linuxcmd', []))}")
+				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
+				print(f" Satellite : {num_sats:,.0f}")
+				print(f"     World : {len(core.get('country', []))}")
+				print(f"   Storage : {dblrconn} [{midbcounter}]")
+				print(f"   Running : {days_running_str}\n")
 
 			except Exception as e:
 				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
@@ -6304,8 +6305,8 @@ def main():
 			answer = find_answer(question,questions)
 			print(answer)
 		
-		else:
-			print (f"{core['trouble_short']} I'm not familiar with this subject!")
+		#else:
+		#	print (f"{core['trouble_short']} I'm not familiar with this subject!")
 
 #-------------------------------------------------
 if __name__ == "__main__":
