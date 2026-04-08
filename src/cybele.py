@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '01.04.2026'
+_revise_ = '08.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -344,6 +344,9 @@ core = {
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
+	"request":	["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ",
+				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
+				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? " ],
 	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later.",
 					"Cybele is currently unavailable. We appreciate your patience.",
 					"Cybele is temporarily out of reach. Please try again shortly.",
@@ -2027,7 +2030,7 @@ def get_question():
 def find_answer(question,whatlist):
 	sugestion_color = random.choice(['DARK_YELLOW','DARK_GREEN','DARK_CYAN'])
 	pontuation = [".",",","!","?"]
-	outoptions = ["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ","Looking for: "]
+	outoptions = core['request']
 	for p in range(len(pontuation)):
 		question = question.replace(pontuation[p],"")
 	for index, value in enumerate(whatlist):
