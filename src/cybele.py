@@ -95,6 +95,11 @@ from zoneinfo import ZoneInfo
 import time
 
 try:
+	import readline
+except ImportError:
+	pass
+
+try:
 	import serial
 	import predict 
 
