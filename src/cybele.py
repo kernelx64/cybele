@@ -360,7 +360,6 @@ core = {
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","speak"],
 	"asking for a phrase":	["say something","make a sentence","make a phrase"],
-	"asking for a word":	["word","say a word","share a word","speak a word"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
@@ -754,12 +753,13 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me <star names|constellations|<dangerous|asteroids|objects>|verbs|old tech words|linux commands|quote> \nReturn the values or the data for the required subject.\n",
+	"help show me": "Usage: show me <star names|constellations|asteroids|dangerous objects>|verbs \n       old tech words|linux commands|climate change terms.\nReturn the values or the data for the required subject.\nex: show me verbs \n    show me dangerous objects\n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
-	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032",
+	"help say a word": "Usage: say a word|share a word \nDisplay a word will interest you (Rich vocabulary).\nex: say a word\n    share a word\n",
+	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032\n",
 	"help star": "Usage: <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
@@ -773,7 +773,6 @@ help = {
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
-	"help word": "Usage: word \nDisplay a word will interest you (Rich vocabulary).\nex: word\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help your version": "Usage: your version | what is | this version \nProvides details about the running instance of Cybele.\nIncludes the version, last update date, unique ID and a note regarding its source code origin. \nex: what is your version \n    your version \n    this version \n",
 	"help yoda say": "Usage: yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \n    ex: Yoda say the force is strong with this one\n"
@@ -2039,7 +2038,7 @@ def find_answer(question,whatlist):
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
-					"time_query","season_query","asking for country details","asking for talking","asking for a word","python art",
+					"time_query","season_query","asking for country details","asking for talking","python art",
 					"sayconvert"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
@@ -2274,7 +2273,7 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "climate dictionary term":
 				climate_anwser = climate_dictionary[word]
-				print("The term "+ word.capitalize() + " belongs to the " + list_name.title()[0:18] + ":\n" + climate_anwser + "\n")
+				print(f"The term {word.capitalize()} belongs to the {list_name.title()[0:18].replace("Climate ", "Climate Change ")} :\n {climate_anwser}\n")
 
 			elif list_name == 'astronomy glossary':
 				db_file ='cybele.db';table = 'astronomy_glossary';search_val = word
@@ -2402,9 +2401,6 @@ def find_word_in_dicts(word, core):
 				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
 				generated_text = make_text(rw, num_sentences=3, num_paragraphs=2)
 				print(f"{text_color}{generated_text}{kolor['OFF']}")
-				print("")
-			
-			elif list_name == "asking for a word":
 				print("")
 			
 			elif list_name == "asking for a phrase":
@@ -4970,7 +4966,7 @@ def main():
 		if question == "bye" or question == "exit" or question == "quit":
 			return False
 		
-		elif any(word in question for word in core['asking for a word']):
+		elif question == "say a word" or question == "share a word":
 			print (preamble_random_word())
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
@@ -4993,7 +4989,8 @@ def main():
 					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
 			print ("")
 
-		elif any(word in question for word in core['badword']) and not "cassiopeia":
+		#elif any(word in question for word in core['badword']) and not "cassiopeia":
+		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]):
 			print (random.choice(messages['badword_msg']) + "\n")
 
 		elif _cybid_ == True and any(word in question for word in addcomm):
@@ -5101,8 +5098,8 @@ def main():
 			elif 'constellations' in question:
 				print (f"{showlisttell(core["constelattion"], num_terms=5, category="Constellations")}.\n")
 
-			elif 'climate' in question or 'dictionary' in question:
-				print (f"{showlisttell(core["climate dictionary term"], num_terms=5, category="Climate Dictionary terms")}.\n")
+			elif 'climate change' in question or 'dictionary' in question:
+				print (f"{showlisttell(core["climate dictionary term"], num_terms=5, category="Climate Change Dictionary terms")}.\n")
 
 			elif 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
 				print (f"{showlisttell(core["word meaning"], num_terms=5, category="Meaning Terms/Words")}.\n")
@@ -5383,6 +5380,8 @@ def main():
 				print ("This is the " + sysos + " Operating System (OS). ")
 			elif sysos == 'Windows':
 				print ("I am behing executed in " + sysos +  "Operating System (OS).\n")
+			elif _pydr3_ == True:
+				print ("I'm running in android Operating System on Pydroid3.\n")
 			else:
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
