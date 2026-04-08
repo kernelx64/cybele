@@ -81,6 +81,7 @@ import locale
 import pycountry
 import PIL
 import tzdata
+from urllib.parse import urljoin
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
@@ -719,6 +720,7 @@ help = {
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
+	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 85       -> Syncs day 85 of the current year\nget ifremer data 85 2025  -> Syncs day 124 of year 2025\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
 	"help gridflow": "Usage: gridflow \nA creative way to bring a dash of algorithmic mystery to your leisure time. \n",	
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
@@ -5004,6 +5006,52 @@ def predict_passes():
 			print(f"[-] Prediction error: {e}")
 
 #-------------------------------------------------
+def download_ifremer_pro(day_number, year):
+	year_val = str(year).strip("{}")
+	day_str = str(day_number).zfill(3).strip("{}")
+	base_url = f"https://osi-saf.ifremer.fr/sst/l3c/north_atlantic/nar_viirs_noaa_20/{year_val}/{day_str}/"
+	local_dir = f"amoc_ifremer/{year_val}/{day_str}"
+	os.makedirs(local_dir, exist_ok=True)
+
+	try:
+		response = requests.get(base_url, timeout=15)
+		response.raise_for_status()
+		soup = BeautifulSoup(response.text, 'html.parser')
+		links = [urljoin(base_url, node.get('href')) for node in soup.find_all('a')
+				if node.get('href') and node.get('href').endswith('.nc')]
+		if not links:
+			print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} No .nc files found at in the url.")
+			return
+		print(f"\n{symb_prompt()}Found {len(links)} files. Starting download...")
+		for link in links:
+			file_name = os.path.basename(link)
+			local_path = os.path.join(local_dir, file_name)
+			print_statusline(f"Fetching: {file_name}")
+			with requests.get(link, stream=True) as r:
+				r.raise_for_status()
+				total_size = int(r.headers.get('content-length', 0))
+				with open(local_path, 'wb') as f, tqdm(
+					total=total_size,
+					unit='B',
+					unit_scale=True,
+					unit_divisor=1024,
+					desc="",
+					leave=False, # Remove the bar after the file finishes
+					ncols=90,
+					bar_format='   {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]'
+				) as pbar:
+					for chunk in r.iter_content(chunk_size=8192):
+						if chunk:
+							f.write(chunk)
+							pbar.update(len(chunk))
+		print_statusline("")
+		print(f"\r{symb_prompt()}{kolor['GREEN']}Day {day_str} synchronized successfully!{kolor['OFF']}\n")
+	except requests.exceptions.HTTPError as e:
+		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} HTTP Error: {e.response.status_code} - Check if the URL is correct.")
+	except Exception as e:
+		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} {random.choice(messages['trouble_short'])} a Unexpected Error occurred!\n")
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -6393,6 +6441,27 @@ def main():
 			else:
 				predict_passes()
 		
+		#elif question == 'get ifremer data':
+		#	daydownload = datetime.now().timetuple().tm_yday
+		#	yeardownload = date.today().year
+		#	download_ifremer_pro(daydownload,yeardownload)
+
+		elif question.startswith('get ifremer data'):
+			parts = question.split()
+			daydownload = datetime.now().timetuple().tm_yday
+			yeardownload = date.today().year
+			try:
+				if len(parts) >= 4:
+					daydownload = int(parts[3])
+				if len(parts) >= 5:
+					yeardownload = int(parts[4])
+				if not (1 <= daydownload <= 366):
+					print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
+				else:
+					download_ifremer_pro(daydownload, yeardownload)
+			except ValueError:
+				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
