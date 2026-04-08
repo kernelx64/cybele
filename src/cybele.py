@@ -687,6 +687,7 @@ help = {
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
 	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
+	"help constellations": "Usage <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage <cybele uptime> \nDisplays the uptime from cybele based on the start execution time.\nex: cybele upytime\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
@@ -1496,7 +1497,7 @@ maincommands = [
 	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits","protect image",
 	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
 	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
-	"play math","play constellations","play elements","game capitals","game countries","game math","game constellations","game elements",
+	"play math","play constellations","play elements","game capitals","game countries","game math","game elements",
 	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
 	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
 	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
@@ -4980,7 +4981,7 @@ def main():
 					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
 			print ("")
 
-		elif any(word in question for word in core['badword']):
+		elif any(word in question for word in core['badword']) and not "cassiopeia":
 			print (random.choice(messages['badword_msg']) + "\n")
 
 		elif _cybid_ == True and any(word in question for word in addcomm):
