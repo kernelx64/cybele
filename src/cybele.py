@@ -2040,7 +2040,7 @@ def find_answer(question,whatlist):
 			return answers[index]+"\n"
 	sayhi = core.get("greatings", [])
 	dict_climate = core.get("climate dictionary", [])
-	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "primary moon phase", "secondary moon phase"]
+	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "meteo", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
 					"time_query","season_query","asking for country details","asking for talking","python art",
