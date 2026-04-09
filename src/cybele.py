@@ -357,8 +357,10 @@ core = {
 					"Hold on a moment! Cybele will be back with you soon.",
 					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
 					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
+	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations"],
+	"withonlyaL":	["constelation","constelations"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
-				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],		
+				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
 	"share":	["sharing about","sharing links"],
 	"sayconvert":	["in full","longhand"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
@@ -765,7 +767,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs \n"+(" "*15)+"old tech words|linux commands|climate change terms|meteorology \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
+	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology> \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
@@ -2458,6 +2460,9 @@ def find_word_in_dicts(word, core):
 			
 			elif list_name == "asking for country details":
 				list_country_details()
+
+			elif list_name == "withonlyaL":
+				print (f"{random.choice(messages['withonlyaL'])}\n")
 
 			elif list_name == "asking for talking":
 				text_color = kolor['VIVID_WHITE']
@@ -4616,7 +4621,7 @@ def commands_by_explanation(linux_commands, keyword):
 			cmd_explanation = expl if expl else "Without data"
 			formatted_name = f"'{name}'"
 			print(f"{formatted_name:<{max_len}} - {cmd_explanation}")
-		print(f"\nFor detailed information on each command '', type it and press enter.\n")
+		print(f"\nFor detailed information on each command, type the command it and press enter.\n")
 	
 #-------------------------------------------------
 def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=120):
@@ -5232,8 +5237,9 @@ def main():
 		elif question[0:22] == 'what do you know about' and question.find('dangerous')!=-1 and question.find('objects')!=-1:
 			print ("I can tell you about " + str(len(core['cneos'])) + " celestial dangerous objects known as the list CNEO.\n ")
 
-		elif question == 'constelations':
-			print (f"{random.choice(messages['withonlyaL'])}\n")
+		#elif question == 'constelations':
+		#elif any(word in question for word in core['poorly_writen']):
+		#	print (f"{random.choice(messages['withonlyaL'])}\n")
 
 		elif question == "can you make a sentence":
 			if question[0:4] == 'make':
@@ -6212,15 +6218,18 @@ def main():
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 		
 		elif question.startswith('offline mode on'):
-			verbose = 'verbose' in question
-			db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
-			output_db_file = _title_.lower() + ".db"
-			if os.path.exists(output_db_file):
-				print(f"I am already able to be fully functional in offline mode but i but I will update.")
-				delete_cybeledb()
-				download_and_convert(db_url, output_db_file, verbose)
+			if internet_onoff == True:
+				verbose = 'verbose' in question
+				db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
+				output_db_file = _title_.lower() + ".db"
+				if os.path.exists(output_db_file):
+					print(f"I am already able to be fully functional in offline mode but i but I will update.")
+					delete_cybeledb()
+					download_and_convert(db_url, output_db_file, verbose)
+				else:
+					download_and_convert(db_url, output_db_file, verbose)
 			else:
-				download_and_convert(db_url, output_db_file, verbose)
+				print(f"{random.choice(messages['trouble_msg'])} To perform this task i need to be able to access the internet.\n")
 					
 		elif question == 'offline mode off':
 			delete_cybeledb()
