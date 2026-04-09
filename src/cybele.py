@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '08.04.2026'
+_revise_ = '09.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -78,7 +78,6 @@ import html, urllib
 import json
 import holidays
 import locale
-import pycountry
 import PIL
 import tzdata
 from urllib.parse import urljoin
@@ -205,7 +204,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-country_code = None; tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}
+tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}
 MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
 BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
@@ -363,8 +362,8 @@ core = {
 	"share":	["sharing about","sharing links"],
 	"sayconvert":	["in full","longhand"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
-	"season_query": ["what season is it","what is the current season","what's the season","current season","which season is it","which season are we in","tell me the season","what is today's season"],
-	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays"],
+	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
+	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","speak"],
 	"asking for a phrase":	["say something","make a sentence","make a phrase"],
@@ -2221,7 +2220,17 @@ def get_display_value(value, suffix="", precision=None, replace_hyphen=False):
 	if replace_hyphen and isinstance(value, str):
 		return value.replace('-', ' - ')
 	return f"{value}{suffix}"
-	
+
+#-------------------------------------------------------
+def show_season():
+	actual_season, next_season = get_the_season()
+	if system_country and system_country != None:
+		sentence = f"Actualy based on the system date {datemd} it's {actual_season.capitalize()}"
+		sentence = sentence + f" in {system_country[1]}"
+		print (f"{sentence} with {next_season[0].capitalize()} approaching.\n")
+	else:
+		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
 
@@ -2442,33 +2451,7 @@ def find_word_in_dicts(word, core):
 				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
 
 			elif list_name == "season_query":
-				actual_season, next_season = get_the_season()
-				if sysos.lower() == 'windows':
-					if system_country != None:
-						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					else:
-						country = pycountry.countries.get(name=country_code)
-				elif sysos.lower() == 'linux':
-					if system_country != None:
-						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					else:
-						country = pycountry.countries.get(alpha_2=country_code)
-				elif sysos.lower() == 'pydroid3':
-					if system_country != None:
-						country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					else:
-						country = pycountry.countries.get(alpha_2=country_code)
-				else:
-					if system_country != None:
-						country_code_for_holidays = system_country[0]
-						country_code_name = system_country[1]
-					else:
-						print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
-	
-				sentence = f"Actualy based on the system date {datemd} it's {actual_season.capitalize()}"
-				if country:
-					sentence = sentence + f" in {country.name}"
-				print (f"{sentence} with {next_season[0].capitalize()} approaching.\n")
+				show_season()
 
 			elif list_name == "holidays_query":
 				country_holidays()
@@ -3545,39 +3528,20 @@ def yoda_speak(sentence):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def today_holiday():
-	
-	global sysos
+	global system_country
 	today = datetime.today()
-	if sysos.lower() == 'windows':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(name=country_code)
-	elif sysos.lower() == 'linux':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
-	elif sysos.lower() == 'pydroid3':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
+	if system_country and len(system_country) >= 2:
+		country_code_for_holidays = system_country[0].upper()
+		country_code_name = system_country[1]
 	else:
-		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
+		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
 		return
-		
-	if country:
-		country_code_for_holidays = country.alpha_2
+	#print(f"\nTargeting: {country_code_name} ({country_code_for_holidays.title()})")
+	supported_countries = holidays.list_supported_countries()
+	if country_code_for_holidays not in supported_countries:
+		print(f"{random.choice(messages['trouble_short'])} 💡 I don't have any reference to holidays for {country_code_name} ({country_code_for_holidays}).\n")
+		return
 	else:
-		if system_country != None:
-			country_code_for_holidays = system_country[0]
-			country_code_name = system_country[1]
-		else:
-			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
-			return False, None
-
-	if country_code_for_holidays:
 		try:
 			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
 			if today in country_holidays:
@@ -3587,66 +3551,38 @@ def today_holiday():
 			else:
 				return False, None
 		except Exception as e:
-			print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} Error checking holidays for {country_code_for_holidays}")
-			return False, None
-	else:
-		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} No country code determined, cannot check for holidays.")
-		return False, None
+			#print(f"I don't have details about holidays for {country_code_name.title()}, {country_code_for_holidays} {get_flag(country_code_for_holidays)}")
+			return False, Non
 
-#----------------------------------------------------------------
 #----------------------------------------------------------------
 def country_holidays():
 	global system_country
-	if sysos.lower() == 'windows':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(name=country_code)
-	elif sysos.lower() == 'linux':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
-	elif sysos.lower() == 'pydroid3':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
-	else:
-		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-		return
-	
-	if country:
-		print(f"\nDetected country: {country.name} ({country.alpha_2})")
-		country_code_for_holidays = country.alpha_2
-		country_code_name = country.name
-	else:
-		if system_country != None:
-			country_code_for_holidays = system_country[0]
-			country_code_name = system_country[1]
-			print(f"\nUsing default country: {country_code_name} ({country_code_for_holidays})")
-		else:
-			print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
-			return
 
+	if system_country and len(system_country) >= 2:
+		country_code_for_holidays = system_country[0].upper()
+		country_code_name = system_country[1]
+	else:
+		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+		return
+	#print(f"\nTargeting: {country_code_name} ({country_code_for_holidays.upper()})")
+	supported_countries = holidays.list_supported_countries()
+	if country_code_for_holidays not in supported_countries:
+		print(f"{random.choice(messages['trouble_short'])} 💡 I don't have any reference to holidays for {country_code_name.title()}, {country_code_for_holidays}.")
+		return
 	holidays_country_year = datetime.now().year
 	try:
-		country_holidays = holidays.country_holidays(country_code_for_holidays, years=holidays_country_year)
-		if country_holidays:
-			print(f"Holidays for {country_code_name} ({country_code_for_holidays}) in the year {holidays_country_year}:\n")
-			sorted_holidays = sorted(country_holidays.items())
-			for date, name in sorted_holidays:
+		found_holidays = holidays.country_holidays(country_code_for_holidays, years=holidays_country_year)
+		if found_holidays:
+			print(f"Holidays for {country_code_name} in {holidays_country_year}:\n")
+			# Sorting by date
+			for date, name in sorted(found_holidays.items()):
 				print(f"  {date} | {name}")
 		else:
-			print(f"No holidays found for {country_code_name} ({country_code_for_holidays}) in {holidays_country_year}.")
-	except NotImplementedError:
-		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} The holidays does not have data for {country.name} ({country.alpha_2}).")
-	except KeyError:
-		print(f"{random.choice(['Oops!', 'Sorry!', 'Heads up!'])} An issue occurred with the country code {country.alpha_2} when fetching holidays.")
+			print(f"No holidays found for {country_code_name} in {holidays_country_year}.")
 	except Exception as e:
-		print(f"{random.choice(messages['trouble_short'])} Unexpected error {e}")
+		print(f"{random.choice(messages['trouble_short'])} Unexpected error: {e}")
 	print("")
-	
+
 #----------------------------------------------------------------
 def get_display_length(s):
     return len(re.sub(r'\033\[[0-9;]*m', '', s))
@@ -4565,33 +4501,30 @@ def verificar_dst(iso_code):
 
 #-------------------------------------------------
 def detect_country():
-	global system_country
-	iso_code = None
+	global ncountries, system_country
+	raw = locale.getlocale()[0]
+	if not raw: return
+	target = raw.split('_')[-1].lower()
+	if len(target) == 2: # Lógica para o Linux
+		for name, data in ncountries.items():
+			# Usamos str(... or '') para evitar o erro de 'NoneType'
+			if str(data.get('alpha2') or '').lower() == target:
+				system_country = [data.get('alpha2'), name.capitalize()]
+				break
+	else: # Lógica para o Windows
+		if target in ncountries:
+			system_country = [ncountries[target].get('alpha2'), target]
 
+#-------------------------------------------------
+def get_flag(country_code):
+	if not country_code or len(country_code) != 2:
+		return ""
+	if platform.system() == "Windows":
+		return ""
 	try:
-		loc_info = locale.getlocale(locale.LC_MESSAGES)       
-		if loc_info[0]:
-			iso_code = loc_info[0].split('_')[-1].upper()
-		if not iso_code:
-			for env_var in ['LANG', 'LC_ALL', 'LC_CTYPE']:
-				val = os.environ.get(env_var)
-				if val and '_' in val:
-					iso_code = val.split('_')[-1].split('.')[0].upper()
-					break
-		if not iso_code:
-			user_lang = locale.getgetlocale()[0]
-			if user_lang:
-				iso_code = user_lang.split('_')[-1].upper()
-		if iso_code and len(iso_code) == 2:
-			pais_obj = pycountry.countries.get(alpha_2=iso_code)
-			if pais_obj:
-				system_country[0] = iso_code
-				system_country[1] = pais_obj.name
-				return
-		system_country = ["PT", "Portugal"]
+		return "".join(chr(ord(c.upper()) + 127397) for c in country_code)
 	except Exception:
-		system_country = ["PT", "Portugal"]
-	country_code = system_country[0]
+		return ""
 
 #-------------------------------------------------
 def set_system_country():
@@ -4599,15 +4532,15 @@ def set_system_country():
 
 	while True:
 		user_input_code = input("Enter a two-letter country code to override (e.g., PT, AU or ?): ").upper()
-		if not user_input_code:		
+		if not user_input_code:
 			detect_country()
 			print(f"System country set the actual country: {system_country[1]} ({system_country[0]})\n")
 			return False
 		if user_input_code == "?":
-			print (f"Available {len(ncountries.items())} Country's for two-letter (Alpha2 Code):")	
+			print (f"Available {len(ncountries.items())} Country's for two-letter (Alpha2 Code):")
 			for country_name, details in ncountries.items():
-				print (f"  {details.get("alpha2")} - {country_name.capitalize()}")
-			print ("")	
+				print (f"  {details.get("alpha2")} - {country_name.title()}")
+			print ("")
 			return False
 		found_country_name = None
 		for country_name, details in ncountries.items():
@@ -4615,7 +4548,7 @@ def set_system_country():
 				found_country_name = country_name
 				break
 		if found_country_name:
-			system_country = (user_input_code, found_country_name.capitalize())
+			system_country = (user_input_code, found_country_name.title())
 			print(f"System country set to: {system_country[1]} ({system_country[0]})\n")
 			return True
 		else:
@@ -4623,36 +4556,12 @@ def set_system_country():
 
 #-------------------------------------------------
 def view_system_country():
-	
-	global system_country
-	global sysos
-	if sysos.lower() == 'windows':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(name=country_code)
-	elif sysos.lower() == 'linux':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
-	elif sysos.lower() == 'pydroid3':
-		if system_country != None:
-			country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-		else:
-			country = pycountry.countries.get(alpha_2=country_code)
+	global system_country, syso
+	if system_country or system_country != None:
+		print(f"My default country running on {sysos.title()} is {system_country[1].title()} - {system_country[0]} {get_flag(system_country[0])}\n")
 	else:
-		print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-		return
-	if country:
-		country_2l = country.alpha_2
-		country_name = country.name
-		country_name_official = country.official_name
-	else:
-		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+		print(f"{random.choice(messages['trouble_short'])} Invalid country code. Type 'set default country' and set a valid the two-letter country code..\n")
 		return False, None
-	if country != None:
-		print(f"The default country is {country_name} - {country_2l}, {country_name_official}.\n")
 
 #-------------------------------------------------
 def list_country_details():
@@ -5049,14 +4958,13 @@ def download_ifremer_pro(day_number, year):
 	except requests.exceptions.HTTPError as e:
 		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} HTTP Error: {e.response.status_code} - Check if the URL is correct.")
 	except Exception as e:
-		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} {random.choice(messages['trouble_short'])} a Unexpected Error occurred!\n")
+		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} Unexpected Error")
 
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
-	global system_country, people_space #, orbit_data
-	detect_country()
+	global system_country, people_space , ncountries#, orbit_data
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5069,6 +4977,7 @@ def main():
 	aboutyou = kdecode(aboutyou, checksum)
 	#----------------------------
 	validate_globals()
+	detect_country()
 	#----------------------------
 	print_statusline(f"")
 	_portac_ = get_default_port()
@@ -5466,17 +5375,16 @@ def main():
 		elif question == 'set default country':
 			set_system_country()
 		
-		elif question == 'default country':
+		elif question == 'default country' or question == 'actual country':
 			view_system_country()
 		
 		elif question == 'default country off':
-			global system_country
-			if system_country != None:
-				print(' > default system country detection restored.\n')
-				system_country = None
+			if 'system_country' not in globals():
+				system_country = []
 			else:
-				print('No user override is being used in the country system detection, so it is not applicable.\n')
-		
+				print(' > default system country detection restored.\n')
+				detect_country()
+
 		elif question[-7:] == 'capital':
 			word = question.split()[0].lower()
 			if word in core['country']:
@@ -5512,7 +5420,7 @@ def main():
 
 		elif question == 's.o' or question == 'operating system' or question == 'system':
 			if sysos == 'Linux':
-				print ("This is the " + sysos + " Operating System (OS). ")
+				print ("This is the " + sysos + " Operating System (OS).\n")
 			elif sysos == 'Windows':
 				print ("I am behing executed in " + sysos +  "Operating System (OS).\n")
 			elif _pydr3_ == True:
@@ -5544,11 +5452,8 @@ def main():
 				print("  ".join(output_parts))
 			print("")
 			
-		elif any(word in question for word in core['season_query']):
-			print("")	
-
-		elif any(word in question for word in core['time_query']):
-			print("")
+		#elif any(word in question for word in core['time_query']):
+		#	print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
@@ -5691,8 +5596,6 @@ def main():
 				core_system_country = "Undetectable"
 				if system_country is not None:
 					core_system_country = system_country[1]
-				elif country_code not in (None, "C", ""):
-					core_system_country = country_code
 				py_version_str = "N/A"
 				if 'pyver' in globals() and isinstance(pyver, tuple) and len(pyver) >= 3:
 					py_version_str = f"{pyver[0]}.{pyver[1]}.{pyver[2]}"
@@ -5760,14 +5663,13 @@ def main():
 			current_time = now.strftime("%H:%M")
 			days_left = days_in_year() - iniyeardays
 			is_holiday, holiday_name = today_holiday()
-			
-			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()[0]}")
-			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
-			
 			special_info = special_dates(datetime.now())
 
+			print(f"Today is {days[weekdaydate]}, {date.today().strftime('%d')} {month_name} of {date.today().strftime('%Y')} and currently {current_time} - {whatgmt()[0]}")
+			print(f"Is the day {iniyeardays} from the week {date.today().isocalendar()[1]}, with {days_left} days left until the end of {date.today().year} ({leapyear()}).")
+
 			if is_holiday == True:
-				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
+				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"
 				if special_info is not None:
 					mensagem += f" and also is {special_info}."
 			else:
@@ -5784,19 +5686,24 @@ def main():
 				print("")
 		
 		elif question == 'today holiday':
-			is_holiday, holiday_name = today_holiday()
-			special_info = special_dates(datetime.now())
-			if is_holiday == True:
-				mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"    
+			if not system_country:
+				print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
+			else:
+				is_holiday, holiday_name = today_holiday()
+				special_info = special_dates(datetime.now())
+				if is_holiday == True:
+					mensagem = f"{_spchar_[18:19]} Today is {holiday_name}"
+				elif is_holiday == "":
+					mensagem = f""
 				if special_info is not None:
 					mensagem += f" and also is {special_info}."
-			else:
-				if special_info is not None:
-					mensagem = f"{_spchar_[18:19]} Today is {special_info}"
-			if is_holiday == True or special_info is not None:
-				print(f"{mensagem} \n")
-			else:
-				print(f"Today is neither a holiday nor a 'special' date.\n")
+				else:
+					if special_info is not None:
+						mensagem = f"{_spchar_[18:19]} Today is {special_info}"
+					if is_holiday == True or special_info is not None:
+						print(f"{mensagem}")
+					else:
+						print("Today is neither a holiday nor a 'special' date.\n")
 		
 		elif question == 'leap year' or question == 'is this year a leap year':
 			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
@@ -6206,37 +6113,6 @@ def main():
 			else:
 				print (random.choice(messages['trouble_msg']) + " I cannot transform emptyness to the morse code except with silence.\n")
 
-		elif question == 'actual country':
-			sentence = f"Actualy based on "
-			if sysos.lower() == 'windows':
-				if system_country != None:
-					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					sentence = sentence + f"user override"
-				else:
-					country = pycountry.countries.get(name=country_code)
-					sentence = sentence + f"the system"
-			elif sysos.lower() == 'linux':
-				if system_country != None:
-					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					sentence = sentence + f"user override"
-				else:
-					country = pycountry.countries.get(alpha_2=country_code)
-					sentence = sentence + f"the system"
-			elif sysos.lower() == 'pydroid3':
-				if system_country != None:
-					country = pycountry.countries.get(alpha_2=system_country[0].split('_')[-1])
-					sentence = sentence + f"user override"
-				else:
-					country = pycountry.countries.get(alpha_2=country_code)
-					sentence = sentence + f"the system"
-			else:
-				print(f"{random.choice(messages['trouble_short'])} This option is unavailable for {sysos.title()} system's.\n")
-			if country:
-				sentence = sentence + f" the country is {country.name}, {country.alpha_2}."
-			else:
-				sentence = sentence + f" i cannot determine the country."	
-			print (f"{sentence}\n")
-
 		elif question[0:8] == 'yoda say':
 			senyoda = question.split()[2:]
 			if len(senyoda) != 0:
@@ -6288,8 +6164,8 @@ def main():
 		elif any(word in question for word in core['asking the uptime']):
 			print("")
 		
-		elif any(word in question for word in core['holidays_query']):
-			print("")
+		#elif any(word in question for word in core['holidays_query']):
+		#	print("")
 		
 		elif question[0:9] == 'conjugate':
 			parts = question.split()[1:]
@@ -6440,11 +6316,6 @@ def main():
 				print("I'm currently running without the modules for satellite tracker command works.\n")
 			else:
 				predict_passes()
-		
-		#elif question == 'get ifremer data':
-		#	daydownload = datetime.now().timetuple().tm_yday
-		#	yeardownload = date.today().year
-		#	download_ifremer_pro(daydownload,yeardownload)
 
 		elif question.startswith('get ifremer data'):
 			parts = question.split()
@@ -6461,6 +6332,14 @@ def main():
 					download_ifremer_pro(daydownload, yeardownload)
 			except ValueError:
 				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+
+		elif question == 'teste':
+			print (locale.getlocale())
+			print (locale.getlocale()[0].split('_')[-1].lower())
+			detect_country()
+
+		elif question == 'teste1':
+			print(ncountries)
 
 		elif question != '':
 			answer = find_answer(question,questions)
