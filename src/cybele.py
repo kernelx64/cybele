@@ -80,6 +80,7 @@ import holidays
 import locale
 import PIL
 import tzdata
+import time
 from urllib.parse import urljoin
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -92,7 +93,6 @@ from math import degrees as deg, radians as rad
 from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
 from datetime import datetime, date, time, timedelta, timezone
 from zoneinfo import ZoneInfo
-import time
 
 try:
 	import readline
@@ -114,42 +114,37 @@ except ImportError as err:
 		else:
 			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 			module_name = 'Pillow' if module_name == 'PIL' else module_name
-			try:
-				while True:
-					install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
-					if install_choice == 'y':
-						if module_name in ["predict", "numpy"] and not check_msvc_installed():
-							print("")
-							print(f"{' ' * 3}{' ERROR: MISSING C++ BUILD TOOLS ':=^60}")
-							print(f"{' '*3}This module '{module_name}' on Python {'.'.join(map(str, pyver))}, REQUIRES MSVC 2022.")
-							print(f"{' '*3}1. Open Visual Studio Installer")
-							print(f"{' '*3}2. Select 'Desktop development with C++'")
-							print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
-							print(f"{' ' * 3}{'':=^60}")
-							print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
-							sys.exit(0)
+			while True:
+				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
+				if install_choice == 'y':
+					if module_name in ["predict", "numpy"] and not check_msvc_installed():
+						print("")
+						print(f"{' ' * 3}{' ERROR: MISSING C++ BUILD TOOLS ':=^60}")
+						print(f"{' '*3}This module '{module_name}' on Python {'.'.join(map(str, pyver))}, REQUIRES MSVC 2022.")
+						print(f"{' '*3}1. Open Visual Studio Installer")
+						print(f"{' '*3}2. Select 'Desktop development with C++'")
+						print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
+						print(f"{' ' * 3}{'':=^60}")
+						print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
+						sys.exit(0)
 
-						print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
-						try:
-							subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-							print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
-							sys.exit(0)
-						except subprocess.CalledProcessError:
-							print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
-							sys.exit(0)
-					elif install_choice == 'n':
-						if module_name == 'predict':
-							print(f"\n{' '*3}{"\u2139"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
-							break
-						else:
-							print(f"{' '*3}Cannot execute properly. Exiting.")
-							sys.exit(0)
+					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
+					try:
+						subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
+						print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
+						sys.exit(0)
+					except subprocess.CalledProcessError:
+						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
+						sys.exit(0)
+				elif install_choice == 'n':
+					if module_name == 'predict':
+						print(f"\n{' '*3}{"\u2139"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
+						break
 					else:
-						print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
-			except KeyboardInterrupt:
-				print("")
-				globals().clear()
-				exit()
+						print(f"{' '*3}Cannot execute properly. Exiting.")
+						sys.exit(0)
+				else:
+					print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
 	else:
 		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
 		print(f"{' '*3}I cannot execute properly. Exiting.")
@@ -357,7 +352,8 @@ core = {
 					"Hold on a moment! Cybele will be back with you soon.",
 					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
 					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
-	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations"],
+	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations","constallatons",
+						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations"],
 	"withonlyaL":	["constelation","constelations"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
@@ -623,7 +619,7 @@ messages = {
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
 					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"
 					"Operation failed to execute.","Critical failure detected.","Looks like we're in a bit of a pickle.",
-					"Things just went south.","We’ve hit a bit of a speed bump.","Houston, we’re sinking.","Well, that’s not right.",
+					"Things just went south","We’ve hit a bit of a speed bump.","Houston, we’re sinking.","Well, that’s not right.",
 					"Glitch in the matrix.","Abandon ship!","Brace for impact."],
 
 	"trouble_short":	["Ah-oh.","Uh-oh.","Oops.","Yikes.","Oh dear.","Crikey!","Darn it.","Holy!","Whoa!","Ouch!","Gulp!","Blimey!",
@@ -2704,6 +2700,7 @@ def people_in_space():
 		print_statusline(f" {symb_prompt()}Using memory stored information.\n")
 		result = people_space
 	else:
+		result = {}
 		url = 'http://api.open-notify.org/astros.json'
 		try:
 			response = urllib.request.urlopen(url, timeout=10)
@@ -4624,7 +4621,7 @@ def commands_by_explanation(linux_commands, keyword):
 		print(f"\nFor detailed information on each command, type the command it and press enter.\n")
 	
 #-------------------------------------------------
-def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=120):
+def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=30):
 
 	if num_slots > 20:
 		print(f"{random.choice(messages['trouble_short'])} CRITICAL ERROR: The slots number cannot be higher than 20.\n")
@@ -4649,15 +4646,15 @@ def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_
 			else:
 				next_show = random.choice(available_shows)
 
-		end_datetime = current_datetime + slot_duration
-		schedule.append({
-			"start": current_datetime.strftime('%H:%M'),
-			"end": end_datetime.strftime('%H:%M'),
-			"show": next_show
-		})
+			end_datetime = current_datetime + slot_duration
+			schedule.append({
+				"start": current_datetime.strftime('%H:%M'),
+				"end": end_datetime.strftime('%H:%M'),
+				"show": next_show
+			})
 
-		current_datetime = end_datetime
-		last_show = next_show
+			current_datetime = end_datetime
+			last_show = next_show
 
 		max_show_length = 20
 		if schedule:
@@ -4924,46 +4921,44 @@ def download_ifremer_pro(day_number, year):
 	year_val = str(year).strip("{}")
 	day_str = str(day_number).zfill(3).strip("{}")
 	base_url = f"https://osi-saf.ifremer.fr/sst/l3c/north_atlantic/nar_viirs_noaa_20/{year_val}/{day_str}/"
-	local_dir = f"amoc_ifremer/{year_val}/{day_str}"
+	local_dir = os.path.join("amoc_ifremer", year_val, day_str)
 	os.makedirs(local_dir, exist_ok=True)
+	spinner = ["|", "/", "-", "\\"]
+	idx = 0
 
 	try:
-		response = requests.get(base_url, timeout=15)
+		headers = {'User-Agent': 'Mozilla/5.0'}
+		print(f"Checking: {base_url}")
+		response = requests.get(base_url, timeout=20, headers=headers)
 		response.raise_for_status()
 		soup = BeautifulSoup(response.text, 'html.parser')
-		links = [urljoin(base_url, node.get('href')) for node in soup.find_all('a')
-				if node.get('href') and node.get('href').endswith('.nc')]
+		links = [urljoin(base_url, n.get('href')) for n in soup.find_all('a')
+				if n.get('href') and n.get('href').lower().endswith('.nc')]
 		if not links:
-			print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} No .nc files found at in the url.")
+			print("No .nc files found.")
 			return
-		print(f"\n{symb_prompt()}Found {len(links)} files. Starting download...")
+		print(f"Found {len(links)} files. Download starting...\n")
 		for link in links:
-			file_name = os.path.basename(link)
-			local_path = os.path.join(local_dir, file_name)
-			print_statusline(f"Fetching: {file_name}")
-			with requests.get(link, stream=True) as r:
+			file_full_name = os.path.basename(link)
+			display_name = file_full_name[44:] if len(file_full_name) > 44 else file_full_name
+			local_path = os.path.join(local_dir, file_full_name)
+			with requests.get(link, stream=True, headers=headers) as r:
 				r.raise_for_status()
-				total_size = int(r.headers.get('content-length', 0))
-				with open(local_path, 'wb') as f, tqdm(
-					total=total_size,
-					unit='B',
-					unit_scale=True,
-					unit_divisor=1024,
-					desc="",
-					leave=False, # Remove the bar after the file finishes
-					ncols=90,
-					bar_format='   {percentage:3.0f}%|{bar}| {n_fmt}/{total_fmt} [{elapsed}]'
-				) as pbar:
-					for chunk in r.iter_content(chunk_size=8192):
+				total_installed = 0
+				with open(local_path, 'wb') as f:
+					for chunk in r.iter_content(chunk_size=65536):
 						if chunk:
 							f.write(chunk)
-							pbar.update(len(chunk))
-		print_statusline("")
-		print(f"\r{symb_prompt()}{kolor['GREEN']}Day {day_str} synchronized successfully!{kolor['OFF']}\n")
-	except requests.exceptions.HTTPError as e:
-		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} HTTP Error: {e.response.status_code} - Check if the URL is correct.")
+							total_installed += len(chunk)
+							char = spinner[idx % len(spinner)]
+							mb = total_installed / (1024 * 1024)
+							print_statusline(f"Downloading: {display_name} [{mb:.1f} MB] {char}")
+							idx += 1
+			sys.stdout.write('\r' + ' ' * getattr(print_statusline, 'last_len', 80) + '\r')
+			print(f"Completed: {display_name}")
+		print(f"\nSuccess: Day {day_str} synchronized.\n")
 	except Exception as e:
-		print(f"\n{kolor['BOLD_RED']}[!]{kolor['OFF']} Unexpected Error")
+		print(f"\nError: {str(e)}")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -5281,6 +5276,7 @@ def main():
 
 		elif question[0:13] == 'distance from':
 			qplanet = []
+			invalid_words = [] # Lista para guardar o que não presta
 			valid_planets = core['planet'] + ['sun'] + ['moon']
 			qerror = ["Please specify two celestial bodies","Enter the names of two celestial bodies","You must provide two celestial bodies to calculate the distance","To determine the distance, please input the names of two celestial objects","Specify two celestial bodies","Input the names of two celestial bodies"]
 			qeg_error = ["using 'and' or 'to' (e.g., 'Earth and Mars').","separated by 'and' or 'to'."]
@@ -6246,7 +6242,7 @@ def main():
 				'start_hour': 21,
 				'start_minute': 30,
 				'num_slots': 5,
-				'slot_duration_minutes': 120			}
+				'slot_duration_minutes': 30}
 			if len(parts) > 1:
 				try:
 					time_part = parts[1].split(':')
@@ -6327,23 +6323,20 @@ def main():
 				predict_passes()
 
 		elif question.startswith('get ifremer data'):
-			if internet_onoff == True:
-				parts = question.split()
-				daydownload = datetime.now().timetuple().tm_yday
-				yeardownload = date.today().year
-				try:
-					if len(parts) >= 4:
-						daydownload = int(parts[3])
-					if len(parts) >= 5:
-						yeardownload = int(parts[4])
-					if not (1 <= daydownload <= 366):
-						print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
-					else:
-						download_ifremer_pro(daydownload, yeardownload)
-				except ValueError:
-					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
-			else:
-				print(f"{random.choice(messages['trouble_msg'])} To make the download i need to access the internet. Just saying.\n")				
+			parts = question.split()
+			daydownload = datetime.now().timetuple().tm_yday
+			yeardownload = date.today().year
+			try:
+				if len(parts) >= 4:
+					daydownload = int(parts[3])
+				if len(parts) >= 5:
+					yeardownload = int(parts[4])
+				if not (1 <= daydownload <= 366):
+					print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
+				else:
+					download_ifremer_pro(daydownload, yeardownload)
+			except ValueError:
+				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
 		elif question == 'teste':
 			print (locale.getlocale())
