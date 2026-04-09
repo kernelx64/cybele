@@ -623,7 +623,7 @@ messages = {
 	"trouble_msg": ["We've got a situation here." , "This is not good." , "We've hit a snag." , "Hoston we have a problem.",
 					"We hit a problemo." , "I think we've got a problem." , "We're in trouble." , "Mayday, mayday!" , "All hands on deck!"
 					"Operation failed to execute.","Critical failure detected.","Looks like we're in a bit of a pickle.",
-					"Things just went south","We’ve hit a bit of a speed bump.","Houston, we’re sinking.","Well, that’s not right.",
+					"Things just went south.","We’ve hit a bit of a speed bump.","Houston, we’re sinking.","Well, that’s not right.",
 					"Glitch in the matrix.","Abandon ship!","Brace for impact."],
 
 	"trouble_short":	["Ah-oh.","Uh-oh.","Oops.","Yikes.","Oh dear.","Crikey!","Darn it.","Holy!","Whoa!","Ouch!","Gulp!","Blimey!",
@@ -6327,20 +6327,23 @@ def main():
 				predict_passes()
 
 		elif question.startswith('get ifremer data'):
-			parts = question.split()
-			daydownload = datetime.now().timetuple().tm_yday
-			yeardownload = date.today().year
-			try:
-				if len(parts) >= 4:
-					daydownload = int(parts[3])
-				if len(parts) >= 5:
-					yeardownload = int(parts[4])
-				if not (1 <= daydownload <= 366):
-					print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
-				else:
-					download_ifremer_pro(daydownload, yeardownload)
-			except ValueError:
-				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+			if internet_onoff == True:
+				parts = question.split()
+				daydownload = datetime.now().timetuple().tm_yday
+				yeardownload = date.today().year
+				try:
+					if len(parts) >= 4:
+						daydownload = int(parts[3])
+					if len(parts) >= 5:
+						yeardownload = int(parts[4])
+					if not (1 <= daydownload <= 366):
+						print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
+					else:
+						download_ifremer_pro(daydownload, yeardownload)
+				except ValueError:
+					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+			else:
+				print(f"{random.choice(messages['trouble_msg'])} To make the download i need to access the internet. Just saying.\n")				
 
 		elif question == 'teste':
 			print (locale.getlocale())
