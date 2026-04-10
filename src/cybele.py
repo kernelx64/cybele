@@ -711,7 +711,6 @@ help = {
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help fav tvshows": "Usage: fav|favorite  tvshows \nCommand to extract from elysia website the favorite list.\nex: fav tvshows\n    favorite tvshows\n    <tvshow name> in fav \n    <tvshow name> in tvshows\n",
 	"help favorite tvshows": "Usage: favorite|fav  tvshows \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav tvshows\n    <tvshow name> in fav\n    <tvshow name> in tvshows\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
@@ -1248,7 +1247,7 @@ def parse_date_string(date_str):
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
 			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
-			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_, tvshows_cache
+			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_
 
 	if not check_tables(tables):
 		sys.exit(0)
@@ -1386,13 +1385,13 @@ def make_intextdb():
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 		
-		tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
+		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
 		midbcounter += len(questions) + len(answers)
-		midbcounter += len(tvshows_cache)
+		#midbcounter += len(tvshows_cache)
 		for key in core:
 			if isinstance(core[key], list):
 				midbcounter += len(core[key])
