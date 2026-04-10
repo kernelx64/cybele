@@ -6013,10 +6013,6 @@ def main():
 				print ('Based on the [' + website['tvshow'] + '] here they are the recently added:\n')
 				recent_from_elysia()
 
-		#elif question == "do you talk":
-		elif any(word in question for word in core['asking for talking']):
-			print("")
-
 		elif question.startswith('play') or question.startswith('game') and ('countries' in question or 'capitals' in question or 'math' in question or 'constellations' in question or 'elements' in question):
 			if question.find("math")!=-1:
 				cybele_math_game()
