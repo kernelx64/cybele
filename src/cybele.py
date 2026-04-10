@@ -359,12 +359,12 @@ core = {
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
 	"share":	["sharing about","sharing links"],
 	"sayconvert":	["in full","longhand"],
+	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
-	"asking for talking":	["talk","do you speak","do you talk","can you talk","can you speak","speak"],
-	"asking for a phrase":	["say something","make a sentence","make a phrase"],
+	"asking for a phrase":	["say something","make a sentence","make a phrase","talk"],
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
@@ -731,7 +731,7 @@ help = {
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
-	"help limits": "Usage: usage <limits <askard|astronomy|oldtech> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
@@ -770,12 +770,12 @@ help = {
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
 	"help say a word": "Usage: say a word|share a word \nDisplay a word will interest you (Rich vocabulary).\nex: say a word\n    share a word\n",
+	"help say something": "Usage: say something \nAsk Cybele to simulate a thought.\nPlease be patient; with a 325KB 'brain,' she’s doing a lot of heavy lifting just to string two words together.\nIt’s a miracle she can even find her own 7MB database in the dark.\nex: say something\n    make a sentence\n    talk\n",
 	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032\n",
 	"help star": "Usage: <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
-	"help talk": "Usage: <talk> \nEngages Cybele in conversation. While Cybele doesn't have direct voice output or external neural network access, she can respond to your input. \n    ex: talk \n    can you speak \n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
@@ -1030,8 +1030,8 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 		else:
 			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m "+ _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			modname = "The database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
+			print(f"\n{'\033[1;31m'} {_spchar_[1:2]} {_title_} {'\033[0;0m'} : {modname}\n")
 			exit(0)
 
 	try:
@@ -2464,30 +2464,15 @@ def find_word_in_dicts(word, core):
 			elif list_name == "withonlyaL":
 				print (f"{random.choice(messages['withonlyaL'])}\n")
 
-			elif list_name == "asking for talking":
-				text_color = kolor['VIVID_WHITE']
-				heading_color = kolor['BOLD_CYAN']
-				intro = random.choice(["For clarity", "Keep in mind", "Please note", "It's important to understand"])
-				beginning = random.choice(["I don't use", "my capabilities do not include", "I do not have access to", "I am unable to utilize"])
-				body = random.choice(["NLP speech synthesis, or external AI modules.", "real-time speech generation or third-party AI integrations.", "direct voice output or external neural networks."])
-				ending = random.choice(["Here's what I have:", "This is my current functionality:", "My current features are as follows:"])
-				print(f"{heading_color}{intro} {beginning} {body}\n{ending}{kolor['OFF']}")
-				for _ in range(5):
-					print(f" - {text_color}{make_text(rw, num_sentences=3, num_paragraphs=1)}{kolor['OFF']}")
-				print(f"\n{heading_color}Now generating a Short Text (2 paragraphs, 3 sentences each):{kolor['OFF']}")
-				generated_text = make_text(rw, num_sentences=3, num_paragraphs=2)
-				print(f"{text_color}{generated_text}{kolor['OFF']}")
-				print("")
-			
 			elif list_name == "asking for a phrase":
 				if "say something" in word:
-					rns = random.randint(1, 10)
-					rnp = random.randint(1, 5)
-					generated_text = make_text(rw, num_sentences=rns, num_paragraphs=rnp)
-					print (f"{generated_text} \n")
+					#rns = random.randint(1, 2)
+					#rnp = random.randint(1, 1)
+					gt = make_text(rw, random.randint(1, 2), random.randint(1, 1))
+					print (f"{gt} \n")
 				else:
-					generated_text = make_text(rw, num_sentences=1, num_paragraphs=1)
-					print (f"{generated_text} \n")
+					gt = make_text(rw, num_sentences=1, num_paragraphs=1)
+					print (f"{gt} \n")
 			
 			elif list_name == "asking the uptime":
 				uptime_parts = get_uptime()
@@ -3425,6 +3410,12 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		elif dbname == 'cybele' and dbtable == 'oldtech':
 			filter = "SELECT min(oldterm) , max(oldterm) FROM oldtech"
 			titvar = "old tech terminology"
+		elif dbname == 'cybele' and dbtable == 'meteo':
+			filter = "SELECT min(term) , max(term) FROM meteo"
+			titvar = "meteorology terms"
+		elif dbname == 'cybele' and dbtable == 'climate_dict':
+			filter = "SELECT min(climate_term) , max(climate_term) FROM climate_dict"
+			titvar = "climate change terms"
 		else:
 			print ("Option limits none of dbtables with conditions... Fix'it\n")
 			conn.close()
@@ -4212,12 +4203,12 @@ def make_sentence(rw_instance):
 		return f"Error generating sentence: {e}"
 
 #-------------------------------------------------------------------
-def make_text(rw_instance, num_sentences=5, num_paragraphs=1): # Pass rw_instance here
+def make_text(rw_instance, num_sentences=5, num_paragraphs=1):
 	text_paragraphs = []
 	for _ in range(num_paragraphs):
 		paragraph_sentences = []
 		for _ in range(num_sentences):
-			paragraph_sentences.append(make_sentence(rw_instance)) # Pass rw_instance to make_sentence
+			paragraph_sentences.append(make_sentence(rw_instance))
 		text_paragraphs.append(" ".join(paragraph_sentences))
 	return "\n".join(text_paragraphs)
 
@@ -5569,7 +5560,7 @@ def main():
 			_poigps_[3] = 1
 			_poigps_[4] = 1
 			
-			print (f"calculations for {str(_poigps_[0])}, {str(_poigps_[1])} to UTC using {defgps}")
+			print (f"Calculations for [{str(_poigps_[0])}|{str(_poigps_[1])}] to {whatgmt()[0]}, {system_country[0]} using {defgps}")
 			drawart('art_world')
 
 			sun_emoji = ["☀️","🌑","🌕","🌅"]
@@ -5939,6 +5930,10 @@ def main():
 					mandb('cybele','astronomy_glossary','limits',0,0)
 				elif getparam[1] == "oldtech":
 					mandb('cybele','oldtech','limits',0,0)
+				elif getparam[1] == "meteo" or getparam[1] == 'meteorology':
+					mandb('cybele','meteo','limits',0,0)
+				elif getparam[1] == "climate":
+					mandb('cybele','climate_dict','limits',0,0)
 			else:
 				print ('The correct usage is <limits <askard|astronomy|oldtech>> to show the first and last record in the database.\n')
 			
@@ -6372,14 +6367,6 @@ def main():
 					download_ifremer_pro(daydownload, yeardownload)
 			except ValueError:
 				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
-
-		elif question == 'teste':
-			print (locale.getlocale())
-			print (locale.getlocale()[0].split('_')[-1].lower())
-			detect_country()
-
-		elif question == 'teste1':
-			print(ncountries)
 
 		elif question != '':
 			answer = find_answer(question,questions)
