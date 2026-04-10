@@ -2684,7 +2684,8 @@ def link_status(url):
 #-----------------------------------------------
 def people_in_space():
 	global people_space
-	result = people_space
+	result = {}
+	
 	url = 'http://api.open-notify.org/astros.json'
 	try:
 		response = urllib.request.urlopen(url, timeout=10)
@@ -2699,7 +2700,7 @@ def people_in_space():
 			print(f"{random.choice(messages['trouble_short'])} Connection Error")
 	except Exception as err:
 		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred! Try again {random.choice(['in a while','later'])}.\n")
-
+			
 	print(f"\n👨‍🚀 Total People in Space: {result['number']}")
 	crafts = {}
 	for p in result['people']:
@@ -2713,7 +2714,7 @@ def people_in_space():
 		for name in members:
 			print(f"  - {name}")
 	print("")
-		
+	
 #-------------------------------------------------
 def where_is_iss():
 	try:
@@ -5958,7 +5959,7 @@ def main():
 				print (where_is_iss())
 
 		elif question == 'people in space':
-			if len(people_space) == 0 or internet_onoff() == False:
+			if internet_onoff() == False:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 			else:
 				people_in_space()
