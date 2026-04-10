@@ -2682,34 +2682,27 @@ def link_status(url):
 		return "not active"
 
 #-----------------------------------------------
-def people_in_space(data_source=None):
-	global people_space
+def people_in_space(data_source=None, status=""):
+    global people_space
+    result = data_source if data_source else people_space
+	
+    if not result:
+        print(f"{random.choice(messages['trouble_short'])} No data available.\n")
+        return
+    print(f"\n👨‍🚀 Total People in Space: {result['number']} | {status}")
+    crafts = {}
+    for p in result['people']:
+        craft_name = p['craft']
+        person_name = p['name']
+        if craft_name not in crafts: crafts[craft_name] = []
+        crafts[craft_name].append(person_name)
     
-	if data_source is None:
-		result = people_space
-		print("")
-	else:
-		result = data_source
-		print("")
-	if not result:
-		print(f"{random.choice(messages['trouble_short'])} No data available offline yet.\n")
-		return
-
-	print(f"👨‍🚀 Total People in Space: {result['number']}")
-	crafts = {}
-	for p in result['people']:
-		craft_name = p['craft']
-		person_name = p['name']
-		if craft_name not in crafts:
-			crafts[craft_name] = []
-		crafts[craft_name].append(person_name)
-    
-	for craft, members in crafts.items():
-		print(f"\n🚀 {craft} ({len(members)})")
-		for name in members:
-			print(f"  - {name}")
-	print("")
-
+    for craft, members in crafts.items():
+        print(f"\n🚀 {craft} ({len(members)})")
+        for name in members:
+            print(f"  - {name}")
+    print("")
+	
 #-----------------------------------------------
 def update_people_data():
 	global people_space
@@ -5967,13 +5960,12 @@ def main():
 		elif question == 'people in space':
 			if internet_onoff():
 				update_people_data()
-				people_in_space()
+				people_in_space(status="🟢 Online")
 			else:
 				if people_space:
-					print("\n🌐 Offline mode (Using cached data)")
-					people_in_space()
+					people_in_space(status="🌐 Offline")
 				else:
-					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+					print(f"\n{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 
 		elif question == 'what is he watching' or question == 'what are you watching':
 			if question.find('fav')!=-1 or question.find('favorite')!=-1:
