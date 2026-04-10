@@ -339,7 +339,6 @@ core = {
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
-	"show_me_your_topics":	["show topics","show me your topics","show topic's","show me your topic's","topics","topic's"],
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
@@ -354,7 +353,7 @@ core = {
 					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
 	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations","constallatons",
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations"],
-	"withonlyaL":	["constelation","constelations"],
+	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
 	"share":	["sharing about","sharing links"],
@@ -2685,25 +2684,21 @@ def link_status(url):
 #-----------------------------------------------
 def people_in_space():
 	global people_space
-	if len(people_space) != 0:
-		print_statusline(f" {symb_prompt()}Using memory stored information.\n")
-		result = people_space
-	else:
-		result = {}
-		url = 'http://api.open-notify.org/astros.json'
-		try:
-			response = urllib.request.urlopen(url, timeout=10)
-			result = json.loads(response.read().decode('utf-8'))
-			people_space = result
-		except urllib.error.HTTPError as err:
-			print(f'HTTP Error: {err.code}')
-		except urllib.error.URLError as err:
-			if isinstance(err.reason, socket.timeout):
-				print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond. Try again {random.choice(['in a while','later'])}.\n")
-			else:
-				print(f"{random.choice(messages['trouble_short'])} Connection Error")
-		except Exception as err:
-			print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred! Try again {random.choice(['in a while','later'])}.\n")
+	result = people_space
+	url = 'http://api.open-notify.org/astros.json'
+	try:
+		response = urllib.request.urlopen(url, timeout=10)
+		result = json.loads(response.read().decode('utf-8'))
+		people_space = result
+	except urllib.error.HTTPError as err:
+		print(f'HTTP Error: {err.code}')
+	except urllib.error.URLError as err:
+		if isinstance(err.reason, socket.timeout):
+			print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond. Try again {random.choice(['in a while','later'])}.\n")
+		else:
+			print(f"{random.choice(messages['trouble_short'])} Connection Error")
+	except Exception as err:
+		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred! Try again {random.choice(['in a while','later'])}.\n")
 
 	print(f"\n👨‍🚀 Total People in Space: {result['number']}")
 	crafts = {}
@@ -5663,7 +5658,7 @@ def main():
 		
 		# == "today"
 		#elif re.compile(r'\b(today(?:\s+date)?|now|what\s+day\s+it\s+is)\b', re.IGNORECASE).search(question):
-		elif re.compile(r'\b(?!.*weather)(date|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
+		elif re.compile(r'\b(?!.*weather)(date|now|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = datetime.now().timetuple().tm_yday
 			current_time = now.strftime("%H:%M")
@@ -5963,10 +5958,10 @@ def main():
 				print (where_is_iss())
 
 		elif question == 'people in space':
-			if people_space != 0 or internet_onoff() == True:
-				people_in_space()
-			else:
+			if len(people_space) == 0 or internet_onoff() == False:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				people_in_space()
 
 		elif question == 'what is he watching' or question == 'what are you watching':
 			if question.find('fav')!=-1 or question.find('favorite')!=-1:
@@ -6349,20 +6344,26 @@ def main():
 				predict_passes()
 
 		elif question.startswith('get ifremer data'):
-			parts = question.split()
-			daydownload = datetime.now().timetuple().tm_yday
-			yeardownload = date.today().year
-			try:
-				if len(parts) >= 4:
-					daydownload = int(parts[3])
-				if len(parts) >= 5:
-					yeardownload = int(parts[4])
-				if not (1 <= daydownload <= 366):
-					print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
-				else:
-					download_ifremer_pro(daydownload, yeardownload)
-			except ValueError:
-				print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+			if internet_onoff() == False:
+				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
+			else:
+				parts = question.split()
+				daydownload = datetime.now().timetuple().tm_yday
+				yeardownload = date.today().year
+				try:
+					if len(parts) >= 4:
+						daydownload = int(parts[3])
+					if len(parts) >= 5:
+						yeardownload = int(parts[4])
+					if not (1 <= daydownload <= 366):
+						print(f"{random.choice(messages['trouble_short'])} Invalid day number. Must be between 1 and 366.")
+					else:
+						download_ifremer_pro(daydownload, yeardownload)
+				except ValueError:
+					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
+
+		elif question == 'test' or question =='teste':
+			print(f"{random.choice(messages['nicefun_msg'])}\n")
 
 		elif question != '':
 			answer = find_answer(question,questions)
