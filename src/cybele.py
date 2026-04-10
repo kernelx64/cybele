@@ -2682,26 +2682,20 @@ def link_status(url):
 		return "not active"
 
 #-----------------------------------------------
-def people_in_space():
+def people_in_space(data_source=None):
 	global people_space
-	result = {}
-	
-	url = 'http://api.open-notify.org/astros.json'
-	try:
-		response = urllib.request.urlopen(url, timeout=10)
-		result = json.loads(response.read().decode('utf-8'))
-		people_space = result
-	except urllib.error.HTTPError as err:
-		print(f'HTTP Error: {err.code}')
-	except urllib.error.URLError as err:
-		if isinstance(err.reason, socket.timeout):
-			print(f"{random.choice(messages['trouble_short'])} The server is taking too long to respond. Try again {random.choice(['in a while','later'])}.\n")
-		else:
-			print(f"{random.choice(messages['trouble_short'])} Connection Error")
-	except Exception as err:
-		print(f"{random.choice(messages['trouble_short'])} An unexpected error occurred! Try again {random.choice(['in a while','later'])}.\n")
-			
-	print(f"\n👨‍🚀 Total People in Space: {result['number']}")
+    
+	if data_source is None:
+		result = people_space
+		print("")
+	else:
+		result = data_source
+		print("")
+	if not result:
+		print(f"{random.choice(messages['trouble_short'])} No data available offline yet.\n")
+		return
+
+	print(f"👨‍🚀 Total People in Space: {result['number']}")
 	crafts = {}
 	for p in result['people']:
 		craft_name = p['craft']
@@ -2709,12 +2703,24 @@ def people_in_space():
 		if craft_name not in crafts:
 			crafts[craft_name] = []
 		crafts[craft_name].append(person_name)
+    
 	for craft, members in crafts.items():
 		print(f"\n🚀 {craft} ({len(members)})")
 		for name in members:
 			print(f"  - {name}")
 	print("")
-	
+
+#-----------------------------------------------
+def update_people_data():
+	global people_space
+	url = 'http://api.open-notify.org/astros.json'
+	try:
+		response = urllib.request.urlopen(url, timeout=5) # Timeout mais curto para não prender o programa
+		people_space = json.loads(response.read().decode('utf-8'))
+		return True
+	except:
+		return False
+
 #-------------------------------------------------
 def where_is_iss():
 	try:
@@ -5959,10 +5965,15 @@ def main():
 				print (where_is_iss())
 
 		elif question == 'people in space':
-			if internet_onoff() == False:
-				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
-			else:
+			if internet_onoff():
+				update_people_data()
 				people_in_space()
+			else:
+				if people_space:
+					print("\n🌐 Offline mode (Using cached data)")
+					people_in_space()
+				else:
+					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
 
 		elif question == 'what is he watching' or question == 'what are you watching':
 			if question.find('fav')!=-1 or question.find('favorite')!=-1:
