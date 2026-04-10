@@ -2954,7 +2954,7 @@ def recent_from_elysia():
 			title_element = show.find('span', class_='C9DxTc')
 			if title_element:
 				items_list.append(title_element.text.strip())
-		for i in range(14, 24):
+		for i in range(9, 19):
 			print (f"{items_list[i]}")
 	except urllib.error.URLError as e:
 		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
@@ -4506,6 +4506,12 @@ def detect_country():
 	raw = locale.getlocale()[0]
 	if not raw: return
 	target = raw.split('_')[-1].lower()
+	if _pydr3_: # Lógica para o pydroid3
+		if target == "C" or target == "c":
+			system_country = ["PT","Portugal"]
+		else:
+			if target in ncountries:
+				system_country = [ncountries[target].get('alpha2'), target]
 	if len(target) == 2: # Lógica para o Linux
 		for name, data in ncountries.items():
 			# Usamos str(... or '') para evitar o erro de 'NoneType'
