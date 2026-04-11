@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '10.04.2026'
+_revise_ = '11.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -352,7 +352,10 @@ core = {
 					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
 					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
 	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations","constallatons",
-						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations"],
+						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
+						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
+						"periodoc table","peridoc table","periodical table","periodic tabel","periodic tayble","periodic teble",
+						"peirodic table"],
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
@@ -693,7 +696,8 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"longest day","shortest day","satellite tracker","process amoc","offline mode","meteorology terms","gridflow","ifremer data"]
 
 #------------------------------------------------------------
-help = {	
+help = {
+	"help ascii table": "Usage: ascii table \nThis table is styled after the legendary Norton Commander and Turbo Pascal interfaces. These were the 'Text User Interfaces' (TUIs) that ruled the DOS era. \nex: ascii table\n",
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage: <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help astronomy questions": "Usage: astronomy questions \nDisplays some preconceived general standard questions about the topic. \nex: Percentage Of Freshwater On Earth?\n    Sun Distance?\n",
@@ -1409,6 +1413,7 @@ questions = [
 	"Tudo bem?",
 	"Hello",
 	"What is your name?",
+	"Whats your name?",
 	"Who are you?",
 	"What are you?",
 	"What is the meaning of your name?",
@@ -1453,8 +1458,9 @@ answers = [
 	"Melhor impossível! Mas não me venhas com truques hoje, hmm?",
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
-	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.",
-	"I am "+ _title_+" a small python script. Think of me as a litle digital small attic knowledge helper.",
+	"I was named "+ _title_+" and i like'it.",
+	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.\nI know i have a litle brain like only 400kb +- but i can allready do a few things.",
+	"I am "+ _title_+" a small python script. Think of me as a litle digital small attic knowledge helper.\nI know i have a litle brain like only 400kb +- but i can allready do a few things.",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
 	"The exact builders of the pyramids are still debated...",
 	"The current time in the system clock is "+datetime.now().strftime("%H:%M"),
@@ -1564,16 +1570,50 @@ periodic_abbr = {
 	"Es":"Einsteinium","Fm":"Fermium","Md":"Mendelevium","No":"Nobelium","Lr":"Lawrencium","Rf":"Rutherfordium","Db":"Dubnium","Sg":"Seaborgium","Bh":"Bohrium","Hs":"Hassium","Mt":"Meitnerium",
 	"Ds":"Darmstadtium","Rg":"Roentgenium","Cn":"Copernicium","Nh":"Nihonium","Fl":"Flerovium","Mc":"Moscovium","Lv":"Livermorium","Ts":"Tennessine","Og":"Oganesson"
 }
-
 #------------------------------------------------------------
 periodic_table_pt = [
-"                  Periodic Table of Elements            ","   1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18",
+"               Periodic Table of Elements               ","   1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18",
 " 1 H                                                  He"," 2 Li Be                               B  C  N  O  F  Ne",
 " 3 Na Mg                               Al Si P  S  Cl Ar"," 4 K  Ca Sc Ti V  Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr",
 " 5 Rb Sr Y  Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I  Xe"," 6 Cs Ba La Hf Ta W  Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn",
 " 7 Fr Ra Ac Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og"," "*67,
 "         Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu","         Th Pa U  Np Pu Am Cm Bk Cf Es Fm Md No Lr",
 ]
+#------------------------------------------------------------
+def get_color(el):
+	if el in ["H", "C", "N", "O", "P", "S", "Se"]: return kolor['VIVID_GREEN']
+	if el in ["He", "Ne", "Ar", "Kr", "Xe", "Rn", "Og"]: return kolor['VIVID_CYAN']
+	if el in ["Li", "Na", "K", "Rb", "Cs", "Fr"]: return kolor['VIVID_RED']
+	if el in ["Be", "Mg", "Ca", "Sr", "Ba", "Ra"]: return kolor['VIVID_YELLOW']
+	if el in ["B", "Si", "Ge", "As", "Sb", "Te", "At"]: return kolor['BOLD_YELLOW']
+	if el in ["F", "Cl", "Br", "I", "Ts"]: return kolor['VIVID_MAGENTA']
+	if el in ["Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu",
+			"Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"]:
+		return kolor['CYAN']
+	return kolor['WHITE']
+
+#-------------------------------------------------------------
+def periodic_table_colored():
+	print("")
+	indent = " " * 3
+	for i, line in enumerate(periodic_table_pt):
+		if i == 0:
+			print(f"{indent}{kolor['BOLD_WHITE']}{line}{kolor['OFF']}")
+			continue
+		if i == 1:
+			print(f" {kolor['DIM_WHITE']}{line}{kolor['OFF']}")
+			continue
+		colored_line = line
+		for symbol in sorted(periodic_abbr.keys(), key=len, reverse=True):
+			if symbol in colored_line:
+				pattern = r'(?<![A-Za-z])' + re.escape(symbol) + r'(?![A-Za-z])'
+				color = get_color(symbol)
+				replacement = f"{color}{symbol}{kolor['OFF']}"
+				colored_line = re.sub(pattern, replacement, colored_line)
+		colored_line = re.sub(r'^(\d)', f"{kolor['DIM_WHITE']}\\1{kolor['OFF']}", colored_line)
+		print(f"{indent}{colored_line}")
+	print("")
+
 #----------------------------------------------------------
 core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
@@ -1616,6 +1656,65 @@ def morse_decode(morse_code):
 def copy2clipboard(text):
 	command = 'echo ' + text.strip() + '| clip'
 	os.system(command)
+
+#----------------------------------------------------------
+def print_ascii_table():
+	reset = kolor['OFF']
+	# 90s Palette
+	cyan = kolor['VIVID_CYAN']
+	gold = kolor['BOLD_YELLOW']
+	vyellow = kolor['VIVID_YELLOW']
+	dim  = kolor['DIM_WHITE']
+	try:
+		term_width, _ = os.get_terminal_size()
+	except:
+		term_width = 80
+	# Cell format: " DEC C UNICOD " -> 3 + 2 + 7 + 2 spaces = 14 chars
+	cell_data_width = 14
+	vert_divider_width = 1
+	total_cell_width = cell_data_width + vert_divider_width
+	num_cols = (term_width - 7) // total_cell_width
+	if num_cols < 1: num_cols = 1
+	TOP_L, TOP_R = "╔", "╗"
+	BOT_L, BOT_R = "╚", "╝"
+	HORIZ, VERT  = "═", "║"
+	TEE_TOP, TEE_BOT = "╤", "╧"
+	CROSS = "┼"
+	SIDE_L, SIDE_R = "╟", "╢"
+	indent = " " * 2
+	header = f"{cyan} Dynamic ASCII/CP437 Table ({num_cols} Columns) {vyellow}(MS-DOS Style){reset}"
+	print(f"\n{indent}{header}")
+	top_bar = TOP_L + (HORIZ * cell_data_width + TEE_TOP) * (num_cols - 1) + HORIZ * cell_data_width + TOP_R
+	mid_bar = SIDE_L + (HORIZ * cell_data_width + CROSS) * (num_cols - 1) + HORIZ * cell_data_width + SIDE_R
+	bot_bar = BOT_L + (HORIZ * cell_data_width + TEE_BOT) * (num_cols - 1) + HORIZ * cell_data_width + BOT_R
+	titles_row = VERT
+	for _ in range(num_cols):
+		titles_row += f"{dim} DEC C UNICOD {reset}{VERT}"
+	print(f"{indent}{top_bar}")
+	print(f"{indent}{titles_row}")
+	print(f"{indent}{mid_bar}")
+
+	start_char = 32
+	end_char = 255
+	total_chars = (end_char - start_char) + 1
+	rows = (total_chars + num_cols - 1) // num_cols # Ceiling division
+	for r in range(rows):
+		line = f"{indent}{VERT}"
+		for c in range(num_cols):
+			val = start_char + r + (c * rows)
+			if val <= end_char:
+				try:
+					char = bytes([val]).decode('cp437')
+					if val < 32 or val in [127, 255]: char = " "
+				except:
+					char = "?"
+				u_code = f"U+{val:04X}"
+				c_color = gold if val > 127 else cyan
+				line += f" {dim}{val:>3}{reset} {c_color}{char:^1}{reset} {dim}{u_code}{reset} {VERT}"
+			else:
+				line += " " * cell_data_width + VERT
+		print(line)
+	print(f"{indent}{bot_bar}\n")
 
 #----------------------------------------------------------
 class Sun:
@@ -5033,7 +5132,6 @@ def main():
 					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
 			print ("")
 
-		#elif any(word in question for word in core['badword']) and not "cassiopeia":
 		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]):
 			print (random.choice(messages['badword_msg']) + "\n")
 
@@ -5061,6 +5159,9 @@ def main():
 				else:
 					result = convert_to_words(int(conteudo_depois)).capitalize()
 					print(f"{result}.\n")
+
+		elif question == 'ascii' or question == 'ascii table':
+			print_ascii_table()
 
 		elif question[0:26] == 'do you know anything about' or question[0:16] == 'know anything on' or question[0:4] == 'find' or question[0:4] == 'seek':
 			if question[0:4] == 'seek' or question[0:4] == 'find':
@@ -5174,23 +5275,6 @@ def main():
 				astro_qa += " "+_spchar_[1:2] + term + "?\n"
 			print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
 
-		elif question[0:8] == 'how many' and question.find('glossary')!=-1 or question.find('astronomy terms')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you the meaning of " + str(len(core["astronomy glossary"])) + " Astronomy glossary terms." + "\n")
-		elif question[0:8] == 'how many' and question.find('asteroids')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you about " + str(len(core['asteroid'])) + " Asteroids, but there are millions and those we dont know.. yet.\n")
-		elif question[0:8] == 'how many' and question.find('dangerous')!=-1 and question.find('objects')!=-1 and question.find('you know')!=-1 or question.find('anwser')!=-1:
-			print ("I can tell you about " + str(len(core['cneos'])) + " dangerous objects, but there much more beside those we dont know.. yet.\n")
-		elif question[0:8] == 'how many' and question.find('star')!=-1 and question.find('names')!=-1 and question.find('you know')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['star name'])) + " Stars. " + random.choice(messages['endterm']) + "\n")
-		elif question[0:8] == 'how many' and question.find('linux commands')!=-1 and question.find('you know')!=-1:
-			print ("Actualy based on my knowledge " + str(len(core['linuxcmd'])) + " Linux commands. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'how many' and question.find('verbs')!=-1 and question.find('you know')!=-1:
-			print ("Actualy based on my knowledge " + str(len(knowledge['verb_base'])) + " verbs. " + random.choice(messages['endterm']) + "...\n")	
-		elif question[0:8] == 'how many' and question.find('capitals')!=-1 and question.find('you know')!=-1:
-			print ("Actualy based on my knowledge i know " + str(len(core['capital']) + 5) + " capitals and " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-		elif question[0:8] == 'how many' and question.find('countries')!=-1 and question.find('you know')!=-1:
-			print ("Actualy based on my knowledge i know " + str(len(core['capital'])) + " countries. " + random.choice(messages['endterm']) + "...\n")
-
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
 			if len(question.split()[2:]) == 0:
 				print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? \n")
@@ -5262,22 +5346,8 @@ def main():
 		elif any(word in question for word in core['question_word']) and any(word in question for word in core['astronomy glossary']) and not "version" in question:
 			print (random.choice(list(messages['magic_anwser'])) % "astronomy term")
 
-		elif question[-14:] == 'periodic table':
-			tablesentence = [["I think you ment ","Don't you ment "],"< visualize | show > periodic table ?!\n"]
-			subwords = "".join(question.split()[1:])
-			words = question.split()[0]
-			if len(question.split()) > 3 or len(question.split()) == 2:
-				print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Something 'elementary' is 'Neutrine' right now!" )
-				if "visualize" in words or "show" in words or subwords!= 'periodictable':
-					pik = random.choice([0,1])
-					print (tablesentence[0][pik] + tablesentence[1])
-			else:
-				if words == 'visualize' or words == 'show':
-					print("")
-					quicklist(periodic_table_pt," ")
-					print("")
-				else:
-					periodic_show ( words )
+		elif question == 'periodic table' or question == 'show periodic table':
+			periodic_table_colored()
 
 		elif question[0:13] == 'distance from':
 			qplanet = []
