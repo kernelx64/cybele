@@ -2797,12 +2797,13 @@ def link_status(url):
 
 #-----------------------------------------------
 def get_generation_by_age(input_text):
-    current_year = date.today().year
+    today = date.today()
+    current_year = today.year
     try:
         age = int(''.join(filter(str.isdigit, input_text)))
     except ValueError:
         return f"{random.choice(messages['trouble_short'])} Invalid age.\n"
-    birth_year = current_year - age
+    birth_year = current_year - ( age + 1 ) 
     for gen, (start, end) in core['generation'].items():
         if start <= birth_year <= end:
             return f"At {age} years old (born on {birth_year}), belong to {gen.title()}.\n"
@@ -5345,7 +5346,9 @@ def main():
 					dfweeks, dfdays = daysweeks_from_date(inidata)
 					years, months, days, hours, minutes, seconds = calc_fulldate(inidata)
 					print("The difference between {} and {} is: {} years, {} months, {} days, {} hours, {} minutes, {} seconds.".format(inidata.strftime("%d.%m.%y"), date.today().strftime("%d.%m.%y"), years, months, days, hours, minutes, seconds))
-					print("The Equivalent of {:,} months {:,} weeks {:,} days {:,} hours {:,} minutes. \n".format(years*12+months-1, dfweeks, dfdays, dfdays*24+hours, ((dfdays*24)*60+minutes)))
+					print("The Equivalent of {:,} months {:,} weeks {:,} days {:,} hours {:,} minutes.".format(years*12+months-1, dfweeks, dfdays, dfdays*24+hours, ((dfdays*24)*60+minutes)))
+					print(re.sub(r"\s*\(.*?\)", "", get_generation_by_age(str(years))).replace("belong", "belongs"))
+					
 				else:
 					raise ValueError
 			except ValueError :
@@ -6493,12 +6496,8 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
-		#elif question == 'list generations':
-		#	list_generations()
-
 		elif question == 'test' or question =='teste':
-			#print(f"{random.choice(messages['nicefun_msg'])}\n")
-			print (core['generation'])
+			print(f"{random.choice(messages['nicefun_msg'])}\n")
 
 		elif question != '':
 			answer = find_answer(question,questions)
