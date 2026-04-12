@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '11.04.2026'
+_revise_ = '12.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -355,7 +355,7 @@ core = {
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
 						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
 						"periodoc table","peridoc table","periodical table","periodic tabel","periodic tayble","periodic teble",
-						"peirodic table"],
+						"peirodic table","millenials"],
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
@@ -701,6 +701,7 @@ help = {
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage: <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help astronomy questions": "Usage: astronomy questions \nDisplays some preconceived general standard questions about the topic. \nex: Percentage Of Freshwater On Earth?\n    Sun Distance?\n",
+	"help age": "Usage: age | years old \nShow the generation relative to the age inputed.\nex: 53 years old \n    age 18\n    list me generations\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
@@ -736,6 +737,7 @@ help = {
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
+	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
@@ -766,7 +768,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology> \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
+	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
@@ -778,6 +780,7 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
+	"help tell me": "Usage: tell me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: tell me verbs \n    tell me linux commands\n    tell me old tech\n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
@@ -1389,6 +1392,16 @@ def make_intextdb():
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 		
+		generationdb = zip(
+			fetch_fromdbfile("cybele.db", "generations", "gen_name"),
+			fetch_fromdbfile("cybele.db", "generations", "start_year"),
+			fetch_fromdbfile("cybele.db", "generations", "end_year")
+		)
+		core['generation'] = {}
+		for name, start, end in generationdb:
+			core['generation'][str(name).strip().lower()] = (int(start), int(end))
+		midbcounter += len(core['generation'])
+
 		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 
 		midbcounter = 0 
@@ -2329,7 +2342,6 @@ def show_season():
 
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
-
 	pontuation = [".",",","!","?"]
 	for p in range(len(pontuation)):
 		word = word.replace(pontuation[p],"")
@@ -2378,15 +2390,20 @@ def find_word_in_dicts(word, core):
 				db_file ='cybele.db';table = 'meanings';search_val = word
 				search_col = 'term';fetch_col = 'designation'
 				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				if "{min_age}" in dbsearch or "{max_age}" in dbsearch:
-					current_year = date.today().year
-					calculated_min_age = current_year - 1980
-					calculated_max_age = current_year - 1965
-					final_answer = dbsearch.format(min_age=calculated_min_age, max_age=calculated_max_age)
-					print('%s\n' % (final_answer))
-				else:
-					print('%s\n' % (dbsearch))
+				print('%s\n' % (dbsearch))
 				
+			elif list_name == 'generation':
+				#word.replace("generation", "").replace("gen", "").strip()
+				current_year = date.today().year
+				for gen_name, (start_year, end_year) in core['generation'].items():
+					if gen_name.strip() == word.lower():
+						calculated_max_age = current_year - start_year
+						calculated_min_age = current_year - end_year
+						template = "People who were born between {min_year} and {max_year}, actually having now between {min_age} and {max_age} years old."
+						final_answer = template.format(min_year=start_year,max_year=end_year,min_age=calculated_min_age,max_age=calculated_max_age)
+						print('%s\n' % (final_answer))
+						break
+
 			elif list_name == 'qa-astro':
 				db_file ='cybele.db';table = 'qa_astro';search_val = word
 				search_col = 'question';fetch_col = 'awnser'
@@ -2515,8 +2532,7 @@ def find_word_in_dicts(word, core):
 				print(f"{'Year range:':>15} {get_display_value(year_value, replace_hyphen=True)}")
 				kms_value = object_details.get('kms')
 				print(f"{'V infinity:':>15} {get_display_value(kms_value, ' Km/s', precision=2)}\n")
-				
-				
+
 			elif list_name == "constelattion":
 				constellation_anwser = constellations_dict[word]
 				random.shuffle(messages['creative matter'])
@@ -2778,6 +2794,32 @@ def link_status(url):
 		return "Error"
 	except Exception as e:
 		return "not active"
+
+#-----------------------------------------------
+def get_generation_by_age(input_text):
+    current_year = date.today().year
+    try:
+        age = int(''.join(filter(str.isdigit, input_text)))
+    except ValueError:
+        return f"{random.choice(messages['trouble_short'])} Invalid age.\n"
+    birth_year = current_year - age
+    for gen, (start, end) in core['generation'].items():
+        if start <= birth_year <= end:
+            return f"At {age} years old (born on {birth_year}), belong to {gen.title()}.\n"
+    return f"{random.choice(messages['trouble_short'])} I haven't found, nor do I have any reference for, that year of birth.\n"
+
+#-----------------------------------------------
+def list_generations():
+	dt = date.today().year
+	print(f'\n{"Generation":<18} {"Born":<15}{"Current Ages"}')
+	print("-" * 48)
+	for name, (start, end) in core['generation'].items():
+		age_max = dt - start
+		age_min = dt - end
+		print(f"{kolor['BLUE']}{name.title():<18} "
+			f"{kolor['CYAN']}{start} – {end:<7} "
+			f"{kolor['MAGENTA']}{age_min} - {age_max}{kolor['OFF']}")
+	print("")
 
 #-----------------------------------------------
 def people_in_space(data_source=None, status=""):
@@ -5263,6 +5305,10 @@ def main():
 
 			elif 'meteo' in question or 'meteorology' in question:
 				print (f"{showlisttell(core["meteo"], num_terms=5, category="meteorology terms")}.\n")
+
+			elif 'generations' in question or 'gens' in question:
+				list_generations()
+
 			else:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_knew'])}\n")
 			
@@ -5414,6 +5460,12 @@ def main():
 					for acronym, description in content[key].items():
 						print(f"    > {acronym} : {description}")
 				print(f"\nHelp: (LEO, GEO, HEO, etc.) define the regions of near-Earth space intended for the operation of artificial satellites and spacecraft.\n")
+
+		elif 'age' in question or 'years old' in question or 'born' in question:
+			print(get_generation_by_age(question))
+
+		elif question == 'gens':
+			list_generations()
 
 		elif question.find('seasons')!=-1 and question.find('year')!=-1:
 			get_season = get_the_season()
@@ -6441,8 +6493,12 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
+		#elif question == 'list generations':
+		#	list_generations()
+
 		elif question == 'test' or question =='teste':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")
+			#print(f"{random.choice(messages['nicefun_msg'])}\n")
+			print (core['generation'])
 
 		elif question != '':
 			answer = find_answer(question,questions)
