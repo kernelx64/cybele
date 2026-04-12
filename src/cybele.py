@@ -2797,13 +2797,12 @@ def link_status(url):
 
 #-----------------------------------------------
 def get_generation_by_age(input_text):
-    today = date.today()
-    current_year = today.year
+    today = date.today().year
     try:
         age = int(''.join(filter(str.isdigit, input_text)))
     except ValueError:
         return f"{random.choice(messages['trouble_short'])} Invalid age.\n"
-    birth_year = current_year - ( age + 1 ) 
+    birth_year = today - age 
     for gen, (start, end) in core['generation'].items():
         if start <= birth_year <= end:
             return f"At {age} years old (born on {birth_year}), belong to {gen.title()}.\n"
