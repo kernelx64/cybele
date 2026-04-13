@@ -1426,6 +1426,21 @@ def make_intextdb():
 		sys.exit(1)
 
 #----------------------------------------------------------------------
+def get_brain_status(midbcounter):
+	MULTIPLICADOR_RAM = 3.5
+	OVERHEAD_SISTEMA = 5000
+	TAMANHO_PY = 350
+	total_kb = (midbcounter * MULTIPLICADOR_RAM) + OVERHEAD_SISTEMA + TAMANHO_PY
+	total_mb = total_kb / 1024
+	disco_estimado_mb = (midbcounter * 1.0) / 1024
+	#return {
+    #    "entradas": midbcounter,
+    #    "ram_estimada_mb": round(total_mb, 2),
+    #    "disco_estimado_mb": round(disco_estimado_mb, 2),
+    #    "info": f"{midbcounter} dicts | ~{total_mb:.2f} MB RAM"
+    #}
+	return round(total_mb)
+#----------------------------------------------------------------------
 questions = [
 	"Ola",
 	"Como te chamas?",
@@ -1478,8 +1493,8 @@ answers = [
 	"Hello. Ask away. No formalities. If i have the knowledge i will anwser.",
 	"My name is "+ _title_+".",
 	"I was named "+ _title_+" and i like'it.",
-	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.\nI know i have a litle brain like only 400kb +- but i can allready do a few things.",
-	"I am "+ _title_+" a small python script. Think of me as a litle digital small attic knowledge helper.\nI know i have a litle brain like only 400kb +- but i can allready do a few things.",
+	"I am "+ _title_+" a small python script that serves as an ever-evolving digital attic and knowledge repository.",
+	"I am "+ _title_+" a small python script. Think of me as a litle digital small attic knowledge helper.\nI know i have a litle brain (like "+str(get_brain_status(midbcounter))+"Mb only +-) but i can allready do a few things.",
 	"The name Cybele essentially means 'Great Mother of the Gods' or 'Mother Goddess,' signifying her role as a powerful deity of the earth, nature, with some interpretations also linking her to the wisdom of a 'Prophet.'",
 	"The exact builders of the pyramids are still debated...",
 	"The current time in the system clock is "+datetime.now().strftime("%H:%M"),
@@ -5589,9 +5604,6 @@ def main():
 					output_parts.append(padded_item)
 				print("  ".join(output_parts))
 			print("")
-			
-		#elif any(word in question for word in core['time_query']):
-		#	print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
@@ -5754,6 +5766,7 @@ def main():
 				days_running_str = "N/A days."
 
 				num_sats = len(load_from_disk())
+				memory = get_brain_status(midbcounter)
 
 				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
 					days_running_str = f"{days_till_today.days} days."
@@ -5768,7 +5781,7 @@ def main():
 				print(f"   Revised : {_revise_}")
 				print(f"    Python : {py_version_str}")
 				print(f"   Country : {core_system_country}")
-				print(f"    Memory : {q_len}|{a_len}|DC{current_midbcounter}")
+				print(f"    Memory : {q_len}|{a_len}|DC{current_midbcounter}|{round(memory)}MB")
 				print(f"      Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
 				print(f"     Linux : {len(core.get('linuxcmd', []))}")
 				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
@@ -6502,19 +6515,16 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
-		#elif question == 'list generations':
-		#	list_generations()
-
 		elif question == 'test' or question =='teste':
-			#print(f"{random.choice(messages['nicefun_msg'])}\n")
-			print (core['generation'])
+			print(f"{random.choice(messages['nicefun_msg'])}\n")
+			mi
 
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
 			
-		#else:
-		#	print (f"{random.choice(messages['trouble_short'])} Woow! that's new for me.!\n")
+		else:
+			print (f"{random.choice(messages['trouble_knew'])}!\n")
 
 #-------------------------------------------------
 if __name__ == "__main__":
