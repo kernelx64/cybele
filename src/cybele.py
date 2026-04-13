@@ -723,7 +723,7 @@ help = {
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
 	"help gridflow": "Usage: gridflow <hour:minute slots slot duration> \nA creative way to bring a dash of algorithmic mystery to your leisure time.\nTakes my own website TVshow list and make your TV watching plan/time. No algorythms selection based. \nex: griflow \n    gridflow 22:00 6 30\n",
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
-	"help help": "Usage: <help> or <help (comammd)>\nDisplays a quick help list of commands or the specific help structure for the related command.\nex: help\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
+	"help help": "Usage: help | help <starting letter> or help <command>\nDisplays the help commands list filtered or full or the specific help structure for the related command.\nex: help s\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
 	"help infostar": "Usage: infostar <name of the star> \nQueries the SIMBAD database to retrieve physical data,coordinates, and identifiers for a specific celestial object. \nex: infostar polaris \n    infostar alpha centauri\n",
@@ -5582,16 +5582,34 @@ def main():
 			else:
 				print ("Sorry i cannot identify this Operating System. Maybe in my next update!\n")
 
-		elif question == "can you help me" or question == "can you help" or question == "help" or question == "help me":
-			print(f"Here are the {str(len(core['help']))} help 🙋 commands ordered alphabetically to better assist you. \nJust type help <desired command> or Hit < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
-			nhelp = dict(sorted(help.items()))	
-			results = list(nhelp)
-			terminal_width = os.get_terminal_size().columns
-			max_item_width = max(len(str(item)) for item in results)
-			if max_item_width + 1 < terminal_width:
-				items_per_line = terminal_width // (max_item_width + 1)
+		elif question.startswith("help"):
+			parts = question.split()
+			if len(parts) > 1:
+				search_term = question.lower() 
+				filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
+        
+				if not filtrado:
+					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
+					nhelp = {} 
+				else:
+					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <desired command help> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+					nhelp = dict(sorted(filtrado.items()))
 			else:
-				items_per_line = 1
+				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you. \nJust type the <desired command help> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+				nhelp = dict(sorted(help.items()))
+			if nhelp:
+				results = list(nhelp.keys())
+			try:
+				terminal_width = os.get_terminal_size().columns
+			except OSError:
+				terminal_width = 80
+			max_item_width = max(len(str(item)) for item in results)
+
+			spacing = 2
+			if max_item_width + spacing < terminal_width:
+				items_per_line = terminal_width // (max_item_width + spacing)
+			else:
+				items_per_line = 1       
 			items_per_line = max(1, items_per_line)
 			column_widths = [0] * items_per_line
 			for i in range(len(results)):
@@ -5601,9 +5619,9 @@ def main():
 				line = results[i:i + items_per_line]
 				output_parts = []
 				for j, item in enumerate(line):
-					padded_item = str(item).ljust(column_widths[min(j, len(column_widths) - 1)])
+					padded_item = str(item).ljust(column_widths[j])
 					output_parts.append(padded_item)
-				print("  ".join(output_parts))
+				print((" " * spacing).join(output_parts))
 			print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
