@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '12.04.2026'
+_revise_ = '13.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -339,12 +339,18 @@ core = {
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
+	"display_options":	["show me","tell me","list me"],
+	"display_commands":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
+						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
+						"meaning term","meaning words","meaning terms","constellations","all constellations","linux commands","verbs",
+						"english verbs","meteo","meteorology","gens","generations"],
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
 	"request":	["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ",
 				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
-				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? " ],
+				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? "],
+	"view_the_topics":	["show topics","show me your topics","show topic's","show me your topic's","topics","topic's"],
 	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later.",
 					"Cybele is currently unavailable. We appreciate your patience.",
 					"Cybele is temporarily out of reach. Please try again shortly.",
@@ -402,7 +408,7 @@ knowledge = {
 }
 #-------------------------------------------------------------
 messages = {
-	"pre_terms":["That is","I identify that as","To me that is a","I recognize that","Based on my knowledge of","I'm sure that is"],
+	"pre_terms":["That is","I identify that as","To me that is","I recognize that as","Based on my knowledge of","I'm sure that is"],
 	"activity_msg":	["We're serving up one year's worth of seasonal shenanigans, daily!","One year of seasons, squeezed into a single day. Time travel? Sort of.",
 					"Daily dose of a year's worth of seasonal quirks.","Seasons? We've got a year of 'em, packed into each day!",
 					"Ever wanted to experience a whole year of seasons in a day? We're showing one year per day.","Once a day. It's like a time machine, but with more leaves and snow.",
@@ -737,7 +743,7 @@ help = {
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
-	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
+	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
@@ -768,7 +774,7 @@ help = {
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
 	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
-	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
+	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
@@ -780,7 +786,7 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
-	"help tell me": "Usage: tell me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteor|meteorology>|generations \nReturn the values or the data for the required subject.\nex: tell me verbs \n    tell me linux commands\n    tell me old tech\n",
+	"help tell me": "Usage: tell me star names|constellations|<asteroids|dangerous> objects|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: tell me verbs \n    tell me linux commands\n    tell me old tech\n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
@@ -2340,6 +2346,30 @@ def show_season():
 	else:
 		print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
 
+#----------------------------------------------------------------
+def showlisttell(data_key_list, num_terms=5, category="terms"):
+
+	all_items = list(data_key_list)
+	random.shuffle(all_items)
+	selected_items = all_items[:num_terms]
+	formatted_items_list = ""
+	if len(selected_items) > 1:
+		formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
+	elif selected_items:
+		formatted_items_list = selected_items[0]
+	intro_fragments = [
+		f"I can show you based on my knowledge, these are some {category}:",
+		f"Here are some {category} I have in knowledge:",
+		f"Based on what I know, these are some {category}:",
+		f"Let me share some {category} I have:",
+		f"You might be interested in these {category}:"
+	]
+	chosen_intro_fragment = random.choice(intro_fragments)
+	if formatted_items_list:
+		return f"{chosen_intro_fragment} {formatted_items_list}"
+	else:
+		return f"Sorry, I don't have any {category} to show at the moment."
+
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
 	pontuation = [".",",","!","?"]
@@ -2392,6 +2422,28 @@ def find_word_in_dicts(word, core):
 				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 				print('%s\n' % (dbsearch))
 				
+			elif list_name == 'view_the_topics':
+				print (random.choice(core['cthemes']) + ": \n")
+				random.shuffle(topics)
+				last_topic = len(topics)-1
+				for i in range(last_topic):
+					print ( "   - " + topics[i].title())
+				print ("  and: ")
+				print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
+
+			elif list_name == 'meteo':
+				mq = random.choice(messages['pre_terms'])
+				random.shuffle(messages['pre_terms'])
+				print (f"{mq} a {list_name.title()}rology term.")
+				db_file ='cybele.db';table = 'meteo';search_val = word
+				search_col = 'term';fetch_col = 'definition'
+				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+				print(f"{symb_prompt()}{dbsearch}\n")
+
+
+			elif list_name == 'display_options':
+				print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
+
 			elif list_name == 'generation':
 				#word.replace("generation", "").replace("gen", "").strip()
 				current_year = date.today().year
@@ -2419,15 +2471,6 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == 'linuxexcmd':
 				print ("")
-
-			elif list_name == 'meteo':
-				mq = random.choice(messages['pre_terms'])
-				random.shuffle(messages['pre_terms'])
-				print (f"{mq} {list_name.title()}rology term.")
-				db_file ='cybele.db';table = 'meteo';search_val = word
-				search_col = 'term';fetch_col = 'definition'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				print(f"{symb_prompt()}{dbsearch}\n")
 
 			elif list_name == 'python art':
 				print ("Python is a programmer language wich i was builted (coded).")
@@ -2604,7 +2647,8 @@ def find_word_in_dicts(word, core):
 				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
 						
 			else:
-				print ("To me that is a %s.\n" % (list_name).replace("_"," "))
+				#print ("To me that is a %s.\n" % (list_name).replace("_"," "))
+				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\n")
 			return True
 
 #--------------------------------------------
@@ -2797,12 +2841,12 @@ def link_status(url):
 
 #-----------------------------------------------
 def get_generation_by_age(input_text):
-    today = date.today().year
+    current_year = date.today().year
     try:
         age = int(''.join(filter(str.isdigit, input_text)))
     except ValueError:
         return f"{random.choice(messages['trouble_short'])} Invalid age.\n"
-    birth_year = today - age 
+    birth_year = current_year - age
     for gen, (start, end) in core['generation'].items():
         if start <= birth_year <= end:
             return f"At {age} years old (born on {birth_year}), belong to {gen.title()}.\n"
@@ -3745,29 +3789,6 @@ def findme(input_string, item_list):
 				matches.append(item)
 				break
 	return matches #if matches else True
-#----------------------------------------------------------------
-def showlisttell(data_key_list, num_terms=5, category="terms"):
-   
-	all_items = list(data_key_list)
-	random.shuffle(all_items)
-	selected_items = all_items[:num_terms]
-	formatted_items_list = ""
-	if len(selected_items) > 1:
-		formatted_items_list = f"{', '.join(selected_items[:-1])} and {selected_items[-1]}"
-	elif selected_items:
-		formatted_items_list = selected_items[0]
-	intro_fragments = [
-		f"I can show you based on my knowledge, these are some {category}:",
-		f"Here are some {category} I have in knowledge:",
-		f"Based on what I know, these are some {category}:",
-		f"Let me share some {category} I have:",
-		f"You might be interested in these {category}:"
-	]
-	chosen_intro_fragment = random.choice(intro_fragments)
-	if formatted_items_list:
-		return f"{chosen_intro_fragment} {formatted_items_list}"
-	else:
-		return f"Sorry, I don't have any {category} to show at the moment."
 
 #----------------------------------------------------------------
 def create_firework_explosion(x, y, max_radius, characters):
@@ -5156,6 +5177,9 @@ def main():
 
 		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
+
+		elif 'cybele idea' in question or 'cybele idea' in question:
+			   print("The word idea was me until "+ _author_.split()[0] +" started to develop me.\nAhah and just for fun!\n")
 		
 		elif " in linux" in question and question != 'help query in linux':
 			keyword = question.replace(" in linux", "").strip()
@@ -5238,15 +5262,6 @@ def main():
 			print ("  and: ")
 			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
 
-		elif question == "show topics" or question == "show me your topics" or question == "show topic's" or question == "show me your topic's" or question == "topics" or question == "topic's":
-			print (random.choice(core['cthemes']) + ": \n")
-			random.shuffle(topics)
-			last_topic = len(topics)-1
-			for i in range(last_topic):
-				print ( "   - " + topics[i].title())
-			print ("  and: ")
-			print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
-
 		elif question.find('quote')!=-1:
 				print ("Here's a quote by my author " + _author_.split()[0] + ".")
 				print (f"{_spchar_[21:22]} {random.choice(as_quotes)}")
@@ -5257,10 +5272,11 @@ def main():
 			cquestion = random.choice(what_creative)
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
-		elif question.startswith(('show me', 'tell me', 'list me')):
-			if 'astronomy terms' in question or 'astronomy glossary' in question:
+		#/// Codigo aqui ///
+		elif any(word in question for word in core['display_options']) and any(word in question for word in core['display_commands']):
+			if 'astronomy terms' in question or 'astronomy words' in question or 'astronomy glossary' in question:
 				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
-			
+
 			elif 'astronomy questions' in question or 'questions of astronomy' in question:
 				all_astro = core["qa-astro"]
 				random.shuffle(all_astro)
@@ -5269,13 +5285,19 @@ def main():
 				for term in astro_random_keys:
 					astro_qa += " "+_spchar_[1:2] + term + "?\n"
 				print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
-	
+
+			elif 'constellations' in question and 'all' in question:
+				print ("\nHere are all Constellations i have in knowledge ("+str(len(constellations_dict))+") and the meaning of her name or her designation:\n")
+				for constelattion in constellations_dict:
+					print(" %s: %s" % (constelattion.title(), constellations_dict[constelattion]))
+				print ("")
+
 			elif 'stars' in question or 'star names' in question:
 				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
 
 			elif 'asteroids' in question:
 				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
-			
+
 			elif 'dangerous objects' in question:
 				print (f"{showlisttell(core["cneos"], num_terms=5, category="Dangerous Objects")}.\n")
 
@@ -5290,16 +5312,10 @@ def main():
 
 			elif 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
 				print (f"{showlisttell(core["word meaning"], num_terms=5, category="Meaning Terms/Words")}.\n")
-			
-			elif 'constellations' in question and 'all' in question:
-				print ("\nHere are all Constellations i have in knowledge ("+str(len(constellations_dict))+") and the meaning of her name or her designation:\n")
-				for constelattion in constellations_dict:
-					print(" %s: %s" % (constelattion.title(), constellations_dict[constelattion]))
-				print ("")
 
 			elif 'linux commands' in question:
 				print (f"{showlisttell(core["linuxcmd"], num_terms=5, category="Linux commands")}.\n")
-				
+
 			elif 'verbs' in question or 'english verbs' in question:
 				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
 
@@ -5308,9 +5324,6 @@ def main():
 
 			elif 'generations' in question or 'gens' in question:
 				list_generations()
-
-			else:
-				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_knew'])}\n")
 			
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
@@ -5345,9 +5358,7 @@ def main():
 					dfweeks, dfdays = daysweeks_from_date(inidata)
 					years, months, days, hours, minutes, seconds = calc_fulldate(inidata)
 					print("The difference between {} and {} is: {} years, {} months, {} days, {} hours, {} minutes, {} seconds.".format(inidata.strftime("%d.%m.%y"), date.today().strftime("%d.%m.%y"), years, months, days, hours, minutes, seconds))
-					print("The Equivalent of {:,} months {:,} weeks {:,} days {:,} hours {:,} minutes.".format(years*12+months-1, dfweeks, dfdays, dfdays*24+hours, ((dfdays*24)*60+minutes)))
-					print(re.sub(r"\s*\(.*?\)", "", get_generation_by_age(str(years))).replace("belong", "belongs"))
-					
+					print("The Equivalent of {:,} months {:,} weeks {:,} days {:,} hours {:,} minutes. \n".format(years*12+months-1, dfweeks, dfdays, dfdays*24+hours, ((dfdays*24)*60+minutes)))
 				else:
 					raise ValueError
 			except ValueError :
@@ -5368,10 +5379,6 @@ def main():
 
 		elif question[0:22] == 'what do you know about' and question.find('dangerous')!=-1 and question.find('objects')!=-1:
 			print ("I can tell you about " + str(len(core['cneos'])) + " celestial dangerous objects known as the list CNEO.\n ")
-
-		#elif question == 'constelations':
-		#elif any(word in question for word in core['poorly_writen']):
-		#	print (f"{random.choice(messages['withonlyaL'])}\n")
 
 		elif question == "can you make a sentence":
 			if question[0:4] == 'make':
@@ -6495,8 +6502,12 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
+		#elif question == 'list generations':
+		#	list_generations()
+
 		elif question == 'test' or question =='teste':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")
+			#print(f"{random.choice(messages['nicefun_msg'])}\n")
+			print (core['generation'])
 
 		elif question != '':
 			answer = find_answer(question,questions)
