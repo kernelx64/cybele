@@ -5592,10 +5592,10 @@ def main():
 					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
 					nhelp = {} 
 				else:
-					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <desired command help> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
 					nhelp = dict(sorted(filtrado.items()))
 			else:
-				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you. \nJust type the <desired command help> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you. \nJust type the <help desired command> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
 				nhelp = dict(sorted(help.items()))
 			if nhelp:
 				results = list(nhelp.keys())
