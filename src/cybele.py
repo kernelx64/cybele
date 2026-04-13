@@ -198,7 +198,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}
+tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}
 MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
 BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
@@ -223,14 +223,6 @@ website = {
 	"trails": "https://www.adelinosaldanha.site/trails",
 	"simlk": "https://simkl.com/4378279/tv/watching/",
 	"askard": "https://www.adelinosaldanha.site/askards"
-}
-webshare = {
-	"books": "ammil://fxzt.gs/yhewxk/Xa42ZCpE#16vJPCLpk9hLWQ0bAOW60J",
-	"movies": "ammil://fxzt.gs/yhewxk/s0idVEtT#5oSn-jPjqRH1Q9-omLNW8J",
-	"tvshow": "ammil://fxzt.gs/yhewxk/qg5W1U7U#PzveuXlo_EjooUTDdPth8z",
-	"myMixs": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dS2jkGSuO5T1eKxCF0R6GV9lLNeZutDIVrQ",
-	"music weekly episodes": "ammil://x.ivehnw.ebgd/inuebgd/lahp?vhwx=dSsjA3S2lYUTkgOEAryJtKH4Ikbv4jJ8QrQ"
-	
 }
 #-----------------------------------------------------------
 presence_online = {}
@@ -773,7 +765,7 @@ help = {
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
-	"help sharing about": "Usage: sharing about <tvshow name> \nDisplays a link from the specific content of the tvshow marked in the list on the TV programs page.\nThe link available is automatically copied to the clipboard.\nex: sharing about nautilus\n",
+	"help sharing": "Usage: sharing about | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links\n",
 	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
@@ -1259,7 +1251,7 @@ def parse_date_string(date_str):
 #------------------------------------------------------------
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
-			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, \
+			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, webshare, \
 			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_
 
 	if not check_tables(tables):
@@ -1408,13 +1400,22 @@ def make_intextdb():
 			core['generation'][str(name).strip().lower()] = (int(start), int(end))
 		midbcounter += len(core['generation'])
 
+		webshare = {
+            "books": fetch_fromdbfile("cybele.db", "webshare", "books")[0],
+            "movies": fetch_fromdbfile("cybele.db", "webshare", "movies")[0],
+            "tvshow": fetch_fromdbfile("cybele.db", "webshare", "tvshow")[0],
+            "myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
+            "music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
+        }
+		midbcounter += len(webshare)
+
 		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
+		#midbcounter += len(tvshows_cache)
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
 		midbcounter += len(questions) + len(answers)
-		#midbcounter += len(tvshows_cache)
 		for key in core:
 			if isinstance(core[key], list):
 				midbcounter += len(core[key])
@@ -2454,7 +2455,6 @@ def find_word_in_dicts(word, core):
 				search_col = 'term';fetch_col = 'definition'
 				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 				print(f"{symb_prompt()}{dbsearch}\n")
-
 
 			elif list_name == 'display_options':
 				print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
@@ -6517,7 +6517,6 @@ def main():
 
 		elif question == 'test' or question =='teste':
 			print(f"{random.choice(messages['nicefun_msg'])}\n")
-			mi
 
 		elif question != '':
 			answer = find_answer(question,questions)
