@@ -2667,12 +2667,12 @@ def find_word_in_dicts(word, core):
 				else:
 					netchk = False
 					print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
-					for tvshow, link in webshare.items():
-						print(" > " + str(tvshow.upper()))
-						print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
-						if netchk == True:
-							print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
-					print ("")
+				for tvshow, link in webshare.items():
+					print(" > " + str(tvshow.upper()))
+					print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
+					if netchk == True:
+						print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
+				print ("")
 			
 			else:
 				#print ("To me that is a %s.\n" % (list_name).replace("_"," "))
