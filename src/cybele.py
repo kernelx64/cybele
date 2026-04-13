@@ -357,7 +357,7 @@ core = {
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
-	"share":	["sharing about","sharing links"],
+	"share":	["sharing links","sharing"],
 	"sayconvert":	["in full","longhand"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
@@ -765,7 +765,7 @@ help = {
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
 	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
-	"help sharing": "Usage: sharing about | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links\n",
+	"help sharing": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
 	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
@@ -2660,7 +2660,20 @@ def find_word_in_dicts(word, core):
 						else:
 							sentence = sentence_parts[0]
 				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
-						
+			
+			elif list_name == 'share':
+				if internet_onoff() == True:
+					netchk = True
+				else:
+					netchk = False
+					print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
+					for tvshow, link in webshare.items():
+						print(" > " + str(tvshow.upper()))
+						print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
+						if netchk == True:
+							print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
+					print ("")
+			
 			else:
 				#print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\n")
@@ -5190,7 +5203,7 @@ def main():
 		elif question == "say a word" or question == "share a word":
 			print (preamble_random_word())
 
-		elif any(word in question for word in core['negative_word']) and question[0:13] != 'sharing about':
+		elif any(word in question for word in core['negative_word']):# and question[0:17] != 'sharing':
 			print ("I understand. Is there anything else You want to ask'me ?\n")
 
 		elif 'cybele idea' in question or 'cybele idea' in question:
@@ -5199,19 +5212,6 @@ def main():
 		elif " in linux" in question and question != 'help query in linux':
 			keyword = question.replace(" in linux", "").strip()
 			commands_by_explanation(linux_commands, keyword)
-		
-		elif any(word in question for word in core['share']):
-			if internet_onoff() == True:
-				netchk = True
-			else:
-				netchk = False
-			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
-			for tvshow, link in webshare.items():
-				print(" > " + str(tvshow.upper()))
-				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
-				if netchk == True:
-					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
-			print ("")
 
 		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]):
 			print (random.choice(messages['badword_msg']) + "\n")
