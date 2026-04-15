@@ -3177,7 +3177,7 @@ def recent_from_elysia():
 		for i in range(9, 19):
 			print (f"{items_list[i]}")
 	except urllib.error.URLError as e:
-		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content from {website[content_type]}")
+		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content.")
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
 	print ("")
