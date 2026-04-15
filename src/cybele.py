@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '13.04.2026'
+_revise_ = '15.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -205,11 +205,11 @@ GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noa
 TLE_URLS = [f"{BASE_URL}?GROUP={g}&FORMAT=tle" for g in GROUPS]
 
 #-----------------------------------------------------------
-etables = ['Y29uZmln', 'YWRqZWN0aXZlZGI=', 'YXNrYXJkX2Ri', 'YWR2ZXJiZGI=', 'YXN0cm9ub215X2dsb3NzYXJ5', 
-			'Y2xpbWF0ZV9kaWN0', 'Y25lb3M=', 'Y29uanVuY3Rpb25kYg==', 'Y29uc3RlbGF0aW9ucw==', 'Y29udGlnZW5jeQ==',
-			'Y291bnRyaWVz', 'ZnVuZmFjdHM=', 'bGludXhfY29tbWFuZHM=', 'bWVhbmluZ3M=', 'bmljZXRoaW5ncw==', 'bm91bnM=',
-			'b2xkdGVjaA==', 'cHJlcG9zaXRpb25kYg==', 'cWFfYXN0cm8=', 'c2Vhc29uX2FjdGl2aXRpZXM=', 'c3BlY2lhbF9kYXRlcw==',
-			'c3RhcnM=', 'dG9wYWN0aXZpdGllcw==', 'dmVyYl9iYXNlZGI=', 'dmVyYl9wYXN0X2Ri', 'dm9jYWJ1bGFyeQ==','dHZzaG93cw==']
+etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
+			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
+			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
+			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
+			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=']
 
 #-----------------------------------------------------------
 website = {
@@ -958,7 +958,6 @@ def kdecode(emessage, shift):
         else:
             dek_msg += char
     return dek_msg
-
 #----------------------------------------------------
 sqlconn = kdecode(dbconn, shift)
 sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
@@ -1402,12 +1401,13 @@ def make_intextdb():
 		midbcounter += len(core['generation'])
 
 		webshare = {
-            "books": fetch_fromdbfile("cybele.db", "webshare", "books")[0],
-            "movies": fetch_fromdbfile("cybele.db", "webshare", "movies")[0],
-            "tvshow": fetch_fromdbfile("cybele.db", "webshare", "tvshow")[0],
-            "myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
-            "music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
-        }
+			"books": fetch_fromdbfile("cybele.db", "webshare", "books")[0],
+			"movies": fetch_fromdbfile("cybele.db", "webshare", "movies")[0],
+			"releases": fetch_fromdbfile("cybele.db", "webshare", "releases")[0],
+			"tvshow": fetch_fromdbfile("cybele.db", "webshare", "tvshow")[0],
+			"myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
+			"music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
+		}
 		midbcounter += len(webshare)
 
 		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
@@ -5584,13 +5584,14 @@ def main():
 
 		elif question.startswith("help"):
 			parts = question.split()
+			spacing = 2
 			if len(parts) > 1:
 				search_term = question.lower() 
 				filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
-        
+				spacing = 2
 				if not filtrado:
 					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
-					nhelp = {} 
+					nhelp = {}
 				else:
 					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
 					nhelp = dict(sorted(filtrado.items()))
@@ -5605,7 +5606,6 @@ def main():
 				terminal_width = 80
 			max_item_width = max(len(str(item)) for item in results)
 
-			spacing = 2
 			if max_item_width + spacing < terminal_width:
 				items_per_line = terminal_width // (max_item_width + spacing)
 			else:
@@ -6534,13 +6534,18 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
-		elif question == 'test' or question =='teste':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")
-			
 		elif question == 'restart' or question == 'reset' or question == 'boot':
 			print_statusline(f"\n{question.split()[0].capitalize()}...\n")
 			clear_screen()
 			return True
+
+		elif question == 'chkver':
+			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
+			_chkcid_ = f"{kolor['GREEN']}Verified{kolor['OFF']}" if cybelecode == idcode else f"{kolor['RED']}Not verified{kolor['OFF']}"
+			print (f"\n PY: {cybelecode} \n DB: {idcode} \n   {symb_prompt()} {_chkcid_}\n")
+
+		elif question == 'test' or question =='teste':
+			print(f"{random.choice(messages['nicefun_msg'])}\n")
 
 		elif question != '':
 			answer = find_answer(question,questions)
@@ -6556,11 +6561,14 @@ if __name__ == "__main__":
 			if main() == False:
 				break
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
+		print ("")
 		globals().clear()
 	except SystemExit as e:
+		print ("")
 		globals().clear()
 	except KeyboardInterrupt:
-		print ("")
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
+		print ("")
 		globals().clear()
+	print ("")
 	globals().clear()
