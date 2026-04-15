@@ -3177,7 +3177,7 @@ def recent_from_elysia():
 		for i in range(9, 19):
 			print (f"{items_list[i]}")
 	except urllib.error.URLError as e:
-		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content.")
+		print(f"{random.choice(messages['trouble_msg'])} Error fetching the content !")
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_msg'])} Unexpected error: {e}")
 	print ("")
@@ -5666,44 +5666,56 @@ def main():
 		elif question.startswith("help"):
 			parts = question.split()
 			spacing = 2
+			results = []  # <--- 1. Inicialização segura
+    
 			if len(parts) > 1:
+				# Nota: 'help' é uma função built-in do Python. 
+				# Certifique-se de que sua variável de dicionário não está em conflito.
 				search_term = question.lower() 
 				filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
-				spacing = 2
+        
 				if not filtrado:
 					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
 					nhelp = {}
 				else:
-					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press <Enter> to get a more descriptive help.\n")
 					nhelp = dict(sorted(filtrado.items()))
 			else:
-				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you. \nJust type the <help desired command> and press < {chr(0x21B5)}Enter> to get a more descriptive help.\n")
+				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you.\n")
 				nhelp = dict(sorted(help.items()))
+
 			if nhelp:
 				results = list(nhelp.keys())
-			try:
-				terminal_width = os.get_terminal_size().columns
-			except OSError:
-				terminal_width = 80
-			max_item_width = max(len(str(item)) for item in results)
 
-			if max_item_width + spacing < terminal_width:
-				items_per_line = terminal_width // (max_item_width + spacing)
-			else:
-				items_per_line = 1       
-			items_per_line = max(1, items_per_line)
-			column_widths = [0] * items_per_line
-			for i in range(len(results)):
-				column_index = i % items_per_line
-				column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
-			for i in range(0, len(results), items_per_line):
-				line = results[i:i + items_per_line]
-				output_parts = []
-				for j, item in enumerate(line):
-					padded_item = str(item).ljust(column_widths[j])
-					output_parts.append(padded_item)
-				print((" " * spacing).join(output_parts))
-			print("")
+			# 2. Só executa a lógica de impressão se houver resultados
+			if results:
+				try:
+					terminal_width = os.get_terminal_size().columns
+				except OSError:
+					terminal_width = 80
+
+				max_item_width = max(len(str(item)) for item in results)
+
+				if max_item_width + spacing < terminal_width:
+					items_per_line = terminal_width // (max_item_width + spacing)
+				else:
+					items_per_line = 1        
+        
+				items_per_line = max(1, items_per_line)
+				column_widths = [0] * items_per_line
+        
+				for i in range(len(results)):
+					column_index = i % items_per_line
+					column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
+            
+				for i in range(0, len(results), items_per_line):
+					line = results[i:i + items_per_line]
+					output_parts = []
+					for j, item in enumerate(line):
+						padded_item = str(item).ljust(column_widths[j])
+						output_parts.append(padded_item)
+					print((" " * spacing).join(output_parts))
+				print("")
 
 		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
 			dt = date.today()
