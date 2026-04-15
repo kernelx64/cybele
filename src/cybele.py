@@ -354,7 +354,7 @@ core = {
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
 						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
 						"periodoc table","peridoc table","periodical table","periodic tabel","periodic tayble","periodic teble",
-						"peirodic table","millenials"],
+						"peirodic table","millenials","ehlp","hlep","hepl"],
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
@@ -369,7 +369,8 @@ core = {
 	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
-	"python art":	["py","python","python art","art python"]
+	"python art":	["py","python","python art","art python"],
+	"executing_mc": ["run mc","mc_","_mc","midnight commander"]
 }
 #-------------------------------------------------------------
 knowledge = {
@@ -738,7 +739,7 @@ help = {
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
-	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system. \nPATH and Registry will be scanned or detected your Linux distro to start with 256-color support. \nex: run mc \n",
+	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
@@ -1578,7 +1579,7 @@ maincommands = [
 	"offline mode off","how many countries do you know","satellite tracker","sat track","tracker","panels tilt","panels angle","process amoc files",
 	"process amoc","github version","my version","this version","list constelations","show me some constellations","play constelattions",
 	"astronomy questions","griflow","get ifremer data"
-]	
+]
 #----------------------------------------------------------
 periodic_elements = {
 	"Hydrogen":"H","Helium":"He","Lithium":"Li","Beryllium":"Be","Boron":"B","Carbon":"C","Nitrogen":"N","Oxygen":"O","Fluorine":"F","Neon":"Ne",
@@ -2254,7 +2255,7 @@ def find_answer(question,whatlist):
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
 					"time_query","season_query","asking for country details","asking for talking","python art","sayconvert",
-					"show_me_your_topics"]
+					"show_me_your_topics","executing_mc"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
 	alldict[:] = list(set(alldict))
@@ -2677,6 +2678,9 @@ def find_word_in_dicts(word, core):
 						print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
 				print ("")
 			
+			elif list_name == 'executing_mc':
+				run_midnight_commander()
+
 			else:
 				#print ("To me that is a %s.\n" % (list_name).replace("_"," "))
 				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\n")
@@ -4969,7 +4973,7 @@ def run_midnight_commander():
 		error_prefix = random.choice(messages['trouble_short'])
 		print(f"{error_prefix} I could not locate '{cmd}'.")
 		if current_os == "windows":
-			print("Try installing it via: 'winget install MidnightCommander.MidnightCommander' or download it at https://midnight-commander.org/")
+			print(f"Try installing it via {kolor['BOLD_BLUE']}'winget install -e --id GNU.MidnightCommander'{kolor['OFF']} or download from{kolor['CYAN']} https://midnight-commander.org/ {kolor['OFF']}\n")
 		elif current_os == "linux":
 			distro = ""
 			try:
@@ -4981,18 +4985,18 @@ def run_midnight_commander():
 				pass
 
 			if "fedora" in distro:
-				print("Try installing it with: sudo dnf install mc")
+				print(f"Try installing it with <{kolor['BOLD_BLUE']}sudo dnf install mc{kolor['OFF']}> \n")
 			elif "suse" in distro:
-				print("Try installing it with: sudo zypper install mc")
+				print(f"Try installing it with <{kolor['BOLD_BLUE']}sudo zypper install mc{kolor['OFF']}> \n")
 			elif "debian" in distro or "ubuntu" in distro:
-				print("Try installing it with: sudo apt install mc")
+				print(f"Try installing it with <{kolor['BOLD_BLUE']}sudo apt install mc{kolor['OFF']}> \n")
 			elif "arch" in distro:
-				print("Try installing it with: sudo pacman -S mc")
+				print(f"Try installing it with <{kolor['BOLD_BLUE']}sudo pacman -S mc{kolor['OFF']}> \n")
 			else:
-				print("Check your package manager for 'mc' or visit: https://midnight-commander.org/")
+				print(f"Check your package manager for 'mc' or visit {kolor['BOLD_BLUE']}https://midnight-commander.org/{kolor['OFF']} \n")
         
 		else:
-			print("Please visit https://midnight-commander.org/ for installation instructions.")
+			print("Please visit https://midnight-commander.org/ for installation instructions. \n")
 		return
 
 	env = os.environ.copy()
@@ -6620,9 +6624,6 @@ def main():
 			print_statusline(f"\n{question.split()[0].capitalize()}...\n")
 			clear_screen()
 			return True
-
-		elif question == 'run mc':
-			run_midnight_commander()
 
 		elif question == 'test' or question =='teste':
 			print(f"{random.choice(messages['nicefun_msg'])}\n")
