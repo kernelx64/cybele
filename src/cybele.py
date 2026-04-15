@@ -81,6 +81,7 @@ import holidays
 import locale
 import PIL
 import tzdata
+import shutil
 from urllib.parse import urljoin
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -737,6 +738,7 @@ help = {
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
+	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system. \nPATH and Registry will be scanned or detected your Linux distro to start with 256-color support. \nex: run mc \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
@@ -4928,6 +4930,81 @@ def check_for_updates():
 			print (f"{random.choice(messages['trouble_short'])} Error comparing versions or revisions: {clean_error}\n")
 	else:
 		print (f"{random.choice(messages['trouble_short'])} I cannot compare versions due to not having an active internet connection.\n")
+
+#-------------------------------------------------
+def find_mc_in_registry():
+	if platform.system().lower() != "windows":
+		return None
+	try:
+		import winreg
+	except ImportError:
+		return None
+
+	registry_paths = [
+		(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\mc.exe"),
+		(winreg.HKEY_CURRENT_USER, r"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\mc.exe"),
+		(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Midnight Commander"),
+		(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Midnight Commander_is1")
+	]
+
+	for root, path in registry_paths:
+		try:
+			with winreg.OpenKey(root, path) as key:
+				value, _ = winreg.QueryValueEx(key, "")
+				if value and os.path.exists(value):
+					return value
+		except (FileNotFoundError, OSError):
+			continue
+	return None
+
+#-------------------------------------------------
+def run_midnight_commander():
+	current_os = platform.system().lower()
+	cmd = "mc.exe" if current_os == "windows" else "mc"
+	executable_path = shutil.which(cmd)
+
+	if not executable_path and current_os == "windows":
+		executable_path = find_mc_in_registry()
+	if not executable_path:
+		error_prefix = random.choice(messages['trouble_short'])
+		print(f"{error_prefix} I could not locate '{cmd}'.")
+		if current_os == "windows":
+			print("Try installing it via: 'winget install MidnightCommander.MidnightCommander' or download it at https://midnight-commander.org/")
+		elif current_os == "linux":
+			distro = ""
+			try:
+				with open("/etc/os-release") as f:
+					lines = f.readlines()
+					distro_info = {line.split("=")[0]: line.split("=")[1].strip().replace('"', '') for line in lines if "=" in line}
+					distro = distro_info.get("ID", "").lower()
+			except:
+				pass
+
+			if "fedora" in distro:
+				print("Try installing it with: sudo dnf install mc")
+			elif "suse" in distro:
+				print("Try installing it with: sudo zypper install mc")
+			elif "debian" in distro or "ubuntu" in distro:
+				print("Try installing it with: sudo apt install mc")
+			elif "arch" in distro:
+				print("Try installing it with: sudo pacman -S mc")
+			else:
+				print("Check your package manager for 'mc' or visit: https://midnight-commander.org/")
+        
+		else:
+			print("Please visit https://midnight-commander.org/ for installation instructions.")
+		return
+
+	env = os.environ.copy()
+	env["COLORTERM"] = "truecolor"
+	env["TERM"] = "xterm-256color"
+
+	try:
+		subprocess.run([executable_path], check=True, env=env)
+	except KeyboardInterrupt:
+		pass
+	except Exception as e:
+		print(f"{random.choice(messages['trouble_short'])} An error occurred while starting Midnight Commander.\n")
 		
 #-------------------------------------------------
 def validate_connection(port):
@@ -5812,6 +5889,11 @@ def main():
 			except Exception as e:
 				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
 
+		elif question == 'chkver':
+			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
+			_chkcid_ = f"{kolor['GREEN']}Verified{kolor['OFF']}" if cybelecode == idcode else f"{kolor['RED']}Not verified{kolor['OFF']}"
+			print (f"\n PY: {cybelecode} \n DB: {idcode} \n   {symb_prompt()} {_chkcid_}\n")
+
 		# == "today activity":
 		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
 			if tdctl >= 3:
@@ -6539,10 +6621,8 @@ def main():
 			clear_screen()
 			return True
 
-		elif question == 'chkver':
-			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
-			_chkcid_ = f"{kolor['GREEN']}Verified{kolor['OFF']}" if cybelecode == idcode else f"{kolor['RED']}Not verified{kolor['OFF']}"
-			print (f"\n PY: {cybelecode} \n DB: {idcode} \n   {symb_prompt()} {_chkcid_}\n")
+		elif question == 'run mc':
+			run_midnight_commander()
 
 		elif question == 'test' or question =='teste':
 			print(f"{random.choice(messages['nicefun_msg'])}\n")
@@ -6561,14 +6641,10 @@ if __name__ == "__main__":
 			if main() == False:
 				break
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
-		print ("")
 		globals().clear()
 	except SystemExit as e:
-		print ("")
 		globals().clear()
 	except KeyboardInterrupt:
 		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
-		print ("")
 		globals().clear()
-	print ("")
 	globals().clear()
