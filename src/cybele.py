@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '15.04.2026'
+_revise_ = '16.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -191,7 +191,6 @@ seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
-iknow_pun = {"i know": "you know","you know": "i know"}
 internals = ["version","_title_","_pcnode_","_spchar_","_active_","_revise_","_author_","_cyext_","_cybid_","lat","lon"]
 datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
@@ -200,10 +199,11 @@ shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.aco
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}
-MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
-BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
+iknow_pun = {"i know": "you know","you know": "i know"}
+BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 TLE_URLS = [f"{BASE_URL}?GROUP={g}&FORMAT=tle" for g in GROUPS]
+MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
@@ -697,6 +697,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 
 #------------------------------------------------------------
 help = {
+	"help amoc audit": "Usage: amoc audit <month|date|between dates> \nDisplays the Ground Truth Audit for AMOC data from Ifremer. You can view a single day, the current month, or a specific date range within the same year. \nex: amoc audit               (Current day)\n    amoc audit month         (Full data for the current month)\n    amoc audit 15.04.2026    (Specific date)\n    amoc audit 01.04 15.04   (Range between two dates)\n",
 	"help ascii table": "Usage: ascii table \nThis table is styled after the legendary Norton Commander and Turbo Pascal interfaces. These were the 'Text User Interfaces' (TUIs) that ruled the DOS era. \nex: ascii table\n",
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage: <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
@@ -1578,7 +1579,7 @@ maincommands = [
 	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","clean","how many capitals do you know","offline mode on","mppt",
 	"offline mode off","how many countries do you know","satellite tracker","sat track","tracker","panels tilt","panels angle","process amoc files",
 	"process amoc","github version","my version","this version","list constelations","show me some constellations","play constelattions",
-	"astronomy questions","griflow","get ifremer data"
+	"astronomy questions","griflow","get ifremer data","amoc audit","amoc audit month"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -5238,6 +5239,103 @@ def download_ifremer_pro(day_number, year):
 		print(f"\nError: {str(e)}")
 
 #-------------------------------------------------
+def validar_e_converter_data(data_str):
+	if not data_str:
+		return datetime.now()
+	# substitui . / ou - por um traço standard
+	padronizada = re.sub(r'[./-]', '-', data_str)
+	try:
+		# Tenta converter no formato Europeu
+		return datetime.strptime(padronizada, '%d-%m-%Y')
+	except ValueError:
+		return None
+		
+#-------------------------------------------------
+def mostrar_valores_amoc(data_input=None, data_fim_input=None):
+	db_name = f"{_title_.lower()}.db"    
+	dt_ini = validar_e_converter_data(data_input)
+	if dt_ini is None:
+		print(f"{kolor['BOLD_RED']}❌ Error: Invalid start date!{kolor['OFF']}\n")
+		return
+    
+	ano = dt_ini.year
+	doy_ini = int(dt_ini.strftime('%j'))
+    
+	if data_fim_input:
+		dt_fim = validar_e_converter_data(data_fim_input)
+		if dt_fim is None or dt_fim.year != ano:
+			print(f"{kolor['BOLD_RED']}❌ Error: Invalid end date or wrong year!{kolor['OFF']}\n")
+			return
+		doy_fim = int(dt_fim.strftime('%j'))
+	else:
+		doy_fim = doy_ini
+
+	try:
+		if internet_onoff() == True:
+			if os.path.isfile(db_name) == True:
+				conn = sqlite3.connect(db_name)
+			else:
+				conn = sqlitecloud.connect(sqlconn)
+		cursor = conn.cursor()
+		cursor.execute("""
+			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, delta 
+			FROM amoc_data 
+			WHERE ano = ? AND doy BETWEEN ? AND ? 
+			ORDER BY doy ASC, flyby ASC
+		""", (ano, doy_ini, doy_fim))
+		rows = cursor.fetchall()
+		conn.close()
+
+		print(f"\n{kolor['BOLD_MAGENTA']}🏛️  AMOC data Ifremer [Ground Truth Audit]{kolor['OFF']}")        
+		if doy_ini == doy_fim:
+			info_data = f"DATA: {dt_ini.strftime('%d.%m.%Y')}  |  DOY: {doy_ini:03}"
+		else:
+			d_ini = dt_ini.strftime('%d.%m')
+			d_fim = dt_fim.strftime('%d.%m')
+			info_data = f"RANGE: Day {doy_ini:03}|{doy_fim:03} ≃ {d_ini}|{d_fim} YEAR:{ano}"
+		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
+		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTA Δ"
+		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
+		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
+		if not rows:
+			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- SEM DADOS NO INTERVALO ---{kolor['OFF']}\n")
+			return
+		for r in rows:
+			# dy = Day of Year vindo da DB
+			dy, fby, *vals, d = r
+			# Conversão de DOY para data formatada (DD.MM)
+			data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
+			data_str = data_obj.strftime("%d.%m")
+			res_vals = []
+			for v in vals:
+				if v is None or str(v).strip() in ["", "None", "NULL"]:
+					res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
+				else:
+					try:
+						res_vals.append(f"{kolor['WHITE']}{float(v):>6.2f}  {kolor['OFF']}")
+					except:
+						res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
+			
+			if d is None or str(d).strip() in ["", "None", "NULL"]:
+				delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
+			else:
+				try:
+					vd = float(d)
+					cor = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
+					delta_str = f"{cor}{vd:>5.2f}{kolor['OFF']}"
+				except:
+					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
+            
+			col_data = f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']}"
+			flyby_f = f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']}"
+			dados_f = "".join(res_vals)
+			print(f"{col_data} | {flyby_f} | {dados_f}| {delta_str}")
+            
+		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}\n")
+	except Exception as e:
+		print(f"{kolor['BOLD_RED']}❗ Erro: {e}{kolor['OFF']}\n")
+		
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -5325,6 +5423,9 @@ def main():
 
 		elif question == 'ascii' or question == 'ascii table':
 			print_ascii_table()
+			
+		elif question in iknow_pun:
+			print(question.capitalize() + " " + iknow_pun[question] + " " + question + ".\n")
 
 		elif question[0:26] == 'do you know anything about' or question[0:16] == 'know anything on' or question[0:4] == 'find' or question[0:4] == 'seek':
 			if question[0:4] == 'seek' or question[0:4] == 'find':
@@ -5639,9 +5740,6 @@ def main():
 			else:
 				print ( random.choice(messages['not_right']) + " " + word.capitalize() + " is not a country!\n")
 
-		elif question in iknow_pun:
-			print(question.capitalize() + " " + iknow_pun[question] + " " + question + ".\n")
-
 		elif question == 'value of pi' or question == 'pi value' or question == 'pi':
 			print ("The value of π is "+ str(math.pi)+ "\n")
 
@@ -5666,14 +5764,10 @@ def main():
 		elif question.startswith("help"):
 			parts = question.split()
 			spacing = 2
-			results = []  # <--- 1. Inicialização segura
-    
+			results = []
 			if len(parts) > 1:
-				# Nota: 'help' é uma função built-in do Python. 
-				# Certifique-se de que sua variável de dicionário não está em conflito.
 				search_term = question.lower() 
 				filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
-        
 				if not filtrado:
 					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
 					nhelp = {}
@@ -5683,11 +5777,8 @@ def main():
 			else:
 				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you.\n")
 				nhelp = dict(sorted(help.items()))
-
 			if nhelp:
 				results = list(nhelp.keys())
-
-			# 2. Só executa a lógica de impressão se houver resultados
 			if results:
 				try:
 					terminal_width = os.get_terminal_size().columns
@@ -5695,19 +5786,16 @@ def main():
 					terminal_width = 80
 
 				max_item_width = max(len(str(item)) for item in results)
-
 				if max_item_width + spacing < terminal_width:
 					items_per_line = terminal_width // (max_item_width + spacing)
 				else:
 					items_per_line = 1        
-        
 				items_per_line = max(1, items_per_line)
 				column_widths = [0] * items_per_line
         
 				for i in range(len(results)):
 					column_index = i % items_per_line
 					column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
-            
 				for i in range(0, len(results), items_per_line):
 					line = results[i:i + items_per_line]
 					output_parts = []
@@ -6604,6 +6692,25 @@ def main():
 			else:
 				run_amoc_engine()
 
+		elif question.startswith('amoc audit'):
+			partes = question.split()
+			if len(partes) == 2:
+				mostrar_valores_amoc()
+			elif len(partes) == 3:
+				sub_comando = partes[2].lower()
+				if sub_comando == 'month':
+					hoje = datetime.now()
+					primeiro_dia = hoje.replace(day=1).strftime('%d.%m.%Y')
+					mostrar_valores_amoc(primeiro_dia, hoje.strftime('%d.%m.%Y'))
+				else:
+					mostrar_valores_amoc(sub_comando)
+			elif len(partes) == 4:
+				data_ini = partes[2]
+				data_fim = partes[3]
+				mostrar_valores_amoc(data_ini, data_fim)
+			else:
+				print(f"{kolor['BOLD_RED']}❓ Invalid format! Use <help amoc audit>{kolor['OFF']}")
+
 		elif question == 'satellite tracker' or question == 'sat track' or  question == 'tracker':
 			if _pydr3_:
 				print("I'm currently running on Pydroid, where my satellite tracker command is unavailable.")
@@ -6636,8 +6743,8 @@ def main():
 			print_statusline(f"\n{question.split()[0].capitalize()}...\n")
 			clear_screen()
 			return True
-
-		elif question == 'test' or question =='teste':
+		
+		elif question[0:10] == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n")
 
 		elif question != '':
