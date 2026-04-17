@@ -4713,16 +4713,16 @@ def detect_country():
 			system_country = ["PT","Portugal"]
 		else:
 			if target in ncountries:
-				system_country = [ncountries[target].get('alpha2'), target]
+				system_country = [ncountries[target].get('alpha2'), target.title()]
 	if len(target) == 2: # Lógica para o Linux
 		for name, data in ncountries.items():
 			# Usamos str(... or '') para evitar o erro de 'NoneType'
 			if str(data.get('alpha2') or '').lower() == target:
-				system_country = [data.get('alpha2'), name.capitalize()]
+				system_country = [data.get('alpha2'), name.title()]
 				break
 	else: # Lógica para o Windows
 		if target in ncountries:
-			system_country = [ncountries[target].get('alpha2'), target]
+			system_country = [ncountries[target].get('alpha2'), target.title()]
 
 #-------------------------------------------------
 def get_flag(country_code):
