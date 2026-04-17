@@ -210,7 +210,8 @@ etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9u
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
 			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
 			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
-			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh']
+			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh',
+			'YXNfcXVvdGVz']
 
 #-----------------------------------------------------------
 website = {
@@ -228,34 +229,9 @@ website = {
 }
 #-----------------------------------------------------------
 presence_online = {}
+as_quotes = []
 #-----------------------------------------------------------
-as_quotes = [
-	"... to keep you busy.",
-	"The time i like to waist is not wasted time, never was and never gonna be.",
-	"Nature don't need our protetion just our absence.",
-	"In order to instigate revolutionary change we must transform human conscienence.",
-	"Nature does not make mistakes.",
-	"If Nature isn't kept healthy, humans won't survive. Simple as that and let's face'it, nature is already scruded. The question is whether it is possible for us to have a future.",
-	"Extreme weather events, rising sea levels, and the loss of biodiversity are already devastating communities around the world. We are witnessing the consequences of our inaction in real-time.",
-	"Who needs Hugh Hefner others and alike's when you've got free, low-res internet gratification? #PlayboyPastItsPrime",
-	"We dream of mansions, yet find true contentment in tiny houses. We strive for the space, and we all endup to a six-foot plot. Perhaps it’s time to reconsider what truly matters.",
-	"Next time you find yourself feeling curious, embrace it. Let it lead you on a journey of discovery, self-reflection, and growth. You might be surprised at where it takes you. Don't blame me if ...",
-	"Um Portugal sem aldeias é um país que perde a alma, um mapa demográfico em branco e compromete o futuro, perdendo a memória e as raízes que o geraram e o fortalecem. Creio que muitos não perceberam que aldeias sem gente são o fim de um tempo que não volta. Morrem as aldeias e morre uma parte do que somos. As nossas aldeias são um tesouro a ser, preservado, e valorizado.",
-	"From shale villages to abandoned places, including picturesque houses and pure nature, from the interior to the coast there are destinations here that are true 'treasures' and, quite simply. That's why I've always preferred places of this scope and not mass, trendy destinations and alike's, because after all, even the little things define us.",
-	"I am sorry if you don't like my honesty, but to be fair i dont give a fuck.",
-	"Somethings just cannot be fixed. Sometimes wore mented to not. Somethings lost are lost forever. No matter how hard we fight, How much it hurts.",
-	"In memory of the 90s, that beloved era, a special time for many.",
-	"Oh! Just bite me, like the Terminator: I can be old but i'm not obsolete.",
-	"Let's face it, Nature is already scrud'ed.  The question is whether it is possible for us to have a future.",
-	"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates.",
-	"Technology is not revolutionary, it's evolutionary.",
-	"Technology is not revolutionary, it's evolutionary, building incrementally upon the accumulated knowledge and innovations of the past, even as sudden breakthroughs redefine the landscape of possibility.",
-	"If the algorithm dictates our 'Action' by forcing us toward the most probable choice, then the ultimate human 'Reaction' isn't a surprise outcome.If the algorithm becomes purely a mathematical law (a 'root') — where A must lead to B with 100% certainty—then there is no possibility for a different future and no true choice remaining for humanity. This is the manifesto for modern free will.",
-	"Everything is smart now. So, when do we download the patch? 'Cos I don't see it anywhere.",
-	"The ultimate irony will be realizing we calculated the risk but forgot that nature follows patterns, not algorithms. Science's greatest mistake is believing that tomorrow was merely a variable of yesterday.",
-	"However great our errors, nature will surpass them—with us or without us."
-]
-#-----------------------------------------------------------
+
 kolor = {
 	'BOLD_WHITE':'\033[1;37m','BOLD_YELLOW':'\033[1;33m','BOLD_GREEN':'\033[1;32m','BOLD_BLUE':'\033[1;34m',
 	'BOLD_CYAN':'\033[1;36m','BOLD_RED':'\033[1;31m','BOLD_MAGENTA':'\033[1;35m','BOLD_BLACK':'\033[1;30m',
@@ -794,7 +770,7 @@ help = {
 	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
 	"help satellite tracker": "Usage: <satellite tracker|sat track|tracker> \nActivates the Cybele satellite tracking system to monitor real-time orbital positions. \nex: sat track \n    satellite tracker \n",
 	"help say something": "Usage: <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
-	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n",
+	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n    spring\n",
 	"help set default country": "Usage: Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
@@ -1293,8 +1269,8 @@ def parse_date_string(date_str):
 #------------------------------------------------------------
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
-			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, webshare, \
-			periodic_elements, periodic_abbr, questions, answers, help, messages, tables, _spchar_
+			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, webshare, periodic_elements, \
+			periodic_abbr, questions, answers, help, messages, tables, _spchar_, as_quotes
 
 	if not check_tables(tables):
 		sys.exit(0)
@@ -1452,6 +1428,9 @@ def make_intextdb():
 		}
 		midbcounter += len(webshare)
 
+		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
+		midbcounter += len(as_quotes)
+		
 		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
 		#midbcounter += len(tvshows_cache)
 
