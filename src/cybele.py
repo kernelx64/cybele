@@ -221,7 +221,7 @@ website = {
 	"movies": "https://www.adelinosaldanha.site/tvshows",
 	"thamix": "https://www.adelinosaldanha.site/thamix",
 	"deserted": "https://www.adelinosaldanha.site/deserted",
-	"trails": "https://www.adelinosaldanha.site/trails",
+	"trails": "https://www.google.com/maps/d/viewer?mid=15HPc39VNDiwpj7ocknqvjMuhSFfZ-do",
 	"simlk": "https://simkl.com/4378279/tv/watching/",
 	"askard": "https://www.adelinosaldanha.site/askards"
 }
@@ -332,6 +332,7 @@ core = {
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
+	"questioning_about": ["what are doing","are you working","working","doing what","having fun"],
 	"display_options":	["show me","tell me","list me"],
 	"display_commands":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
 						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
@@ -344,12 +345,12 @@ core = {
 				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
 				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? "],
 	"view_the_topics":	["show topics","show me your topics","show topic's","show me your topic's","topics","topic's"],
-	"working_hard":	["Cybele is taking a break right now. Please wait a moment and try again later.",
-					"Cybele is currently unavailable. We appreciate your patience.",
-					"Cybele is temporarily out of reach. Please try again shortly.",
-					"Hold on a moment! Cybele will be back with you soon.",
-					"Pardon the interruption, Cybele is paused. Please check back in a little while.",
-					"Currently, Cybele is resting. Your request will be handled as soon as possible."],
+	"working_hard":	["I'm taking a break right now. Please wait a moment and try again later.",
+					"I am currently unavailable. I appreciate your patience.",
+					"I'm temporarily out of reach. Please try again shortly.",
+					"Hold on a moment! I will be back with you soon.",
+					"Pardon the interruption, I'm in a pause. Please check back in a little while.",
+					"Currently, I'm resting. Your request will be handled as soon as possible."],
 	"misspelled_word":	["contelation","contelations","constalation""constalations","contalation","contalations","constallatons",
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
 						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
@@ -437,6 +438,13 @@ messages = {
 						"I feel your love!","I'm feeling the love","My day geted brighter!","Your wishes made'me...",
 						"Another year wiser!","Another year older.","So they say...","Coming from you...","Age is just a number."],
 
+	"found_msgs":	["Yes! I've located some information regarding '{topic}':","Found it. Here is what I have on '{topic}':",
+					"Checking my databases... Yes, I have a record for '{topic}':","Affirmative. Accessing details for '{topic}' now:",
+					"I've got you covered. Here's the entry for '{topic}':","Sure thing! This is what I know about '{topic}':",
+					"Database match found. Displaying information for '{topic}':","Ah, '{topic}'! I have exactly what you need right here:",
+					"Looking through the archives... Found it! Info on '{topic}':","It's your lucky day. I have a detailed entry for '{topic}':"],
+
+
 	"creative matter":	["Interesting! %s definitely has a vibe of %s." , "You're right, '%s' does have a strong %s feel to it.",
 						"That's a great point! The word '%s' certainly evokes %s imagery." , "I can see why you think that. '%s' does seem like a very %s word.",
 						"The word %s belongs to the %s based on my general knowledge." , "The word '%s' gives me a distinct %s impression.",
@@ -462,7 +470,7 @@ messages = {
 	
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
-					"Is it December already? Time flies when you're having fun!", "You're officially the most prepared person I know.",
+					"Is it December already? Time flies when you're having fun! You think...", "You're officially the most prepared person I know.",
 					"Happy New Year to you too! But... Are we there allready?", "You've got great timing for the future!"],
 
 	"enjoying": ["Currently enjoying ", "Enjoying at the moment " ,"Right now, I'm loving ","In the middle of enjoying ","Just enjoying some ",
@@ -693,20 +701,24 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
-		"longest day","shortest day","satellite tracker","process amoc","offline mode","meteorology terms","gridflow","ifremer data"]
+		"longest day","shortest day","satellite tracker","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit",
+		"list and calculate person generation"]
 
 #------------------------------------------------------------
 help = {
+	"help about you":"Usage: ...about you \nTriggers my biography. You can ask naturally or use the direct phrase to hear about my origins and my creator. \nex: tell me about you \n    what are you\n    who are you\n",
 	"help amoc audit": "Usage: amoc audit <month|date|between dates> \nDisplays the Ground Truth Audit for AMOC data from Ifremer. You can view a single day, the current month, or a specific date range within the same year. \nex: amoc audit               (Current day)\n    amoc audit month         (Full data for the current month)\n    amoc audit 15.04.2026    (Specific date)\n    amoc audit 01.04 15.04   (Range between two dates)\n",
 	"help ascii table": "Usage: ascii table \nThis table is styled after the legendary Norton Commander and Turbo Pascal interfaces. These were the 'Text User Interfaces' (TUIs) that ruled the DOS era. \nex: ascii table\n",
+	"help art python": "Usage: <art python|python art> \nDisplays a stylized ASCII art representation of the Python logo. This command serves as a visual nod to the foundational programming language used to build and power the core logic of this system. \nex: art python\n    python art\n",
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage: <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
+	"help astronomy": "Usage: <astronomy term> \nAccesses the cosmic glossary. Displays the definition of celestial terms or designations typed directly in the prompt. \nex: show me astronomy terms? \n    dwarf planet\n",
 	"help astronomy questions": "Usage: astronomy questions \nDisplays some preconceived general standard questions about the topic. \nex: Percentage Of Freshwater On Earth?\n    Sun Distance?\n",
 	"help age": "Usage: age | years old \nShow the generation relative to the age inputed.\nex: 53 years old \n    age 18\n    list me generations\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
-	"help conjugate": "Usage: conjugate <verb> \n\nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
+	"help conjugate": "Usage: conjugate <verb> \nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele upytime\n",
@@ -718,65 +730,81 @@ help = {
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help doy": f"Usage: doy <day number>|<date> of the year {datetime.now().year}. \nConverts the day number to date or vice-versa. \nex: doy 124\n    doy 04.05\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
+	"help elysia": f"Usage: elysia <created|went online> \nCommand to display the date when Elysia ({_author_.split()[0]} website) went global.\nex: elysian created\n    elysia went online\n",
 	"help favorite tvshows": "Usage: favorite|fav  tvshows \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav tvshows\n    <tvshow name> in fav\n    <tvshow name> in tvshows\n",
-	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
-	"help fun fact": "Usage: fun fact \nReturns: A random, interesting, and often surprising fact.\n",
+	"help find": "Usage: find|seek <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: find help \n    seek astronomy questions",
+	"help fun fact": "Usage: <fun fact|fast fact> \nReturns: A random, interesting, and often surprising fact. \nex: fun fact \n    fast fact \n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
+	"help generation": "Usage: <generation> \nShow the generation, years and the people age based on the current year.\nex: gen x \n    age 53\n    list me generations\n",
 	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 85       -> Syncs day 85 of the current year\nget ifremer data 85 2025  -> Syncs day 124 of year 2025\n",
-	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps)\n",	
+	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps) \nex: gps to distance \n    harvesine formula \n    harvesine \n",
 	"help gridflow": "Usage: gridflow <hour:minute slots slot duration> \nA creative way to bring a dash of algorithmic mystery to your leisure time.\nTakes my own website TVshow list and make your TV watching plan/time. No algorythms selection based. \nex: griflow \n    gridflow 22:00 6 30\n",
-	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",	
+	"help harvesine": "Usage: harvesine|<formula> \nCalculate distance between two GPS given points, or between one given point if the default. (eg. set default gps) \nex: harvesine \n    harvesine formula \n    gps to distance \n",
+	"help happy birthday": f"Usage: happy birthday \nDisplay a Happy Birthday message to the author ({_author_.split()[0]}), me ({_title_}) and Elysia (website). \nex: happy birthday \n",
+	"help happy new year": f"Usage: happy new year \nDisplay a Happy New Year message for you only in the day. \nex: happy new year \n",
+	"help happy valentines": f"Usage: happy valentines \nDisplay a Valentines message for you. \nex: happy valentines \n",
+	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",
 	"help help": "Usage: help | help <starting letter> or help <command>\nDisplays the help commands list filtered or full or the specific help structure for the related command.\nex: help s\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
 	"help infostar": "Usage: infostar <name of the star> \nQueries the SIMBAD database to retrieve physical data,coordinates, and identifiers for a specific celestial object. \nex: infostar polaris \n    infostar alpha centauri\n",
+	"help last update": "Usage: last|check update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
+	"help license": "Usage: license \nDisplays the legal terms and author’s philosophy regarding the use, modification, and distribution of the software. \nex: license \n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
-	"help linux command": "Usage: <linux command> \nShows the Syntax a short explanation and examples for the typed linux command.\n",
-	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help linux command": "Usage: <linux command> \nTyped directly the linux command shows a short explanation and examples. Can be used mixed with 'show me linux commands' command.\nex: uname -a \n    show me linux commands \n",
+	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate|amoc> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help list askard": "Usage: list askard|<begin substring> <ending substring> \nReturn the entire list of askard's or for the required range.\nex: list askard \n    list askard 4005 4010\n",
 	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
 	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
-	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
+	"help merry christmas": f"Usage: merry christmas \nDisplay in the Christmas season a Message with 'some grifts' . \nex: merry christmas \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
 	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
 	"help mppt": "Usage: mppt|solar <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: mppt monitor \n    mppt history\n    mppt last30 \n    solar monitor\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
-	"help network status": "Usage: network status \nShow the actual "+_title_.lower()+" working mode and status based on internet activity. \nex: network status\n",
+	"help network status": f"Usage: network status \nShow the actual {_title_.lower()} working mode and status based on internet activity. \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
-	"help demorse": "Usage: demorse <morse code> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
+	"help demorse": "Usage: demorse <morse co\nex: holidayde> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
 	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
 	"help orbit acronym": "Usage: <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
+	"help orbital regimes": "Usage: orbital regimes \nDisplays a categorized list of orbital regions and their altitudes. Also allows direct acronym lookup for specific regime details. \nex: orbital regimes \n    leo\n",
 	"help panels tilt": "Usage: panels tilt|panels angle \nCalculates the optimal solar panel inclination based on seasonal solar declination.\nThe system uses the current season and your global latitude to optimize energy capture. \nex: panels tilt\n    panels angle\n",
 	"help people in space": "Usage: people in space\nReturns the names of the individuals currently aboard spacecraft in orbit.\n",
-	"help presence": "Usage: presence <service> \nShow's the direct link for "+_author_.split()[0]+" online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
+	"help presence": f"Usage: presence <service> \nShow's the direct link for {_author_.split()[0]} online/internet presence in the digited service. \nex: presence asus\n    presence trinket\n",
 	"help planet": "Usage: <name of the planet> typed directly\nReturns some basic information about the planet name typed.\n",
 	"help play game": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her learned abbreviation thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
 	"help play": "Usage: play game <capitals/constelattions/math> \nPlay the game of your choose. \n\nex: Capitals makes'you know and learn of what Country it is. \n    Constellations is given the constellation name to you anwser her designation learned thru me. \n    Math game is a memory training game with addiction, subtration and multiplication factors.\n",
+	"help peridoc table": "Usage: peridoc table|<show> \nDisplays the Periodic Table of Elements in ASCII format. Interactive identification via prompt of the element. \nex: show periodic table  \n    Li\n    periodic table\n",
 	"help phonetic": "Usage: phonetic <word/phrase> \nTransform to the NATO phonetic alphabet what is the base for HAM and Military's the word or the phrase digited. \n\nex: phonetic cybele \n",
 	"help process amoc": "Usage: process amoc|process amoc files\nStarts the Multi-Source Data Analysis engine (IFREMER/NASA/COPERNICUS).\nThe system scans for .nc files, validates SHA1 integrity, and extracts SST values for AMOC monitoring latitudes. \n    ex: process amoc\n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
+	"help quote": f"Usage: quote \nWords from the my creator {_author_.split()[0]}. Displays a rotating selection of personal quotes and reflections on life, heritage, and the soul of our world. \nex: quote \n",
 	"help query in linux": "Usage: <query <in linux>> \nDisplay all linux commands who contain the query words. \nex: rename in linux \n    cp in linux\n",	
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help restart": "Usage: restart | boot \nEngages Cybele in a 'fresh start', re-reading databases and data and clearing memory. \nex: restart \n    boot \n",
-	"help satellite tracker": "Usage: satellite tracker|sat track \nActivates the Cybele satellite tracking system to monitor real-time orbital positions. \n    ex: sat track \n",
+	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
+	"help satellite tracker": "Usage: <satellite tracker|sat track|tracker> \nActivates the Cybele satellite tracking system to monitor real-time orbital positions. \nex: sat track \n    satellite tracker \n",
 	"help say something": "Usage: <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help set default country": "Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
 	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
-	"help seek": "Usage: seek <topic> \nReturns if there is any information or topic about the questioned.\n",
+	"help find": "Usage: find|seek <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: find help \n    seek astronomy questions",
+	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
+	"help search askard": "Usage: search askard <word> \nPerforms a substring search across the phrase database. Returns all entries and unique IDs containing the specified string. Use <view askard <id>> to retrieve the complete detail. \nex: search askard time\n    view askard 4005\n",
+	"help satellite track": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
 	"help sharing": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
 	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
-	"help show info": "Usage: show info or #info \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #info\n",
+	"help show info": "Usage: show <info|core> or <#info|#core> \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #core\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
-	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
+	"help solar system planets": "Usage: solar system planets|planets of solar system \nDisplay exactly what the command say's. Display the order of the planets of our solar system. \nex: solar system planets \n    planets of solar system\n    planets of the solar system\n",
 	"help say a word": "Usage: say a word|share a word \nDisplay a word will interest you (Rich vocabulary).\nex: say a word\n    share a word\n",
 	"help say something": "Usage: say something \nAsk Cybele to simulate a thought.\nPlease be patient; with a 325KB 'brain,' she’s doing a lot of heavy lifting just to string two words together.\nIt’s a miracle she can even find her own 7MB database in the dark.\nex: say something\n    make a sentence\n    talk\n",
 	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032\n",
@@ -784,19 +812,25 @@ help = {
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
+	"help system": f"Usage: system \nDisplays information about the machine's environment and the core platform powering {_title_}. \nex: system \n    operating system\n",
 	"help tell me": "Usage: tell me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: tell me verbs \n    tell me linux commands\n    tell me old tech\n",
+	"help time now": "Usage: time now \nDisplays the actual time based on the GTM system clock. \nex: time now\n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
+	"help trais": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}.Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
+	"help uptime": "Usage: cybele uptime \nReports the current session duration. Useful for monitoring script stability and long-running processes.\nex: cybele uptime\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm (work in progress).\nex: weather for today\n",
+	"help week number": "Usage: week number \nDisplay the week number for the actual date or the system date.\nex: week number\n",
 	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
 	"help your version": "Usage: your version | what is | this version \nProvides details about the running instance of Cybele.\nIncludes the version, last update date, unique ID and a note regarding its source code origin. \nex: what is your version \n    your version \n    this version \n",
-	"help yoda say": "Usage: yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \n    ex: Yoda say the force is strong with this one\n"
+	"help yoda say": "Usage: yoda say <sentence> \nTransforms the given sentence to Yoda speach alike \n    ex: Yoda say the force is strong with this one\n",
+	"help #version": "Usage: #version \nProvides details about the running instance of Cybele.\nIncludes the version and her date. \nex: #version \n"
 }
 #------------------------------------------------------------
 orbit_regime = {
@@ -1556,33 +1590,6 @@ others = [
 	"current system uptime","display uptime"
 ]
 #----------------------------------------------------------
-maincommands = [
-	"bye","exit","quit","do you know anything about","know anything on","find","seek","what can i ask you","how many linux commands you know",
-	"what can you anwser","what do you know","what can you do","what do you do","what you can do","quote","what is","happy birthday cybele",
-	"do you know what is","meaning of","show me","tell me","list me","meaning term","meaning words","meaning terms",
-	"show me some linux commands","astronomy questions","questions of astronomy","days till","days for","days to","trails",
-	"difference from","age calc","what do you know about","astronomy","universe","can you","elysia created","visualize periodic table",
-	"show periodic table","distance from","planets of the solar system","planets of solar system","solar system planets order",
-	"solar system planets","types of orbits","orbital regimes","year seasons","seasons of the year","capital","capital of","value of pi",
-	"pi value","pi","s.o","operating system","system","can you help me","can you help","help","help me","time","what time it is",
-	"clock time","cybele happy birthday","happy birthday","merry christmas","i wish you a merry christmas","happy valentines",
-	"happy new year","what is your version","#version","convert gps to distance","gps to distance","harvesine","harvesine formula","sunset time","sunrise time",
-	"diagnostics","show core","#core","date","today","today is","what day it is","what day is today","what is the date","what is today","convert",
-	"how many weeks have a year","year weeks","week","week number","what number is this week","what is this week number","last update",
-	"yes","search askard","view askard","list askard","search astronomy","search oldtech","list oldtech","limits","protect image",
-	"current century","population","where is the iss","where is zarya","people in space","what is he watching","what are you watching",
-	"fav tvshows","favorite tvshows","do you speak","do you talk","say something","make a sentence","play capitals","play countries",
-	"play math","play constellations","play elements","game capitals","game countries","game math","game elements","set default gps",
-	"show my score","reset my score","reset score","infostar","today activity","weather","about you","presence","presence services",
-	"presence online","phonetic","morse","demorse","yoda say","genpwd","multiplication table","x table","licence","cybele licence",
-	"when elysia was created","elysia created","when elysia went online","cybele uptime","stars from","list stars","list constellations",
-	"protect image","set default country","default country off","list holidays","actual country","view solar system","check update","solar",
-	"last update","conjugate","fun fact","fast fact","nice thing","clear screen","clean","how many capitals do you know","offline mode on","mppt",
-	"offline mode off","how many countries do you know","satellite tracker","sat track","tracker","panels tilt","panels angle","process amoc files",
-	"process amoc","github version","my version","this version","list constelations","show me some constellations","play constelattions",
-	"astronomy questions","griflow","get ifremer data","amoc audit","amoc audit month"
-]
-#----------------------------------------------------------
 periodic_elements = {
 	"Hydrogen":"H","Helium":"He","Lithium":"Li","Beryllium":"Be","Boron":"B","Carbon":"C","Nitrogen":"N","Oxygen":"O","Fluorine":"F","Neon":"Ne",
 	"Sodium":"Na","Magnesium":"Mg","Aluminum":"Al","Silicon":"Si","Phosphorus":"P","Sulfur":"S","Chlorine":"Cl","Argon":"Ar","Potassium":"K","Calcium":"Ca","Scandium":"Sc",
@@ -2259,7 +2266,7 @@ def find_answer(question,whatlist):
 					"time_query","season_query","asking for country details","asking for talking","python art","sayconvert",
 					"show_me_your_topics","executing_mc"]
 	others = [item for key in others_keys if key in core for item in core[key]]
-	alldict = others + questions + sayhi + dict_climate + dict_astro + maincommands
+	alldict = others + questions + sayhi + dict_climate + dict_astro
 	alldict[:] = list(set(alldict))
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
@@ -2492,6 +2499,9 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == 'linuxexcmd':
 				print ("")
+
+			elif list_name == 'questioning_about':
+				print(f"{random.choice(core['working_hard'])}\n{random.choice(messages['enjoying'])}\n")
 
 			elif list_name == 'python art':
 				print ("Python is a programmer language wich i was builted (coded).")
@@ -5427,29 +5437,38 @@ def main():
 
 		elif question == 'ascii' or question == 'ascii table':
 			print_ascii_table()
-			
+
+		elif any(question.startswith(p) for p in ['do you know anything about','know anything on', 'find', 'seek']):
+			if question.startswith('seek') or question.startswith('find'):
+				words = question.split()[1:]
+			elif question.startswith('know anything on'):
+				words = question.split()[3:]
+			else: # do you know anything about
+				words = question.split()[5:]
+
+			if not words:
+				xvar = random.choice(messages['trouble_msg'])
+				yvar = random.choice(["What! Whatever it was...", "Whatever it was... What?"])
+				wvar = random.choice(["Runned away...", "Escaped...", "Took of...", "Made a break for it..."])
+				seekfind_message = [f"{yvar} {wvar} {xvar}\n", f"{xvar} {yvar} {wvar}\n"]
+				print(random.choice(seekfind_message))
+			else:
+				target_topic = " ".join(words).strip()
+				help_key = f"help {target_topic}"
+
+				if help_key in help:
+					msg = random.choice(messages['found_msgs']).format(topic=target_topic)
+					print(f"{msg}\n")
+					print(help[help_key])
+				else:
+					cybele_find = findme(words, topics)
+					if cybele_find:
+						print("Yes. There are in my topic's.\n")
+					else:
+						print(f"Unfortunately, I don't have any information or Topic about '{target_topic}'.\n")
+
 		elif question in iknow_pun:
 			print(question.capitalize() + " " + iknow_pun[question] + " " + question + ".\n")
-
-		elif question[0:26] == 'do you know anything about' or question[0:16] == 'know anything on' or question[0:4] == 'find' or question[0:4] == 'seek':
-			if question[0:4] == 'seek' or question[0:4] == 'find':
-				words = question.split()[1:]
-			elif question[0:16] == 'know anything on':
-				words = question.split()[3:]
-			else:
-				words = question.split()[5:]
-			if len(words) == 0:
-				xvar = random.choice(messages['trouble_msg'])
-				yvar = random.choice(["What! Whatever it was...","Whatever it was... What?"])
-				wvar = random.choice(["Runned away...","Escaped...","Took of...","Made a break for it...","Made a hasty retreat...","Hightailed it...","Beat a hasty retreat..."])
-				seekfind_message = [ yvar + " " + wvar + " " + xvar + "\n" , xvar + " " + yvar + " " + wvar + "\n"]
-				print (random.choice(seekfind_message))
-			else:
-				cybele_find = findme(words, topics)
-				if cybele_find:
-					print ("Yes. There are in my topic's.\n")
-				else:
-					print ("Unfornunately and dont have any information or Topic about'it. \n")
 
 		elif find_word_in_dicts(question, core) == True:
 			if question == 'cybele idea' or 'cybele idea' in question:
@@ -5828,7 +5847,7 @@ def main():
 				print(f"To who?! To Me ?!")
 				print(random.choice(messages['birthday_short']) + " Are trying to trik me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin().upper() + "!\n")
 
-		elif question == 'merry christmas' or question == 'i wish you a merry christmas':
+		elif question == 'merry christmas':
 			dt = date.today()
 			if dt.month == 12 and dt.day >= 22 and dt.day <= 26:
 				print ("Merry Christmas to you too!\nI hope you have a wonderful holiday season filled with joy, care and love.\n")
@@ -6457,7 +6476,7 @@ def main():
 			print(f"{oracle.predict()}\n")
 
 		elif question[-9:] == 'about you':
-				print ("Ok!. My name is " + _title_ +" and I was maded by " + _author_.split()[0] + " " + str(days_till_today).replace(", 0:00:00","") + " ago. I was builded to be a extention of elysia, this website.\n" + aboutyou + "\n" )
+				print (f"Ok!. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago. I was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {aboutyou}\n")
 
 		elif question.startswith('presence'):
 			source_icon = f"{_spchar_[22:23]}"
@@ -6551,9 +6570,6 @@ def main():
 		elif any(word in question for word in core['asking the uptime']):
 			print("")
 		
-		#elif any(word in question for word in core['holidays_query']):
-		#	print("")
-		
 		elif question[0:9] == 'conjugate':
 			parts = question.split()[1:]
 			if len(parts) != 1:
@@ -6566,8 +6582,7 @@ def main():
 					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} {random.choice(['I dont recognize','I dont see'])} {kolor['BOLD_YELLOW']}{parts[-1:][0]}{kolor['OFF']} like a english verb!\n")
 		
 		elif question == 'trails':
-			print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} I think what you are trying can be found here:")
-			print (f"{website['trails']}\n")
+			print (f"The direct link for the map knowed via acronym 'ASCTR' is: \n{website['trails']}\n\nalso accessed via: {website['home']}/trails\n")
 		
 		elif question == 'view solar system':
 			terminal_width, terminal_height = os.get_terminal_size()
@@ -6675,16 +6690,7 @@ def main():
 					case []:
 						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
 					case _:
-						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")			
-		
-		elif question == 'github version':
-			remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
-			if internet_onoff() == True or internet_onoff() == None:
-				print(f"I cannot tell you that. There is no internet connection!\n")
-			elif remote_version_raw == None or remote_revised_raw == None:
-				print (f"Right now the only thing I can tell you is this running version is the {version} from {_revise_}.\n")
-			else:
-				print (f"The github version is the {remote_version_raw} from {remote_revised_raw}.\n")
+						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
 		
 		elif question == '#version':
 			print (f"I'm running in the {version} from {_revise_}.\n")
@@ -6713,7 +6719,7 @@ def main():
 						doy_num = data_obj.strftime('%j')
 						print(f"The Day of Year for {data_obj.strftime('%d.%m.%Y')} is {int(doy_num)}.\n")
 					except ValueError:
-						print(f"{random.choice(messages['trouble_short'])} Invalid date format. Use DD.MM or DD.MM.YYYY\n")
+						print(f"{random.choice(messages['not_right'])} Use DD.MM or DD.MM.YYYY\n")
 				else:
 					try:
 						dia_escolhido = int(entrada)
@@ -6721,9 +6727,9 @@ def main():
 							data_calc = datetime(hoje.year, 1, 1) + timedelta(days=dia_escolhido - 1)
 							print(f"The day {dia_escolhido} corresponds to {data_calc.strftime('%d.%m.%Y')}.\n")
 						else:
-							print(f"{random.choice(messages['trouble_msg'])} Out of range. Try 1 to {anoleap}.\n")
+							print(f"{random.choice(messages['not_right'])} Try 1 to {anoleap}.\n")
 					except ValueError:
-						print(f"{random.choice(messages['trouble_short'])} That is not a valid number or date.\n")
+						print(f"{random.choice(messages['not_right'])} That is not a valid number or date.\n")
 			else:
 				print(f"Usage for {datetime.now().year}: doy 124 (number to date) OR doy 04.05 (date to number)\n")
 				
