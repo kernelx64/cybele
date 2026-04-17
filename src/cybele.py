@@ -24,12 +24,12 @@ lat = 41.5454
 lon = -8.4265
 
 # some static global cybele variables
-version = '1.1.1'
+version = '1.1.2'
 _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '16.04.2026'
+_revise_ = '17.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -210,7 +210,7 @@ etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9u
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
 			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
 			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
-			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=']
+			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh']
 
 #-----------------------------------------------------------
 website = {
@@ -716,6 +716,7 @@ help = {
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
+	"help doy": f"Usage: doy <day number>|<date> of the year {datetime.now().year}. \nConverts the day number to date or vice-versa. \nex: doy 124\n    doy 04.05\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
 	"help favorite tvshows": "Usage: favorite|fav  tvshows \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav tvshows\n    <tvshow name> in fav\n    <tvshow name> in tvshows\n",
 	"help find": "Usage: find <topic> \nReturns if there is any information or topic about the questioned.\n",
@@ -3631,6 +3632,9 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		elif dbname == 'cybele' and dbtable == 'climate_dict':
 			filter = "SELECT min(climate_term) , max(climate_term) FROM climate_dict"
 			titvar = "climate change terms"
+		elif dbname == 'cybele' and dbtable == 'amoc_data':
+			filter = "SELECT min(doy) , max(doy) FROM amoc_data"
+			titvar = "DOY AMOC data"
 		else:
 			print ("Option limits none of dbtables with conditions... Fix'it\n")
 			conn.close()
@@ -6283,6 +6287,8 @@ def main():
 					mandb('cybele','meteo','limits',0,0)
 				elif getparam[1] == "climate":
 					mandb('cybele','climate_dict','limits',0,0)
+				elif getparam[1] == "amoc":
+					mandb('cybele','amoc_data','limits',0,0)
 			else:
 				print ('The correct usage is <limits <askard|astronomy|oldtech>> to show the first and last record in the database.\n')
 			
@@ -6691,7 +6697,36 @@ def main():
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ I've detected I'm running on the Pydroid IDE.\n{kolor['BOLD_YELLOW']}While I'd love to crunch those numbers, my AMOC heavy-lift engine requires a Desktop environment.{kolor['OFF']}\n")
 			else:
 				run_amoc_engine()
-
+	
+		elif question[0:3] == 'doy':
+			partes = question.split()
+			anoleap = 366 if leapyear() != 'not a leap year' else 365
+			hoje = datetime.now()
+			if len(partes) == 2:
+				entrada = partes[1]
+				if '.' in entrada:
+					try:
+						if len(entrada.split('.')) == 2:
+							data_obj = datetime.strptime(f"{entrada}.{hoje.year}", "%d.%m.%Y")
+						else:
+							data_obj = datetime.strptime(entrada, "%d.%m.%Y")    
+						doy_num = data_obj.strftime('%j')
+						print(f"The Day of Year for {data_obj.strftime('%d.%m.%Y')} is {int(doy_num)}.\n")
+					except ValueError:
+						print(f"{random.choice(messages['trouble_short'])} Invalid date format. Use DD.MM or DD.MM.YYYY\n")
+				else:
+					try:
+						dia_escolhido = int(entrada)
+						if 1 <= dia_escolhido <= anoleap:
+							data_calc = datetime(hoje.year, 1, 1) + timedelta(days=dia_escolhido - 1)
+							print(f"The day {dia_escolhido} corresponds to {data_calc.strftime('%d.%m.%Y')}.\n")
+						else:
+							print(f"{random.choice(messages['trouble_msg'])} Out of range. Try 1 to {anoleap}.\n")
+					except ValueError:
+						print(f"{random.choice(messages['trouble_short'])} That is not a valid number or date.\n")
+			else:
+				print(f"Usage for {datetime.now().year}: doy 124 (number to date) OR doy 04.05 (date to number)\n")
+				
 		elif question.startswith('amoc audit'):
 			partes = question.split()
 			if len(partes) == 2:
