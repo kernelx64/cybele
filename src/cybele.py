@@ -185,6 +185,7 @@ def print_statusline(msg: str):
 #-----------------------------------------------------------
 print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
+iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
@@ -200,7 +201,6 @@ stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_comma
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}
 GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
-iknow_pun = {"i know": "you know","you know": "i know"}
 BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 TLE_URLS = [f"{BASE_URL}?GROUP={g}&FORMAT=tle" for g in GROUPS]
 MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
@@ -223,7 +223,8 @@ website = {
 	"deserted": "https://www.adelinosaldanha.site/deserted",
 	"trails": "https://www.google.com/maps/d/viewer?mid=15HPc39VNDiwpj7ocknqvjMuhSFfZ-do",
 	"simlk": "https://simkl.com/4378279/tv/watching/",
-	"askard": "https://www.adelinosaldanha.site/askards"
+	"askard": "https://www.adelinosaldanha.site/askards",
+	"book": "https://www.adelinosaldanha.site/unforgettable-humanity"
 }
 #-----------------------------------------------------------
 presence_online = {}
@@ -713,7 +714,7 @@ help = {
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
 	"help asteroid": "Usage: <asteroid> \nDisplays basic information about the asteroid \nex: (4) vesta\n",
 	"help astronomy": "Usage: <astronomy term> \nAccesses the cosmic glossary. Displays the definition of celestial terms or designations typed directly in the prompt. \nex: show me astronomy terms? \n    dwarf planet\n",
-	"help astronomy questions": "Usage: astronomy questions \nDisplays some preconceived general standard questions about the topic. \nex: Percentage Of Freshwater On Earth?\n    Sun Distance?\n",
+	"help astronomy questions": "Usage: astronomy questions \nDisplays some preconceived general standard questions about the topic. \nex: Percentage Of Freshwater On Earth?\n    Sun Distance?\n    show me astronomy questions \n",
 	"help age": "Usage: age | years old \nShow the generation relative to the age inputed.\nex: 53 years old \n    age 18\n    list me generations\n",
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
@@ -1524,7 +1525,9 @@ questions = [
 	"Smart",
 	"Dumb",
 	"What do you mean?",
-	"Say something smart"
+	"Tell me about your book",
+	"Unforgettable Humanity",
+	"Adelino book"
 ]
 #------------------------------------------------
 answers = [
@@ -1569,7 +1572,10 @@ answers = [
 	"'Smart' is a slippery word because it functions less like a fixed measurement and more like a moving target.",
 	"'Dumb' is often just as misunderstood as 'smart'. Usually, what we call 'dumb' isn't a lack of brainpower—it's a breakdown in the system."
 	"I'm not referring to anything or anyone.",
-	"Complexity is often just a failure of imagination. When we can't explain something simply, it’s usually because we don’t understand the boundaries of the concept well enough to see where it connects to everything else."
+	"Complexity is often just a failure of imagination. When we can't explain something simply, it’s usually because we don’t understand the boundaries of the concept well enough to see where it connects to everything else.",
+	"Adelino is the author of 'Unforgettable Humanity', a book that explores the depths of the human experience. You can find all the details and grab a copy directly on Amazon here: https://www.amazon.es/dp/B0G6SVN4XX",
+	"'Unforgettable Humanity' is the latest work by Adelino. For more information visit the official webpage "+website['book'],
+	"Yes, Adelino has written a compelling book titled 'Unforgettable Humanity'. It’s a great way to dive deeper into the themes he values. Here is the link: https://www.amazon.es/dp/B0G6SVN4XX"
 ]
 #-------------------------------------------------
 others = [
@@ -2262,11 +2268,12 @@ def find_answer(question,whatlist):
 	dict_climate = core.get("climate dictionary", [])
 	dict_astro_keys = ["astronomy glossary", "constelattion", "planet", "qa-astro", "meteo", "primary moon phase", "secondary moon phase"]
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
+	help_comands = [key.replace("help ", "") for key in help.keys()]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
 					"time_query","season_query","asking for country details","asking for talking","python art","sayconvert",
 					"show_me_your_topics","executing_mc"]
 	others = [item for key in others_keys if key in core for item in core[key]]
-	alldict = others + questions + sayhi + dict_climate + dict_astro
+	alldict = others + questions + sayhi + dict_climate + dict_astro + help_comands
 	alldict[:] = list(set(alldict))
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
@@ -2653,8 +2660,6 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == "asking for a phrase":
 				if "say something" in word:
-					#rns = random.randint(1, 2)
-					#rnp = random.randint(1, 1)
 					gt = make_text(rw, random.randint(1, 2), random.randint(1, 1))
 					print (f"{gt} \n")
 				else:
@@ -2694,8 +2699,7 @@ def find_word_in_dicts(word, core):
 				run_midnight_commander()
 
 			else:
-				#print ("To me that is a %s.\n" % (list_name).replace("_"," "))
-				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\n")
+				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\nPerhaps you'd like to type the command: help \n")
 			return True
 
 #--------------------------------------------
