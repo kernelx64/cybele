@@ -5257,20 +5257,21 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 
 	dt_ini = validar_e_converter_data(data_input)
 	if dt_ini is None:
-		print(f"{kolor['BOLD_RED']}❌ Error: Invalid start date!{kolor['OFF']}\n")
+		print(f"{random.choice(messages['trouble_short'])} ❌ Invalid start date!\n")
 		return
 
 	ano = dt_ini.year
+	max_doy_ano = 366 if calendar.isleap(ano) else 365
 	doy_ini = int(dt_ini.strftime('%j'))
 
 	if data_fim_input:
 		dt_fim = validar_e_converter_data(data_fim_input)
 		if dt_fim is None or dt_fim.year != ano:
-			print(f"{kolor['BOLD_RED']}❌ Error: Invalid end date or wrong year!{kolor['OFF']}\n")
+			print(f"{random.choice(messages['trouble_short'])} ❌ That is a invalid end date or a wrong year!\n")
 			return
 		doy_fim = int(dt_fim.strftime('%j'))
 	else:
-		dt_fim = dt_ini  # Para evitar erro de variável não definida no print final
+		dt_fim = dt_ini
 		doy_fim = doy_ini
 
 	conn = None
@@ -5281,28 +5282,34 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		conn = sqlite3.connect(db_name)
 		selected_db = "local"
 	else:
-		print("Erro: No connection and no local database.")
+		print(f"{random.choice(messages['trouble_short'])} ❌ No connection and no local database.")
 		return
 
 	try:
-		filter_query = "SELECT MAX(doy) FROM amoc_data"
-		cursor = conn.execute(filter_query)
+		filter_query = "SELECT MAX(doy) FROM amoc_data WHERE ano = ?"
+		cursor = conn.execute(filter_query, (ano,))
 		last_doy_row = cursor.fetchone()
 
 		if last_doy_row and last_doy_row[0] is not None:
-			last_doy = last_doy_row[0]
+			last_doy = int(last_doy_row[0])
+			if not (1 <= last_doy <= max_doy_ano):
+				print(f"{random.choice(messages['trouble_short'])} The {selected_db} Database contains ⚠️ invalid DOY ({last_doy}) for year {ano}!\n")
+				return True
+
 			hoje = datetime.now().date()
-			data_db = datetime.strptime(f"{hoje.year} {last_doy}", "%Y %j").date()
+			try:
+				data_db = datetime.strptime(f"{ano} {last_doy}", "%Y %j").date()
+				if data_db != hoje:
+					diff = abs((hoje - data_db).days)
+					outdated = f"is {diff} day outdated" if diff == 1 else f"are {diff} days outdated"
+				else:
+					outdated = "are updated"
 
-			if data_db != hoje:
-				diff = abs((hoje - data_db).days)
-				outdated = f"is {diff} day outdated" if diff == 1 else f"are {diff} days outdated"
-			else:
-				outdated = "are updated"
-
-			print(f"Using {kolor['BOLD_BLUE']}{selected_db}{kolor['OFF']} database. Values {outdated} - Last DOY: {last_doy} | {data_db.strftime('%d.%m')}")
+				print(f"Using {kolor['BOLD_BLUE']}{selected_db}{kolor['OFF']} database. Values {outdated} - Last DOY: {last_doy} | {data_db.strftime('%d.%m')}")
+			except ValueError:
+				print(f"{kolor['BOLD_RED']}⚠️  Could not calculate date: DOY {last_doy} is out of range for {ano}.{kolor['OFF']}")
 		else:
-			print("The database is empty!")
+			print(f"{random.choice(messages['trouble_short'])} the ⚠️ {selected_db} Database is empty !")
 
 		cursor = conn.cursor()
 		cursor.execute("""
@@ -5321,7 +5328,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 			info_data = f"RANGE: Day {doy_ini:03}|{doy_fim:03} ≃ {dt_ini.strftime('%d.%m')}|{dt_fim.strftime('%d.%m')} YEAR:{ano}"
 
 		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
-		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTA Δ"
+		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
 		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
 
@@ -5330,8 +5337,11 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		else:
 			for r in rows:
 				dy, fby, *vals, d = r
-				data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
-				data_str = data_obj.strftime("%d.%m")
+				try:
+					data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
+					data_str = data_obj.strftime("%d.%m")
+				except:
+					data_str = "??.??"
 
 				res_vals = []
 				for v in vals:
@@ -5355,7 +5365,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}\n")
 
 	except Exception as e:
-		print(f"{kolor['BOLD_RED']}❗ Erro: {e}{kolor['OFF']}\n")
+		print(f"{random.choice(messages['trouble_short'])}❗ {e}{kolor['OFF']}\n")
 	finally:
 		if conn:
 			conn.close()
