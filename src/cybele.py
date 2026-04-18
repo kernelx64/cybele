@@ -5251,15 +5251,18 @@ def validar_e_converter_data(data_str):
 		
 #-------------------------------------------------
 def mostrar_valores_amoc(data_input=None, data_fim_input=None):
-	db_name = f"{_title_.lower()}.db"    
+	db_name = f"{_title_.lower()}.db"
+	db_exists = os.path.isfile(db_name)
+	internet = internet_onoff()
+
 	dt_ini = validar_e_converter_data(data_input)
 	if dt_ini is None:
 		print(f"{kolor['BOLD_RED']}❌ Error: Invalid start date!{kolor['OFF']}\n")
 		return
-    
+
 	ano = dt_ini.year
 	doy_ini = int(dt_ini.strftime('%j'))
-    
+
 	if data_fim_input:
 		dt_fim = validar_e_converter_data(data_fim_input)
 		if dt_fim is None or dt_fim.year != ano:
@@ -5267,73 +5270,96 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 			return
 		doy_fim = int(dt_fim.strftime('%j'))
 	else:
+		dt_fim = dt_ini  # Para evitar erro de variável não definida no print final
 		doy_fim = doy_ini
 
+	conn = None
+	if internet and not db_exists:
+		conn = sqlitecloud.connect(sqlconn)
+		selected_db = "online"
+	elif db_exists:
+		conn = sqlite3.connect(db_name)
+		selected_db = "local"
+	else:
+		print("Erro: No connection and no local database.")
+		return
+
 	try:
-		if internet_onoff() == True:
-			if os.path.isfile(db_name) == True:
-				conn = sqlite3.connect(db_name)
+		filter_query = "SELECT MAX(doy) FROM amoc_data"
+		cursor = conn.execute(filter_query)
+		last_doy_row = cursor.fetchone()
+
+		if last_doy_row and last_doy_row[0] is not None:
+			last_doy = last_doy_row[0]
+			hoje = datetime.now().date()
+			data_db = datetime.strptime(f"{hoje.year} {last_doy}", "%Y %j").date()
+
+			if data_db != hoje:
+				diff = abs((hoje - data_db).days)
+				outdated = f"is {diff} day outdated" if diff == 1 else f"are {diff} days outdated"
 			else:
-				conn = sqlitecloud.connect(sqlconn)
+				outdated = "are updated"
+
+			print(f"Using {kolor['BOLD_BLUE']}{selected_db}{kolor['OFF']} database. Values {outdated} - Last DOY: {last_doy} | {data_db.strftime('%d.%m')}")
+		else:
+			print("The database is empty!")
+
 		cursor = conn.cursor()
 		cursor.execute("""
-			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, delta 
-			FROM amoc_data 
-			WHERE ano = ? AND doy BETWEEN ? AND ? 
+			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, delta
+			FROM amoc_data
+			WHERE ano = ? AND doy BETWEEN ? AND ?
 			ORDER BY doy ASC, flyby ASC
 		""", (ano, doy_ini, doy_fim))
-		rows = cursor.fetchall()
-		conn.close()
 
-		print(f"\n{kolor['BOLD_MAGENTA']}🏛️  AMOC data Ifremer [Ground Truth Audit]{kolor['OFF']}")        
+		rows = cursor.fetchall()
+
+		print(f"\n{kolor['BOLD_MAGENTA']}🏛️  AMOC data Ifremer [Ground Truth Audit]{kolor['OFF']}")
 		if doy_ini == doy_fim:
 			info_data = f"DATA: {dt_ini.strftime('%d.%m.%Y')}  |  DOY: {doy_ini:03}"
 		else:
-			d_ini = dt_ini.strftime('%d.%m')
-			d_fim = dt_fim.strftime('%d.%m')
-			info_data = f"RANGE: Day {doy_ini:03}|{doy_fim:03} ≃ {d_ini}|{d_fim} YEAR:{ano}"
+			info_data = f"RANGE: Day {doy_ini:03}|{doy_fim:03} ≃ {dt_ini.strftime('%d.%m')}|{dt_fim.strftime('%d.%m')} YEAR:{ano}"
+
 		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
 		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTA Δ"
 		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
+
 		if not rows:
-			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- SEM DADOS NO INTERVALO ---{kolor['OFF']}\n")
-			return
-		for r in rows:
-			# dy = Day of Year vindo da DB
-			dy, fby, *vals, d = r
-			# Conversão de DOY para data formatada (DD.MM)
-			data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
-			data_str = data_obj.strftime("%d.%m")
-			res_vals = []
-			for v in vals:
-				if v is None or str(v).strip() in ["", "None", "NULL"]:
-					res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
-				else:
+			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- NO DATA IN THE RANGE ---{kolor['OFF']}\n")
+		else:
+			for r in rows:
+				dy, fby, *vals, d = r
+				data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
+				data_str = data_obj.strftime("%d.%m")
+
+				res_vals = []
+				for v in vals:
 					try:
+						if v in [None, "", "None", "NULL"]: raise ValueError
 						res_vals.append(f"{kolor['WHITE']}{float(v):>6.2f}  {kolor['OFF']}")
 					except:
 						res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
-			
-			if d is None or str(d).strip() in ["", "None", "NULL"]:
-				delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
-			else:
+
 				try:
+					if d in [None, "", "None", "NULL"]: raise ValueError
 					vd = float(d)
-					cor = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
-					delta_str = f"{cor}{vd:>5.2f}{kolor['OFF']}"
+					cor_d = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
+					delta_str = f"{cor_d}{vd:>5.2f}{kolor['OFF']}"
 				except:
 					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
-            
-			col_data = f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']}"
-			flyby_f = f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']}"
-			dados_f = "".join(res_vals)
-			print(f"{col_data} | {flyby_f} | {dados_f}| {delta_str}")
-            
+
+				print(f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | {kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
+					f"{''.join(res_vals)}| {delta_str}")
+
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}\n")
+
 	except Exception as e:
 		print(f"{kolor['BOLD_RED']}❗ Erro: {e}{kolor['OFF']}\n")
-		
+	finally:
+		if conn:
+			conn.close()
+
 #-------------------------------------------------
 #-------------------------------------------------
 def main():
@@ -6720,6 +6746,7 @@ def main():
 				
 		elif question.startswith('amoc audit'):
 			partes = question.split()
+			db_name = _title_.lower() + ".db"
 			if len(partes) == 2:
 				mostrar_valores_amoc()
 			elif len(partes) == 3:
