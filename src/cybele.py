@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '18.04.2026'
+_revise_ = '19.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -1978,53 +1978,63 @@ class VictronMonitor:
 class aetherNeural:
 	def __init__(self):
 		self.zones = {
-			"AR": [15, 10, 0.3, True],  "AU": [20, 12, 0.2, True],  "BR": [26, 4, 0.7, True],
-			"CA": [5, 20, 0.4, False], "CN": [15, 15, 0.4, False], "DE": [10, 12, 0.5, False],
-			"EG": [22, 12, 0.1, False], "ES": [18, 12, 0.2, False], "FI": [3, 18, 0.5, False],
-			"FR": [12, 10, 0.5, False], "GB": [10, 8, 0.6, False],  "IN": [28, 7, 0.6, False],
-			"JP": [15, 12, 0.5, False], "MX": [22, 8, 0.3, False],  "NO": [4, 15, 0.5, False],
-			"PT": [17, 10, 0.3, False], "RU": [2, 22, 0.4, False],  "US": [13, 15, 0.4, False],
-			"ZA": [17, 10, 0.3, True],  "TH": [28, 3, 0.8, False], "DEFAULT": [20, 10, 0.4, False]
+			"AR": [[24,23,21,17,14,11,11,13,15,18,20,23], 10, 0.3, 0.022],
+			"AU": [[27,27,25,22,18,15,15,16,19,22,24,26], 12, 0.2, 0.024],
+			"BR": [[27,27,27,26,25,24,24,25,25,26,26,27], 6, 0.7, 0.021],
+			"CA": [[-10,-9,-4,4,11,16,19,18,13,7,0,-7], 15, 0.4, 0.045],
+			"CN": [[-2,2,8,15,21,25,27,26,21,14,6,0], 12, 0.4, 0.028],
+			"DE": [[1,2,6,11,15,18,20,20,16,11,6,2], 10, 0.5, 0.030],
+			"EG": [[14,15,18,23,27,30,31,31,29,26,21,16], 15, 0.1, 0.035],
+			"ES": [[10,11,14,16,20,24,27,28,25,20,14,11], 12, 0.2, 0.032],
+			"FI": [[-6,-7,-3,3,10,15,18,16,10,5,0,-3], 12, 0.5, 0.050],
+			"FR": [[5,6,9,12,16,19,22,22,18,14,9,6], 10, 0.5, 0.028],
+			"GB": [[5,5,7,9,12,15,17,17,15,11,8,6], 8, 0.6, 0.025],
+			"IN": [[18,21,26,31,33,33,31,30,29,27,23,19], 12, 0.6, 0.022],
+			"JP": [[5,6,9,15,20,23,27,28,24,19,13,8], 10, 0.5, 0.026],
+			"MX": [[15,16,19,21,23,23,22,22,22,20,18,16], 12, 0.3, 0.025],
+			"NO": [[-3,-3,0,5,11,14,17,16,11,7,2,-1], 10, 0.5, 0.048],
+			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.3, 0.031],
+			"RU": [[-10,-9,-2,7,15,19,22,19,13,6,-2,-7], 15, 0.4, 0.040],
+			"US": [[2,4,8,14,19,24,27,26,22,15,9,4], 13, 0.4, 0.028],
+			"ZA": [[21,21,20,17,15,12,12,14,16,18,19,21], 11, 0.3, 0.024],
+			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
+			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
 
 	def _get_emoji(self, status, temp):
 		status_lower = status.lower()
-		if "rain" in status_lower: 
-			return "🌧️"
-		if "cloudy" in status_lower: 
-			return "⛅" if temp > 15 else "☁️"
-		if temp > 28: 
-			return "🔥"
-		if temp < 0:  
-			return "❄️"
+		if "rain" in status_lower: return "🌧️"
+		if "cloudy" in status_lower: return "⛅" if temp > 15 else "☁️"
+		if temp > 28: return "🔥"
+		if temp < 0: return "❄️"
 		return "☀️"
 
 	def predict(self):
 		code = system_country[0]
 		name = system_country[1]
 		profile = self.zones.get(code, self.zones["DEFAULT"])
-		base_temp, swing, humidity, is_south = profile
+		monthly_avgs, swing, humidity, gw_rate = profile
 		now = datetime.now()
-		day_of_year = now.timetuple().tm_yday
-		phase_shift = 0.5 if is_south else 0.0
-		seasonal_effect = math.sin(2 * math.pi * ((day_of_year / 365.0) - 0.25 - phase_shift))
-		temp = base_temp + (swing * seasonal_effect)
-		hour = now.hour
-		hour_effect = math.cos(2 * math.pi * ((hour - 15) / 24.0)) * 4
-		final_temp = temp + hour_effect
-		state_seed = (day_of_year * 7) % 100
+		month_idx = now.month - 1
+		next_month_idx = (month_idx + 1) % 12
+		day_progress = (now.day - 1) / 30.0
+		base_temp = monthly_avgs[month_idx] + (monthly_avgs[next_month_idx] - monthly_avgs[month_idx]) * day_progress
+		years_diff = now.year - 2020
+		gw_increment = max(0, years_diff * gw_rate)
+		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
+		final_temp = base_temp + gw_increment + hour_effect
+		state_seed = (now.timetuple().tm_yday * 7) % 100
 		if state_seed < (humidity * 100):
 			status = "Cloudy with a chance of rain"
-		elif state_seed > 80:
+		elif state_seed > 85:
 			status = "Partly Cloudy"
 		else:
 			status = "Clear Skies"
 		icon = self._get_emoji(status, final_temp)
-		#return f"aetherNeural ✧ Weather for {name}: {icon} {round(final_temp)}°C, {status}."
 		return (
 			f"{kolor['BOLD_CYAN']}aetherNeural {kolor['BOLD_YELLOW']}✧ "
 			f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
-			f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp)}°C{kolor['WHITE']}, "
+			f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
 			f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}."
 		)
 
@@ -5313,7 +5323,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 
 		cursor = conn.cursor()
 		cursor.execute("""
-			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, delta
+			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, n99, delta
 			FROM amoc_data
 			WHERE ano = ? AND doy BETWEEN ? AND ?
 			ORDER BY doy ASC, flyby ASC
@@ -5336,32 +5346,47 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- NO DATA IN THE RANGE ---{kolor['OFF']}\n")
 		else:
 			for r in rows:
-				dy, fby, *vals, d = r
+				dy    = r[0]
+				fby   = r[1]
+				temps = r[2:8]
+				db_hash = r[8]
+				delta = r[9]
+
 				try:
-					data_obj = datetime.strptime(f"{ano} {dy}", "%Y %j")
-					data_str = data_obj.strftime("%d.%m")
+					data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
 				except:
 					data_str = "??.??"
 
 				res_vals = []
-				for v in vals:
+				_psi = 0.0
+				for v in temps:
 					try:
 						if v in [None, "", "None", "NULL"]: raise ValueError
-						res_vals.append(f"{kolor['WHITE']}{float(v):>6.2f}  {kolor['OFF']}")
-					except:
+						val_f = float(v)
+						_psi += val_f
+						res_vals.append(f"{kolor['WHITE']}{val_f:>6.2f}  {kolor['OFF']}")
+					except ValueError:
 						res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
 
+				calc_hash = int((_psi + dy) * (fby + 124))
+				if db_hash == calc_hash:
+					#st = ✓
+					st = f"{kolor['DIM_WHITE']} {kolor['OFF']}"
+				else:
+					# Debug para ver onde está o erro se falhar
+					st = f"{kolor['DIM_WHITE']}X [DB:{db_hash} | CC:{calc_hash}]{kolor['OFF']}"
+
 				try:
-					if d in [None, "", "None", "NULL"]: raise ValueError
-					vd = float(d)
+					vd = float(delta)
 					cor_d = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
 					delta_str = f"{cor_d}{vd:>5.2f}{kolor['OFF']}"
 				except:
 					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
 
-				print(f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | {kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
-					f"{''.join(res_vals)}| {delta_str}")
-
+				print(f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | "
+						f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
+						f"{''.join(res_vals)}| {delta_str} {st}")
+		
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}\n")
 
 	except Exception as e:
