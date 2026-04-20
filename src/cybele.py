@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '19.04.2026'
+_revise_ = '20.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -66,6 +66,7 @@ import string
 import random
 import calendar
 import platform
+import threading
 import zoneinfo
 import pytz
 import socket
@@ -203,7 +204,9 @@ tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webs
 GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
 BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
 TLE_URLS = [f"{BASE_URL}?GROUP={g}&FORMAT=tle" for g in GROUPS]
-MEU_QTH = (lat, lon, 221);FILE_NAME = 'cybele.sat'
+MEU_QTH = (lat, lon, 221);FILE_NAME = f"{_title_}.sat"
+update_available = False
+version_val = 0
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
@@ -225,7 +228,8 @@ website = {
 	"trails": "https://www.google.com/maps/d/viewer?mid=15HPc39VNDiwpj7ocknqvjMuhSFfZ-do",
 	"simlk": "https://simkl.com/4378279/tv/watching/",
 	"askard": "https://www.adelinosaldanha.site/askards",
-	"book": "https://www.adelinosaldanha.site/unforgettable-humanity"
+	"book": "https://www.adelinosaldanha.site/unforgettable-humanity",
+	"github": "https://github.com/kernelx64/"
 }
 #-----------------------------------------------------------
 presence_online = {}
@@ -803,7 +807,7 @@ help = {
 	"help uptime": "Usage: cybele uptime \nReports the current session duration. Useful for monitoring script stability and long-running processes.\nex: cybele uptime\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
-	"help weather": "Usage: weather | <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm (work in progress).\nex: weather for today\n    weather \n",
+	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm (work in progress).\nex: weather for today\n",
 	"help week number": "Usage: week number \nDisplay the week number for the actual date or the system date.\nex: week number\n",
 	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
@@ -1017,7 +1021,7 @@ def get_default_port():
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
 	global dblrconn, dbmsgbl
-	conn = None		
+	conn = None
 	if internet_onoff() == True:
 		if os.path.isfile(db_filename) == True:
 			conn = sqlite3.connect(db_filename)
@@ -1035,7 +1039,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 					print_statusline(f"")
 					modname = f"\n    Unexpected invalid value encountered: {e}\n"
 					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)	
+					exit(0)
 				except sqlitecloud.exceptions.SQLiteCloudException as e:
 					if attempt < max_attempts:
 						sleep(1)
@@ -1193,6 +1197,26 @@ def check_tables(tables_names):
 			conn.close()
 
 #------------------------------------------------------------
+def check_database_version():
+	global update_available, version_val
+	db_name = f"{_title_.lower()}.db"
+
+	if not os.path.isfile(db_name) or not internet_onoff():
+		return
+
+	try:
+		res_local = fetch_fromdbfile(db_name, "config", "tc")
+		version_local = res_local[0] if res_local else 0
+		with sqlitecloud.connect(sqlconn) as conn:
+			cursor = conn.execute("SELECT tc FROM config LIMIT 1")
+			row = cursor.fetchone()
+			if row and row[0] > version_local:
+				version_val = row[0]
+				update_available = True
+	except Exception:
+		pass
+
+#------------------------------------------------------------
 def download_and_convert(connection_string: str, local_db_filename: str, verbose):
 
 	cloud_conn = None
@@ -1227,7 +1251,7 @@ def download_and_convert(connection_string: str, local_db_filename: str, verbose
 			placeholders = ', '.join(['?'] * len(columns))
 			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
 			if rows:
-				local_cursor.executemany(insert_sql, rows)    
+				local_cursor.executemany(insert_sql, rows)
 		local_conn.commit()
 		if hasattr(os, 'sync'):
 			os.sync()
@@ -1284,11 +1308,14 @@ def make_intextdb():
 		idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
 		_revise_idvdb_ = _revise_.replace('.', '')
 		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
+			v_str = str(idvdb).zfill(6)
+			seculo_atual = str(datetime.now().year)[:2]
 			print_statusline(f"")
-			print(f" {kolor['RED']}WARNING!{kolor['OFF']} The essential architectural evolution needs that this version be updated. \n I strongly advise a {_title_} upgrade via github to maintain funcionaly and compatibility. \n")
+			print(f"{kolor['YELLOW']}WARNING!{kolor['OFF']} A new build of {_title_} {version} (released {v_str[:2]}.{v_str[2:4]}.{seculo_atual}{v_str[4:]}) is now available.")
+			print(f"This update is essential for continued functionality and compatibility.\nI strongly recommend upgrading via github: {kolor['BOLD_BLUE']}{website['github']}cybele{kolor['OFF']} \n")
 			sys.exit(0)
 		del idvdb
-		
+
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
 
 		star_data = zip(
@@ -1508,7 +1535,9 @@ questions = [
 	"What do you mean?",
 	"Tell me about your book",
 	"Unforgettable Humanity",
-	"Adelino book"
+	"Adelino book",
+	"Meteorological instruments",
+	"Meteo instruments"
 ]
 #------------------------------------------------
 answers = [
@@ -1556,7 +1585,10 @@ answers = [
 	"Complexity is often just a failure of imagination. When we can't explain something simply, it’s usually because we don’t understand the boundaries of the concept well enough to see where it connects to everything else.",
 	"Adelino is the author of 'Unforgettable Humanity', a book that explores the depths of the human experience. You can find all the details and grab a copy directly on Amazon here: https://www.amazon.es/dp/B0G6SVN4XX",
 	"'Unforgettable Humanity' is the latest work by Adelino. For more information visit the official webpage "+website['book'],
-	"Yes, Adelino has written a compelling book titled 'Unforgettable Humanity'. It’s a great way to dive deeper into the themes he values. Here is the link: https://www.amazon.es/dp/B0G6SVN4XX"
+	"Yes, Adelino has written a compelling book titled 'Unforgettable Humanity'. It’s a great way to dive deeper into the themes he values. Here is the link: https://www.amazon.es/dp/B0G6SVN4XX",
+	"The essential instruments include: Anemometer (wind speed), Wind sock (wind direction), Barometer (atmospheric pressure), Thermometer (temperature), Rain gauge (precipitation), Hygrometer (air humidity), and Heliograph (sun brightness).",
+	"Main instruments: Anemometer (wind speed), Wind sock (wind direction), Barometer (atmospheric pressure), Thermometer (temperature), Rain gauge (precipitation), Hygrometer (air humidity), and Heliograph (sun brightness).",
+
 ]
 #-------------------------------------------------
 others = [
@@ -5416,6 +5448,9 @@ def main():
 	#----------------------------
 	print_statusline(f"")
 	_portac_ = get_default_port()
+	t = threading.Thread(target=check_database_version)
+	t.daemon = True
+	t.start()
 	#----------------------------
 	drawart('art_cybele')
 	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
@@ -5426,6 +5461,11 @@ def main():
 	while True:
 		#-------------------------
 		question = get_question()
+		#-------------------------
+		if globals()['update_available']:
+			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version is available (v.{version_val}).{kolor['OFF']}")
+			print("Type 'offline mode on' to sync.\n")
+			globals()['update_available'] = False
 		#-------------------------
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
