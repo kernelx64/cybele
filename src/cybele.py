@@ -29,7 +29,7 @@ _title_ = 'Cybele'
 _pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '20.04.2026'
+_revise_ = '21.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _cybid_ = False
@@ -1178,69 +1178,57 @@ def check_database_version():
 		pass
 
 #------------------------------------------------------------
+#------------------------------------------------------------
 def download_and_convert(connection_string: str, local_db_filename: str, verbose):
+
 	cloud_conn = None
 	local_conn = None
 	try:
 		print_statusline("Connecting to SQLite Cloud database...")
 		cloud_conn = sqlitecloud.connect(connection_string)
-		cloud_conn.execute("USE DATABASE cybele.sqlite;")
 		cloud_cursor = cloud_conn.cursor()
-
-		print_statusline(f"Creating local database '{local_db_filename}'...")
+		print_statusline(f"Creating my local database '{local_db_filename}'...")
 		local_conn = sqlite3.connect(local_db_filename)
-
-		# Otimização para escrita rápida no Linux
-		local_conn.execute("PRAGMA journal_mode = WAL;")
-		local_conn.execute("PRAGMA synchronous = NORMAL;")
-
+		local_conn.execute("PRAGMA synchronous = FULL;")
 		local_cursor = local_conn.cursor()
-
-		print_statusline("Fetching table schema...")
+		print_statusline("Fetching table schema from the cloud database...")
 		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
 		tables_info = cloud_cursor.fetchall()
-
 		total_tables = len(tables_info)
-		msg_template = "Syncing data [{bar}] {progress:.1f}% ({table_name})..." if verbose else "Syncing data [{bar}] {progress:.1f}% ..."
-
+		if verbose:
+			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ({table_name})..."
+		else:
+			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ..."
 		for i, (table_name, create_sql) in enumerate(tables_info):
 			progress = (i + 1) / total_tables * 100
-			bar = '█' * int(20 * progress // 100) + '░' * (20 - int(20 * progress // 100))
+			bar_length = 20
+			filled_length = int(bar_length * progress // 100)
+			bar = '█' * filled_length + '░' * (bar_length - filled_length)
 			print_statusline(msg_template.format(bar=bar, progress=progress, table_name=table_name))
-
-			# Limpa e cria a tabela local
 			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
 			local_cursor.execute(create_sql)
-
-			# Fetch dos dados da cloud
-			cloud_cursor.execute(f"SELECT * FROM \"{table_name}\";")
+			cloud_cursor.execute(f"SELECT * FROM {table_name};")
 			rows = cloud_cursor.fetchall()
-
+			columns = [col[0] for col in cloud_cursor.description]
+			placeholders = ', '.join(['?'] * len(columns))
+			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
 			if rows:
-				columns = [col[0] for col in cloud_cursor.description]
-				placeholders = ', '.join(['?'] * len(columns))
-				col_names = ', '.join([f'"{c}"' for c in columns])
-				insert_sql = f"INSERT INTO \"{table_name}\" ({col_names}) VALUES({placeholders});"
-
 				local_cursor.executemany(insert_sql, rows)
-				# COMMIT aqui garante que cada tabela é gravada fisicamente antes de passar à próxima
-				local_conn.commit()
-
-		# Força o sistema de ficheiros a escrever as alterações no disco
+		local_conn.commit()
 		if hasattr(os, 'sync'):
 			os.sync()
-
-		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart Cybele")
+		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
 		print("\n")
-
+	except sqlitecloud.SQLiteCloudException as e:
+		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
+	except sqlite3.Error as e:
+		print(f"\nAn SQLite error occurred: {e}", file=sys.stderr)
 	except Exception as e:
-		if local_conn:
-			local_conn.rollback() # Se algo der errado, desfaz para não corromper
-		print(f"\nErro no Linux (Tumbleweed): {e}", file=sys.stderr)
+		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
 	finally:
 		if cloud_conn: cloud_conn.close()
-		if local_conn:
-			local_conn.close() # Fechar a ligação é o que realmente "tranca" o ficheiro no disco
+		if local_conn: local_conn.close()
+
 #------------------------------------------------------------
 def delete_cybeledb():
 	file_name = _title_.lower()+".db"
