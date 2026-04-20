@@ -45,64 +45,42 @@ import subprocess
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 
 try:
-    import winreg
-except ImportError:
-    winreg = None
+	import time
+	import time as sys_time
+	import string
+	import random
+	import calendar
+	import platform
+	import threading
+	import zoneinfo
+	import pytz
+	import socket
+	import math
+	import base64
+	import hashlib
+	import sqlite3
+	import sqlitecloud
+	import requests
+	import html, urllib
+	import json
+	import holidays
+	import locale
+	import PIL
+	import tzdata
+	import shutil
+	from urllib.parse import urljoin
+	from packaging.version import parse as parse_version
+	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
+	from bs4 import BeautifulSoup
+	from random_word import RandomWords
+	from platform import python_version
+	from time import gmtime, strftime, sleep
+	from math import degrees as deg, radians as rad
+	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
+	from datetime import datetime, date, time, timedelta, timezone
+	from zoneinfo import ZoneInfo
 
-def check_msvc_installed():
-	if winreg is None: # Non Windows
-		return True
-	try:
-		path = r"SOFTWARE\Microsoft\VisualStudio\SxS\VS7"
-		with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY) as key:
-			winreg.QueryValueEx(key, "17.0")
-			return True
-	except:
-		return False
-
-import time
-import time as sys_time
-import string
-import random
-import calendar
-import platform
-import threading
-import zoneinfo
-import pytz
-import socket
-import math
-import base64
-import hashlib
-import sqlite3
-import sqlitecloud
-import requests
-import html, urllib
-import json
-import holidays
-import locale
-import PIL
-import tzdata
-import shutil
-from urllib.parse import urljoin
-from packaging.version import parse as parse_version
-from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
-from bs4 import BeautifulSoup
-from random_word import RandomWords
-from platform import python_version
-from time import gmtime, strftime, sleep
-from math import degrees as deg, radians as rad
-from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-from datetime import datetime, date, time, timedelta, timezone
-from zoneinfo import ZoneInfo
-
-try:
-	import readline
-except ImportError:
-	pass
-
-try:
 	import serial
-	import predict 
 
 except ImportError as err:
 	match = re.search(r"'(.*?)'", str(err))
@@ -118,17 +96,6 @@ except ImportError as err:
 			while True:
 				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
 				if install_choice == 'y':
-					if module_name in ["predict", "numpy"] and not check_msvc_installed():
-						print("")
-						print(f"{' ' * 3}{' ERROR: MISSING C++ BUILD TOOLS ':=^60}")
-						print(f"{' '*3}This module '{module_name}' on Python {'.'.join(map(str, pyver))}, REQUIRES MSVC 2022.")
-						print(f"{' '*3}1. Open Visual Studio Installer")
-						print(f"{' '*3}2. Select 'Desktop development with C++'")
-						print(f"{' '*3}3. Ensure 'MSVC v143' and 'Windows SDK' are checked.")
-						print(f"{' ' * 3}{'':=^60}")
-						print(f"{' '*3}Linux users can ignore the MSVC error! Is only a Windows-specific requirement.")
-						sys.exit(0)
-
 					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
 					try:
 						subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
@@ -138,10 +105,6 @@ except ImportError as err:
 						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
 						sys.exit(0)
 				elif install_choice == 'n':
-					if module_name == 'predict':
-						print(f"\n{' '*3}{"\u2139"}  Ignoring '{module_name}' for Satellite Prediction Passes.")
-						break
-					else:
 						print(f"{' '*3}Cannot execute properly. Exiting.")
 						sys.exit(0)
 				else:
@@ -682,7 +645,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
-		"longest day","shortest day","satellite tracker","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit",
+		"longest day","shortest day","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit",
 		"list and calculate person generation"]
 
 #------------------------------------------------------------
@@ -772,7 +735,6 @@ help = {
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help restart": "Usage: restart | boot \nEngages Cybele in a 'fresh start', re-reading databases and data and clearing memory. \nex: restart \n    boot \n",
 	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
-	"help satellite tracker": "Usage: <satellite tracker|sat track|tracker> \nActivates the Cybele satellite tracking system to monitor real-time orbital positions. \nex: sat track \n    satellite tracker \n",
 	"help say something": "Usage: <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n    spring\n",
 	"help set default country": "Usage: Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
@@ -781,7 +743,6 @@ help = {
 	"help seek": "Usage: seek|find <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: seek help \n    find astronomy questions\n",
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
 	"help search askard": "Usage: search askard <word> \nPerforms a substring search across the phrase database. Returns all entries and unique IDs containing the specified string. Use <view askard <id>> to retrieve the complete detail. \nex: search askard time\n    view askard 4005\n",
-	"help satellite track": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
 	"help sharing": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
 	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show <info|core> or <#info|#core> \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #core\n",
@@ -1218,55 +1179,68 @@ def check_database_version():
 
 #------------------------------------------------------------
 def download_and_convert(connection_string: str, local_db_filename: str, verbose):
-
 	cloud_conn = None
 	local_conn = None
 	try:
 		print_statusline("Connecting to SQLite Cloud database...")
 		cloud_conn = sqlitecloud.connect(connection_string)
+		cloud_conn.execute("USE DATABASE cybele.sqlite;")
 		cloud_cursor = cloud_conn.cursor()
-		print_statusline(f"Creating my local database '{local_db_filename}'...")
+
+		print_statusline(f"Creating local database '{local_db_filename}'...")
 		local_conn = sqlite3.connect(local_db_filename)
-		local_conn.execute("PRAGMA synchronous = FULL;")
+
+		# Otimização para escrita rápida no Linux
+		local_conn.execute("PRAGMA journal_mode = WAL;")
+		local_conn.execute("PRAGMA synchronous = NORMAL;")
+
 		local_cursor = local_conn.cursor()
-		print_statusline("Fetching table schema from the cloud database...")
+
+		print_statusline("Fetching table schema...")
 		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
 		tables_info = cloud_cursor.fetchall()
+
 		total_tables = len(tables_info)
-		if verbose:
-			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ({table_name})..."
-		else:
-			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ..."
+		msg_template = "Syncing data [{bar}] {progress:.1f}% ({table_name})..." if verbose else "Syncing data [{bar}] {progress:.1f}% ..."
+
 		for i, (table_name, create_sql) in enumerate(tables_info):
 			progress = (i + 1) / total_tables * 100
-			bar_length = 20
-			filled_length = int(bar_length * progress // 100)
-			bar = '█' * filled_length + '░' * (bar_length - filled_length)
+			bar = '█' * int(20 * progress // 100) + '░' * (20 - int(20 * progress // 100))
 			print_statusline(msg_template.format(bar=bar, progress=progress, table_name=table_name))
+
+			# Limpa e cria a tabela local
 			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
 			local_cursor.execute(create_sql)
-			cloud_cursor.execute(f"SELECT * FROM {table_name};")
+
+			# Fetch dos dados da cloud
+			cloud_cursor.execute(f"SELECT * FROM \"{table_name}\";")
 			rows = cloud_cursor.fetchall()
-			columns = [col[0] for col in cloud_cursor.description]
-			placeholders = ', '.join(['?'] * len(columns))
-			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
+
 			if rows:
+				columns = [col[0] for col in cloud_cursor.description]
+				placeholders = ', '.join(['?'] * len(columns))
+				col_names = ', '.join([f'"{c}"' for c in columns])
+				insert_sql = f"INSERT INTO \"{table_name}\" ({col_names}) VALUES({placeholders});"
+
 				local_cursor.executemany(insert_sql, rows)
-		local_conn.commit()
+				# COMMIT aqui garante que cada tabela é gravada fisicamente antes de passar à próxima
+				local_conn.commit()
+
+		# Força o sistema de ficheiros a escrever as alterações no disco
 		if hasattr(os, 'sync'):
 			os.sync()
-		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
+
+		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart Cybele")
 		print("\n")
-	except sqlitecloud.SQLiteCloudException as e:
-		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
-	except sqlite3.Error as e:
-		print(f"\nAn SQLite error occurred: {e}", file=sys.stderr)
+
 	except Exception as e:
-		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
+		if local_conn:
+			local_conn.rollback() # Se algo der errado, desfaz para não corromper
+		print(f"\nErro no Linux (Tumbleweed): {e}", file=sys.stderr)
 	finally:
 		if cloud_conn: cloud_conn.close()
-		if local_conn: local_conn.close()
-
+		if local_conn:
+			local_conn.close() # Fechar a ligação é o que realmente "tranca" o ficheiro no disco
 #------------------------------------------------------------
 def delete_cybeledb():
 	file_name = _title_.lower()+".db"
@@ -1302,10 +1276,28 @@ def make_intextdb():
 	message = random.choice(messages['loadings'])
 	print_statusline(f"{message} {_spchar_[7:8]}")
 
-	try:
-		idvdb = ""
-		idcode = fetch_fromdbfile("cybele.db", "config", "code")[0]
-		idvdb = fetch_fromdbfile("cybele.db", "config", "id")[0]
+	try:	
+		db_name = f"{_title_.lower()}.db"
+		internet = internet_onoff()
+		db_exists = os.path.isfile(db_name)
+		conn = None
+		if internet and not db_exists:
+			conn = sqlitecloud.connect(sqlconn)
+		elif db_exists:
+			conn = sqlite3.connect(db_name)
+		else:
+			print(f"{random.choice(messages['trouble_short'])} ❌ I cannot processed. There is No intenet and no local database.")
+			return
+		
+		cursor = conn.execute("SELECT * FROM config LIMIT 1")
+		row = cursor.fetchone()
+		idvdb = row[0]
+		idtc = row[1]
+		idcode = row[2] 
+
+		if conn:
+			conn.close()
+
 		_revise_idvdb_ = _revise_.replace('.', '')
 		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
 			v_str = str(idvdb).zfill(6)
@@ -1472,7 +1464,7 @@ def make_intextdb():
 				midbcounter += len(core[key])
 
 	except Exception as e:
-		print(f"{random.choice(messages['trouble_short'])}, {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}") 
+		print(f"{random.choice(messages['trouble_short'])}! {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}")
 		sys.exit(1)
 
 #----------------------------------------------------------------------
@@ -5099,143 +5091,6 @@ def run_amoc_engine():
 		print(f"{kolor['DIM_WHITE']}Please place the Rust binary in the Cybele root folder.{kolor['OFF']}\n")
 
 #-------------------------------------------------
-def download_tle():
-	print(f'{kolor['BOLD_WHITE']}{symb_prompt()} Updating TLE database for {FILE_NAME}...{kolor['OFF']}')
-	seen_ids = set()
-	final_list = []
-	try:
-		with open(FILE_NAME, 'w', encoding='utf-8') as f:
-			for url in TLE_URLS:
-				try:
-					r = requests.get(url, timeout=10)
-					r.raise_for_status()
-					lines = [l.strip() for l in r.text.split('\n') if l.strip()]
-					for i in range(0, len(lines) - 2, 3):
-						name, l1, l2 = lines[i], lines[i+1], lines[i+2]
-						# Unique NORAD ID is in line 2, columns 3 to 7
-						sat_id = l2[2:7].strip()
-						if sat_id not in seen_ids:
-						# The Hack: '0 ' for total compatibility
-							f.write(f"0 {name}\n{l1}\n{l2}\n")
-							seen_ids.add(sat_id)
-							final_list.append({
-								'satellite_name': name,
-								'tle_1': l1,
-								'tle_2': l2
-							})
-				except Exception:
-					print(f"{kolor['RED']}Error accessing: {kolor['DARK_WHITE']}{url}{kolor['OFF']}")
-
-		print(f"{symb_prompt()} Success! {len(final_list)} satellites saved to {FILE_NAME}.\n")
-		return final_list
-	except Exception as e:
-		print(f"[-] Fatal error writing file: {e}")
-		return []
-
-#-------------------------------------------------
-def load_from_disk():
-	sats = []
-	if not os.path.exists(FILE_NAME): return sats
-	with open(FILE_NAME, 'r', encoding='utf-8') as f:
-		lines = [l.strip() for l in f.readlines() if l.strip()]
-		for i in range(0, len(lines), 3):
-			# Extract name removing the '0 ' prefix if present
-			raw_name = lines[i]
-			name = raw_name[2:] if raw_name.startswith('0 ') else raw_name
-			sats.append({
-				'satellite_name': name,
-				'tle_1': lines[i+1],
-				'tle_2': lines[i+2]
-			})
-	return sats
-
-#-------------------------------------------------
-def load_cybele_data():
-	"""Manages the 5-day logic and decides whether to download or use local data."""
-	needs_download = False
-	age_str = "Just now"
-	if not os.path.exists(FILE_NAME):
-		if internet_onoff() == True:
-			needs_download = True
-		else:
-			print(f"{kolor['RED']}[-] No internet connection. I'm unable to update the TLE.{kolor['OFF']}\n")
-			return True
-	else:
-		mtime = os.path.getmtime(FILE_NAME)
-		diff = datetime.now() - datetime.fromtimestamp(mtime)
-		# Format age for the status message
-		if diff.days > 0:
-			age_str = f"{diff.days} days ago"
-		else:
-			hours = diff.seconds // 3600
-			age_str = f"{hours}h ago" if hours > 0 else "less than 1h ago"
-		if diff > timedelta(days=5):
-			needs_download = True
-	if needs_download:
-		sats = download_tle()
-		print(f"{kolor['BOLD_BLUE']}{symb_prompt()}Tracker for {len(sats)} satellites (Updated: Now).{kolor['OFF']}")
-		return sats
-	else:
-		sats = load_from_disk()
-		print(f"{kolor['BOLD_BLUE']}{symb_prompt()}Tracker for {len(sats)} satellites (Age: {age_str}).{kolor['OFF']}")
-		return sats
-
-#-------------------------------------------------
-def select_satellite(search_term, sat_list):
-	"""Searches for satellites that START with the given term."""
-	term = search_term.strip().upper()
-	found = [s for s in sat_list if s['satellite_name'].upper().startswith(term)]
-	if not found:
-		print(f"{symb_prompt()} No satellite starts with '{search_term}'.")
-		return None
-	if len(found) == 1:
-		return found[0]
-	print(f"\n{symb_prompt()}Found {len(found)} satellites starting with '{term}':")
-	for idx, sat in enumerate(found[:25], 1):
-		print(f"  {idx:2d}) {sat['satellite_name']}")
-	if len(found) > 25:
-		print(f"  ... and {len(found)-25} more results.")
-	try:
-		op = input(f"\nChoose a number (1-{min(len(found), 25)}) or '{chr(0x21B5)} exit': ")
-		if not op or op == "0": return None
-		return found[int(op) - 1]
-	except:
-		return None
-
-#-------------------------------------------------
-def predict_passes():
-	global MEU_QTH # GEt the lat and lon variables and put them together for the location
-	sat_list = load_cybele_data()
-	if sat_list == None or sat_list == True:
-		return True
-	if not sat_list:
-		print(f"{symb_prompt()} Error: Could not load any TLE data.")
-		return
-	while True:
-		search = input(f"\nSatellite Name (search, '{chr(0x21B5)} exit'): ").strip()
-		if not search or search.lower() in ['exit', 'quit']: print(""); break
-		chosen = select_satellite(search, sat_list)
-		if not chosen: continue
-		# Data for the predict library
-		sat_data = [chosen['satellite_name'], chosen['tle_1'], chosen['tle_2']]
-		now = datetime.now(timezone.utc).timestamp()
-		try:
-			passes = predict.transits(sat_data, MEU_QTH, now, now + 86400)
-			print(f"\n{kolor['BOLD_GREEN']}{symb_prompt()} UPCOMING PASSES (24h): {chosen['satellite_name']}{kolor['OFF']}")
-			print("-" * 60)
-			print(f"{'Date/Time (AOS)':<20} | {'Duration':<10} | {'Max Elev':<10} | {'Azimuth'}")
-			print("-" * 60)
-			for p in passes:
-				duration = p.duration()
-				peak_time = p.start + (duration / 2)
-				pos = predict.quick_find(sat_data, peak_time, MEU_QTH)
-				dt = datetime.fromtimestamp(p.start).strftime('%d/%m %H:%M:%S')
-				print(f"{dt:<20} | {int(duration//60):02d}m {int(duration%60):02d}s    | {pos['elevation']:>7.1f}°   | {pos['azimuth']:>6.1f}°")
-			print("-" * 60)
-		except Exception as e:
-			print(f"[-] Prediction error: {e}")
-
-#-------------------------------------------------
 def download_ifremer_pro(day_number, year):
 	year_val = str(year).strip("{}")
 	day_str = str(day_number).zfill(3).strip("{}")
@@ -6074,7 +5929,6 @@ def main():
 							total_knowledge_sum += len(value)
 				days_running_str = "N/A days."
 
-				num_sats = len(load_from_disk())
 				memory = get_brain_status(midbcounter)
 
 				if 'days_till_today' in globals() and hasattr(days_till_today, 'days'):
@@ -6094,7 +5948,6 @@ def main():
 				print(f"      Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
 				print(f"     Linux : {len(core.get('linuxcmd', []))}")
 				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
-				print(f" Satellite : {num_sats:,.0f}")
 				print(f"     World : {len(core.get('country', []))}")
 				print(f"   Storage : {dblrconn}")
 				print(f"   Running : {days_running_str}\n")
@@ -6838,15 +6691,6 @@ def main():
 				mostrar_valores_amoc(data_ini, data_fim)
 			else:
 				print(f"{kolor['BOLD_RED']}❓ Invalid format! Use <help amoc audit>{kolor['OFF']}")
-
-		elif question == 'satellite tracker' or question == 'sat track' or  question == 'tracker':
-			if _pydr3_:
-				print("I'm currently running on Pydroid, where my satellite tracker command is unavailable.")
-				print("I'm ready to handle these once we're back on a compatible Linux|Windows setup!\n")
-			elif 'predict' not in sys.modules:
-				print("I'm currently running without the modules for satellite tracker command works.\n")
-			else:
-				predict_passes()
 
 		elif question.startswith('get ifremer data'):
 			if internet_onoff() == False:
