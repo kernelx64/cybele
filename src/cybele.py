@@ -1279,22 +1279,19 @@ def make_intextdb():
 		
 		cursor = conn.execute("SELECT * FROM config LIMIT 1")
 		row = cursor.fetchone()
-		idvdb = row[0]
-		idtc = row[1]
 		idcode = row[2] 
 
 		if conn:
 			conn.close()
 
-		_revise_idvdb_ = _revise_.replace('.', '')
-		if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
-			v_str = str(idvdb).zfill(6)
-			seculo_atual = str(datetime.now().year)[:2]
-			print_statusline(f"")
-			print(f"{kolor['YELLOW']}WARNING!{kolor['OFF']} A new build of {_title_} {version} (released {v_str[:2]}.{v_str[2:4]}.{seculo_atual}{v_str[4:]}) is now available.")
-			print(f"This update is essential for continued functionality and compatibility.\nI strongly recommend upgrading via github: {kolor['BOLD_BLUE']}{website['github']}cybele{kolor['OFF']} \n")
-			sys.exit(0)
-		del idvdb
+		#_revise_idvdb_ = _revise_.replace('.', '')
+		#if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
+		#	seculo_atual = str(datetime.now().year)[:2]
+		#	print_statusline(f"")
+		#	print(f"{kolor['YELLOW']}WARNING!{kolor['OFF']} A new build of {_title_} {version} (released {revise_idvdb_[:-4]} {revise_idvdb_[-2:]}) is now available.")
+		#	print(f"This update is essential for continued functionality and compatibility.\nI strongly recommend upgrading via github: {kolor['BOLD_BLUE']}{website['github']}cybele{kolor['OFF']} \n")
+		#	sys.exit(0)
+		#del idvdb
 
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
 
@@ -5423,7 +5420,7 @@ def main():
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
 		#///
-		elif any(word in question for word in core['display_options']) and any(word in question for word in core['display_commands']):
+		elif any(word in question for word in core['display_options']):
 			if 'astronomy terms' in question or 'astronomy words' in question or 'astronomy glossary' in question:
 				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
 
