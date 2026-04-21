@@ -140,7 +140,7 @@ print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
-dbconn = "ljebmxvehnw://vqnhfh3tas.z1.ljebmx.vehnw:8860/vruxex.ljebmx?tibdxr=9h4sZZOoQDFn74I2HsWakhmMHUi9ZVZJ2t0OhmnVFfl"
+dbconn = f"{_title_.lower()}.db"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -153,7 +153,6 @@ stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_comma
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []
-
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
