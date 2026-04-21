@@ -79,6 +79,7 @@ try:
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
 	from datetime import datetime, date, time, timedelta, timezone
 	from zoneinfo import ZoneInfo
+	from itertools import product
 
 	import serial
 
@@ -273,8 +274,8 @@ core = {
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
 	"questioning_about": ["what are doing","are you working","working","doing what","having fun"],
-	"display_options":	["show me","tell me","list me"],
-	"display_commands":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
+	"display_commands":	["show me","tell me","list me"],
+	"display_options":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
 						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
 						"meaning term","meaning words","meaning terms","constellations","all constellations","linux commands","verbs",
 						"english verbs","meteo","meteorology","gens","generations"],
@@ -295,7 +296,7 @@ core = {
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
 						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
 						"periodoc table","peridoc table","periodical table","periodic tabel","periodic tayble","periodic teble",
-						"peirodic table","millenials","ehlp","hlep","hepl"],
+						"peirodic table","millenials","ehlp","hlep","hepl","astronmy"],
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
@@ -313,6 +314,8 @@ core = {
 	"python art":	["py","python","python art","art python"],
 	"executing_mc": ["run mc","mc_","_mc","midnight commander"]
 }
+#-------------------------------------------------------------
+user_utterances = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
 #-------------------------------------------------------------
 knowledge = {
 		"noun_countable_singular": ["dog", "cat", "book", "tree", "car", "person", "thing", "rainbow", "ocean", "mountain", "river", "flower", "computer"],
@@ -344,6 +347,7 @@ knowledge = {
 #-------------------------------------------------------------
 messages = {
 	"pre_terms":["That is","I identify that as","To me that is","I recognize that as","Based on my knowledge of","I'm sure that is"],
+	"helpassist":	["This may help", "Try this", "Suggested command", "Quick tip", "Available option","Need a hand? Try","Hint","I Suggested"],
 	"activity_msg":	["We're serving up one year's worth of seasonal shenanigans, daily!","One year of seasons, squeezed into a single day. Time travel? Sort of.",
 					"Daily dose of a year's worth of seasonal quirks.","Seasons? We've got a year of 'em, packed into each day!",
 					"Ever wanted to experience a whole year of seasons in a day? We're showing one year per day.","Once a day. It's like a time machine, but with more leaves and snow.",
@@ -2269,7 +2273,7 @@ def find_answer(question,whatlist):
 					"time_query","season_query","asking for country details","asking for talking","python art","sayconvert",
 					"show_me_your_topics","executing_mc"]
 	others = [item for key in others_keys if key in core for item in core[key]]
-	alldict = others + questions + sayhi + dict_climate + dict_astro + help_comands
+	alldict = others + questions + sayhi + dict_climate + dict_astro + help_comands + user_utterances
 	alldict[:] = list(set(alldict))
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
@@ -2472,7 +2476,7 @@ def find_word_in_dicts(word, core):
 				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 				print(f"{symb_prompt()}{dbsearch}\n")
 
-			elif list_name == 'display_options':
+			elif list_name == 'display_commands':
 				print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
 
 			elif list_name == 'generation':
@@ -2502,6 +2506,11 @@ def find_word_in_dicts(word, core):
 
 			elif list_name == 'linuxexcmd':
 				print ("")
+				
+			elif list_name == 'display_options':
+				what2tell = random.choice(core['display_commands'])
+				iniwhat2tell = random.choice(messages['helpassist'])
+				print(f"{iniwhat2tell}, type <{what2tell} {word}> or <help {what2tell}>\n")
 
 			elif list_name == 'questioning_about':
 				print(f"{random.choice(core['working_hard'])}\n{random.choice(messages['enjoying'])}\n")
@@ -5416,7 +5425,7 @@ def main():
 			print ( "What?! " + cquestion + "In my case just type without the usual formalities... if i have the knowledge i will anwser.\n")
 
 		#///
-		elif any(word in question for word in core['display_options']):
+		elif any(word in question for word in user_utterances):
 			if 'astronomy terms' in question or 'astronomy words' in question or 'astronomy glossary' in question:
 				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
 
@@ -6697,7 +6706,9 @@ def main():
 			return True
 		
 		elif question[0:10] == 'test':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")
+			#print(f"{random.choice(messages['nicefun_msg'])}\n")
+			result = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
+			print(result)
 
 		elif question != '':
 			answer = find_answer(question,questions)
