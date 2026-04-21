@@ -66,6 +66,7 @@ try:
 	import PIL
 	import tzdata
 	import shutil
+	import zlib
 	from urllib.parse import urljoin
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -145,15 +146,13 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 internals = ["version","_title_","_spchar_","_active_","_revise_","_author_","lat","lon"]
-datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
+datemd = str(datetime.today().strftime("%d.%m")); _poigps_=[]; tables=[]; system_country=None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
-shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.acos(-1)) * 3) + math.e**2)-56)
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
-tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}
-update_available = False
-version_val = 0
+tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
+update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
@@ -179,10 +178,6 @@ website = {
 	"github": "https://github.com/kernelx64/"
 }
 #-----------------------------------------------------------
-presence_online = {}
-as_quotes = []
-#-----------------------------------------------------------
-
 kolor = {
 	'BOLD_WHITE':'\033[1;37m','BOLD_YELLOW':'\033[1;33m','BOLD_GREEN':'\033[1;32m','BOLD_BLUE':'\033[1;34m',
 	'BOLD_CYAN':'\033[1;36m','BOLD_RED':'\033[1;31m','BOLD_MAGENTA':'\033[1;35m','BOLD_BLACK':'\033[1;30m',
@@ -220,8 +215,6 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [129150,32,98,121,32,65,83]
-#------------------------------------------------------------
-csugestions = []; chkdict = []
 #------------------------------------------------------------
 core = {
 	"greatings":	["good morning","good evening","good afternoon","good night","hi good morning","hello good morning","hi good evening",
@@ -928,6 +921,7 @@ def kdecode(emessage, shift):
         else:
             dek_msg += char
     return dek_msg
+	
 #----------------------------------------------------
 sqlconn = kdecode(dbconn, shift)
 sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
