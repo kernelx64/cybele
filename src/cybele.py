@@ -26,13 +26,11 @@ lon = -8.4265
 # some static global cybele variables
 version = '1.1.2'
 _title_ = 'Cybele'
-_pcnode_ = ['PC','LAPTOP','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
 _revise_ = '21.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
-_cybid_ = False
 _pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
@@ -118,12 +116,6 @@ except ImportError as err:
 start_time = datetime.now()
 node_name = platform.node()
 sysos = platform.system()
-if node_name:
-	if platform.node().upper() in [node.upper() for node in _pcnode_]:
-		try:
-			_cybid_ = True
-		except ImportError:
-			_cybid_ = False
 
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10:
@@ -152,7 +144,7 @@ seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
-internals = ["version","_title_","_pcnode_","_spchar_","_active_","_revise_","_author_","_cyext_","_cybid_","lat","lon"]
+internals = ["version","_title_","_spchar_","_active_","_revise_","_author_","lat","lon"]
 datemd = str(datetime.today().strftime("%d.%m"));_poigps_=[];tables=[];system_country = None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
@@ -1656,17 +1648,8 @@ def periodic_table_colored():
 #----------------------------------------------------------
 core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
-
-#----------------------------------------------------------
-if _cybid_ == True:
-	for i in range(len(addcomm)):
-		others.append(addcomm[i])
-
 #----------------------------------------------------------------------
-if _cybid_ == True:
-	help.update({"help list extcom": "Usage: <list extcom or extcom> \nDisplays all the commands the Cybele extention can provide.\nex: list extcom\n    extcom\n"})
 checksum = shift
-
 #------------------------------------------------------------
 def phonetic_alphabet(word2nato):
 	natodict = {'a': 'alpha','b': 'bravo','c': 'charlie','d': 'delta','e': 'echo','f': 'foxtrot','g': 'golf','h': 'hotel','i': 'india',
@@ -5335,14 +5318,6 @@ def main():
 
 		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]):
 			print (random.choice(messages['badword_msg']) + "\n")
-
-		elif _cybid_ == True and any(word in question for word in addcomm):
-			cybext.EXTmod(question)
-
-		elif question == 'list extcom' or question == 'extcom' and _cybid_ == True:
-			print ("List of the available commands by" + _cyext_ + "\n")
-			quicklist(addcomm,"")
-			print ("")
 		
 		elif any(word in question for word in core['information state']):
 			random.shuffle(core['information state awnsers'])
@@ -5781,13 +5756,8 @@ def main():
 				print ("A litle present for you...\n 〉 ")
 				draw_christmas_tree()
 			else:
-				# Use the weather_season_condiction() or get_the_season() to play with "i'm definitely not ready for the cold and snow"
-				if _cybid_ == True:
-					random.shuffle(messages['notchristmas'])
-					print (random.choice(messages['notchristmas']) + ". Okay, " + os.getlogin() + "!\n")
-				else:
-					random.shuffle(messages['notchristmas'])
-					print (random.choice(messages['notchristmas']) + "\n")
+				random.shuffle(messages['notchristmas'])
+				print (random.choice(messages['notchristmas']) + ". Okay, " + os.getlogin() + "!\n")
 
 		elif question.find('happy new year')!=-1:
 			dt = date.today()
@@ -6378,15 +6348,6 @@ def main():
 							print (response[i])
 					else:
 						print( random.choice(messages['nostar_message']) + "cybele.star #" + star_name + " have empty data!\n")
-
-		elif _cybid_ == True and question == 'extcybele' or question == 'extver' or question == 'extdir':
-			print ( kolor['RED'] + " 〉 Cybele external Library Module by AS" + kolor['OFF'])
-			print ("   Loaded : " + str(_cybid_))
-			print ("   Module : " + extvars[2] + ".py")
-			print ("  Version : " + extvars[0])
-			print ("  Revised : " + extvars[1])
-			print (" Commands : " + str(len(addcomm)))
-			print ("")
 
 		elif question == 'weather':
 			dayseason = get_the_season()[0]
