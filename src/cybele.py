@@ -159,8 +159,8 @@ etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9u
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
 			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
 			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
-			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dm9jYWJ1bGFyeQ==','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh',
-			'YXNfcXVvdGVz']
+			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh','YXNfcXVvdGVz',
+			'YW1vY19kYXRh']
 
 #-----------------------------------------------------------
 website = {
@@ -927,7 +927,6 @@ sqlconn = kdecode(dbconn, shift)
 sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
 for table in etables:
 	tables.append(base64.b64decode(table.encode('utf-8')).decode('utf-8'))
-	
 #----------------------------------------------------
 def whatgmt():
 	offset = -sys_time.altzone if (sys_time.localtime().tm_isdst == 1 and sys_time.daylight != 0) else -sys_time.timezone
