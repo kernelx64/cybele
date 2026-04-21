@@ -26,7 +26,7 @@ lon = -8.4265
 # some static global cybele variables
 version = '1.1.2'
 _title_ = 'Cybele'
-_pcnode_ = ['ASUSK','TUMBLEWEED','localhost']
+_pcnode_ = ['PC','LAPTOP','localhost']
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
 _revise_ = '21.04.2026'
@@ -164,10 +164,6 @@ shift=int(round(math.sqrt(math.log(math.cosh(10)) * 1000 - math.degrees(math.aco
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}
-GROUPS = ['active', 'weather', 'resource', 'cubesat', 'stations', 'sarsat', 'noaa', 'amateur', 'engineering']
-BASE_URL = 'https://celestrak.org/NORAD/elements/gp.php'
-TLE_URLS = [f"{BASE_URL}?GROUP={g}&FORMAT=tle" for g in GROUPS]
-MEU_QTH = (lat, lon, 221);FILE_NAME = f"{_title_}.sat"
 update_available = False
 version_val = 0
 
@@ -6543,7 +6539,7 @@ def main():
 			else:
 				verbose = 'verbose' in question
 				db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
-				output_db_file = _title_.lower() + ".db"
+				output_db_file = f"{_title_.lower()}.db"
 				if os.path.exists(output_db_file):
 					print(f"I am already able to be fully functional in offline mode but i but I will update.")
 					delete_cybeledb()
@@ -6659,7 +6655,6 @@ def main():
 				
 		elif question.startswith('amoc audit'):
 			partes = question.split()
-			db_name = _title_.lower() + ".db"
 			if len(partes) == 2:
 				mostrar_valores_amoc()
 			elif len(partes) == 3:
