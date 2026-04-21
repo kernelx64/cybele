@@ -121,12 +121,7 @@ sysos = platform.system()
 if node_name:
 	if platform.node().upper() in [node.upper() for node in _pcnode_]:
 		try:
-			import cybext
 			_cybid_ = True
-			_cyext_ = _cyext_.replace(_cyext_[0:4],_cyext_[0:4].upper())
-			addcomm = [];extvars = []
-			addcomm = cybext.addcommands()
-			extvars = cybext.extinternal_vars()
 		except ImportError:
 			_cybid_ = False
 
