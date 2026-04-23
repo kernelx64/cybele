@@ -140,7 +140,7 @@ print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
-dbconn = f""
+dbconn = f"{_title_.lower()}.db"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -1166,23 +1166,23 @@ def check_database_version():
 
 	try:
 		res = requests.get(api_url).json()
-
 		if not res or not os.path.exists(local_path):
 			update_available = False
 			return
-
 		remote_str = res[0]['commit']['committer']['date']
 		remote_date = datetime.strptime(remote_str, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=None)
-
+		stat = os.stat(local_path)
+		try:
+			creation_timestamp = stat.st_birthtime
+		except AttributeError:
+			creation_timestamp = stat.st_ctime
 		local_date = datetime.fromtimestamp(os.path.getmtime(local_path), UTC).replace(tzinfo=None, microsecond=0)
 		dbld = local_date
 		dbrd = remote_date
-
 		if remote_date > local_date:
 			update_available = True
 		else:
 			update_available = False
-
 	except Exception:
 		update_available = False
 
@@ -1240,6 +1240,7 @@ def download_and_convert_sqlite(connection_string: str, local_db_filename: str, 
 
 #------------------------------------------------------------
 def download_database_update():
+	global dbrd, dbld
 	nome_base = _title_.lower()
 	local_db_filename = f"{nome_base}.db"
 	url = f"https://raw.githubusercontent.com/kernelx64/{nome_base}/main/src/{nome_base}.db"
@@ -1263,6 +1264,22 @@ def download_database_update():
 								f"{mb_downloaded:.2f}MB / {mb_total:.2f}MB "
 								f"({(downloaded/total_size)*100:.1f}%)")
 				sys.stdout.flush()
+
+		if 'dbrd' in globals() and dbrd is not None:
+			try:
+				remote_timestamp = dbrd.timestamp()
+				os.utime(local_db_filename, (remote_timestamp, remote_timestamp))
+
+				local_check = os.path.getmtime(local_db_filename)
+				diff_seconds = local_check - remote_timestamp
+
+				if abs(diff_seconds) >= 60: # If there's more than a minute difference
+					diff_hours = round(diff_seconds / 3600)
+					print(f"{kolor['BOLD_BLUE']}Note:{kolor['OFF']} Your OS added a {diff_hours}h timezone offset to the file.")
+					print(f"If 'database info' shows 'SUPERIOR', you're still all set!\n")
+
+			except Exception as e:
+				print(f"Warning: Could not sync file time: {e}")
 
 		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
 
@@ -6728,24 +6745,30 @@ def main():
 					fmt = '%d.%m.%y %H:%M:%S'
 					local_f = dbld.strftime(fmt)
 					remote_f = dbrd.strftime(fmt)
+
+					# Calculate the real difference
 					delta = dbrd - dbld if dbrd > dbld else dbld - dbrd
+					diff_seconds = (dbrd - dbld).total_seconds()
+
 					hours, rem = divmod(delta.seconds, 3600)
 					mins, secs = divmod(rem, 60)
 					diff_str = f"{delta.days}d {hours}h {mins}m {secs}s"
 
-					if dbld == dbrd:
+					if abs(diff_seconds) < 3660:
 						print(f"You have the latest version available ({remote_f}).\n")
-					elif dbld < dbrd:
+
+					# If remote is actually newer (more than 1 hour difference)
+					elif diff_seconds >= 3660:
 						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your database version is lower than the existing {remote_f}.")
 						print(f"Update lag: {diff_str}\n")
+
+					# If local is actually newer (more than 1 hour difference)
 					else:
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
 
 		elif question[0:10] == 'test':
-			#print(f"{random.choice(messages['nicefun_msg'])}\n")
-			result = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
-			print(result)
+			print(f"{random.choice(messages['nicefun_msg'])}\n")
 
 		elif question != '':
 			answer = find_answer(question,questions)
