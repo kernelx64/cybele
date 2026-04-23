@@ -28,7 +28,7 @@ version = '1.1.2'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '21.04.2026'
+_revise_ = '23.04.2026'
 _author_ = 'Adelino Saldanha'
 _cyext_ = " extention"
 _pydr3_ = False
@@ -1246,14 +1246,11 @@ def download_database_update():
 
 	try:
 		response = requests.get(url, stream=True)
-		response.raise_for_status() # Garante que o link existe (404, etc)
-
+		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
 		block_size = 1024 # 1 Kibibyte
 		downloaded = 0
-
 		print(f"Downloading update for {local_db_filename}...")
-
 		with open(local_db_filename, 'wb') as f:
 			for data in response.iter_content(block_size):
 				f.write(data)
@@ -1267,7 +1264,7 @@ def download_database_update():
 								f"({(downloaded/total_size)*100:.1f}%)")
 				sys.stdout.flush()
 
-		print(f"\n\nUpdate complete! 🚀 Restart {_title_}")
+		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
 
 	except Exception as e:
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
@@ -5344,7 +5341,7 @@ def main():
 		question = get_question()
 		#-------------------------
 		if globals()['update_available']:
-			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version is available.{kolor['OFF']}")
+			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd} is available.{kolor['OFF']}")
 			print("Type 'offline mode on' to sync.\n")
 			globals()['update_available'] = False
 		#-------------------------
@@ -6739,11 +6736,11 @@ def main():
 					if dbld == dbrd:
 						print(f"You have the latest version available ({remote_f}).\n")
 					elif dbld < dbrd:
-						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your version {local_f} is lower than {remote_f}.")
+						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your database version is lower than the existing {remote_f}.")
 						print(f"Update lag: {diff_str}\n")
 					else:
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
-					print(f"Ahead by: {diff_str}\n")
+						print(f"Ahead by: {diff_str}\n")
 
 		elif question[0:10] == 'test':
 			#print(f"{random.choice(messages['nicefun_msg'])}\n")
