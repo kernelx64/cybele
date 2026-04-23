@@ -40,7 +40,6 @@ import os
 import sys
 import re
 import subprocess
-pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
 
 try:
 	import time
@@ -137,10 +136,12 @@ def print_statusline(msg: str):
     setattr(print_statusline, 'last_msg', msg)
 #-----------------------------------------------------------
 print_statusline(f"\nLoading ...")
-#-----------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------
+# For cybele in using sqlitecloud set this for her own user API with cybele.sqlite dabatase
+dbconn = "sqlitecloud://xxxxxxxxxxxxxx.g1.sqlite.cloud:8860/cybele.sqlite?apikey=xxxxxxxxxxxxxxxxxxxxxxx"
+#-------------------------------------------------------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
-dbconn = f"{_title_.lower()}.db"
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -6746,10 +6747,9 @@ def main():
 					local_f = dbld.strftime(fmt)
 					remote_f = dbrd.strftime(fmt)
 
-					# Calculate the real difference
+					# Calculate real difference
 					delta = dbrd - dbld if dbrd > dbld else dbld - dbrd
 					diff_seconds = (dbrd - dbld).total_seconds()
-
 					hours, rem = divmod(delta.seconds, 3600)
 					mins, secs = divmod(rem, 60)
 					diff_str = f"{delta.days}d {hours}h {mins}m {secs}s"
@@ -6757,12 +6757,9 @@ def main():
 					if abs(diff_seconds) < 3660:
 						print(f"You have the latest version available ({remote_f}).\n")
 
-					# If remote is actually newer (more than 1 hour difference)
 					elif diff_seconds >= 3660:
 						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your database version is lower than the existing {remote_f}.")
 						print(f"Update lag: {diff_str}\n")
-
-					# If local is actually newer (more than 1 hour difference)
 					else:
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
