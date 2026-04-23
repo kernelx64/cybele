@@ -76,7 +76,7 @@ try:
 	from time import gmtime, strftime, sleep
 	from math import degrees as deg, radians as rad
 	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-	from datetime import datetime, date, time, timedelta, timezone
+	from datetime import datetime, date, time, timedelta, timezone, UTC
 	from zoneinfo import ZoneInfo
 	from itertools import product
 
@@ -140,7 +140,7 @@ print_statusline(f"\nLoading ...")
 #-----------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
-dbconn = f"{_title_.lower()}.db"
+dbconn = f""
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -152,7 +152,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
-update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []
+update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
@@ -645,6 +645,7 @@ help = {
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele upytime\n",
+	"help database info": "Usage: database info \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: database info \n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
@@ -1137,7 +1138,7 @@ def check_tables(tables_names):
 			conn.close()
 
 #------------------------------------------------------------
-def check_database_version():
+def check_database_version_sqlite():
 	global update_available, version_val
 	db_name = f"{_title_.lower()}.db"
 
@@ -1157,8 +1158,37 @@ def check_database_version():
 		pass
 
 #------------------------------------------------------------
+def check_database_version():
+	global update_available, dbld, dbrd
+	nome_base = _title_.lower()
+	local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{nome_base}.db")
+	api_url = f"https://api.github.com/repos/kernelx64/{nome_base}/commits?path=src/{nome_base}.db&per_page=1"
+
+	try:
+		res = requests.get(api_url).json()
+
+		if not res or not os.path.exists(local_path):
+			update_available = False
+			return
+
+		remote_str = res[0]['commit']['committer']['date']
+		remote_date = datetime.strptime(remote_str, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=None)
+
+		local_date = datetime.fromtimestamp(os.path.getmtime(local_path), UTC).replace(tzinfo=None, microsecond=0)
+		dbld = local_date
+		dbrd = remote_date
+
+		if remote_date > local_date:
+			update_available = True
+		else:
+			update_available = False
+
+	except Exception:
+		update_available = False
+
 #------------------------------------------------------------
-def download_and_convert(connection_string: str, local_db_filename: str, verbose):
+#------------------------------------------------------------
+def download_and_convert_sqlite(connection_string: str, local_db_filename: str, verbose):
 
 	cloud_conn = None
 	local_conn = None
@@ -1207,6 +1237,42 @@ def download_and_convert(connection_string: str, local_db_filename: str, verbose
 	finally:
 		if cloud_conn: cloud_conn.close()
 		if local_conn: local_conn.close()
+
+#------------------------------------------------------------
+def download_database_update():
+	nome_base = _title_.lower()
+	local_db_filename = f"{nome_base}.db"
+	url = f"https://raw.githubusercontent.com/kernelx64/{nome_base}/main/src/{nome_base}.db"
+
+	try:
+		response = requests.get(url, stream=True)
+		response.raise_for_status() # Garante que o link existe (404, etc)
+
+		total_size = int(response.headers.get('content-length', 0))
+		block_size = 1024 # 1 Kibibyte
+		downloaded = 0
+
+		print(f"Downloading update for {local_db_filename}...")
+
+		with open(local_db_filename, 'wb') as f:
+			for data in response.iter_content(block_size):
+				f.write(data)
+				downloaded += len(data)
+				done = int(50 * downloaded / total_size) if total_size > 0 else 0
+				mb_downloaded = downloaded / (1024 * 1024)
+				mb_total = total_size / (1024 * 1024)
+
+				sys.stdout.write(f"\r[{'█' * done}{'░' * (50 - done)}] "
+								f"{mb_downloaded:.2f}MB / {mb_total:.2f}MB "
+								f"({(downloaded/total_size)*100:.1f}%)")
+				sys.stdout.flush()
+
+		print(f"\n\nUpdate complete! 🚀 Restart {_title_}")
+
+	except Exception as e:
+		print(f"\n❌ Download error: {e}", file=sys.stderr)
+		if os.path.exists(local_db_filename):
+			os.remove(local_db_filename)
 
 #------------------------------------------------------------
 def delete_cybeledb():
@@ -1562,7 +1628,7 @@ others = [
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
 	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
-	"current system uptime","display uptime"
+	"current system uptime","display uptime","database info"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -5246,7 +5312,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
-	global system_country, people_space , ncountries#, orbit_data
+	global system_country, people_space, ncountries, dbld, dlrd #, orbit_data
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5278,7 +5344,7 @@ def main():
 		question = get_question()
 		#-------------------------
 		if globals()['update_available']:
-			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version is available (v.{version_val}).{kolor['OFF']}")
+			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version is available.{kolor['OFF']}")
 			print("Type 'offline mode on' to sync.\n")
 			globals()['update_available'] = False
 		#-------------------------
@@ -6500,9 +6566,9 @@ def main():
 				if os.path.exists(output_db_file):
 					print(f"I am already able to be fully functional in offline mode but i but I will update.")
 					delete_cybeledb()
-					download_and_convert(db_url, output_db_file, verbose)
+					download_database_update()
 				else:
-					download_and_convert(db_url, output_db_file, verbose)
+					download_database_update()
 
 		elif question == 'offline mode off':
 			delete_cybeledb()
@@ -6653,6 +6719,32 @@ def main():
 			clear_screen()
 			return True
 		
+		elif question == 'database info':
+			if not internet_onoff():
+				print(f"{random.choice(messages['trouble_short'])} For this task i need an active internet connection.\n")
+			else:
+				check_database_version()
+				if dbld is None or dbrd is None:
+					missing = "remote" if dbrd is None else "local"
+					print(f"{random.choice(messages['trouble_short'])} I cannot retrieve the {missing} database information!\n")
+				else:
+					fmt = '%d.%m.%y %H:%M:%S'
+					local_f = dbld.strftime(fmt)
+					remote_f = dbrd.strftime(fmt)
+					delta = dbrd - dbld if dbrd > dbld else dbld - dbrd
+					hours, rem = divmod(delta.seconds, 3600)
+					mins, secs = divmod(rem, 60)
+					diff_str = f"{delta.days}d {hours}h {mins}m {secs}s"
+
+					if dbld == dbrd:
+						print(f"You have the latest version available ({remote_f}).\n")
+					elif dbld < dbrd:
+						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your version {local_f} is lower than {remote_f}.")
+						print(f"Update lag: {diff_str}\n")
+					else:
+						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
+					print(f"Ahead by: {diff_str}\n")
+
 		elif question[0:10] == 'test':
 			#print(f"{random.choice(messages['nicefun_msg'])}\n")
 			result = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
