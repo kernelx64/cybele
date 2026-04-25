@@ -24,13 +24,12 @@ lat = 41.5454
 lon = -8.4265
 
 # some static global cybele variables
-version = '1.1.2'
+version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '23.04.2026'
+_revise_ = '25.04.2026'
 _author_ = 'Adelino Saldanha'
-_cyext_ = " extention"
 _pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
@@ -39,6 +38,7 @@ _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 import os
 import sys
 import re
+import inspect
 import subprocess
 
 try:
@@ -136,10 +136,7 @@ def print_statusline(msg: str):
     setattr(print_statusline, 'last_msg', msg)
 #-----------------------------------------------------------
 print_statusline(f"\nLoading ...")
-#-------------------------------------------------------------------------------------------------------
-# For cybele in using sqlitecloud set this for her own user API with cybele.sqlite dabatase
-dbconn = "sqlitecloud://xxxxxxxxxxxxxx.g1.sqlite.cloud:8860/cybele.sqlite?apikey=xxxxxxxxxxxxxxxxxxxxxxx"
-#-------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
@@ -147,6 +144,7 @@ GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
 internals = ["version","_title_","_spchar_","_active_","_revise_","_author_","lat","lon"]
+shifl = int(round(math.sqrt(math.log(math.cosh(10)) * 400 - math.degrees(math.acos(-1)) * 1.5) + math.e**1.92) - 45)
 datemd = str(datetime.today().strftime("%d.%m")); _poigps_=[]; tables=[]; system_country=None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
@@ -154,6 +152,10 @@ stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_comma
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
+BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
+BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="
+_h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
+
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
@@ -857,20 +859,29 @@ planet_data = {
 	}
 }
 #----------------------------------------------------
+def lista_defs():
+	contexto_atual = globals()
+	print(f"\n--- Internal [{_title_.upper()}] def() functions ---\n")
+	for nome, objeto in contexto_atual.items():
+		if inspect.isfunction(objeto) and objeto.__module__ == "__main__":
+			print(f"-> {nome}")
+	print("")
+
+#----------------------------------------------------
 def chkcoor(lat, lon):
-    try:
-        lat_val = float(lat)
-        if not (-90 <= lat_val <= 90):
-            return False
-    except (ValueError, TypeError):
-        return False
-    try:
-        lon_val = float(lon)
-        if not (-180 <= lon_val <= 180):
-            return False
-    except (ValueError, TypeError):
-        return False
-    return True
+	try:
+		lat_val = float(lat)
+		if not (-90 <= lat_val <= 90):
+			return False
+	except (ValueError, TypeError):
+		return False
+	try:
+		lon_val = float(lon)
+		if not (-180 <= lon_val <= 180):
+			return False
+	except (ValueError, TypeError):
+		return False
+	return True
 
 #-------------------------------------------------
 def validate_globals():
@@ -911,21 +922,19 @@ def validate_globals():
 				
 #-------------------------------------------------
 def kdecode(emessage, shift):
-    dek_msg = ""
-    for char in emessage:
-        if char.isalpha():
-            if char.isupper():
-                k_char = chr((ord(char) - shift - 65) % 26 + 65)
-            else:
-                k_char = chr((ord(char) - shift - 97) % 26 + 97)
-            dek_msg += k_char
-        else:
-            dek_msg += char
-    return dek_msg
-	
+	dek_msg = ""
+	for char in emessage:
+		if char.isalpha():
+			if char.isupper():
+				k_char = chr((ord(char) - shift - 65) % 26 + 65)
+			else:
+				k_char = chr((ord(char) - shift - 97) % 26 + 97)
+			dek_msg += k_char
+		else:
+			dek_msg += char
+	return dek_msg
+
 #----------------------------------------------------
-sqlconn = kdecode(dbconn, shift)
-sqlcodb = kdecode(dbconn[0:46] + "{wugtfx_ietvxahewxk}" + dbconn[52:], shift)
 for table in etables:
 	tables.append(base64.b64decode(table.encode('utf-8')).decode('utf-8'))
 #----------------------------------------------------
@@ -962,44 +971,19 @@ def get_default_port():
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
-	global dblrconn, dbmsgbl
+	global dbmsgbl,dblrconn
 	conn = None
-	if internet_onoff() == True:
-		if os.path.isfile(db_filename) == True:
-			conn = sqlite3.connect(db_filename)
-			dblrconn= "offline [database files]"
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			max_attempts = 5
-			for attempt in range(1, max_attempts + 1):
-				try:
-					conn = sqlitecloud.connect(sqlconn)
-					dblrconn="online [sqlitecloud]"
-					dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
-					break
-				except ValueError as e:
-					print_statusline(f"")
-					modname = f"\n    Unexpected invalid value encountered: {e}\n"
-					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)
-				except sqlitecloud.exceptions.SQLiteCloudException as e:
-					if attempt < max_attempts:
-						sleep(1)
-					else:
-						print_statusline(f"")
-						modname = random.choice(messages['db_pause_msg']) + f"\n    I made {max_attempts} attempts and {attempt} failed. Give another try in a while."
-						print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-						exit(0)
+
+	db_exists = os.path.isfile(db_filename)
+	if db_exists:
+		conn = sqlite3.connect(db_filename)
+		dblrconn= "offline [database files]"
+		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
-		if os.path.isfile(db_filename) == True:
-			conn = sqlite3.connect(db_filename)
-			dblrconn="offline [database files]"
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			print_statusline(f"")
-			modname = "The database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print(f"\n{'\033[1;31m'} {_spchar_[1:2]} {_title_} {'\033[0;0m'} : {modname}\n")
-			exit(0)
+		print_statusline(f"")
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+		exit(0)
 
 	try:
 		cursor = conn.cursor()
@@ -1019,26 +1003,20 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 			
 #------------------------------------------------------------
 def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):	
-	global dblrconn, dbmsgbl
+	global dbmsgbl,dblrconn
 	conn = None
-	if internet_onoff() == True:
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-			dblrconn="offline [database files]"
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			conn = sqlitecloud.connect(sqlconn)
-			dblrconn="online [sqlitecloud]"
-			dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
+
+	db_exists = os.path.isfile(db_filename)
+	if db_exists:
+		conn = sqlite3.connect(db_filename)
+		dblrconn= "offline [database files]"
+		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
-		if os.path.isfile (db_filename) == True:
-			conn = sqlite3.connect(db_filename)
-			dblrconn="offline [database files]"
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)	
+		print_statusline(f"")
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+		exit(0)
+
 	try:
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {column_to_fetch} FROM {table_name} WHERE {search_column} = ?", (record,))
@@ -1056,7 +1034,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 #--------------------------------------------------------
 def check_tables(tables_names):
 	global dbmsgbl
-	db_filename = 'cybele.db'
+	db_filename = f"{_title_.lower()}.db"
 	missing_tables = []
 	github_file_url = kdecode(GITHUB, shift)
 	attempt = 0
@@ -1064,48 +1042,17 @@ def check_tables(tables_names):
 	conn = None
 	cur = None
 	
-	if internet_onoff() == True:
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			try:
-				conn = sqlitecloud.connect(sqlconn)
-				dbmsgbl = f"Connecting with remote database {_spchar_[7:8]}"
-			except ValueError as e:
-				print_statusline(f"")
-				modname = f"\n    An unexpected error occurred: {e}"
-				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)
-			except sqlitecloud.exceptions.SQLiteCloudException as e:
-				print_statusline(f"")
-				modname = f"\n    An unexpected error occurred: {e}"
-				print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-				exit(0)
-			except sqlitecloud.exceptions.SQLiteCloudError as e:
-				print_statusline(f"")
-				if "Your free node has been paused due to inactivity." in str(e):
-					modname = (
-						f" {random.choice(messages['db_pause_msg'])} \n"
-						f"   Either there is an upgrade going on right now or the database has migrated to another platform.\n"
-						f"   Please try again in a few minutes or email the author asking to wake her up.\n"
-					)	
-					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)
-				else:
-					modname = f"\n    An unexpected database error occurred: {e}"
-					print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
-					exit(0)
+	db_exists = os.path.isfile(db_filename)
+	if db_exists:
+		conn = sqlite3.connect(db_filename)
+		dblrconn= "offline [database files]"
+		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
-		else:
-			print_statusline(f"")
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			exit(0)
-		
+		print_statusline(f"")
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+		exit(0)
+
 	try:
 		cur = conn.cursor()
 		cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -1139,26 +1086,6 @@ def check_tables(tables_names):
 			conn.close()
 
 #------------------------------------------------------------
-def check_database_version_sqlite():
-	global update_available, version_val
-	db_name = f"{_title_.lower()}.db"
-
-	if not os.path.isfile(db_name) or not internet_onoff():
-		return
-
-	try:
-		res_local = fetch_fromdbfile(db_name, "config", "tc")
-		version_local = res_local[0] if res_local else 0
-		with sqlitecloud.connect(sqlconn) as conn:
-			cursor = conn.execute("SELECT tc FROM config LIMIT 1")
-			row = cursor.fetchone()
-			if row and row[0] > version_local:
-				version_val = row[0]
-				update_available = True
-	except Exception:
-		pass
-
-#------------------------------------------------------------
 def check_database_version():
 	global update_available, dbld, dbrd
 	nome_base = _title_.lower()
@@ -1186,58 +1113,6 @@ def check_database_version():
 			update_available = False
 	except Exception:
 		update_available = False
-
-#------------------------------------------------------------
-#------------------------------------------------------------
-def download_and_convert_sqlite(connection_string: str, local_db_filename: str, verbose):
-
-	cloud_conn = None
-	local_conn = None
-	try:
-		print_statusline("Connecting to SQLite Cloud database...")
-		cloud_conn = sqlitecloud.connect(connection_string)
-		cloud_cursor = cloud_conn.cursor()
-		print_statusline(f"Creating my local database '{local_db_filename}'...")
-		local_conn = sqlite3.connect(local_db_filename)
-		local_conn.execute("PRAGMA synchronous = FULL;")
-		local_cursor = local_conn.cursor()
-		print_statusline("Fetching table schema from the cloud database...")
-		cloud_cursor.execute("SELECT name, sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
-		tables_info = cloud_cursor.fetchall()
-		total_tables = len(tables_info)
-		if verbose:
-			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ({table_name})..."
-		else:
-			msg_template = "Getting ready for offline mode! I'm currently syncing my data [{bar}] {progress:.1f}% ..."
-		for i, (table_name, create_sql) in enumerate(tables_info):
-			progress = (i + 1) / total_tables * 100
-			bar_length = 20
-			filled_length = int(bar_length * progress // 100)
-			bar = '█' * filled_length + '░' * (bar_length - filled_length)
-			print_statusline(msg_template.format(bar=bar, progress=progress, table_name=table_name))
-			local_cursor.execute(f"DROP TABLE IF EXISTS \"{table_name}\";")
-			local_cursor.execute(create_sql)
-			cloud_cursor.execute(f"SELECT * FROM {table_name};")
-			rows = cloud_cursor.fetchall()
-			columns = [col[0] for col in cloud_cursor.description]
-			placeholders = ', '.join(['?'] * len(columns))
-			insert_sql = f"INSERT INTO \"{table_name}\" ({', '.join([f'"{c}"' for c in columns])}) VALUES({placeholders});"
-			if rows:
-				local_cursor.executemany(insert_sql, rows)
-		local_conn.commit()
-		if hasattr(os, 'sync'):
-			os.sync()
-		print_statusline(f"I'm now able to work in offline mode! 🚀. Restart {_title_}")
-		print("\n")
-	except sqlitecloud.SQLiteCloudException as e:
-		print(f"\nAn SQLite Cloud error occurred: {e}", file=sys.stderr)
-	except sqlite3.Error as e:
-		print(f"\nAn SQLite error occurred: {e}", file=sys.stderr)
-	except Exception as e:
-		print(f"\nAn unexpected error occurred: {e}", file=sys.stderr)
-	finally:
-		if cloud_conn: cloud_conn.close()
-		if local_conn: local_conn.close()
 
 #------------------------------------------------------------
 def download_database_update():
@@ -1291,7 +1166,7 @@ def download_database_update():
 
 #------------------------------------------------------------
 def delete_cybeledb():
-	file_name = _title_.lower()+".db"
+	file_name = f"{_title_.lower()}.db"
 	if os.path.exists(file_name):
 		try:
 			os.remove(file_name)
@@ -1326,15 +1201,12 @@ def make_intextdb():
 
 	try:	
 		db_name = f"{_title_.lower()}.db"
-		internet = internet_onoff()
 		db_exists = os.path.isfile(db_name)
 		conn = None
-		if internet and not db_exists:
-			conn = sqlitecloud.connect(sqlconn)
-		elif db_exists:
+		if db_exists:
 			conn = sqlite3.connect(db_name)
 		else:
-			print(f"{random.choice(messages['trouble_short'])} ❌ I cannot processed. There is No intenet and no local database.")
+			print(f"{random.choice(messages['trouble_short'])} ❌ I cannot processed. The local database file dont exist.")
 			return
 		
 		cursor = conn.execute("SELECT * FROM config LIMIT 1")
@@ -1343,15 +1215,6 @@ def make_intextdb():
 
 		if conn:
 			conn.close()
-
-		#_revise_idvdb_ = _revise_.replace('.', '')
-		#if int(idvdb) != int(_revise_idvdb_[:-4] + _revise_idvdb_[-2:]):
-		#	seculo_atual = str(datetime.now().year)[:2]
-		#	print_statusline(f"")
-		#	print(f"{kolor['YELLOW']}WARNING!{kolor['OFF']} A new build of {_title_} {version} (released {revise_idvdb_[:-4]} {revise_idvdb_[-2:]}) is now available.")
-		#	print(f"This update is essential for continued functionality and compatibility.\nI strongly recommend upgrading via github: {kolor['BOLD_BLUE']}{website['github']}cybele{kolor['OFF']} \n")
-		#	sys.exit(0)
-		#del idvdb
 
 		core["astronomy glossary"] = list(fetch_fromdbfile("cybele.db", "astronomy_glossary", "glossary"))
 
@@ -1494,9 +1357,6 @@ def make_intextdb():
 
 		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
 		midbcounter += len(as_quotes)
-		
-		#tvshows_cache = list(fetch_fromdbfile("cybele.db", "tvshows", "library"))
-		#midbcounter += len(tvshows_cache)
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
@@ -1520,13 +1380,8 @@ def get_brain_status(midbcounter):
 	total_kb = (midbcounter * MULTIPLICADOR_RAM) + OVERHEAD_SISTEMA + TAMANHO_PY
 	total_mb = total_kb / 1024
 	disco_estimado_mb = (midbcounter * 1.0) / 1024
-	#return {
-    #    "entradas": midbcounter,
-    #    "ram_estimada_mb": round(total_mb, 2),
-    #    "disco_estimado_mb": round(disco_estimado_mb, 2),
-    #    "info": f"{midbcounter} dicts | ~{total_mb:.2f} MB RAM"
-    #}
 	return round(total_mb)
+
 #----------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -2154,7 +2009,7 @@ def pregpsconvert():
 			print(f"  ( approximately ≈ {str( convert_to_words(int(distancekm) + 1) )} kilometers )\n")
 			return False
 		else:
-			print(f"{kolor['RED']}{_spchar_[1:2]}{kolor['OFF']} {random.choice(messages['trouble_short'])} My code had some problems handling the distance result {str(distancekm)}") 
+			print(f"{kolor['RED']}{_spchar_[1:2]}{kolor['OFF']} {random.choice(messages['trouble_short'])} My code had some problems handling the distance result {str(distancekm)}")
 
 #---------------------------------------------------
 # Harvesine
@@ -2258,7 +2113,6 @@ def daysweeks_year():
 	year_end = date(today.year, 12, 31)
 	total_days = (year_end - year_start + timedelta(days=1)).days
 	weeks = total_days // 7
-
 	return [ total_days, weeks ]
 
 #---------------------------------------------------
@@ -2275,19 +2129,25 @@ def leapyear():
 
 #---------------------------------------------------
 def symb_prompt():
-	primary_icon = _spchar_[1:2]
+	global _spchar_
+	primary_icon = _spchar_[1]
 	alternative_icon = "\u27e9"
 	safety_icon = "\u276f"
 
+	def update_global(new_icon):
+		global _spchar_
+		_spchar_ = _spchar_[0] + new_icon + _spchar_[2:]
+		return new_icon
+
 	try:
 		primary_icon.encode(sys.stdout.encoding)
-		return primary_icon
+		return update_global(primary_icon)
 	except (UnicodeEncodeError, AttributeError):
 		try:
 			alternative_icon.encode(sys.stdout.encoding)
-			return alternative_icon
+			return update_global(alternative_icon)
 		except:
-			return safety_icon
+			return update_global(safety_icon)
 
 #---------------------------------------------------------------------------
 #-------------------------------------------------------------------
@@ -2556,6 +2416,7 @@ def find_word_in_dicts(word, core):
 				print ("")
 
 			elif list_name == 'linuxexcmd':
+				#print ("Linux command. Just type directly the command or type: list me linux commands")
 				print ("")
 				
 			elif list_name == 'display_options':
@@ -3316,10 +3177,10 @@ def _print_tv_list(items):
 #-------------------------------------------------
 def get_the_season():
 	global system_country
-    
+
 	today = datetime.now()
 	doy = today.timetuple().tm_yday
-    
+
 	h_sul = ['AO', 'AR', 'AU', 'BO', 'BR', 'BW', 'CL', 'CK', 'KM', 'CG', 'CD', 'FK', 'FJ', 
     'GF', 'PF', 'TF', 'GA', 'ID', 'KE', 'LS', 'MG', 'MW', 'MY', 'MU', 'YT', 'MZ', 
     'NA', 'NR', 'NC', 'NZ', 'NU', 'PG', 'PY', 'PE', 'PN', 'RW', 'WS', 'ST', 'SC', 
@@ -3343,7 +3204,7 @@ def get_the_season():
 	current_season = f"{seasons_names[s]} {season_emoji[s]}"
 	next_season_index = (s + 1) % 4
 	other_seasons = seasons_names[next_season_index:] + seasons_names[:next_season_index]
-    
+
 	return current_season, other_seasons
 
 #--------------------------------------------------
@@ -3442,16 +3303,13 @@ def random_season_activity():
 	season = get_the_season()[0].lower()
 	conn = None
 	try:
-		if internet_onoff():
-			conn = sqlitecloud.connect(sqlconn)
+		db_filename = f"{_title_.lower()}.db"
+		if os.path.isfile(db_filename):
+			conn = sqlite3.connect(db_filename)
 		else:
-			db_filename = "cybele.db"
-			if os.path.isfile(db_filename):
-				conn = sqlite3.connect(db_filename)
-			else:
-				modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-				print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
-				sys.exit(0)
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
+			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
+			sys.exit(0)
 
 		cursor = conn.cursor()
 		cursor.execute(f"SELECT {season} FROM season_activities ORDER BY RANDOM() LIMIT 1")
@@ -3545,26 +3403,16 @@ def cybele_math_game():
 #-------------------------------------------------
 #-------------------------------------------------
 def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
-
 	global dblrconn
-	if internet_onoff() == True:
-		db_filename = dbtable + ".db"
-		if os.path.isfile (db_filename) == True :
-			conn = sqlite3.connect(db_filename)
-			dblrconn="offline [database files]"
-		else:
-			sqlconm = sqlcodb.format(dbname_placeholder=dbname)
-			conn = sqlitecloud.connect(sqlconm)
-			dblrconn="online [sqlitecloud]"
+
+	db_filename = dbname + ".db"
+	if os.path.isfile (db_filename) == True :
+		conn = sqlite3.connect(db_filename)
+		dblrconn="offline [database files]"
 	else:
-		db_filename = dbname + ".db"
-		if os.path.isfile (db_filename) == True:
-			conn = sqlite3.connect(db_filename)
-			dblrconn="offline [database files]"
-		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
-			sys.exit(0)
+		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
+		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		sys.exit(0)
 	
 	zdb = []
 	filter = ""
@@ -3622,7 +3470,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				zdb.append(row[0])
 				zdb.append(row[1])
 			if row_found and len(zdb) > 0:
-				print(f"\n {_spchar_[9:10]}  {_spchar_[1:2]}{zdb[1]}")
+				print(f"\n {_spchar_[9:10]}  {symb_prompt()}{zdb[1]}")
 			else:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} No record found for askard #{ask_id_val}.\n")
 		elif dbname == 'cybele' and dbtable == 'funfacts':
@@ -3719,7 +3567,7 @@ def get_cmdlinux(command_name):
     
 	conn = None
 	try:
-		conn = sqlite3.connect('cybele.db')
+		conn = sqlite3.connect(f"{_title_.lower}.db")
 		cursor = conn.cursor()
 		query = "SELECT cmd_name, syntax, explanation, examples FROM linux_commands WHERE cmd_name = ?"
 		cursor.execute(query, (command_name,))
@@ -3750,7 +3598,7 @@ def get_cmdlinux(command_name):
 def chkpy():
 	if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\n\033[1;31m " + symb_prompt() + _title_ + "\033[0;0m" + ": " + modname)
 		return False
 	return True	
 
@@ -5189,9 +5037,19 @@ def validar_e_converter_data(data_str):
 		
 #-------------------------------------------------
 def mostrar_valores_amoc(data_input=None, data_fim_input=None):
-	db_name = f"{_title_.lower()}.db"
-	db_exists = os.path.isfile(db_name)
-	internet = internet_onoff()
+	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
+	online = internet_onoff()
+	db_filename = f"{_title_.lower()}.db"
+	where_amoc = ""
+
+	if online:
+		where_amoc = "online [baserow.io]"
+	else:
+		if os.path.isfile(db_filename):
+			where_amoc = "offline [dbfile]"
+		else:
+			print(f"❌ {random.choice(messages['trouble_short'])} No internet and local file {db_filename} not found.\n")
+			return
 
 	dt_ini = validar_e_converter_data(data_input)
 	if dt_ini is None:
@@ -5199,110 +5057,111 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		return
 
 	ano = dt_ini.year
-	max_doy_ano = 366 if calendar.isleap(ano) else 365
 	doy_ini = int(dt_ini.strftime('%j'))
+	contagem_na = 0
+	limit_audit = 200
 
 	if data_fim_input:
 		dt_fim = validar_e_converter_data(data_fim_input)
 		if dt_fim is None or dt_fim.year != ano:
-			print(f"{random.choice(messages['trouble_short'])} ❌ That is a invalid end date or a wrong year!\n")
+			print(f"{random.choice(messages['trouble_short'])} ❌ Invalid end date or year mismatch!\n")
 			return
 		doy_fim = int(dt_fim.strftime('%j'))
 	else:
-		dt_fim = dt_ini
 		doy_fim = doy_ini
 
-	conn = None
-	if internet and not db_exists:
-		conn = sqlitecloud.connect(sqlconn)
-		selected_db = "online"
-	elif db_exists:
-		conn = sqlite3.connect(db_name)
-		selected_db = "local"
-	else:
-		print(f"{random.choice(messages['trouble_short'])} ❌ No connection and no local database.")
+	if (doy_fim - doy_ini) > limit_audit:
+		print(f"❌ {random.choice(messages['trouble_short'])} The range of {doy_fim - doy_ini} days exceeds the limit of {limit_audit}!\n")
 		return
 
+	rows_filtradas = []
+	last_doy = 0
+
 	try:
-		filter_query = "SELECT MAX(doy) FROM amoc_data WHERE ano = ?"
-		cursor = conn.execute(filter_query, (ano,))
-		last_doy_row = cursor.fetchone()
+		if online:
+			h_key = base64.b64decode(_h_key_64).decode()
+			h_val = base64.b64decode(_h_val_64).decode()
+			idur = base64.b64decode(BRTID_EN).decode()
+			idt  = base64.b64decode(BRTK_EN).decode()
+			path_int = kdecode(BRADR_EN, shifl).format(idur)
+			wtitle = {h_key: f"{h_val}{idt}"}
 
-		if last_doy_row and last_doy_row[0] is not None:
-			last_doy = int(last_doy_row[0])
-			if not (1 <= last_doy <= max_doy_ano):
-				print(f"{random.choice(messages['trouble_short'])} The {selected_db} Database contains ⚠️ invalid DOY ({last_doy}) for year {ano}!\n")
-				return True
+			response = requests.get(path_int, headers=wtitle, timeout=10)
+			if response.status_code != 200:
+				print(f"❌ {random.choice(messages['trouble_short'])} Baserow error: {response.status_code}\n")
+				return
 
-			hoje = datetime.now().date()
-			try:
-				data_db = datetime.strptime(f"{ano} {last_doy}", "%Y %j").date()
-				if data_db != hoje:
-					diff = abs((hoje - data_db).days)
-					outdated = f"is {diff} day outdated" if diff == 1 else f"are {diff} days outdated"
-				else:
-					outdated = "are updated"
-
-				print(f"Using {kolor['BOLD_BLUE']}{selected_db}{kolor['OFF']} database. Values {outdated} - Last DOY: {last_doy} | {data_db.strftime('%d.%m')}")
-			except ValueError:
-				print(f"{kolor['BOLD_RED']}⚠️  Could not calculate date: DOY {last_doy} is out of range for {ano}.{kolor['OFF']}")
+			todos_os_dados = response.json().get('results', [])
+			for r in todos_os_dados:
+				r_ano = int(r.get('ano', 0))
+				r_doy = int(r.get('doy', 0))
+				if r_ano == ano:
+					if r_doy > last_doy: last_doy = r_doy
+					if doy_ini <= r_doy <= doy_fim:
+						rows_filtradas.append(r)
 		else:
-			print(f"{random.choice(messages['trouble_short'])} the ⚠️ {selected_db} Database is empty !")
+			conn = sqlite3.connect(db_filename)
+			conn.row_factory = sqlite3.Row
+			cursor = conn.cursor()
 
-		cursor = conn.cursor()
-		cursor.execute("""
-			SELECT doy, flyby, n40, n45, n50, n55, n60, n65, n99, delta
-			FROM amoc_data
-			WHERE ano = ? AND doy BETWEEN ? AND ?
-			ORDER BY doy ASC, flyby ASC
-		""", (ano, doy_ini, doy_fim))
+			query = "SELECT * FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ? ORDER BY doy ASC, flyby ASC"
+			cursor.execute(query, (ano, doy_ini, doy_fim))
 
-		rows = cursor.fetchall()
+			for r in cursor.fetchall():
+				rows_filtradas.append(dict(r))
 
+			cursor.execute("SELECT MAX(doy) FROM amoc_data WHERE ano = ?", (ano,))
+			res = cursor.fetchone()
+			last_doy = res[0] if res and res[0] else 0
+			conn.close()
+
+		#display_msg = f"Using {kolor['BOLD_BLUE']}{where_amoc}{kolor['OFF']} database. Last DOY: {last_doy}"
+
+		doy_hoje = datetime.now().timetuple().tm_yday
+		difdoys = doy_hoje - last_doy
+		display_msg = f"Using {kolor['BOLD_BLUE']}{where_amoc}{kolor['OFF']} database. Last DOY: {last_doy}"
+		if difdoys != 0:
+			daynum = "day" if difdoys == 1 else "days"
+			display_msg += f"{kolor['OFF']} | Outdated: {kolor['YELLOW']}{difdoys} {daynum}{kolor['OFF']}"
+		else:
+			display_msg += f"{kolor['OFF']} | {kolor['VIVID_GREEN']}Updated {kolor['OFF']}"
+		print(display_msg)
 		print(f"\n{kolor['BOLD_MAGENTA']}🏛️  AMOC data Ifremer [Ground Truth Audit]{kolor['OFF']}")
-		if doy_ini == doy_fim:
-			info_data = f"DATA: {dt_ini.strftime('%d.%m.%Y')}  |  DOY: {doy_ini:03}"
-		else:
-			info_data = f"RANGE: Day {doy_ini:03}|{doy_fim:03} ≃ {dt_ini.strftime('%d.%m')}|{dt_fim.strftime('%d.%m')} YEAR:{ano}"
 
+		info_data = f"DATE: {dt_ini.strftime('%d.%m.%Y')} | DOY: {doy_ini:03}" if doy_ini == doy_fim else f"RANGE: {doy_ini:03}|{doy_fim:03} YEAR:{ano}"
 		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
-		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
+
+		h_txt = " DATE  | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
 		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
 
-		if not rows:
-			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- NO DATA IN THE RANGE ---{kolor['OFF']}\n")
+		if not rows_filtradas:
+			print(f"{kolor['VIVID_YELLOW']}{' '*20}--- NO DATA IN THE RANGE ---{kolor['OFF']}")
 		else:
-			for r in rows:
-				dy    = r[0]
-				fby   = r[1]
-				temps = r[2:8]
-				db_hash = r[8]
-				delta = r[9]
+			rows_filtradas.sort(key=lambda x: (int(x['doy']), int(x['flyby'])))
+			for r in rows_filtradas:
+				dy = int(r['doy'])
+				fby = int(r['flyby'])
+				temps_keys = ['n40', 'n45', 'n50', 'n55', 'n60', 'n65']
+				db_hash = int(r.get('n99', 0))
+				delta = r.get('delta', '')
 
-				try:
-					data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
-				except:
-					data_str = "??.??"
-
+				data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
 				res_vals = []
 				_psi = 0.0
-				for v in temps:
+
+				for k in temps_keys:
+					val = r.get(k, '')
 					try:
-						if v in [None, "", "None", "NULL"]: raise ValueError
-						val_f = float(v)
+						if val in [None, "", "None"]: raise ValueError
+						val_f = float(val)
 						_psi += val_f
 						res_vals.append(f"{kolor['WHITE']}{val_f:>6.2f}  {kolor['OFF']}")
 					except ValueError:
 						res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
 
 				calc_hash = int((_psi + dy) * (fby + 124))
-				if db_hash == calc_hash:
-					#st = ✓
-					st = f"{kolor['DIM_WHITE']} {kolor['OFF']}"
-				else:
-					# Debug para ver onde está o erro se falhar
-					st = f"{kolor['DIM_WHITE']}X [DB:{db_hash} | CC:{calc_hash}]{kolor['OFF']}"
+				st = f"{kolor['DIM_WHITE']} {kolor['OFF']}" if db_hash == calc_hash else f"{kolor['BOLD_RED']}X{kolor['OFF']}"
 
 				try:
 					vd = float(delta)
@@ -5310,18 +5169,20 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 					delta_str = f"{cor_d}{vd:>5.2f}{kolor['OFF']}"
 				except:
 					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
+					contagem_na += 1
 
 				print(f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | "
-						f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
-						f"{''.join(res_vals)}| {delta_str} {st}")
-		
-		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}\n")
+					f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
+					f"{''.join(res_vals)}| {delta_str} {st}")
+
+		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
+		if contagem_na > 0:
+			print(f"{kolor['DIM_WHITE']}Note: {contagem_na} Records with Delta N/A due to sensor failure in N40 or N60.{kolor['OFF']}\n")
+		else:
+			print("")
 
 	except Exception as e:
-		print(f"{random.choice(messages['trouble_short'])}❗ {e}{kolor['OFF']}\n")
-	finally:
-		if conn:
-			conn.close()
+		print(f"❗{random.choice(messages['trouble_short'])} error processing data: {e}\n")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -5349,7 +5210,7 @@ def main():
 	t.start()
 	#----------------------------
 	drawart('art_cybele')
-	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']} a {website['home'][8:]}{_cyext_}{kolor['OFF']}")
+	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
@@ -5528,6 +5389,11 @@ def main():
 			for term in astro_random_keys:
 				astro_qa += " "+_spchar_[1:2] + term + "?\n"
 			print ("There are some astronomy questions you can make'me:\n\n" + astro_qa.title()[:-2] + "?\n")
+
+		elif question == 'linux command':
+			what2tell = random.choice(core['display_commands'])
+			iniwhat2tell = random.choice(messages['helpassist'])
+			print(f"{iniwhat2tell}, type <{what2tell} {question.split()[0]} commands> or <help {what2tell}>\n")
 
 		elif question[0:9] == "days till" or question[0:8] == "days for" or question[0:7] == "days to":
 			if len(question.split()[2:]) == 0:
@@ -5933,7 +5799,6 @@ def main():
 			print(f"{kolor['BOLD_CYAN']}{random.choice(messages['info_intromsg'])}{kolor['OFF']}\n")
 			try:
 				display_node_name = platform.node().upper() if node_name else "unidentified device"
-				display_cyext = _cyext_[0:4].replace(" ","") if len(_cyext_) >= 4 else "N/A"
 				core_system_country = "Undetectable"
 				if system_country is not None:
 					core_system_country = system_country[1]
@@ -5966,7 +5831,7 @@ def main():
 				else:
 					_pydr3_ = _pydr3_
 
-				print(f"    Device : {display_node_name}|{display_cyext} on {sysos}")
+				print(f"    Device : {display_node_name} on {sysos}")
 				print(f"      Name : {_title_}")
 				print(f"   Version : {version}")
 				print(f"   Revised : {_revise_}")
@@ -6747,9 +6612,10 @@ def main():
 					local_f = dbld.strftime(fmt)
 					remote_f = dbrd.strftime(fmt)
 
-					# Calculate real difference
+					# Calculate the real difference
 					delta = dbrd - dbld if dbrd > dbld else dbld - dbrd
 					diff_seconds = (dbrd - dbld).total_seconds()
+
 					hours, rem = divmod(delta.seconds, 3600)
 					mins, secs = divmod(rem, 60)
 					diff_str = f"{delta.days}d {hours}h {mins}m {secs}s"
@@ -6757,15 +6623,18 @@ def main():
 					if abs(diff_seconds) < 3660:
 						print(f"You have the latest version available ({remote_f}).\n")
 
+					# If remote is actually newer (more than 1 hour difference)
 					elif diff_seconds >= 3660:
 						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your database version is lower than the existing {remote_f}.")
 						print(f"Update lag: {diff_str}\n")
+
+					# If local is actually newer (more than 1 hour difference)
 					else:
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
 
-		elif question[0:10] == 'test':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")
+		elif question[0:4] == 'test':
+			print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
 
 		elif question != '':
 			answer = find_answer(question,questions)
