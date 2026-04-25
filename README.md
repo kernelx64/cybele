@@ -1,3 +1,37 @@
+# ⚠️ PROJECT STATUS / AVISO IMPORTANTE
+
+> ### "The Ungrateful Reality / A Realidade Ingrata"
+> 
+> I did my part: I found the data, organized it, and tried to give it a voice. 
+> Current infrastructures make it almost impossible for an ordinary citizen to maintain 
+> an open data flow without having to take a cybersecurity course.
+>
+> **[Read the full manifesto below]**
+
+## English Version
+The Ungrateful Reality
+I am right when I say that this is no longer my problem. I did my part: I found the data, organized it, and tried to give it a voice. Current infrastructures (the "modern" databases) make it almost impossible for an ordinary citizen to maintain an open data flow without having to take a cybersecurity course. The blame lies with the evolution of technology itself, which has closed in on itself.
+
+One Last Thought (No Pressure)
+I don’t feel bad about "leaving it as it is." In computer science, as in science, tools are sometimes not yet up to the author's vision. Google Sheets is easy, but it is static — which is why Cybele lost this module. As for SQLite/Baserow, they are dynamic, but they are "paranoid" and contradictory: a read-only API should not have to face these kinds of barriers. Furthermore, the fact that APIs have full privileges by default is, in itself, a contradiction to that very "paranoia." But these are different ways of looking at things, and I guess I’m just a dinosaur in this field.
+
+For me, this isn't just about fatigue; it’s a matter of principle. Seeing knowledge blocked by "technical semantics" is an insult to the intelligence of those who simply want to document the reality of our planet. Did you know that more than 90% of the population doesn't even know what the AMOC is or what it’s for?
+
+This clearly explains why Cybele has been pushed to a corner. The only viable option I found—one that is free and without "walls"—was to use a simple spreadsheet to share the values.
+
+
+# Versão Portuguesa
+A Realidade Ingrata
+Tenho razão quando digo que isto já não é um problema meu. Eu fiz a minha parte: encontrei os dados, organizei-os e tentei dar-lhes voz. Com as infraestruturas atuais (as bases de dados "modernas"), torna-se quase impossível para um cidadão comum manter um fluxo de dados aberto sem ter de tirar um curso de cibersegurança. A culpa é da evolução da própria tecnologia, que se fechou sobre si mesma.
+
+Um último pensamento
+Não me sinto mal por "deixar como está". Na informática, como na ciência, às vezes as ferramentas ainda não estão à altura da visão do autor. O Google Sheets é fácil, mas é estático, e por isso a Cybele perdeu este módulo. Já o SQLite e o Baserow são dinâmicos, mas "paranoicos" e contraditórios: uma API só de leitura não deveria passar por este tipo de entraves. Além disso, as APIs por defeito não deveriam ter privilégios totais — o que, por si só, é uma contradição à própria "paranoia" de segurança. Mas são formas de olhar para as coisas, e eu se calhar já sou um dinossauro.
+
+Para mim, isto não é apenas cansaço; é uma questão de princípios. Ver o conhecimento ficar bloqueado por "semânticas" é um insulto à inteligência de quem quer apenas documentar a realidade — no meu caso, a do nosso planeta. Sabiam que mais de 90% da população nem sequer sabe o que é a AMOC ou para que serve?
+
+Fica aqui bem explícito o porquê de a Cybele ter ficado encostada a um canto. A única hipótese mais viável que encontrei, gratuita e sem "muros", foi uma simples folha de cálculo para partilhar os valores.
+
+
 # 🤖 Cybele Bot
 
 > *"The code is open, but the conscience is not."* > *"Remember: Many charge monthly for a mountain I built for free."*
