@@ -6440,8 +6440,6 @@ def main():
 			if internet_onoff() == False:
 				print(f"{random.choice(messages['trouble_msg'])} To perform this task i need to be able to access the internet.\n")
 			else:
-				verbose = 'verbose' in question
-				db_url = sqlcodb.format(dbname_placeholder=_title_.lower())
 				output_db_file = f"{_title_.lower()}.db"
 				if os.path.exists(output_db_file):
 					print(f"I am already able to be fully functional in offline mode but i but I will update.")
