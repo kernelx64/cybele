@@ -1125,7 +1125,7 @@ def download_database_update():
 		response = requests.get(url, stream=True)
 		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
-		block_size = 1024 # 1 Kibibyte
+		block_size = 1024
 		downloaded = 0
 		print(f"Downloading update for {local_db_filename}...")
 		with open(local_db_filename, 'wb') as f:
@@ -1149,7 +1149,7 @@ def download_database_update():
 				local_check = os.path.getmtime(local_db_filename)
 				diff_seconds = local_check - remote_timestamp
 
-				if abs(diff_seconds) >= 60: # If there's more than a minute difference
+				if abs(diff_seconds) >= 60:
 					diff_hours = round(diff_seconds / 3600)
 					print(f"{kolor['BOLD_BLUE']}Note:{kolor['OFF']} Your OS added a {diff_hours}h timezone offset to the file.")
 					print(f"If 'database info' shows 'SUPERIOR', you're still all set!\n")
