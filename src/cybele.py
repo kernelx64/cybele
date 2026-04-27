@@ -746,7 +746,7 @@ help = {
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
 	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
-	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}.Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
+	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}. Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help uptime": "Usage: cybele uptime \nReports the current session duration. Useful for monitoring script stability and long-running processes.\nex: cybele uptime\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
@@ -5220,7 +5220,7 @@ def main():
 		question = get_question()
 		#-------------------------
 		if globals()['update_available']:
-			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd} is available.{kolor['OFF']}")
+			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime("%d.%m.%Y %H:%M:%S")} is available.{kolor['OFF']}")
 			print("Type 'offline mode on' to sync.\n")
 			globals()['update_available'] = False
 		#-------------------------
