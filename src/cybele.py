@@ -751,7 +751,8 @@ help = {
 	"help uptime": "Usage: cybele uptime \nReports the current session duration. Useful for monitoring script stability and long-running processes.\nex: cybele uptime\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
-	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm (work in progress).\nex: weather for today\n",
+	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm.\nex: weather for today\n",
+	"help weather now": "Usage: weather now\nIt provides a local weather forecast using the aether Neural algorithm ✧ which analyzes AMOC data as an influential factor in the forecast. (Beta testing)\nex: weather now\n",
 	"help week number": "Usage: week number \nDisplay the week number for the actual date or the system date.\nex: week number\n",
 	"help well calc": "Usage: well calc \nProvides precise calculations for borehole volume, casing capacity, and water column height..\nex: well calc\n",
 	"help x table": "Usage: x table | multiplication table <number>\nShow the multiplication table for the inputed number \nex: multiplication table 5 \n    x table 5\n",
@@ -1960,6 +1961,70 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 	return amoc_history
 
 #---------------------------------------------------
+class aetherNeuralbase:
+	def __init__(self):
+		self.zones = {
+			"AR": [[24,23,21,17,14,11,11,13,15,18,20,23], 10, 0.3, 0.022],
+			"AU": [[27,27,25,22,18,15,15,16,19,22,24,26], 12, 0.2, 0.024],
+			"BR": [[27,27,27,26,25,24,24,25,25,26,26,27], 6, 0.7, 0.021],
+			"CA": [[-10,-9,-4,4,11,16,19,18,13,7,0,-7], 15, 0.4, 0.045],
+			"CN": [[-2,2,8,15,21,25,27,26,21,14,6,0], 12, 0.4, 0.028],
+			"DE": [[1,2,6,11,15,18,20,20,16,11,6,2], 10, 0.5, 0.030],
+			"EG": [[14,15,18,23,27,30,31,31,29,26,21,16], 15, 0.1, 0.035],
+			"ES": [[10,11,14,16,20,24,27,28,25,20,14,11], 12, 0.2, 0.032],
+			"FI": [[-6,-7,-3,3,10,15,18,16,10,5,0,-3], 12, 0.5, 0.050],
+			"FR": [[5,6,9,12,16,19,22,22,18,14,9,6], 10, 0.5, 0.028],
+			"GB": [[5,5,7,9,12,15,17,17,15,11,8,6], 8, 0.6, 0.025],
+			"IN": [[18,21,26,31,33,33,31,30,29,27,23,19], 12, 0.6, 0.022],
+			"JP": [[5,6,9,15,20,23,27,28,24,19,13,8], 10, 0.5, 0.026],
+			"MX": [[15,16,19,21,23,23,22,22,22,20,18,16], 12, 0.3, 0.025],
+			"NO": [[-3,-3,0,5,11,14,17,16,11,7,2,-1], 10, 0.5, 0.048],
+			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.3, 0.031],
+			"RU": [[-10,-9,-2,7,15,19,22,19,13,6,-2,-7], 15, 0.4, 0.040],
+			"US": [[2,4,8,14,19,24,27,26,22,15,9,4], 13, 0.4, 0.028],
+			"ZA": [[21,21,20,17,15,12,12,14,16,18,19,21], 11, 0.3, 0.024],
+			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
+			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
+		}
+
+	def _get_emoji(self, status, temp):
+		status_lower = status.lower()
+		if "rain" in status_lower: return "🌧️"
+		if "cloudy" in status_lower: return "⛅" if temp > 15 else "☁️"
+		if temp > 28: return "🔥"
+		if temp < 0: return "❄️"
+		return "☀️"
+
+	def predictbase(self):
+		code = system_country[0]
+		name = system_country[1]
+		profile = self.zones.get(code, self.zones["DEFAULT"])
+		monthly_avgs, swing, humidity, gw_rate = profile
+		now = datetime.now()
+		month_idx = now.month - 1
+		next_month_idx = (month_idx + 1) % 12
+		day_progress = (now.day - 1) / 30.0
+		base_temp = monthly_avgs[month_idx] + (monthly_avgs[next_month_idx] - monthly_avgs[month_idx]) * day_progress
+		years_diff = now.year - 2020
+		gw_increment = max(0, years_diff * gw_rate)
+		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
+		final_temp = base_temp + gw_increment + hour_effect
+		state_seed = (now.timetuple().tm_yday * 7) % 100
+		if state_seed < (humidity * 100):
+			status = "Cloudy with a chance of rain"
+		elif state_seed > 85:
+			status = "Partly Cloudy"
+		else:
+			status = "Clear Skies"
+		icon = self._get_emoji(status, final_temp)
+		return (
+			f"{kolor['BOLD_CYAN']}aetherNeural {kolor['BOLD_YELLOW']}✧ "
+			f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
+			f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
+			f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}."
+		)
+
+#---------------------------------------------------
 class aetherNeural:
 	def __init__(self):
 		self.zones = {
@@ -2011,7 +2076,7 @@ class aetherNeural:
 						r_doy = int(r.get('doy', 0))
 						if r_ano == ano and doy_ini <= r_doy <= doy_fim:
 							rows_filtradas.append(r)
-			except: 
+			except:
 				pass
 
 		if not rows_filtradas and os.path.isfile(db_filename):
@@ -2022,7 +2087,7 @@ class aetherNeural:
 				cursor.execute("SELECT data, doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
 				rows_filtradas = [dict(r) for r in cursor.fetchall()]
 				conn.close()
-			except: 
+			except:
 				pass
 
 		for row in rows_filtradas:
@@ -2042,10 +2107,10 @@ class aetherNeural:
 		profile = self.zones.get(code, self.zones["DEFAULT"])
 		sensitivity = self.amoc_sensitivity.get(code, 0.1)
 		monthly_avgs, swing, humidity, gw_rate = profile
-        
+
 		now = datetime.now()
 		doy_atual = now.timetuple().tm_yday
-        
+
 		day_progress = (now.day - 1) / 30.0
 		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 		years_diff = now.year - 2020
@@ -2054,12 +2119,12 @@ class aetherNeural:
 
 		amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
 		history = self._get_amoc_history(now.year, doy_atual - 7, doy_atual)
-        
+
 		if history:
 			sorted_days = sorted(history.keys())
 			current_delta = history[sorted_days[-1]]
-            
-			# Se tivermos histórico >= 2 dias, calcula media movel. 
+
+			# Se tivermos histórico >= 2 dias, calcula media movel.
 			# Senão, usa o baseline crítico de 6.05 como referência de "motor ligado".
 			if len(history) >= 2:
 				prev_deltas = [history[d] for d in sorted_days[:-1]]
@@ -2068,7 +2133,7 @@ class aetherNeural:
 				baseline = 6.05
 
 			diff = current_delta - baseline
-            
+
 			if diff < 0:
 				amoc_adj = abs(diff) * 2.2 * sensitivity
 				hum_mod = max(0.2, 1.0 + (diff * 0.25 * sensitivity))
@@ -2078,16 +2143,16 @@ class aetherNeural:
 				amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC OK]{kolor['OFF']}"
 
 		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
-        
+
 		state_seed = (doy_atual * 7) % 100
 		status = "Cloudy with a chance of rain" if state_seed < (humidity * hum_mod * 100) else ("Partly Cloudy" if state_seed > 85 else "Clear Skies")
 		icon = "🌧️" if "rain" in status.lower() else ("🔥" if final_temp > 28 else ("❄️" if final_temp < 0 else "☀️"))
-        
+
 		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
 				f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
-				
+
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
 	for i, item in enumerate(items):
@@ -5169,7 +5234,7 @@ def validar_e_converter_data(data_str):
 		return datetime.strptime(padronizada, '%d-%m-%Y')
 	except ValueError:
 		return None
-		
+
 #-------------------------------------------------
 #-------------------------------------------------
 def mostrar_valores_amoc(data_input=None, data_fim_input=None):
@@ -5202,6 +5267,10 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		if dt_fim is None or dt_fim.year != ano:
 			print(f"{random.choice(messages['trouble_short'])} ❌ Invalid end date or year mismatch!\n")
 			return
+		elif dt_ini > datetime.now() or dt_fim > datetime.now():
+			print(f"{random.choice(messages['trouble_short'])} ❌ The start date and the end date cannot be later than the current date.\n")
+			return
+
 		doy_fim = int(dt_fim.strftime('%j'))
 	else:
 		doy_fim = doy_ini
@@ -5228,6 +5297,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 				return
 
 			todos_os_dados = response.json().get('results', [])
+
 			for r in todos_os_dados:
 				r_ano = int(r.get('ano', 0))
 				r_doy = int(r.get('doy', 0))
@@ -6429,8 +6499,13 @@ def main():
 				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}."
 			]
 			print(random.choice(weather_starters))
-			oracle = aetherNeural()
-			print(f"{oracle.predict()}\n")
+			if 'weather now' in question:
+				oracle = aetherNeural()
+				print(f"{oracle.predict()}\n")
+			else:
+				oracle = aetherNeuralbase()
+				print(f"{oracle.predictbase()}\n")
+
 
 		elif question[-9:] == 'about you':
 				print (f"Ok!. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago. I was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {aboutyou}\n")
