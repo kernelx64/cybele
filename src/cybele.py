@@ -1961,8 +1961,8 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 
 #---------------------------------------------------
 class aetherNeural:
-    def __init__(self):
-        self.zones = {
+	def __init__(self):
+		self.zones = {
 			"AR": [[24,23,21,17,14,11,11,13,15,18,20,23], 10, 0.3, 0.022],
 			"AU": [[27,27,25,22,18,15,15,16,19,22,24,26], 12, 0.2, 0.024],
 			"BR": [[27,27,27,26,25,24,24,25,25,26,26,27], 6, 0.7, 0.021],
@@ -1985,109 +1985,108 @@ class aetherNeural:
 			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
 			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
-        self.amoc_sensitivity = { "PT": 1.4, "ES": 1.3, "GB": 1.5, "FR": 1.4,
+		self.amoc_sensitivity = { "PT": 1.4, "ES": 1.3, "GB": 1.5, "FR": 1.4,
 								"NO": 1.5, "FI": 1.3, "DE": 1.2, "US": 1.1,
 								"CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4,
 								"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3,
 								"ZA": 0.2, "AU": 0.1, "TH": 0.05, "EG": 0.6
 								}
 
-    def _get_amoc_history(self, ano, doy_ini, doy_fim):
-        global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
-        online = internet_onoff()
-        db_filename = f"{_title_.lower()}.db"
-        rows_filtradas = []
-        daily_values = {}
+	def _get_amoc_history(self, ano, doy_ini, doy_fim):
+		global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
+		online = internet_onoff()
+		db_filename = f"{_title_.lower()}.db"
+		rows_filtradas = []
+		daily_values = {}
 
-        if online:
-            try:
-                h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
-                idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
-                path_int = kdecode(BRADR_EN, shifl).format(idur)
-                response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
-                if response.status_code == 200:
-                    for r in response.json().get('results', []):
-                        r_ano = int(r.get('ano', 0))
-                        r_doy = int(r.get('doy', 0))
-                        if r_ano == ano and doy_ini <= r_doy <= doy_fim:
-                            rows_filtradas.append(r)
-            except: 
-                pass
+		if online:
+			try:
+				h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
+				idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
+				path_int = kdecode(BRADR_EN, shifl).format(idur)
+				response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
+				if response.status_code == 200:
+					for r in response.json().get('results', []):
+						r_ano = int(r.get('ano', 0))
+						r_doy = int(r.get('doy', 0))
+						if r_ano == ano and doy_ini <= r_doy <= doy_fim:
+							rows_filtradas.append(r)
+			except: 
+				pass
 
-        if not rows_filtradas and os.path.isfile(db_filename):
-            try:
-                conn = sqlite3.connect(db_filename)
-                conn.row_factory = sqlite3.Row
-                cursor = conn.cursor()
-                cursor.execute("SELECT data, doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
-                rows_filtradas = [dict(r) for r in cursor.fetchall()]
-                conn.close()
-            except: 
-                pass
+		if not rows_filtradas and os.path.isfile(db_filename):
+			try:
+				conn = sqlite3.connect(db_filename)
+				conn.row_factory = sqlite3.Row
+				cursor = conn.cursor()
+				cursor.execute("SELECT data, doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
+				rows_filtradas = [dict(r) for r in cursor.fetchall()]
+				conn.close()
+			except: 
+				pass
 
-        # Processamento...
-        for row in rows_filtradas:
-            d_raw = row.get('delta')
-            if d_raw is None or str(d_raw).upper() == "N/A": continue
-            try:
-                doy = int(row.get('doy'))
-                val = float(d_raw)
-                if doy not in daily_values: daily_values[doy] = {"samples": []}
-                daily_values[doy]["samples"].append(val)
-            except: continue
+		for row in rows_filtradas:
+			d_raw = row.get('delta')
+			if d_raw is None or str(d_raw).upper() == "N/A": continue
+			try:
+				doy = int(row.get('doy'))
+				val = float(d_raw)
+				if doy not in daily_values: daily_values[doy] = {"samples": []}
+				daily_values[doy]["samples"].append(val)
+			except: continue
 
-        return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
+		return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
 
-    def predict(self):
-        code, name = system_country[0], system_country[1]
-        profile = self.zones.get(code, self.zones["DEFAULT"])
-        sensitivity = self.amoc_sensitivity.get(code, 0.1)
-        monthly_avgs, swing, humidity, gw_rate = profile
+	def predict(self):
+		code, name = system_country[0], system_country[1]
+		profile = self.zones.get(code, self.zones["DEFAULT"])
+		sensitivity = self.amoc_sensitivity.get(code, 0.1)
+		monthly_avgs, swing, humidity, gw_rate = profile
         
-        now = datetime.now()
-        doy_atual = now.timetuple().tm_yday
+		now = datetime.now()
+		doy_atual = now.timetuple().tm_yday
         
-        day_progress = (now.day - 1) / 30.0
-        base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
-        years_diff = now.year - 2020
-        gw_increment = max(0, years_diff * gw_rate)
-        hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
+		day_progress = (now.day - 1) / 30.0
+		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
+		years_diff = now.year - 2020
+		gw_increment = max(0, years_diff * gw_rate)
+		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
 
-        amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
-        history = self._get_amoc_history(now.year, doy_atual - 7, doy_atual)
+		amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
+		history = self._get_amoc_history(now.year, doy_atual - 7, doy_atual)
         
-        if history:
-            sorted_days = sorted(history.keys())
-            current_delta = history[sorted_days[-1]]
+		if history:
+			sorted_days = sorted(history.keys())
+			current_delta = history[sorted_days[-1]]
             
-            # Se tivermos histórico >= 2 dias, calcula média móvel. 
-            # Senão, usa o baseline crítico de 6.05 como referência de "motor ligado".
-            if len(history) >= 2:
-                prev_deltas = [history[d] for d in sorted_days[:-1]]
-                baseline = sum(prev_deltas[-5:]) / len(prev_deltas[-5:])
-            else:
-                baseline = 6.05 
+			# Se tivermos histórico >= 2 dias, calcula media movel. 
+			# Senão, usa o baseline crítico de 6.05 como referência de "motor ligado".
+			if len(history) >= 2:
+				prev_deltas = [history[d] for d in sorted_days[:-1]]
+				baseline = sum(prev_deltas[-5:]) / len(prev_deltas[-5:])
+			else:
+				baseline = 6.05
 
-            diff = current_delta - baseline
+			diff = current_delta - baseline
             
-            if diff < 0:
-                amoc_adj = abs(diff) * 2.2 * sensitivity
-                hum_mod = max(0.2, 1.0 + (diff * 0.25 * sensitivity))
-                color = kolor['ORANGE'] if diff < -1.5 else kolor['BOLD_YELLOW']
-                amoc_tag = f" {color}[AMOC Δ{current_delta}]{kolor['OFF']}"
-            else:
-                amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC OK]{kolor['OFF']}"
+			if diff < 0:
+				amoc_adj = abs(diff) * 2.2 * sensitivity
+				hum_mod = max(0.2, 1.0 + (diff * 0.25 * sensitivity))
+				color = kolor['ORANGE'] if diff < -1.5 else kolor['BOLD_YELLOW']
+				amoc_tag = f" {color}[AMOC Δ{current_delta}]{kolor['OFF']}"
+			else:
+				amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC OK]{kolor['OFF']}"
 
-        final_temp = base_temp + gw_increment + hour_effect + amoc_adj
+		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
         
-        state_seed = (doy_atual * 7) % 100
-        status = "Cloudy with a chance of rain" if state_seed < (humidity * hum_mod * 100) else ("Partly Cloudy" if state_seed > 85 else "Clear Skies")
-        icon = "🌧️" if "rain" in status.lower() else ("🔥" if final_temp > 28 else ("❄️" if final_temp < 0 else "☀️"))
+		state_seed = (doy_atual * 7) % 100
+		status = "Cloudy with a chance of rain" if state_seed < (humidity * hum_mod * 100) else ("Partly Cloudy" if state_seed > 85 else "Clear Skies")
+		icon = "🌧️" if "rain" in status.lower() else ("🔥" if final_temp > 28 else ("❄️" if final_temp < 0 else "☀️"))
         
-        return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
-                f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
-                f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
-                f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
+		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
+				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
+				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
+				f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
 				
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
