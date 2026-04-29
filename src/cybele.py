@@ -142,7 +142,7 @@ seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml
 GITHUB = "ammil://ktp.zbmanunlxkvhgmxgm.vhf/dxkgxeq64/vruxex/ftbg/lkv/vruxex.ir"
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 aboutyou = "B'f t wbghltnk bg t mxva tzx, unm B'f lmbee xqxvnmbgz fr vhwx yetpexller."
-internals = ["version","_title_","_spchar_","_active_","_revise_","_author_","lat","lon"]
+internals = ["version","_title_","_spchar_","_active_","_revise_","_author_","lat","lon"]; update_available = False;
 shifl = int(round(math.sqrt(math.log(math.cosh(10)) * 400 - math.degrees(math.acos(-1)) * 1.5) + math.e**1.92) - 45)
 datemd = str(datetime.today().strftime("%d.%m")); _poigps_=[]; tables=[]; system_country=None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
@@ -150,7 +150,7 @@ month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);
 stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
-update_available = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
+nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
 BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="
 _h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
@@ -3095,14 +3095,11 @@ def get_star_info(star_name):
 
 #-------------------------------------------------
 def get_next_asteroid(limit=5):
-	global _title_
-	db_name = f"{_title_.lower()}.db"
+	db_name = f"{globals().get('_title_').lower()}.db"
 	agora = datetime.now().strftime("%Y-%m-%d %H:%M")
-
 	try:
 		conn = sqlite3.connect(db_name)
 		cursor = conn.cursor()
-
 		query = f"""
 			SELECT asteroid, ca_ut, d_km, au
 			FROM neo
@@ -3110,17 +3107,19 @@ def get_next_asteroid(limit=5):
 			ORDER BY ca_ut ASC
 			LIMIT {limit}
 		"""
-
 		cursor.execute(query, (agora,))
 		rows = cursor.fetchall()
-
 		if rows:
 			if limit == 1:
 				nome, data_raw, dist_km, au = rows[0]
 				data_obj = datetime.strptime(data_raw, "%Y-%m-%d %H:%M")
-				d_clean = float(str(dist_km).replace(",", ""))
-				dist_fmt = f"{d_clean:,.0f}".replace(",", ".")
-				print(f"{kolor['BOLD_MAGENTA']}🔔 NEXT NEO EVENT:{kolor['OFF']} {kolor['VIVID_YELLOW']}{nome}{kolor['OFF']} a {data_obj.strftime('%d.%m %H:%M')} ({dist_fmt} km)")
+				agora = datetime.now()
+				if (data_obj - datetime.now()).days < 15:
+					d_clean = float(str(dist_km).replace(",", ""))
+					dist_fmt = f"{d_clean:,.0f}".replace(",", ".")
+					globals()['nextneo'] = f"{kolor['BOLD_MAGENTA']}🔔 NEXT NEO EVENT:{kolor['OFF']} {kolor['VIVID_YELLOW']}{nome}{kolor['OFF']} in {data_obj.strftime('%d.%m %H:%M')} ({dist_fmt} km)"
+				else:
+					nextneo = False
 			else:
 				print(f"\n{kolor['BOLD_MAGENTA']}{'-'*55}{kolor['OFF']}")
 				print(f"{kolor['BOLD_MAGENTA']}|   ☄️  UPCOMING EVENTS: Near Earth Objects (NEO)     |{kolor['OFF']}")
@@ -3142,7 +3141,7 @@ def get_next_asteroid(limit=5):
 	finally:
 		if 'conn' in locals() and conn:
 			conn.close()
-
+	
 #------------------------------------------------
 def add_days(n, d = datetime.today()):
   return d + timedelta(n)
@@ -5434,7 +5433,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
-	global system_country, people_space, ncountries, dbld, dlrd #, orbit_data
+	global system_country, people_space, ncountries, dbld, dlrd, nextneo #, orbit_data
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5462,8 +5461,6 @@ def main():
 	sleep(3.00)
 	print_statusline(f"\n")
 	#-----------------------------
-	#get_next_asteroid(limit=1)
-	#-----------------------------
 	while True:
 		#-------------------------
 		question = get_question()
@@ -5472,6 +5469,8 @@ def main():
 			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime("%d.%m.%Y %H:%M:%S")} is available.{kolor['OFF']}")
 			print("Type 'offline mode on' to sync.\n")
 			globals()['update_available'] = False
+		if globals().get('nextneo'):
+			print(nextneo); globals()['nextneo'] = False
 		#-------------------------
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
