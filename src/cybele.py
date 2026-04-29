@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '27.04.2026'
+_revise_ = '29.04.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -1892,74 +1892,56 @@ class VictronMonitor:
 
 #---------------------------------------------------
 def _get_amoc_history(ano, doy_ini, doy_fim):
-	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
-	online = internet_onoff()
-	db_filename = f"{_title_.lower()}.db"
-    
-	rows_filtradas = []
-	daily_values = {}
+    global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
+    online = internet_onoff()
+    db_filename = f"{_title_.lower()}.db"
+    rows_filtradas = []
+    daily_values = {}
 
-	# Obtem os dados (Prioridade Baserow -> Fallback ficheiro db SQLite)
-	if online:
-		try:
-			h_key = base64.b64decode(_h_key_64).decode()
-			h_val = base64.b64decode(_h_val_64).decode()
-			idur = base64.b64decode(BRTID_EN).decode()
-			idt  = base64.b64decode(BRTK_EN).decode()
-			path_int = kdecode(BRADR_EN, shifl).format(idur) + "?size=200"
-			wtitle = {h_key: f"{h_val}{idt}"}
+    if online:
+        try:
+            h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
+            idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
+            path_int = kdecode(BRADR_EN, shifl).format(idur)
+            response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
+            if response.status_code == 200:
+                for r in response.json().get('results', []):
+                    try:
+                        r_ano = int(r.get('ano', 0))
+                        r_doy = int(r.get('doy', 0))
+                        if r_ano == ano and doy_ini <= r_doy <= doy_fim:
+                            rows_filtradas.append(r)
+                    except: continue
+        except:
+            pass
 
-			response = requests.get(path_int, headers=wtitle, timeout=10)
-			if response.status_code == 200:
-				for r in response.json().get('results', []):
-					r_ano = int(r.get('ano', 0))
-					r_doy = int(r.get('doy', 0))
-					if r_ano == ano and doy_ini <= r_doy <= doy_fim:
-						rows_filtradas.append(r)
-		except Exception as e:
-			print(f"⚠️ Baserow failed, checking local DB...")
+    if not rows_filtradas and os.path.isfile(db_filename):
+        try:
+            conn = sqlite3.connect(db_filename)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            # SQL limpo: sem a coluna 'data' que não existe
+            cursor.execute("SELECT doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
+            rows_filtradas = [dict(r) for r in cursor.fetchall()]
+            conn.close()
+        except:
+            pass
 
-	# Se estiver offline OU se o Baserow falhou/não houver dados
-	if not rows_filtradas and os.path.isfile(db_filename):
-		try:
-			conn = sqlite3.connect(db_filename)
-			conn.row_factory = sqlite3.Row
-			cursor = conn.cursor()
-			query = "SELECT data, doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?"
-			cursor.execute(query, (ano, doy_ini, doy_fim))
-			rows_filtradas = [dict(r) for r in cursor.fetchall()]
-			conn.close()
-		except Exception as e:
-			pass
-
-	# Processa a lista rows_filtradas para dict
-	for row in rows_filtradas:
-		delta_raw = row.get('delta')
-		if delta_raw is None or str(delta_raw).upper() == "N/A":
-			continue
+    for row in rows_filtradas:
+        # Tenta 'delta' e a versão com o símbolo grego 'deltΔ' que viste no log
+        d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
         
-		try:
-			doy = int(row.get('doy'))
-			delta_val = float(delta_raw)
-			if doy not in daily_values:
-				daily_values[doy] = {"date": row.get('data', '??.??'), "samples": []}
-			daily_values[doy]["samples"].append(delta_val)
-		except:
-			continue
+        if d_raw is None or str(d_raw).upper() == "N/A": 
+            continue
+        try:
+            doy = int(row.get('doy'))
+            val = float(d_raw)
+            if doy not in daily_values: daily_values[doy] = {"samples": []}
+            daily_values[doy]["samples"].append(val)
+        except: continue
 
-	# Gera dict final com medias
-	amoc_history = {}
-	for doy in sorted(daily_values.keys()):
-		data = daily_values[doy]
-		avg_delta = sum(data["samples"]) / len(data["samples"])
-		amoc_history[doy] = {
-			"date": data["date"],
-			"delta": round(avg_delta, 2),
-			"flybys": len(data["samples"])
-		}
-    
-	return amoc_history
-
+    return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
+	
 #---------------------------------------------------
 class aetherNeuralbase:
 	def __init__(self):
@@ -2043,14 +2025,14 @@ class aetherNeural:
 			"JP": [[5,6,9,15,20,23,27,28,24,19,13,8], 10, 0.5, 0.026],
 			"MX": [[15,16,19,21,23,23,22,22,22,20,18,16], 12, 0.3, 0.025],
 			"NO": [[-3,-3,0,5,11,14,17,16,11,7,2,-1], 10, 0.5, 0.048],
-			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.3, 0.031],
+			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.45, 0.031], # Humidade base subiu para 0.45
 			"RU": [[-10,-9,-2,7,15,19,22,19,13,6,-2,-7], 15, 0.4, 0.040],
 			"US": [[2,4,8,14,19,24,27,26,22,15,9,4], 13, 0.4, 0.028],
 			"ZA": [[21,21,20,17,15,12,12,14,16,18,19,21], 11, 0.3, 0.024],
 			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
 			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
-		self.amoc_sensitivity = { "PT": 1.4, "ES": 1.3, "GB": 1.5, "FR": 1.4,
+		self.amoc_sensitivity = { "PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, # Sensibilidade de PT reforçada
 								"NO": 1.5, "FI": 1.3, "DE": 1.2, "US": 1.1,
 								"CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4,
 								"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3,
@@ -2072,26 +2054,24 @@ class aetherNeural:
 				response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
 				if response.status_code == 200:
 					for r in response.json().get('results', []):
-						r_ano = int(r.get('ano', 0))
-						r_doy = int(r.get('doy', 0))
+						r_ano = int(r.get('ano') or r.get('Year') or 0)
+						r_doy = int(r.get('doy') or r.get('DayOfYear') or 0)
 						if r_ano == ano and doy_ini <= r_doy <= doy_fim:
 							rows_filtradas.append(r)
-			except:
-				pass
+			except: pass
 
 		if not rows_filtradas and os.path.isfile(db_filename):
 			try:
 				conn = sqlite3.connect(db_filename)
 				conn.row_factory = sqlite3.Row
 				cursor = conn.cursor()
-				cursor.execute("SELECT data, doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
+				cursor.execute("SELECT doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
 				rows_filtradas = [dict(r) for r in cursor.fetchall()]
 				conn.close()
-			except:
-				pass
+			except: pass
 
 		for row in rows_filtradas:
-			d_raw = row.get('delta')
+			d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
 			if d_raw is None or str(d_raw).upper() == "N/A": continue
 			try:
 				doy = int(row.get('doy'))
@@ -2107,10 +2087,10 @@ class aetherNeural:
 		profile = self.zones.get(code, self.zones["DEFAULT"])
 		sensitivity = self.amoc_sensitivity.get(code, 0.1)
 		monthly_avgs, swing, humidity, gw_rate = profile
-
+	
 		now = datetime.now()
 		doy_atual = now.timetuple().tm_yday
-
+	
 		day_progress = (now.day - 1) / 30.0
 		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 		years_diff = now.year - 2020
@@ -2118,35 +2098,57 @@ class aetherNeural:
 		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
 
 		amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
+		# procura historico para detecção de ciclo
 		history = self._get_amoc_history(now.year, doy_atual - 7, doy_atual)
 
 		if history:
 			sorted_days = sorted(history.keys())
 			current_delta = history[sorted_days[-1]]
-
-			# Se tivermos histórico >= 2 dias, calcula media movel.
-			# Senão, usa o baseline crítico de 6.05 como referência de "motor ligado".
-			if len(history) >= 2:
-				prev_deltas = [history[d] for d in sorted_days[:-1]]
-				baseline = sum(prev_deltas[-5:]) / len(prev_deltas[-5:])
-			else:
-				baseline = 6.05
-
+			baseline = 6.05 # Referência estável
 			diff = current_delta - baseline
 
-			if diff < 0:
+			# Logica Ciclo (Notas do Utilizador)
+			anomaly_day = 0
+			for i in range(1, 5):
+				check_day = doy_atual - i
+				if check_day in history and history[check_day] < (baseline - 0.5):
+					anomaly_day = i
+					break
+
+			if anomaly_day in [1, 2]:
+				amoc_adj = 5.0 * sensitivity
+				hum_mod = 0.4 # Calor acumulado, mas com viés de nuvens baixas se PT
+				amoc_tag = f" {kolor['ORANGE']}[PHASE: HEAT]{kolor['OFF']}"
+			elif anomaly_day in [3, 4]:
+				amoc_adj = -6.5 * sensitivity
+				hum_mod = 2.8 # Chuva pesada
+				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: STORM]{kolor['OFF']}"
+			elif diff > 1.5:
+				# Pico de Delta (Instabilidade por excesso de fluxo, ex: 8.77)
+				amoc_adj = diff * 0.4 * sensitivity
+				hum_mod = 2.2 # Força nuvens/chuva por instabilidade térmica
+				amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC HIGH Δ]{kolor['OFF']}"
+			elif diff < 0:
 				amoc_adj = abs(diff) * 2.2 * sensitivity
-				hum_mod = max(0.2, 1.0 + (diff * 0.25 * sensitivity))
-				color = kolor['ORANGE'] if diff < -1.5 else kolor['BOLD_YELLOW']
-				amoc_tag = f" {color}[AMOC Δ{current_delta}]{kolor['OFF']}"
+				hum_mod = max(0.5, 1.0 + (abs(diff) * 0.3 * sensitivity))
+				amoc_tag = f" {kolor['BOLD_YELLOW']}[AMOC Δ{current_delta}]{kolor['OFF']}"
 			else:
-				amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC OK]{kolor['OFF']}"
+				amoc_tag = f" {kolor['BLUE']}[AMOC OK]{kolor['OFF']}"
 
 		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
 
-		state_seed = (doy_atual * 7) % 100
-		status = "Cloudy with a chance of rain" if state_seed < (humidity * hum_mod * 100) else ("Partly Cloudy" if state_seed > 85 else "Clear Skies")
-		icon = "🌧️" if "rain" in status.lower() else ("🔥" if final_temp > 28 else ("❄️" if final_temp < 0 else "☀️"))
+		# Cálculo de Estado focado em Portugal (maior sensibilidade a nuvens)
+		state_seed = (doy_atual * 13) % 100
+		rain_threshold = humidity * hum_mod * 100
+		
+		if state_seed < rain_threshold:
+			status = "Rainy and Overcast" if rain_threshold > 55 else "Cloudy with a chance of rain"
+		elif state_seed < (rain_threshold + 15):
+			status = "Very Cloudy / Heavy Overcast"
+		else:
+			status = "Partly Cloudy" if state_seed > 85 else "Clear Skies"
+
+		icon = "🌧️" if "rain" in status.lower() else ("☁️" if "Cloudy" in status else ("🔥" if final_temp > 28 else "☀️"))
 
 		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
@@ -5241,7 +5243,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
 	online = internet_onoff()
 	db_filename = f"{_title_.lower()}.db"
-	where_amoc = ""
+	where_amoc = None
 
 	if online:
 		where_amoc = "online [baserow.io]"
@@ -5260,7 +5262,6 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 	ano = dt_ini.year
 	doy_ini = int(dt_ini.strftime('%j'))
 	contagem_na = 0
-	limit_audit = 200
 
 	if data_fim_input:
 		dt_fim = validar_e_converter_data(data_fim_input)
@@ -5274,10 +5275,6 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		doy_fim = int(dt_fim.strftime('%j'))
 	else:
 		doy_fim = doy_ini
-
-	if (doy_fim - doy_ini) > limit_audit:
-		print(f"❌ {random.choice(messages['trouble_short'])} The range of {doy_fim - doy_ini} days exceeds the limit of {limit_audit}!\n")
-		return
 
 	rows_filtradas = []
 	last_doy = 0
@@ -5335,7 +5332,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		info_data = f"DATE: {dt_ini.strftime('%d.%m.%Y')} | DOY: {doy_ini:03}" if doy_ini == doy_fim else f"RANGE: {doy_ini:03}|{doy_fim:03} YEAR:{ano}"
 		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
 
-		h_txt = " DATE | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
+		h_txt = " DOY  | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
 		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
 
@@ -5350,7 +5347,8 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 				db_hash = int(r.get('n99', 0))
 				delta = r.get('delta', '')
 
-				data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
+				#data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
+				data_str = f"{dy:03}"
 				res_vals = []
 				_psi = 0.0
 
@@ -6841,7 +6839,8 @@ def main():
 						print(f"Ahead by: {diff_str}\n")
 
 		elif question[0:4] == 'test':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
+			#print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
+			print (_get_amoc_history(2026, 115, 119))
 
 		elif question != '':
 			answer = find_answer(question,questions)
