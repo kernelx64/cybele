@@ -56,7 +56,6 @@ try:
 	import base64
 	import hashlib
 	import sqlite3
-	import sqlitecloud
 	import requests
 	import html, urllib
 	import json
@@ -162,7 +161,7 @@ etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9u
 			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
 			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
 			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh','YXNfcXVvdGVz',
-			'YW1vY19kYXRh']
+			'YW1vY19kYXRh','bmVv']
 
 #-----------------------------------------------------------
 website = {
@@ -263,6 +262,7 @@ core = {
 						"english verbs","meteo","meteorology","gens","generations"],
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
+	"next_neos":	["next neo","next neos","next asteroid","next asteroids"],
 	"game":	["countries", "capitals", "math", "constellations", "elements"],
 	"request":	["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ",
 				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
@@ -386,13 +386,6 @@ messages = {
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression.",
 						"I would characterize '%s' as a %s idea." , "The word '%s' is a %s concept." , "I find '%s' to be a very %s term.",
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
-
-	"db_pause_msg":	["Oops! The SQLiteCloud database is currently in deep hibernation.",
-					"Sleeping instead of working?! Give yourself a shake and wake up. Lazy database!",
-					"Looks like the database is on a coffee break. Call'her to see if she comes online.",
-					"Database says 'do not disturb'! It's in offline mode. Wake'her up to resume the service.",
-					"Our database decided to take a spontaneous vacation. Maybe we'll see her again soon.",
-					"Connection refused! The database is currently practicing its 'offline arts.'."],
 	
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
@@ -482,12 +475,6 @@ messages = {
 					"Roses are red, violets are blue, you're the one for me, through and through.","Sending you a virtual hug and a kiss. Happy Valentine's Day!",
 					"You brighten my world. Happy Valentine's Day, my love.","I'm so lucky to have you in my life. Happy Valentine's Day!",
 					"Here's to many more Valentine's Days together.","You're the missing piece to my puzzle. Happy Valentine's Day!"],
-
-	"notfree":	["The 'free' tier of SQLiteCloud has gone to sleep. Patience is a virtue, and so is a paid plan.",
-				"My comunication attempt failed! Free SQLitecloud plans you know. Try again later, who knows!",
-				"Looks like the free SQLiteCloud tier has hit the snooze button. Free-mium ain't forever. Try again later.",
-				"The 'free' part of SQLiteCloud comes with a naptime. This is the new reality. Give it another shot soon!",
-				"That's the free plan for you—it requires a gentle nudge. You get what you pay for in this day and age. Try again later."],
 
 	"notplanet":	["Alien technology detected. Trying to locate %s planet...\n","You've discovered a new planet %s! Congratulations, explorer!\n",
 					"Planet %s not found. Did you mean 'Planet Hoth'?\n","Error 404: Planet %s not found. Please try searching for %s again.\n",
@@ -696,6 +683,7 @@ help = {
 	"help month": "Usage: month [name] \nProvides detailed information for a specific or current month, including its numerical order, leap year status for the current year, and its corresponding season based on your hemisphere. \nex: may \n",	
 	"help mppt": "Usage: mppt|solar <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: mppt monitor \n    mppt history\n    mppt last30 \n    solar monitor\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
+	"help next neo": "Usage: next neo(s)|asteroid(s) \nDisplays basic information about the upcoming Near Earth Object (NEO) flybys. \nex: next asteroid\n    next neo\n",
 	"help network status": f"Usage: network status \nShow the actual {_title_.lower()} working mode and status based on internet activity. \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse co\nex: holidayde> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
@@ -1892,55 +1880,54 @@ class VictronMonitor:
 
 #---------------------------------------------------
 def _get_amoc_history(ano, doy_ini, doy_fim):
-    global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
-    online = internet_onoff()
-    db_filename = f"{_title_.lower()}.db"
-    rows_filtradas = []
-    daily_values = {}
+	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
+	online = internet_onoff()
+	db_filename = f"{_title_.lower()}.db"
+	rows_filtradas = []
+	daily_values = {}
 
-    if online:
-        try:
-            h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
-            idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
-            path_int = kdecode(BRADR_EN, shifl).format(idur)
-            response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
-            if response.status_code == 200:
-                for r in response.json().get('results', []):
-                    try:
-                        r_ano = int(r.get('ano', 0))
-                        r_doy = int(r.get('doy', 0))
-                        if r_ano == ano and doy_ini <= r_doy <= doy_fim:
-                            rows_filtradas.append(r)
-                    except: continue
-        except:
-            pass
+	if online:
+		try:
+			h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
+			idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
+			path_int = kdecode(BRADR_EN, shifl).format(idur)
+			response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
+			if response.status_code == 200:
+				for r in response.json().get('results', []):
+					try:
+						r_ano = int(r.get('ano', 0))
+						r_doy = int(r.get('doy', 0))
+						if r_ano == ano and doy_ini <= r_doy <= doy_fim:
+							rows_filtradas.append(r)
+					except: continue
+		except:
+			pass
 
-    if not rows_filtradas and os.path.isfile(db_filename):
-        try:
-            conn = sqlite3.connect(db_filename)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            # SQL limpo: sem a coluna 'data' que não existe
-            cursor.execute("SELECT doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
-            rows_filtradas = [dict(r) for r in cursor.fetchall()]
-            conn.close()
-        except:
-            pass
+	if not rows_filtradas and os.path.isfile(db_filename):
+		try:
+			conn = sqlite3.connect(db_filename)
+			conn.row_factory = sqlite3.Row
+			cursor = conn.cursor()
+			cursor.execute("SELECT doy, delta FROM amoc_data WHERE ano = ? AND doy BETWEEN ? AND ?", (ano, doy_ini, doy_fim))
+			rows_filtradas = [dict(r) for r in cursor.fetchall()]
+			conn.close()
+		except:
+			pass
 
-    for row in rows_filtradas:
-        # Tenta 'delta' e a versão com o símbolo grego 'deltΔ' que viste no log
-        d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
+	for row in rows_filtradas:
+		# Tenta 'delta' e a versão com o simbolo grego 'deltΔ'
+		d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
         
-        if d_raw is None or str(d_raw).upper() == "N/A": 
-            continue
-        try:
-            doy = int(row.get('doy'))
-            val = float(d_raw)
-            if doy not in daily_values: daily_values[doy] = {"samples": []}
-            daily_values[doy]["samples"].append(val)
-        except: continue
+		if d_raw is None or str(d_raw).upper() == "N/A":
+			continue
+		try:
+			doy = int(row.get('doy'))
+			val = float(d_raw)
+			if doy not in daily_values: daily_values[doy] = {"samples": []}
+			daily_values[doy]["samples"].append(val)
+		except: continue
 
-    return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
+	return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
 	
 #---------------------------------------------------
 class aetherNeuralbase:
@@ -2118,16 +2105,19 @@ class aetherNeural:
 			if anomaly_day in [1, 2]:
 				amoc_adj = 5.0 * sensitivity
 				hum_mod = 0.4 # Calor acumulado, mas com viés de nuvens baixas se PT
-				amoc_tag = f" {kolor['ORANGE']}[PHASE: HEAT]{kolor['OFF']}"
+				amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥]{kolor['OFF']}"
+				#amoc_tag = f" {kolor['ORANGE']}[PHASE: HEAT]{kolor['OFF']}"
 			elif anomaly_day in [3, 4]:
 				amoc_adj = -6.5 * sensitivity
 				hum_mod = 2.8 # Chuva pesada
-				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: STORM]{kolor['OFF']}"
+				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️]{kolor['OFF']}"
+				#amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: STORM]{kolor['OFF']}"
 			elif diff > 1.5:
 				# Pico de Delta (Instabilidade por excesso de fluxo, ex: 8.77)
 				amoc_adj = diff * 0.4 * sensitivity
 				hum_mod = 2.2 # Força nuvens/chuva por instabilidade térmica
-				amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC HIGH Δ]{kolor['OFF']}"
+				amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
+				#amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC HIGH Δ]{kolor['OFF']}"
 			elif diff < 0:
 				amoc_adj = abs(diff) * 2.2 * sensitivity
 				hum_mod = max(0.5, 1.0 + (abs(diff) * 0.3 * sensitivity))
@@ -2667,6 +2657,9 @@ def find_word_in_dicts(word, core):
 				print ( "  Temperature: " + str(planet_data[word]['temperature']))
 				print ("")
 
+			elif list_name == 'next_neos':
+				get_next_asteroid()
+
 			elif list_name == 'capital':
 				index = core[list_name].index(word)
 				print ("%s is a %s, and is from %s.\n" % (word.capitalize(), list_name, core['country'][index].capitalize()))
@@ -3099,6 +3092,56 @@ def get_star_info(star_name):
 		clean_msg = str(e).split(':')[-1].strip()
 		print(f"{random.choice(messages['trouble_short'])} {kolor['RED']}{clean_msg}{kolor['OFF']}")
 		return ['emptydata']
+
+#-------------------------------------------------
+def get_next_asteroid(limit=5):
+	global _title_
+	db_name = f"{_title_.lower()}.db"
+	agora = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+	try:
+		conn = sqlite3.connect(db_name)
+		cursor = conn.cursor()
+
+		query = f"""
+			SELECT asteroid, ca_ut, d_km, au
+			FROM neo
+			WHERE ca_ut >= ?
+			ORDER BY ca_ut ASC
+			LIMIT {limit}
+		"""
+
+		cursor.execute(query, (agora,))
+		rows = cursor.fetchall()
+
+		if rows:
+			if limit == 1:
+				nome, data_raw, dist_km, au = rows[0]
+				data_obj = datetime.strptime(data_raw, "%Y-%m-%d %H:%M")
+				d_clean = float(str(dist_km).replace(",", ""))
+				dist_fmt = f"{d_clean:,.0f}".replace(",", ".")
+				print(f"{kolor['BOLD_MAGENTA']}🔔 NEXT NEO EVENT:{kolor['OFF']} {kolor['VIVID_YELLOW']}{nome}{kolor['OFF']} a {data_obj.strftime('%d.%m %H:%M')} ({dist_fmt} km)")
+			else:
+				print(f"\n{kolor['BOLD_MAGENTA']}{'-'*55}{kolor['OFF']}")
+				print(f"{kolor['BOLD_MAGENTA']}|   ☄️  UPCOMING EVENTS: Near Earth Objects (NEO)     |{kolor['OFF']}")
+				print(f"{kolor['BOLD_MAGENTA']}{'-'*55}{kolor['OFF']}")
+				for row in rows:
+					nome, data_raw, dist_km, au = row
+					data_obj = datetime.strptime(data_raw, "%Y-%m-%d %H:%M")
+					data_display = data_obj.strftime("%d.%m.%Y %H:%M")
+					d_clean = float(str(dist_km).replace(",", ""))
+					dist_fmt = f"{d_clean:,.0f}".replace(",", ".")
+					print(f"{kolor['BOLD_MAGENTA']}|{kolor['OFF']} {kolor['VIVID_YELLOW']}{nome:<15}{kolor['OFF']}{kolor['BOLD_MAGENTA']} | {kolor['OFF']}{data_display}{kolor['BOLD_MAGENTA']} | {kolor['OFF']}{dist_fmt:>11} km {kolor['BOLD_MAGENTA']}|{kolor['OFF']}")
+				print(f"{kolor['BOLD_MAGENTA']}{'-'*55}{kolor['OFF']}\n")
+		else:
+			if limit > 1:
+				print(f"{kolor['VIVID_RED']}No future events were found in the table.{kolor['OFF']}\n")
+
+	except sqlite3.Error as e:
+		print(f"{random.choice(messages['trouble_short'])} Database error: {e}")
+	finally:
+		if 'conn' in locals() and conn:
+			conn.close()
 
 #------------------------------------------------
 def add_days(n, d = datetime.today()):
@@ -5332,7 +5375,8 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		info_data = f"DATE: {dt_ini.strftime('%d.%m.%Y')} | DOY: {doy_ini:03}" if doy_ini == doy_fim else f"RANGE: {doy_ini:03}|{doy_fim:03} YEAR:{ano}"
 		print(f"{kolor['BOLD_CYAN']}{info_data}{kolor['OFF']}")
 
-		h_txt = " DOY  | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
+		#h_txt = " DATE  | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
+		h_txt = "DOY | DATE  | FLYBY |   N40     N45     N50     N55     N60     N65   | DELTΔ  "
 		print(f"{kolor['BOLD_WHITE']}{h_txt}{kolor['OFF']}")
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
 
@@ -5347,8 +5391,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 				db_hash = int(r.get('n99', 0))
 				delta = r.get('delta', '')
 
-				#data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
-				data_str = f"{dy:03}"
+				data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
 				res_vals = []
 				_psi = 0.0
 
@@ -5373,7 +5416,8 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
 					contagem_na += 1
 
-				print(f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | "
+				print(f"{kolor['BOLD_WHITE']}{dy:03}{kolor['OFF']} | "
+					f"{kolor['BOLD_WHITE']}{data_str}{kolor['OFF']} | "
 					f"{kolor['BOLD_YELLOW']}{str(fby):<5}{kolor['OFF']} | "
 					f"{''.join(res_vals)}| {delta_str} {st}")
 
@@ -5407,8 +5451,9 @@ def main():
 	#----------------------------
 	print_statusline(f"")
 	_portac_ = get_default_port()
-	t = threading.Thread(target=check_database_version)
-	t.daemon = True
+	t_neo = threading.Thread(target=get_next_asteroid, args=(1,), daemon=True)
+	t_neo.start()
+	t = threading.Thread(target=check_database_version, daemon=True)
 	t.start()
 	#----------------------------
 	drawart('art_cybele')
@@ -5416,6 +5461,8 @@ def main():
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
+	#-----------------------------
+	#get_next_asteroid(limit=1)
 	#-----------------------------
 	while True:
 		#-------------------------
@@ -6839,8 +6886,7 @@ def main():
 						print(f"Ahead by: {diff_str}\n")
 
 		elif question[0:4] == 'test':
-			#print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
-			print (_get_amoc_history(2026, 115, 119))
+			print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
 
 		elif question != '':
 			answer = find_answer(question,questions)
