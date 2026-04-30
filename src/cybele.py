@@ -270,6 +270,7 @@ core = {
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
 	"questioning_about": ["what are doing","are you working","working","doing what","having fun"],
+	"asking the uptime":	["what is my uptime","my uptime","my uptime is","cybele uptime","display my uptime","show me my uptime"],
 	"display_commands":	["show me","tell me","list me"],
 	"display_options":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
 						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
@@ -305,7 +306,6 @@ core = {
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
 	"asking for a phrase":	["say something","make a sentence","make a phrase","talk"],
-	"asking the uptime":	["what is my uptime","cybele uptime","current system uptime","display my uptime"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
 	"python art":	["py","python","python art","art python"],
@@ -649,7 +649,7 @@ help = {
 	"help conjugate": "Usage: conjugate <verb> \nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
-	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele upytime\n",
+	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele uptime\n    my uptime is\n",
 	"help database info": "Usage: database info \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: database info \n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
@@ -750,7 +750,6 @@ help = {
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}. Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
-	"help uptime": "Usage: cybele uptime \nReports the current session duration. Useful for monitoring script stability and long-running processes.\nex: cybele uptime\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm.\nex: weather for today\n",
@@ -2627,6 +2626,22 @@ def find_word_in_dicts(word, core):
 			elif list_name == 'linuxexcmd':
 				#print ("Linux command. Just type directly the command or type: list me linux commands")
 				print ("")
+
+			elif list_name == "asking the uptime":
+				uptime_parts = get_uptime()
+				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
+				sentence_parts = []
+				for value, unit in time_units:
+					if value > 0:
+						sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
+					if not sentence_parts:
+						sentence = "less than a second"
+					else:
+						if len(sentence_parts) > 1:
+							sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
+						else:
+							sentence = sentence_parts[0]
+				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")	
 				
 			elif list_name == 'display_options':
 				what2tell = random.choice(core['display_commands'])
@@ -2794,22 +2809,6 @@ def find_word_in_dicts(word, core):
 				else:
 					gt = make_text(rw, num_sentences=1, num_paragraphs=1)
 					print (f"{gt} \n")
-			
-			elif list_name == "asking the uptime":
-				uptime_parts = get_uptime()
-				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
-				sentence_parts = []
-				for value, unit in time_units:
-					if value > 0:
-						sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
-					if not sentence_parts:
-						sentence = "less than a second"
-					else:
-						if len(sentence_parts) > 1:
-							sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-						else:
-							sentence = sentence_parts[0]
-				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")
 			
 			elif list_name == 'share':
 				if internet_onoff() == True:
@@ -6678,9 +6677,6 @@ def main():
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
 					
-		elif any(word in question for word in core['asking the uptime']):
-			print("")
-		
 		elif question[0:9] == 'conjugate':
 			parts = question.split()[1:]
 			if len(parts) != 1:
