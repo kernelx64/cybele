@@ -364,6 +364,14 @@ messages = {
 					"Your vocabulary is as vast as your knowledge of grammar.",
 					"I'm impressed by your ability to convey such profound thoughts with such limited vocabulary."],
 
+	"quips":	["I speak fluent Human, but I’m still learning the 'Glitchy Keyboard' dialect.",
+				"Unless your spacebar is on strike, I’m reading you loud and clear.",
+				"I can decode almost anything, provided your keyboard isn't currently possessed by a poltergeist.",
+				"If you're writing, unless your keyboard has a problem, I understand very well.",
+				"As long as your keys aren't playing a game of Twister, we won't have any communication breakdowns.",
+				"My processing is sharp, but I don't have the 'Spilled Coffee on the Layout' plugin yet.",
+				"Unless your 'Enter' key has developed a mind of its own, I’ve got exactly what you’re saying."],
+
 	"birthday_msg":	["I'm so glad you remembered! Thank you.","Woohoo! Thank you so much for the birthday wishes!",
 					"I'm feeling the birthday love! Thanks!","You're the best! Thanks for the birthday greeting.",
 					"Another year older, another year wiser...or so they say. Thanks for the birthday wishes!"
@@ -1345,18 +1353,17 @@ def make_intextdb():
 			"myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
 			"music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
 		}
-		midbcounter += len(webshare)
-
+		
 		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
-		midbcounter += len(as_quotes)
-
 		amoclen = len(fetch_fromdbfile("cybele.db", "amoc_data", "doy"))
-		midbcounter += amoclen
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
 		midbcounter += len(questions) + len(answers)
+		midbcounter += amoclen
+		midbcounter += len(as_quotes)
+		midbcounter += len(webshare)
 		for key in core:
 			if isinstance(core[key], list):
 				midbcounter += len(core[key])
@@ -2368,7 +2375,7 @@ def symb_prompt():
 def get_question():
 	qt = input(f"{_title_}? {symb_prompt()}")
 	if qt.isupper():
-		print("Can you please stop shouting! \nIf you're writing, unless your keyboard has a problem, I understand very well.\n")
+		print(f"Can you please stop shouting!\n{random.choice(messages['quips'])}\n")
 		question = qt.lower()
 	try:
 		if str(qt):
@@ -6114,8 +6121,8 @@ def main():
 				if _pydr3_ == True:
 					sysos = "Pydroid3"
 				else:
-					_pydr3_ = _pydr3_			
-					
+					_pydr3_ = _pydr3_
+									
 				print(f"    Device : {display_node_name} on {sysos}")
 				print(f"      Name : {_title_}")
 				print(f"   Version : {version}")
@@ -6127,7 +6134,7 @@ def main():
 				print(f"     Linux : {len(core.get('linuxcmd', []))}")
 				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
 				print(f"     World : {len(core.get('country', []))}")
-				print(f"      AMOC : {amoclen}|{round(amoclen/2)} RD")
+				print(f"      AMOC : R{amoclen}|D{round(amoclen/2)}")
 				print(f"   Storage : {dblrconn}")
 				print(f"   Running : {days_running_str}\n")
 
