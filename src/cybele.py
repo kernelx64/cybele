@@ -1383,7 +1383,7 @@ def swmsg():
 	if not quotes:
 		print("🤖 My Star Wars dictionary is missing and I am not able to complete some of my tasks.\n")
 		return
-	if today.month == 4 and today.day == 30:
+	if today.month == 5 and today.day == 4:
 		quote = random.choice(quotes)
 		print(f"✨ {kolor['SABER_BLUE']}[MAY THE 4TH]{kolor['OFF']} {kolor['SW_CRAWL']}Special Protocol Active: Happy Birthday!{kolor['OFF']}")
 		print(f"💬 \"{quote}\"\n")
