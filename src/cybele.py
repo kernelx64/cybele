@@ -659,7 +659,7 @@ help = {
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
 	"help cybele uptime": "Usage: <cybele uptime> \nDisplays the uptime from cybele based on the start execution local time.\nex: cybele uptime\n    my uptime is\n",
-	"help database info": "Usage: database info \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: database info \n",
+	"help check database": "Usage: check database \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: check database \n    database info\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
@@ -710,7 +710,7 @@ help = {
 	"help network status": f"Usage: network status \nShow the actual {_title_.lower()} working mode and status based on internet activity. \nex: network status\n",
 	"help nice thing": "Usage: nice thing \nReturns: A positive and uplifting message or compliment.\n",
 	"help demorse": "Usage: demorse <morse co\nex: holidayde> \nDecode from morse code the digited encode word or phrase. \nex: demorse -.-. -.-- -... . .-.. .\n",
-	"help offline mode": "Usage: offline mode <on|off> \nAllows me to work with or without an internet connection. \nex: offline mode on\n",
+	"help offline mode": "Usage: offline mode \nAllows me to work with or without an internet connection. \nex: offline mode \n    update database\n",
 	"help orbit acronym": "Usage: <orbit acronym> \nDisplays basic information about the orbit and her principals. \nex: geo\n",
 	"help orbit": "Usage: <planet> orbit / <orbit acronym> \nShow the type of the orbit from the typed planet / Displays basic information about the orbit and her principals. \nex: earth orbit\n    geo\n",
 	"help orbital regimes": "Usage: orbital regimes \nDisplays a categorized list of orbital regions and their altitudes. Also allows direct acronym lookup for specific regime details. \nex: orbital regimes \n    leo\n",
@@ -759,6 +759,7 @@ help = {
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}. Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
+	"help update database": "Usage: update database \nAllows me to work with or without an internet connection. \nex: update database \n    offline mode on\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm.\nex: weather for today\n",
@@ -1131,67 +1132,40 @@ def download_database_update():
 	nome_base = _title_.lower()
 	local_db_filename = f"{nome_base}.db"
 	url = f"https://raw.githubusercontent.com/kernelx64/{nome_base}/main/src/{nome_base}.db"
-
 	try:
 		response = requests.get(url, stream=True)
 		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
+		block_size = 1024
 		downloaded = 0
-		start_time = datetime.now()
-
 		print(f"Downloading update for {local_db_filename}...")
 		with open(local_db_filename, 'wb') as f:
-			for data in response.iter_content(chunk_size=1024):
+			for data in response.iter_content(block_size):
 				f.write(data)
 				downloaded += len(data)
-
+				done = int(50 * downloaded / total_size) if total_size > 0 else 0
 				mb_downloaded = downloaded / (1024 * 1024)
 				mb_total = total_size / (1024 * 1024)
 				percent = (downloaded / total_size) * 100 if total_size > 0 else 0
-
-				elapsed = (datetime.now() - start_time).total_seconds()
-				if elapsed > 0:
-					speed = (downloaded / 1024) / elapsed  # kB/s
-					remaining_bytes = total_size - downloaded
-					eta_seconds = remaining_bytes / (speed * 1024) if speed > 0 else 0
-				else:
-					speed = 0
-					eta_seconds = 0
-
-				mins, secs = divmod(int(eta_seconds), 60)
-				eta_str = f"{mins:02d}:{secs:02d}"
-
-				c_fill = kolor.get('VIVID_CYAN', '')
-				c_empty = kolor.get('DIM_WHITE', '')
-				c_text = kolor.get('WHITE', '')
-				c_speed = kolor.get('BOLD_GREEN', '')
-				c_off = kolor.get('OFF', '')
-
-				largura_barra = 45
-				preenchido = int(largura_barra * (percent / 100))
-
-				barra_visual = (
-					f"{c_fill}{'━' * preenchido}╸{c_off}"
-					f"{c_empty}{'━' * (largura_barra - preenchido)}{c_off}"
-				)
+				color_bar = kolor.get('CYAN', '')
+				color_off = kolor.get('OFF', '')
+				color_success = kolor.get('GREEN', '')
 				status_msg = (
-					f" {barra_visual} {c_text}{mb_downloaded:.1f}/{mb_total:.1f} MB{c_off} "
-					f"{c_speed}{speed:.1f} kB/s{c_off} {kolor.get('BOLD_YELLOW', '')}{eta_str}{c_off}"
+							f"{color_bar}[{'█' * done}{'░' * (50 - done)}]{color_off} "
+							f"📥 {mb_downloaded:.2f}MB / {mb_total:.2f}MB "
+							f"{color_success}({percent:.1f}%){color_off}"
 				)
-
 				print_statusline(status_msg)
-		print()
-
 		if dbrd:
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
-			print(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime('%d.%m.%Y %H:%M:%S')} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime('%d.%m.%Y %H:%M:%S')}")
-		print(f"Update complete! 🚀 Restart {_title_}\n")
-
+			print_statusline(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld}")
+		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
 	except Exception as e:
-		print(f"\n{kolor.get('BOLD_RED', '')}❌ Download error: {e}{kolor.get('OFF', '')}\n", file=sys.stderr)
+		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
 			os.remove(local_db_filename)
+
 
 #------------------------------------------------------------
 def delete_cybeledb():
@@ -2598,7 +2572,7 @@ def get_uptime_sentence():
 		sentence = sentence_parts[0]
 	else:
 		sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-	return f"I'm running for ⏱️ {sentence} since {start_time.strftime('%H:%M')} local time {whatgmt()[0]}.\n"
+	return f"I'm running for ⏱️ {sentence} since {start_time.strftime('%H:%M')} local time {whatgmt()[0]} on {start_time.strftime("%d.%m.%Y")}.\n"
 
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
@@ -2696,10 +2670,6 @@ def find_word_in_dicts(word, core):
 				print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
 				print ("Explanation: " + str(linux_commands[word]['explanation']))
 				print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
-				print ("")
-
-			elif list_name == 'linuxexcmd':
-				#print ("Linux command. Just type directly the command or type: list me linux commands")
 				print ("")
 
 			elif list_name == "asking the uptime":
@@ -6784,7 +6754,7 @@ def main():
 									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
 		
-		elif question.startswith('offline mode on'):
+		elif question == "offline mode" or question == "database update" or question == "update database":
 			if internet_onoff() == False:
 				print(f"{random.choice(messages['trouble_msg'])} To perform this task i need to be able to access the internet.\n")
 			else:
@@ -6795,9 +6765,6 @@ def main():
 					download_database_update()
 				else:
 					download_database_update()
-
-		elif question == 'offline mode off':
-			delete_cybeledb()
 
 		elif question == 'network status':
 			if dblrconn[0:7] == "online" or dblrconn[0:7] == "offline":
@@ -6945,7 +6912,7 @@ def main():
 			clear_screen()
 			return True
 		
-		elif question == 'database info':
+		elif question == 'database info' or question == 'check database':
 			if not internet_onoff():
 				print(f"{random.choice(messages['trouble_short'])} For this task i need an active internet connection.\n")
 			else:
@@ -6957,24 +6924,16 @@ def main():
 					fmt = '%d.%m.%y %H:%M:%S'
 					local_f = dbld.strftime(fmt)
 					remote_f = dbrd.strftime(fmt)
-
-					# Calculate the real difference
 					delta = dbrd - dbld if dbrd > dbld else dbld - dbrd
 					diff_seconds = (dbrd - dbld).total_seconds()
-
 					hours, rem = divmod(delta.seconds, 3600)
 					mins, secs = divmod(rem, 60)
 					diff_str = f"{delta.days}d {hours}h {mins}m {secs}s"
-
 					if abs(diff_seconds) < 3660:
 						print(f"You have the latest version available ({remote_f}).\n")
-
-					# If remote is actually newer (more than 1 hour difference)
 					elif diff_seconds >= 3660:
 						print(f"{kolor['BOLD_YELLOW']}Attention!{kolor['OFF']} Your database version is lower than the existing {remote_f}.")
 						print(f"Update lag: {diff_str}\n")
-
-					# If local is actually newer (more than 1 hour difference)
 					else:
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
