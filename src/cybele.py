@@ -5341,10 +5341,10 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 	where_amoc = None
 
 	if online:
-		where_amoc = "online [baserow.io]"
+		where_amoc = "[baserow.io] online"
 	else:
 		if os.path.isfile(db_filename):
-			where_amoc = "offline [dbfile]"
+			where_amoc = "[dbfile] offline"
 		else:
 			print(f"❌ {random.choice(messages['trouble_short'])} No internet and local file {db_filename} not found.\n")
 			return
@@ -5473,7 +5473,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 
 		print(f"{kolor['DIM_WHITE']}{'─' * len(h_txt)}{kolor['OFF']}")
 		if contagem_na > 0:
-			print(f"{kolor['DIM_WHITE']}Note: {contagem_na} Records with Delta N/A due to sensor failure in N40 or N60.{kolor['OFF']}\n")
+			print(f"{kolor['DIM_WHITE']}Note: {contagem_na} Records with Delta N/A due clouds or sensor failure in N40 or N60.{kolor['OFF']}\n")
 		else:
 			print("")
 
