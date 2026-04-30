@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '29.04.2026'
+_revise_ = '30.04.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -190,7 +190,7 @@ kolor = {
 	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
 	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
-	'ORANGE': '\033[38;5;208m','OFF':'\033[0m'
+	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m'
 }
 #-----------------------------------------------------------
 art_world = [
@@ -216,6 +216,21 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [129150,32,98,121,32,65,83]
+#------------------------------------------------------------
+star_wars_quotes = [
+	"Do or do not. There is no try. — Yoda",
+	"In my experience, there is no such thing as luck. — Obi-Wan Kenobi",
+	"The Force will be with you. Always. — Obi-Wan Kenobi",
+	"Your focus determines your reality. — Qui-Gon Jinn",
+	"The capacity to speak does not make you intelligent. — Qui-Gon Jinn",
+	"Many of the truths we cling to depend greatly on our own point of view. — Obi-Wan Kenobi",
+	"Rebellion is built on hope. — Jyn Erso",
+	"I've got a bad feeling about this. — Han Solo",
+	"The visual language of cinema is the only universal language. — George Lucas",
+	"Dreams are extremely important. You can't do it unless you can imagine it. — George Lucas",
+	"Your eyes can deceive you; don’t trust them. — Obi-Wan Kenobi",
+	"Stay on target. — Gold Five"
+]
 #------------------------------------------------------------
 core = {
 	"greatings":	["good morning","good evening","good afternoon","good night","hi good morning","hello good morning","hi good evening",
@@ -1086,17 +1101,17 @@ def check_database_version():
 		if not res or not os.path.exists(local_path):
 			update_available = False
 			return
+
 		remote_str = res[0]['commit']['committer']['date']
-		remote_date = datetime.strptime(remote_str, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=None)
-		stat = os.stat(local_path)
-		try:
-			creation_timestamp = stat.st_birthtime
-		except AttributeError:
-			creation_timestamp = stat.st_ctime
-		local_date = datetime.fromtimestamp(os.path.getmtime(local_path), UTC).replace(tzinfo=None, microsecond=0)
-		dbld = local_date
-		dbrd = remote_date
-		if remote_date > local_date:
+		remote_dt = datetime.strptime(remote_str, '%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=timezone.utc)
+		remote_ts = remote_dt.timestamp()
+
+		local_ts = os.path.getmtime(local_path)
+    
+		dbld = datetime.fromtimestamp(local_ts, timezone.utc)
+		dbrd = remote_dt
+
+		if remote_ts > (local_ts + 2):
 			update_available = True
 		else:
 			update_available = False
@@ -1109,7 +1124,6 @@ def download_database_update():
 	nome_base = _title_.lower()
 	local_db_filename = f"{nome_base}.db"
 	url = f"https://raw.githubusercontent.com/kernelx64/{nome_base}/main/src/{nome_base}.db"
-
 	try:
 		response = requests.get(url, stream=True)
 		response.raise_for_status()
@@ -1124,30 +1138,21 @@ def download_database_update():
 				done = int(50 * downloaded / total_size) if total_size > 0 else 0
 				mb_downloaded = downloaded / (1024 * 1024)
 				mb_total = total_size / (1024 * 1024)
-
-				sys.stdout.write(f"\r[{'█' * done}{'░' * (50 - done)}] "
-								f"{mb_downloaded:.2f}MB / {mb_total:.2f}MB "
-								f"({(downloaded/total_size)*100:.1f}%)")
-				sys.stdout.flush()
-
-		if 'dbrd' in globals() and dbrd is not None:
-			try:
-				remote_timestamp = dbrd.timestamp()
-				os.utime(local_db_filename, (remote_timestamp, remote_timestamp))
-
-				local_check = os.path.getmtime(local_db_filename)
-				diff_seconds = local_check - remote_timestamp
-
-				if abs(diff_seconds) >= 60:
-					diff_hours = round(diff_seconds / 3600)
-					print(f"{kolor['BOLD_BLUE']}Note:{kolor['OFF']} Your OS added a {diff_hours}h timezone offset to the file.")
-					print(f"If 'database info' shows 'SUPERIOR', you're still all set!\n")
-
-			except Exception as e:
-				print(f"Warning: Could not sync file time: {e}")
-
+				percent = (downloaded / total_size) * 100 if total_size > 0 else 0
+				color_bar = kolor.get('CYAN', '')
+				color_off = kolor.get('OFF', '')
+				color_success = kolor.get('GREEN', '')
+				status_msg = (
+							f"{color_bar}[{'█' * done}{'░' * (50 - done)}]{color_off} "
+							f"📥 {mb_downloaded:.2f}MB / {mb_total:.2f}MB "
+							f"{color_success}({percent:.1f}%){color_off}"
+				)
+				print_statusline(status_msg)
+		if dbrd:
+			remote_ts = dbrd.timestamp()
+			os.utime(local_db_filename, (remote_ts, remote_ts))
+			print_statusline(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld}")
 		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
-
 	except Exception as e:
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
@@ -1361,7 +1366,7 @@ def make_intextdb():
 		print(f"{random.choice(messages['trouble_short'])}! {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}")
 		sys.exit(1)
 
-#----------------------------------------------------------------------
+#---------------------------------------------------------------------
 def get_brain_status(midbcounter):
 	MULTIPLICADOR_RAM = 3.5
 	OVERHEAD_SISTEMA = 5000
@@ -1371,7 +1376,20 @@ def get_brain_status(midbcounter):
 	disco_estimado_mb = (midbcounter * 1.0) / 1024
 	return round(total_mb)
 
-#----------------------------------------------------------------------
+#---------------------------------------------------------------------
+def swmsg():
+	today = datetime.now()
+	quotes = globals().get('star_wars_quotes')
+	if not quotes:
+		print("🤖 My Star Wars dictionary is missing and I am not able to complete some of my tasks.\n")
+		return
+	if today.month == 4 and today.day == 30:
+		quote = random.choice(quotes)
+		print(f"✨ {kolor['SABER_BLUE']}[MAY THE 4TH]{kolor['OFF']} {kolor['SW_CRAWL']}Special Protocol Active: Happy Birthday!{kolor['OFF']}")
+		print(f"💬 \"{quote}\"\n")
+		return
+
+#---------------------------------------------------------------------
 questions = [
 	"Ola",
 	"Como te chamas?",
@@ -5280,6 +5298,33 @@ def validar_e_converter_data(data_str):
 		return None
 
 #-------------------------------------------------
+def get_all_rows(api_url, token):
+	headers = token
+	all_data = []
+	vistos = set()
+	url = api_url
+    
+	print_statusline("📦 Synchronizing with Baserow cloud database...")
+	while url:
+		response = requests.get(url, headers=headers).json()
+		linhas_da_pagina = response.get('results', [])
+		if not linhas_da_pagina:
+			break
+		novos_encontrados = 0
+		for linha in linhas_da_pagina:
+			row_id = linha.get('id')
+			if row_id not in vistos:
+				all_data.append(linha)
+				vistos.add(row_id)
+				novos_encontrados += 1
+		if novos_encontrados == 0:
+			print("🔍 Loop deteted (Repeated data). Stoping the task.")
+			break        
+		url = response.get('next')
+		#if url:
+		#	print(f"DEBUG: Actual accumulated: {len(all_data)} lines.")
+	return all_data
+	
 #-------------------------------------------------
 def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
@@ -5329,14 +5374,12 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 			idt  = base64.b64decode(BRTK_EN).decode()
 			path_int = kdecode(BRADR_EN, shifl).format(idur)
 			wtitle = {h_key: f"{h_val}{idt}"}
-
+			
 			response = requests.get(path_int, headers=wtitle, timeout=10)
 			if response.status_code != 200:
 				print(f"❌ {random.choice(messages['trouble_short'])} Baserow error: {response.status_code}\n")
 				return
-
-			todos_os_dados = response.json().get('results', [])
-
+			todos_os_dados = get_all_rows(path_int, wtitle)
 			for r in todos_os_dados:
 				r_ano = int(r.get('ano', 0))
 				r_doy = int(r.get('doy', 0))
@@ -5454,12 +5497,16 @@ def main():
 	t_neo.start()
 	t = threading.Thread(target=check_database_version, daemon=True)
 	t.start()
+	#t_sw = threading.Thread(target=swmsg, daemon=True)
+	#t_sw.start()
 	#----------------------------
 	drawart('art_cybele')
 	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
+	#-----------------------------
+	swmsg()
 	#-----------------------------
 	while True:
 		#-------------------------
@@ -5471,7 +5518,7 @@ def main():
 			globals()['update_available'] = False
 		if globals().get('nextneo'):
 			print(nextneo); globals()['nextneo'] = False
-		#-------------------------
+		#-------------------------	
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
 			print (f" {symb_prompt()}What can you anwser?")
@@ -6885,8 +6932,8 @@ def main():
 						print(f"Ahead by: {diff_str}\n")
 
 		elif question[0:4] == 'test':
-			print(f"{random.choice(messages['nicefun_msg'])}\n")#lista_defs()
-
+			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
+			
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
