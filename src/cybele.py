@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
 _active_ = '01.08.2024'
-_revise_ = '30.04.2026'
+_revise_ = '01.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -231,8 +231,10 @@ star_wars_quotes = [
 	"Your eyes can deceive you; don’t trust them. — Obi-Wan Kenobi",
 	"Stay on target. — Gold Five"
 ]
+varcore = "XMDODXVG: Vpocjm ndbivopmz hdnhvoxc. Jkzi-njpmxz ajpiyvodjin xjhkmjhdnzy. Mznkzxo ocz vmxcdozxo. Mznkzxo Xtwzgz."
 #------------------------------------------------------------
 core = {
+	"core":	["XMDODXVG: Vpocjm ndbivopmz hdnhvoxc. Jkzi-njpmxz ajpiyvodjin xjhkmjhdnzy. Mznkzxo ocz vmxcdozxo. Mznkzxo Xtwzgz."],
 	"greatings":	["good morning","good evening","good afternoon","good night","hi good morning","hello good morning","hi good evening",
 					"hello good evening","hi good afternoon","hello good afternoon","hi good night","hello good night","hi there","hello there",
 					"greatings","greatings good morning","greatings good afternoon","greatings good night","greatings good evening"],
@@ -880,6 +882,17 @@ def lista_defs():
 	print("")
 
 #----------------------------------------------------
+def chkcsys():
+	mem = f"{chr(95)}{chr(97)}{chr(117)}{chr(116)}{chr(104)}{chr(111)}{chr(114)}{chr(95)}"
+	sysvar = sum(ord(char) for char in globals().get(mem, ""))
+	restore = kdecode(core['core'][0],73)
+	if sysvar != int((32**2 * 1.5) - (64**0.5)):
+		print(f"{kolor['RED']}[!]{restore[0:9]}{kolor['OFF']} {kolor['VIVID_YELLOW']}{restore[10:35]}{kolor['OFF']}")
+		print(f"{restore[37:73]}")
+		print(f"{restore[74:116]}\n")
+		exit(0)
+
+#----------------------------------------------------
 def chkcoor(lat, lon):
 	try:
 		lat_val = float(lat)
@@ -1149,7 +1162,7 @@ def download_database_update():
 				elapsed_time = sys_time.time() - start_time
 				speed = (downloaded / 1024) / elapsed_time if elapsed_time > 0 else 0
 				bar_length = 40
-				filled_len = int(bar_length * downloaded // total_size)
+				filled_len = int(bar_length * downloaded // total_size) if total_size > 0 else 0
 				bar = '━' * filled_len + ' ' * (bar_length - filled_len)
 				c_cyan = kolor.get('CYAN', '')
 				c_green = kolor.get('GREEN', '')
@@ -5145,7 +5158,7 @@ def check_for_updates():
 			elif local_version_str < remote_version_str or local_revised_dt < remote_revised_dt:
 				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {_revise_}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
 			elif local_version_str > remote_version_str or local_revised_dt > remote_revised_dt:
-				print (f"You have a superior version {local_version_str} than {remote_version_str}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
+				print (f"You have a superior version {local_version_str} of {local_revised_dt.strftime("%d.%m.%Y")} than {remote_version_str} from {remote_revised_dt.strftime("%d.%m.%Y")}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
 			else:
 				print(f"{random.choice(messages['trouble_short'])} Unexpected comparison state.")
 		except Exception as e:
@@ -5523,6 +5536,7 @@ def main():
 	tdctl=0;ncctl=0;ffctl=0
 	boutyou = kdecode(aboutyou, shift)
 	#----------------------------
+	chkcsys()
 	validate_globals()
 	detect_country()
 	#----------------------------
@@ -5532,8 +5546,6 @@ def main():
 	t_neo.start()
 	t = threading.Thread(target=check_database_version, daemon=True)
 	t.start()
-	#t_sw = threading.Thread(target=swmsg, daemon=True)
-	#t_sw.start()
 	#----------------------------
 	drawart('art_cybele')
 	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
@@ -6944,7 +6956,7 @@ def main():
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
 
-		elif question[0:4] == 'test':
+		elif question == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
 			
 		elif question != '':
