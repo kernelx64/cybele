@@ -670,7 +670,6 @@ help = {
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps) \nex: gps to distance \n    harvesine formula \n    harvesine \n",
 	"help gridflow": "Usage: gridflow <hour:minute slots slot duration> \nA creative way to bring a dash of algorithmic mystery to your leisure time.\nTakes my own website TVshow list and make your TV watching plan/time. No algorythms selection based. \nex: griflow \n    gridflow 22:00 6 30\n",
 	"help harvesine": "Usage: harvesine|<formula> \nCalculate distance between two GPS given points, or between one given point if the default. (eg. set default gps) \nex: harvesine \n    harvesine formula \n    gps to distance \n",
-	"help happy birthday": f"Usage: happy birthday \nDisplay a Happy Birthday message to the author ({_author_.split()[0]}), me ({_title_}) and Elysia (website). \nex: happy birthday \n",
 	"help happy new year": f"Usage: happy new year \nDisplay a Happy New Year message for you only in the day. \nex: happy new year \n",
 	"help happy valentines": f"Usage: happy valentines \nDisplay a Valentines message for you. \nex: happy valentines \n",
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",
@@ -1382,13 +1381,13 @@ def swmsg():
 	quotes = globals().get('star_wars_quotes')
 	if not quotes:
 		print("🤖 My Star Wars dictionary is missing and I am not able to complete some of my tasks.\n")
-		return
 	if today.month == 5 and today.day == 4:
 		quote = random.choice(quotes)
 		print(f"✨ {kolor['SABER_BLUE']}[MAY THE 4TH]{kolor['OFF']} {kolor['SW_CRAWL']}Special Protocol Active: Happy Birthday!{kolor['OFF']}")
 		print(f"💬 \"{quote}\"\n")
-		return
-
+	if today.month == int(_active_[3:5]) and today.day == int(_active_[0:2]):
+		print(f"✨ {kolor['SABER_BLUE']}[{_title_.upper()}]{kolor['OFF']} {kolor['SW_CRAWL']}Special Algorithm Activated: Happy Birthday!{kolor['OFF']}\n")
+	
 #---------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -5963,24 +5962,14 @@ def main():
 					print((" " * spacing).join(output_parts))
 				print("")
 
-		elif question.find('happy birthday cybele')!=-1 or question.find('cybele happy birthday')!=-1 or question.find('happy birthday')!=-1:
-			dt = date.today()
-			if (str(dt)[5:]) == _active_[3:5] + "-" + _active_[0:2]:
+		elif question.find('happy birthday')!=-1:
+			today = datetime.now()
+			if (today.month == 5 and today.day == 4) or (today.month == int(_active_[3:5]) and today.day == int(_active_[0:2])):
 				random.shuffle(messages['birthday_msg'])
-				print (random.choice(messages['birthday_msg']))
-				print ("")
-			elif (str(dt)[5:]) == '05-04' and question == 'happy birthday':
-				random.shuffle(messages['birthday_msg'])
-				print (random.choice(messages['birthday_msg']))
-				print ("Here's a eternal gift: " + website['may4th'] )
-				print ("")
-			elif (str(dt)[5:]) == '12-09' and question == 'happy birthday':
-				random.shuffle(messages['birthday_msg'])
-				print ("In name of elysia " + random.choice(messages['birthday_msg']))
-				print ("elysia, {} personal website went online makes {} years ago on this same day.\n".format(_author_.split()[0] , date.today().year - date(2010,12,9).year))
+				print (f"{random.choice(messages['birthday_msg'])}\n")
 			else:
 				print(f"To who?! To Me ?!")
-				print(random.choice(messages['birthday_short']) + " Are trying to trik me, hmm! Its "+month_name+", "+date.today().strftime("%d")+". BAD " + os.getlogin().upper() + "!\n")
+				print(f"{random.choice(messages['birthday_short'])} You're trying to trick me, hmm? It's {month_name} {date.today().strftime("%d")} NOT {core['months'][int(_active_[3:5])-1].title()} {_active_[0:2]}. — BAD {os.getlogin().upper()}!\n")				
 
 		elif question == 'merry christmas':
 			dt = date.today()
@@ -6020,10 +6009,9 @@ def main():
 		elif question == 'what is your version' or question == 'cybele version' or question == 'your version' or question == 'this version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
-			_chkwww_ = 'online' if internet_onoff() else 'offline'
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
-			chkids = "and this isn't my original source code" if idcode != _chkcid_ else 'running via my original source code'
-			nversion = f"I am {_title_} {_chkwww_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nmy unique id is '{_chkcid_}' {chkids}."
+			chkids = f"and this {kolor['ORANGE']}IS NOT{kolor['OFF']} my {kolor['ORANGE']}original{kolor['OFF']} source code" if idcode != _chkcid_ else f"running via my {kolor['GREEN']}original{kolor['OFF']} source code"
+			nversion = f"I am {_title_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nMy unique ID is '{_chkcid_}' {chkids}."
 			print (nversion + "\n")
 
 		#------------------------------------------------
@@ -6145,8 +6133,8 @@ def main():
 
 		elif question == 'chkver':
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
-			_chkcid_ = f"{kolor['GREEN']}Verified{kolor['OFF']}" if cybelecode == idcode else f"{kolor['RED']}Not verified{kolor['OFF']}"
-			print (f"\n PY: {cybelecode} \n DB: {idcode} \n   {symb_prompt()} {_chkcid_}\n")
+			_chkcid_ = f"✅" if cybelecode == idcode else f"❌"
+			print (f"\n 📁: {cybelecode} \n 🛢️: {idcode} \n   {symb_prompt()}{_chkcid_}\n")
 
 		# == "today activity":
 		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
