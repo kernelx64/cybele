@@ -2565,6 +2565,42 @@ def showlisttell(data_key_list, num_terms=5, category="terms"):
 		return f"Sorry, I don't have any {category} to show at the moment."
 
 #-------------------------------------------------------
+def get_uptime_sentence():
+	now = datetime.now()
+	delta = now - start_time
+	total_days = delta.days
+	years = total_days // 365
+	remaining_days = total_days % 365
+	months = int(remaining_days // 30.44)
+	days = int(remaining_days % 30.44)
+	seconds_in_day = delta.seconds
+	hours = seconds_in_day // 3600
+	minutes = (seconds_in_day % 3600) // 60
+	seconds = seconds_in_day % 60
+	weeks = days // 7
+	days = days % 7
+	raw_units = [
+		(years, "year"),
+		(months, "month"),
+		(weeks, "week"),
+		(days, "day"),
+		(hours, "hour"),
+		(minutes, "minute"),
+		(seconds, "second")
+	]
+	sentence_parts = [
+		f"{val} {unit}{'s' if val != 1 else ''}"
+		for val, unit in raw_units if val > 0
+	]
+	if not sentence_parts:
+		sentence = "less than a second"
+	elif len(sentence_parts) == 1:
+		sentence = sentence_parts[0]
+	else:
+		sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
+	return f"I'm running for ⏱️ {sentence} since {start_time.strftime('%H:%M')} local time {whatgmt()[0]}.\n"
+
+#-------------------------------------------------------
 def find_word_in_dicts(word, core):
 	pontuation = [".",",","!","?"]
 	for p in range(len(pontuation)):
@@ -2667,20 +2703,7 @@ def find_word_in_dicts(word, core):
 				print ("")
 
 			elif list_name == "asking the uptime":
-				uptime_parts = get_uptime()
-				time_units = [(uptime_parts[0], "hour"),(uptime_parts[1], "minute"),(uptime_parts[2], "second")]
-				sentence_parts = []
-				for value, unit in time_units:
-					if value > 0:
-						sentence_parts.append(f"{value} {unit}{'s' if value > 1 else ''}")
-					if not sentence_parts:
-						sentence = "less than a second"
-					else:
-						if len(sentence_parts) > 1:
-							sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-						else:
-							sentence = sentence_parts[0]
-				print(f"I'm running for {sentence} since {start_time.strftime('%H:%M')} local time.\n")	
+				print(get_uptime_sentence())
 				
 			elif list_name == 'display_options':
 				what2tell = random.choice(core['display_commands'])
