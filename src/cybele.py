@@ -152,8 +152,8 @@ cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; nc
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
-BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="
-_h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
+BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; _h_key_64 = "QXV0aG9yaXphdGlvbg=="
+_h_val_64 = "VG9rZW4g"; amoclen = 0
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
@@ -1183,7 +1183,7 @@ def parse_date_string(date_str):
 def make_intextdb():
 	global midbcounter, ncountries, constellations_dict, special_dates_dict, idcode, knowledge, asteroids_list, cneos_list, \
 			stars_dict, constellations_abbr, climate_dictionary, linux_commands, core, webshare, periodic_elements, \
-			periodic_abbr, questions, answers, help, messages, tables, _spchar_, as_quotes
+			periodic_abbr, questions, answers, help, messages, tables, _spchar_, as_quotes, amoclen
 
 	if not check_tables(tables):
 		sys.exit(0)
@@ -1349,6 +1349,9 @@ def make_intextdb():
 
 		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
 		midbcounter += len(as_quotes)
+
+		amoclen = len(fetch_fromdbfile("cybele.db", "amoc_data", "doy"))
+		midbcounter += amoclen
 
 		midbcounter = 0 
 		for category_list in knowledge.values():
@@ -6111,8 +6114,8 @@ def main():
 				if _pydr3_ == True:
 					sysos = "Pydroid3"
 				else:
-					_pydr3_ = _pydr3_
-
+					_pydr3_ = _pydr3_			
+					
 				print(f"    Device : {display_node_name} on {sysos}")
 				print(f"      Name : {_title_}")
 				print(f"   Version : {version}")
@@ -6124,6 +6127,7 @@ def main():
 				print(f"     Linux : {len(core.get('linuxcmd', []))}")
 				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
 				print(f"     World : {len(core.get('country', []))}")
+				print(f"      AMOC : {amoclen}|{round(amoclen/2)} RD")
 				print(f"   Storage : {dblrconn}")
 				print(f"   Running : {days_running_str}\n")
 
