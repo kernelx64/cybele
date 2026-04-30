@@ -759,7 +759,7 @@ help = {
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}. Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
-	"help update database": "Usage: update database \nAllows me to work with or without an internet connection. \nex: update database \n    offline mode on\n",
+	"help update database": "Usage: update database \nAllows me to work with or without an internet connection. \nex: update database \n    offline mode\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm.\nex: weather for today\n",
@@ -993,7 +993,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
 		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
 		exit(0)
 
@@ -1025,7 +1025,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
 		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
 		exit(0)
 
@@ -1061,7 +1061,7 @@ def check_tables(tables_names):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   Exiting."
+		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
 		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
 		exit(0)
 
@@ -3599,7 +3599,7 @@ def random_season_activity():
 		if os.path.isfile(db_filename):
 			conn = sqlite3.connect(db_filename)
 		else:
-			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting."
+			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting."
 			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
 			sys.exit(0)
 
@@ -3702,7 +3702,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		conn = sqlite3.connect(db_filename)
 		dblrconn="offline [database files]"
 	else:
-		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode on> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
+		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 		sys.exit(0)
 	
@@ -5544,7 +5544,7 @@ def main():
 		#-------------------------
 		if globals()['update_available']:
 			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime("%d.%m.%Y %H:%M:%S")} is available.{kolor['OFF']}")
-			print("Type 'offline mode on' to sync.\n")
+			print("Type 'offline mode' to sync.\n")
 			globals()['update_available'] = False
 		if globals().get('nextneo'):
 			print(nextneo); globals()['nextneo'] = False
