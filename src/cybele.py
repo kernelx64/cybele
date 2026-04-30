@@ -1136,37 +1136,42 @@ def download_database_update():
 		response = requests.get(url, stream=True)
 		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
-		block_size = 1024
 		downloaded = 0
-		print(f"Downloading update for {local_db_filename}...")
+		start_time = sys_time.time()    
+		print(f"Downloading {local_db_filename}...")
 		with open(local_db_filename, 'wb') as f:
-			for data in response.iter_content(block_size):
+			for data in response.iter_content(chunk_size=8192):
 				f.write(data)
 				downloaded += len(data)
-				done = int(50 * downloaded / total_size) if total_size > 0 else 0
+				percent = (downloaded / total_size) * 100 if total_size > 0 else 0
 				mb_downloaded = downloaded / (1024 * 1024)
 				mb_total = total_size / (1024 * 1024)
-				percent = (downloaded / total_size) * 100 if total_size > 0 else 0
-				color_bar = kolor.get('CYAN', '')
-				color_off = kolor.get('OFF', '')
-				color_success = kolor.get('GREEN', '')
-				status_msg = (
-							f"{color_bar}[{'█' * done}{'░' * (50 - done)}]{color_off} "
-							f"📥 {mb_downloaded:.2f}MB / {mb_total:.2f}MB "
-							f"{color_success}({percent:.1f}%){color_off}"
+				elapsed_time = sys_time.time() - start_time
+				speed = (downloaded / 1024) / elapsed_time if elapsed_time > 0 else 0
+				bar_length = 40
+				filled_len = int(bar_length * downloaded // total_size)
+				bar = '━' * filled_len + ' ' * (bar_length - filled_len)
+				c_cyan = kolor.get('CYAN', '')
+				c_green = kolor.get('GREEN', '')
+				c_off = kolor.get('OFF', '')
+				status_line = (
+					f"\r {c_cyan}{bar}{c_off} "
+					f"{mb_downloaded:.1f}/{mb_total:.1f} MB "
+					f"{speed:,.0f} kB/s "
+					f"({percent:.1f}%)"
 				)
-				print_statusline(status_msg)
+				sys.stdout.write(status_line)
+				sys.stdout.flush()
 		if dbrd:
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
-			print_statusline(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld}")
-		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
+			print(f"\n🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime("%d.%m.%Y %H:%M:%S")} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime("%d.%m.%Y %H:%M:%S")}")
+		print(f"{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
 	except Exception as e:
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
 			os.remove(local_db_filename)
-
-
+			
 #------------------------------------------------------------
 def delete_cybeledb():
 	file_name = f"{_title_.lower()}.db"
@@ -6907,8 +6912,9 @@ def main():
 				except ValueError:
 					print(f"{random.choice(messages['trouble_short'])} Format error. Use: 'get ifremer data [day] [year]' (e.g., get ifremer data 125 2025)")
 
-		elif question == 'restart' or question == 'reset' or question == 'boot':
+		elif question == 'restart' or question == 'reset' or question == 'boot' or question == 'restart cybele':
 			print_statusline(f"\n{question.split()[0].capitalize()}...\n")
+			sleep(0.5)
 			clear_screen()
 			return True
 		
