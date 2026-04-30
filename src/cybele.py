@@ -244,6 +244,7 @@ core = {
 				"motherfucker","nigga","nigra","pigfucker","piss","prick","pussy","shit","shit ass","shite","sibling fucker","sisterfuck",
 				"sisterfucker","slut","son of a bitch","son of a whore","spastic","sweet jesus","fag","cum","blowjob",
 				"retard","retarded","whore","wtf","fool","bull","loser","fuckface","ass-wipe","goat","goat banger","faggot","blockhead","jinx"],
+	"interjections":	["Ok", "Swell", "Sweet", "Rad", "Neat","Marvellous", "Splendid", "Fine", "Righto","Alrighty", "Groovy", "Grand"],
 	"spring":	["march","april","may"],
 	"summer":	["june","july","august"],
 	"autumn":	["september","october","november"],
@@ -1130,37 +1131,65 @@ def download_database_update():
 	nome_base = _title_.lower()
 	local_db_filename = f"{nome_base}.db"
 	url = f"https://raw.githubusercontent.com/kernelx64/{nome_base}/main/src/{nome_base}.db"
+
 	try:
 		response = requests.get(url, stream=True)
 		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
-		block_size = 1024
 		downloaded = 0
+		start_time = datetime.now()
+
 		print(f"Downloading update for {local_db_filename}...")
 		with open(local_db_filename, 'wb') as f:
-			for data in response.iter_content(block_size):
+			for data in response.iter_content(chunk_size=1024):
 				f.write(data)
 				downloaded += len(data)
-				done = int(50 * downloaded / total_size) if total_size > 0 else 0
+
 				mb_downloaded = downloaded / (1024 * 1024)
 				mb_total = total_size / (1024 * 1024)
 				percent = (downloaded / total_size) * 100 if total_size > 0 else 0
-				color_bar = kolor.get('CYAN', '')
-				color_off = kolor.get('OFF', '')
-				color_success = kolor.get('GREEN', '')
-				status_msg = (
-							f"{color_bar}[{'█' * done}{'░' * (50 - done)}]{color_off} "
-							f"📥 {mb_downloaded:.2f}MB / {mb_total:.2f}MB "
-							f"{color_success}({percent:.1f}%){color_off}"
+
+				elapsed = (datetime.now() - start_time).total_seconds()
+				if elapsed > 0:
+					speed = (downloaded / 1024) / elapsed  # kB/s
+					remaining_bytes = total_size - downloaded
+					eta_seconds = remaining_bytes / (speed * 1024) if speed > 0 else 0
+				else:
+					speed = 0
+					eta_seconds = 0
+
+				mins, secs = divmod(int(eta_seconds), 60)
+				eta_str = f"{mins:02d}:{secs:02d}"
+
+				c_fill = kolor.get('VIVID_CYAN', '')
+				c_empty = kolor.get('DIM_WHITE', '')
+				c_text = kolor.get('WHITE', '')
+				c_speed = kolor.get('BOLD_GREEN', '')
+				c_off = kolor.get('OFF', '')
+
+				largura_barra = 45
+				preenchido = int(largura_barra * (percent / 100))
+
+				barra_visual = (
+					f"{c_fill}{'━' * preenchido}╸{c_off}"
+					f"{c_empty}{'━' * (largura_barra - preenchido)}{c_off}"
 				)
+				status_msg = (
+					f" {barra_visual} {c_text}{mb_downloaded:.1f}/{mb_total:.1f} MB{c_off} "
+					f"{c_speed}{speed:.1f} kB/s{c_off} {kolor.get('BOLD_YELLOW', '')}{eta_str}{c_off}"
+				)
+
 				print_statusline(status_msg)
+		print()
+
 		if dbrd:
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
-			print_statusline(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld}")
-		print(f"\nUpdate complete! 🚀 Restart {_title_}\n")
+			print(f"🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime('%d.%m.%Y %H:%M:%S')} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime('%d.%m.%Y %H:%M:%S')}")
+		print(f"Update complete! 🚀 Restart {_title_}\n")
+
 	except Exception as e:
-		print(f"\n❌ Download error: {e}", file=sys.stderr)
+		print(f"\n{kolor.get('BOLD_RED', '')}❌ Download error: {e}{kolor.get('OFF', '')}\n", file=sys.stderr)
 		if os.path.exists(local_db_filename):
 			os.remove(local_db_filename)
 
@@ -5484,7 +5513,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
-	global system_country, people_space, ncountries, dbld, dlrd, nextneo #, orbit_data
+	global system_country, people_space, ncountries, dbld, dlrd, nextneo, shift #, orbit_data
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -5494,7 +5523,7 @@ def main():
 	#----------------------------
 	wms = random.choice(core['intromsg'])
 	tdctl=0;ncctl=0;ffctl=0
-	aboutyou = kdecode(aboutyou, checksum)
+	boutyou = kdecode(aboutyou, shift)
 	#----------------------------
 	validate_globals()
 	detect_country()
@@ -6595,9 +6624,10 @@ def main():
 				oracle = aetherNeuralbase()
 				print(f"{oracle.predictbase()}\n")
 
-
 		elif question[-9:] == 'about you':
-				print (f"Ok!. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago. I was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {aboutyou}\n")
+			random.shuffle(core['interjections'])
+			intj = random.choice(core['interjections'])
+			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
 
 		elif question.startswith('presence'):
 			source_icon = f"{_spchar_[22:23]}"
