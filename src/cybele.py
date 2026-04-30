@@ -271,7 +271,7 @@ core = {
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
 	"questioning_about": ["what are doing","are you working","working","doing what","having fun"],
-	"asking the uptime":	["what is my uptime","my uptime","my uptime is","cybele uptime","display my uptime","show me my uptime"],
+	"asking the uptime":	["what is my uptime","my uptime","my uptime is","cybele uptime","display my uptime","show me my uptime","uptime cybele"],
 	"display_commands":	["show me","tell me","list me"],
 	"display_options":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
 						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
