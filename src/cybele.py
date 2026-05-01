@@ -268,7 +268,7 @@ core = {
 				"Awesome you're here!","Stoked you're here!","Pleasure to have you!","Delighted to welcome you!","Is a privilege to host you!",
 				"Honored to have you join us.","A warm welcome to you.","Truly a pleasure to meet you.","So glad you could make it!",
 				"Great to see you in the mix!","Look who decided to drop by!","Hi! Let’s get started.","Make yourself at home!",
-				"Step right in!","The man/woman/legend has arrived!","Your presence makes this better.","Welcome to the party."],
+				"Step right in!","The man/woman/legend has arrived!","Your presence makes this better.","Welcome to the party.","Oh, you're back?"],
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
@@ -304,7 +304,7 @@ core = {
 	"share":	["sharing links","sharing"],
 	"sayconvert":	["in full","longhand"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
-	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time"],
+	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time", "the time", "what is the time"],
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
@@ -374,6 +374,12 @@ messages = {
 				"As long as your keys aren't playing a game of Twister, we won't have any communication breakdowns.",
 				"My processing is sharp, but I don't have the 'Spilled Coffee on the Layout' plugin yet.",
 				"Unless your 'Enter' key has developed a mind of its own, I’ve got exactly what you’re saying."],
+
+	"clocktime":	["It's {time}, though I suspect that clock three inches above my window is slightly more aesthetically pleasing.",
+					"The time is {time}, but since we're both staring at a screen that displays it in two different corners, this feels a bit redundant, doesn't it?",
+					"I could tell you it's {time}, or you could save us both the processing power by glancing at the taskbar.",
+					"It's currently {time}. I'd offer to keep track of it for you, but your computer is literally made of clocks.",
+					"Sure, it's {time}. I'm glad I could help you confirm what that tiny digital clock has been telling you all along."],
 
 	"birthday_msg":	["I'm so glad you remembered! Thank you.","Woohoo! Thank you so much for the birthday wishes!",
 					"I'm feeling the birthday love! Thanks!","You're the best! Thanks for the birthday greeting.",
@@ -2403,6 +2409,8 @@ def get_question():
 			return qt.lower()
 	except ValueError:
 		return qt.lower()
+	except KeyboardInterrupt:
+		return False
 	return qt.lower()
 
 def find_answer(question,whatlist):
@@ -2838,7 +2846,10 @@ def find_word_in_dicts(word, core):
 				print (help[word])
 				
 			elif list_name == "time_query":
-				print ("The current time is "+datetime.now().strftime("%H:%M")+".\n")
+				ctime = datetime.now().strftime("%H:%M")
+				msgtime = random.choice(messages["clocktime"])
+				timeoutput = msgtime.format(time=ctime)
+				print (f"{timeoutput}\n")
 
 			elif list_name == "season_query":
 				show_season()
@@ -6534,10 +6545,8 @@ def main():
 			parts = question.lower().split(" in ")
 			search_term = parts[0].strip()
 			search_term = search_term.replace("what are", "").replace("is", "").strip()
-
 			if search_term:
 				results = [item for item in tvshows_cache if search_term in item.lower()]
-        
 				if results:
 					print(f"\nI found {len(results):02d} match(es) for '{search_term.upper()}' in your library 🧠:")
 					for i, match in enumerate(results, 1):
