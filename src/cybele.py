@@ -154,7 +154,6 @@ nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
 BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; _h_key_64 = "QXV0aG9yaXphdGlvbg=="
 _h_val_64 = "VG9rZW4g"; amoclen = 0
-
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
@@ -190,7 +189,7 @@ kolor = {
 	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
 	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
-	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m'
+	'ORANGE':'\033[38;5;208m','OFF':'\033[0m','SW_CRAWL':'\033[93m','SABER_BLUE':'\033[96m'
 }
 #-----------------------------------------------------------
 art_world = [
