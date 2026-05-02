@@ -3708,14 +3708,17 @@ def random_season_activity():
 def periodic_show( element ):
 
 	if any(elements in element for elements in core['element symbol']):
-		element_sy = periodic_elements[element.capitalize()]
-		number_sy = list(periodic_elements.keys()).index(element.capitalize())
-		print ("%s is a element who is symbol is represented by [ %s ] (abbr.) and her Atomic number [%s]." % (element.capitalize(), element_sy, number_sy + 1))
-		print ('The Periodic Table is ordered by increasing atomic number, witch is the number of protons and electons from the element.\n')
+		element_name = element.capitalize()
+		element_abbr = periodic_elements[element_name]
+		atomic_number = list(periodic_elements.keys()).index(element_name) + 1
+		print(f"Actually, {element_name} is represented by the symbol '{element_abbr}'.")
+		print(f"It holds the atomic number [{atomic_number}] in the Periodic Table, defined by its count of protons and electrons.\n")
 	elif any(elements in element for elements in core['element abbr']):
-		element_sy = periodic_abbr[element.capitalize()]
-		number_sy = list(periodic_abbr.keys()).index(element.capitalize())
-		print ("%s is the (abbr) of the symbol what is the element [ %s ] and her Atomic number is [%s].\n" % (element.capitalize(), element_sy, number_sy + 1))
+		element_abbr = element.capitalize()
+		element_name = periodic_abbr[element_abbr]
+		atomic_number = list(periodic_abbr.keys()).index(element_abbr) + 1
+		print(f"'{element_abbr}' is the chemical symbol for {element_name}.")
+		print(f"Its atomic number is [{atomic_number}].\n")
 	else:
 		print ( random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Weird! My search of the element was 'Neutrine'. !\n")
 
