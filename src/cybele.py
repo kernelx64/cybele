@@ -2622,12 +2622,12 @@ def find_word_in_dicts(word, core):
 	target_list = found_in[0]
 	selected_match = True
 	if len(found_in) > 1 and any(cat in friendly_names for cat in found_in):
-		# 2. Se entrou aqui, houve ambiguidade, então assumimos False até que o user escolha bem
+		# Houve ambiguidade
 		selected_match = False
 		printable_cats = [friendly_names.get(cat, cat) for cat in found_in]
 		print(f"{_spchar_[28:29]} I found '{word}' in: {', '.join(printable_cats)}.")
 		choice = input(f"{kolor['YELLOW']}In which context do you prefer?{kolor['OFF']} {symb_prompt()}").lower().strip()
-		if choice: # Só valida se não for Enter vazio
+		if choice:
 			for technical, friendly in friendly_names.items():
 				if technical in found_in:
 					if choice in technical.lower() or choice in friendly.lower():
