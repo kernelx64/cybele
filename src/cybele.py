@@ -248,6 +248,10 @@ core = {
 				"sisterfucker","slut","son of a bitch","son of a whore","spastic","sweet jesus","fag","cum","blowjob",
 				"retard","retarded","whore","wtf","fool","bull","loser","fuckface","ass-wipe","goat","goat banger","faggot","blockhead","jinx"],
 	"interjections":	["Ok", "Swell", "Sweet", "Rad", "Neat","Marvellous", "Splendid", "Fine", "Righto","Alrighty", "Groovy", "Grand"],
+	"brain_status": ["Invalid context", "Logic mismatch", "Sequence error"],
+	"brain_action": ["cancelling", "rejecting", "purging", "discarding"],
+	"brain_target": ["the selection", "the current process", "the entry"],
+	"brain_mood": ["therefore", "so", "consequently"],
 	"spring":	["march","april","may"],
 	"summer":	["june","july","august"],
 	"autumn":	["september","october","november"],
@@ -287,6 +291,9 @@ core = {
 	"request":	["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ",
 				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
 				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? "],
+	"discovery_verb":	["I found","I spotted","I discovered","I identified","I tracked down","I came across","I pinpointed"],
+	"preference_inquiry":	["Which one do you prefer?","Which do you like better?","Which is your favorite?","Which would you choose?",
+						"Which appeals to you more?","Which one suits you best?"],
 	"view_the_topics":	["show topics","show me your topics","show topic's","show me your topic's","topics","topic's"],
 	"working_hard":	["I'm taking a break right now. Please wait a moment and try again later.",
 					"I am currently unavailable. I appreciate your patience.",
@@ -885,7 +892,9 @@ friendly_names = {
     "oceanography": "Oceanography",
     "astronomy glossary": "Astronomy",
     "meteo": "Meteorology",
-    "element abbr": "Elements"
+    "element abbr": "Elements",
+    "climate_dict": "Climate change",
+	"word meaning": "Meanings",
 }
 #----------------------------------------------------
 def lista_defs():
@@ -2326,7 +2335,6 @@ def convert_to_words(num):
 #----------------------------------------------------
 def drawart(artname):
 	print(kolor['OFF'])
-
 	art_data = {
 		'art_cybele': {'art': art_cybele, 'exclude_colors': ['BOLD_BLACK', 'DARK_BLACK', 'DIM_BLACK', 'BLACK'],
 			'fallback_colors': ['RED', 'DIM_RED', 'BOLD_RED'], 'special_line': 5, 'special_suffix': art_byas,
@@ -2334,12 +2342,10 @@ def drawart(artname):
 		'art_world': {'art': art_world, 'color': 'BLUE'},
 		'art_py': {'art': art_py, 'color': 'GREEN'}
 	}
-
 	if artname not in art_data:
 		print(f"Error: Art '{artname}' not found in my code to handle'it. Fix'it!\n")
 		print(kolor['OFF'])
 		return
-
 	config = art_data[artname]
 	art = config['art']
 	if 'color' in config:
@@ -2351,7 +2357,6 @@ def drawart(artname):
 		else:
 			art_color_name = random.choice(available_colors)
 		art_color = kolor[art_color_name]
-
 	for i, line_bytes in enumerate(art):
 		res = ''.join(map(chr, line_bytes))
 		if artname == 'art_cybele' and i == config['special_line']:
@@ -2628,8 +2633,9 @@ def find_word_in_dicts(word, core):
 		printable_cats = [friendly_names.get(cat, cat) for cat in found_in]
 		printable_cats.sort()
 		formatted_list = ", ".join(printable_cats[:-1]) + f" and {printable_cats[-1]}"
-		print(f"{_spchar_[28:29]} I found '{kolor['BLUE']}{word.upper()}{kolor['OFF']}' in {formatted_list}.")
-		choice = input(f"{kolor['YELLOW']}In which context do you prefer?{kolor['OFF']} {symb_prompt()}").lower().strip()
+		random.shuffle(core['discovery_verb'])
+		print(f"{_spchar_[28:29]} {random.choice(core['discovery_verb'])} '{kolor['BLUE']}{word.upper()}{kolor['OFF']}' in {formatted_list}.")
+		choice = input(f"{kolor['YELLOW']}{random.choice(core['preference_inquiry'])} {kolor['OFF']}{symb_prompt()}").lower().strip()
 		if choice:
 			for technical, friendly in friendly_names.items():
 				if technical in found_in:
@@ -2639,7 +2645,7 @@ def find_word_in_dicts(word, core):
 						print("")
 						break
 	if not selected_match:
-		print(f"{random.choice(messages['trouble_short'])} Invalid context, therefore I am cancelling the possible selection.\n")
+		print(f"{random.choice(core["brain_status"])}, {random.choice(core["brain_mood"])} I am {random.choice(core["brain_action"])} {random.choice(core["brain_target"])}.\n")
 		return True
 
 	list_name = target_list
@@ -2688,7 +2694,7 @@ def find_word_in_dicts(word, core):
 		search_col = 'term';fetch_col = 'designation'
 		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 		#print('%s\n' % (dbsearch))
-		print(f"{textwrap.fill(dbsearch, columns - 3)}")
+		print(f"{textwrap.fill(dbsearch, columns - 3)}\n")
 				
 	elif list_name == 'view_the_topics':
 		print (random.choice(core['cthemes']) + ": \n")
@@ -2717,7 +2723,7 @@ def find_word_in_dicts(word, core):
 		db_file ='cybele.db';table = 'oceanography';search_val = word
 		search_col = 'term';fetch_col = 'designation'
 		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-		print(f"{symb_prompt()}{textwrap.fill(dbsearch, columns - 3) }\n")
+		print(f"{symb_prompt()}{textwrap.fill(dbsearch, columns - 3)}\n")
 
 	elif list_name == 'display_commands':
 		print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
