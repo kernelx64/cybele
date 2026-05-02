@@ -884,7 +884,8 @@ friendly_names = {
     "old_tech_term": "Old Tech History",
     "oceanography": "Oceanography",
     "astronomy glossary": "Astronomy",
-    "meteo": "Meteorology"
+    "meteo": "Meteorology",
+    "element abbr": "Elements"
 }
 #----------------------------------------------------
 def lista_defs():
