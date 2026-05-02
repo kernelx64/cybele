@@ -26,9 +26,9 @@ lon = -8.4265
 # some static global cybele variables
 version = '1.1.3'
 _title_ = 'Cybele'
-_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐'
+_spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '01.05.2026'
+_revise_ = '02.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -65,6 +65,7 @@ try:
 	import tzdata
 	import shutil
 	import zlib
+	import textwrap
 	from urllib.parse import urljoin
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -154,13 +155,14 @@ nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
 BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; _h_key_64 = "QXV0aG9yaXphdGlvbg=="
 _h_val_64 = "VG9rZW4g"; amoclen = 0
+
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
 			'Y25lb3M=','Y29uanVuY3Rpb25kYg==','Y29uc3RlbGF0aW9ucw==','Y29udGlnZW5jeQ==','Y291bnRyaWVz','ZnVuZmFjdHM=',
 			'bGludXhfY29tbWFuZHM=','bWVhbmluZ3M=','bmljZXRoaW5ncw==','bm91bnM=','b2xkdGVjaA==','cHJlcG9zaXRpb25kYg==',
 			'cWFfYXN0cm8=','c2Vhc29uX2FjdGl2aXRpZXM=','c3BlY2lhbF9kYXRlcw==','c3RhcnM=','dG9wYWN0aXZpdGllcw==',
 			'dmVyYl9iYXNlZGI=','dmVyYl9wYXN0X2Ri','dHZzaG93cw==','Z2VuZXJhdGlvbnM=','YW1vY19kYXRh','YXNfcXVvdGVz',
-			'YW1vY19kYXRh','bmVv']
+			'YW1vY19kYXRh','b2NlYW5vZ3JhcGh5','bmVv']
 
 #-----------------------------------------------------------
 website = {
@@ -189,7 +191,7 @@ kolor = {
 	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
 	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
-	'ORANGE':'\033[38;5;208m','OFF':'\033[0m','SW_CRAWL':'\033[93m','SABER_BLUE':'\033[96m'
+	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m'
 }
 #-----------------------------------------------------------
 art_world = [
@@ -267,7 +269,7 @@ core = {
 				"Awesome you're here!","Stoked you're here!","Pleasure to have you!","Delighted to welcome you!","Is a privilege to host you!",
 				"Honored to have you join us.","A warm welcome to you.","Truly a pleasure to meet you.","So glad you could make it!",
 				"Great to see you in the mix!","Look who decided to drop by!","Hi! Let’s get started.","Make yourself at home!",
-				"Step right in!","The man/woman/legend has arrived!","Your presence makes this better.","Welcome to the party.","Oh, you're back?"],
+				"Step right in!","The man/woman/legend has arrived!","Your presence makes this better.","Welcome to the party."],
 	"cthemes":	["I know about","Let's explore the together about","Based on my knowledge","You can ask me about",
 				"If you are curious you can ask'me about","I can anwser questions about","I can share knowledge about",
 				"I can provide you answers about","I can tell you about","I have knowledge about"],
@@ -277,7 +279,7 @@ core = {
 	"display_options":	["astronomy terms","astronomy words","astronomy questions","astronomy glossary","questions of astronomy",
 						"stars","star names","asteroids","dangerous objects","old tech","constellations","climate change","climate",
 						"meaning term","meaning words","meaning terms","constellations","all constellations","linux commands","verbs",
-						"english verbs","meteo","meteorology","gens","generations"],
+						"english verbs","meteo","meteorology","gens","generations","oceanography","oceanography terms"],
 	"question_word":	["who", "what", "when", "why", "can", "whose", "which"], #"how","where"],
 	"game_starters":	["play", "game"],
 	"next_neos":	["next neo","next neos","next asteroid","next asteroids"],
@@ -296,14 +298,14 @@ core = {
 						"constallaton","constillation", "constillations","onstellation", "onstellations","consstellation", "consstellations",
 						"peridoc table","peridotic table","periodict table","preiodic table","peiodic table","peridoic table","periodic tbabel",
 						"periodoc table","peridoc table","periodical table","periodic tabel","periodic tayble","periodic teble",
-						"peirodic table","millenials","ehlp","hlep","hepl","astronmy"],
+						"peirodic table","millenials","ehlp","hlep","hepl","astronmy","oceanograpyh terms","oceanograpy"],
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
 	"share":	["sharing links","sharing"],
 	"sayconvert":	["in full","longhand"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
-	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time", "the time", "what is the time"],
+	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time","what is the time"],
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
@@ -373,7 +375,7 @@ messages = {
 				"As long as your keys aren't playing a game of Twister, we won't have any communication breakdowns.",
 				"My processing is sharp, but I don't have the 'Spilled Coffee on the Layout' plugin yet.",
 				"Unless your 'Enter' key has developed a mind of its own, I’ve got exactly what you’re saying."],
-
+	
 	"clocktime":	["It's {time}, though I suspect that clock three inches above my window is slightly more aesthetically pleasing.",
 					"The time is {time}, but since we're both staring at a screen that displays it in two different corners, this feels a bit redundant, doesn't it?",
 					"I could tell you it's {time}, or you could save us both the processing power by glancing at the taskbar.",
@@ -400,7 +402,6 @@ messages = {
 					"I've got you covered. Here's the entry for '{topic}':","Sure thing! This is what I know about '{topic}':",
 					"Database match found. Displaying information for '{topic}':","Ah, '{topic}'! I have exactly what you need right here:",
 					"Looking through the archives... Found it! Info on '{topic}':","It's your lucky day. I have a detailed entry for '{topic}':"],
-
 
 	"creative matter":	["Interesting! %s definitely has a vibe of %s." , "You're right, '%s' does have a strong %s feel to it.",
 						"That's a great point! The word '%s' certainly evokes %s imagery." , "I can see why you think that. '%s' does seem like a very %s word.",
@@ -618,10 +619,10 @@ messages = {
 						"Did you consider know how many days are still that unique event that it %s?\n"],
 
 	"info_intromsg":	["Alright, time for a little peek under my digital hood:","Behold, my magnificent inner workings! (Currently running on 1s and 0s):",
-						"Greetings! My vital statistics, at your service:","Calculating... here's the full lowdown on Cybele:",
+						"Greetings! My vital statistics, at your service:","Calculating... here's the full lowdown on "+_title_+":",
 						"Reporting for duty! Here's my current status report:","Commencing self-analysis. The results are in:",
 						"My brain dump, for your viewing pleasure (and analytical needs):","Just the facts, ma'am/sir/user! Here's my core info:",
-						"Let's see what makes Cybele tick. Full specs ahead:","Presenting the official Cybele System Report, hot off the virtual press:",
+						"Let's see what makes "+_title_+" tick. Full specs ahead:","Presenting the official "+_title_+" System Report, hot off the virtual press:",
 						"Alright, let's get down to brass virtual tacks"],
 
 	"withonlyaL":		["Is this the low-calorie version of the night sky? Constellations Lite™.","The second 'L' took one look at the Milky Way and decided to move out.",
@@ -641,12 +642,12 @@ weather_season_condiction = {
 #------------------------------------------------------------
 topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types of orbits","asteroids","information about stars",
 		"distance of planets and from the sun","periodic table elements","visualize the periodic table","where is the ISS","people in space","actual country",
-		"climate dictionary","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
+		"climate change terms","old tech objects and terms","the world capitals","seasons of the year","play capitals","math game","constellations and elements game",
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
 		"longest day","shortest day","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit",
-		"list and calculate person generation"]
+		"list and calculate person generation","oceanography terms"]
 
 #------------------------------------------------------------
 help = {
@@ -700,7 +701,7 @@ help = {
 	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
 	"help linux command": "Usage: <linux command> \nTyped directly the linux command shows a short explanation and examples. Can be used mixed with 'show me linux commands' command.\nex: uname -a \n    show me linux commands \n",
-	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate|amoc> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
+	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate|amoc|oceanography> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help list askard": "Usage: list askard|<begin substring> <ending substring> \nReturn the entire list of askard's or for the required range.\nex: list askard \n    list askard 4005 4010\n",
 	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
@@ -745,7 +746,7 @@ help = {
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
 	"help search askard": "Usage: search askard <word> \nPerforms a substring search across the phrase database. Returns all entries and unique IDs containing the specified string. Use <view askard <id>> to retrieve the complete detail. \nex: search askard time\n    view askard 4005\n",
 	"help sharing": "Usage: sharing | sharing links\nDisplays a link to specific and properly identified content shared by "+_author_.split()[0]+".\nThe link can accessed by Ctrl + Click the link to open it.\nex: sharing links \n    sharing\n",
-	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
+	"help show me": "Usage: show me star names|constellations|<asteroids|dangerous> objects|astronomy questions|linux commands| \n"+(" "*15)+"old tech words|verbs|oceanography|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: show me verbs \n    show me linux commands\n    show me old tech\n",
 	"help show info": "Usage: show <info|core> or <#info|#core> \nDisplays comprehensive information about the "+_title_+" application and its current operating environment. \nex: show info \n    #core\n",
 	"help show my score": "Usage: show my score \nDisplay the played game score's. \n    ex: show my score\n",
 	"help solar": "Usage: solar|mppt <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: solar monitor \n    solar history\n    solar last30 \n    mppt monitor\n",
@@ -877,6 +878,14 @@ planet_data = {
 	"moons": "Five moons: Charon, Styx, Nix, Kerberos, and Hydra.","rings": "No rings.","temperature": "-228°C (-378°F)"
 	}
 }
+#---------------------------------------------
+friendly_names = {
+    "linuxcmd": "Linux Commands",
+    "old_tech_term": "Old Tech History",
+    "oceanography": "Oceanography",
+    "astronomy glossary": "Astronomy",
+    "meteo": "Meteorology"
+}
 #----------------------------------------------------
 def lista_defs():
 	contexto_atual = globals()
@@ -1007,7 +1016,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 	db_exists = os.path.isfile(db_filename)
 	if db_exists:
 		conn = sqlite3.connect(db_filename)
-		dblrconn= "offline [database files]"
+		dblrconn= "offline [database file]"
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
@@ -1039,7 +1048,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	db_exists = os.path.isfile(db_filename)
 	if db_exists:
 		conn = sqlite3.connect(db_filename)
-		dblrconn= "offline [database files]"
+		dblrconn= "offline [database file]"
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
@@ -1075,7 +1084,7 @@ def check_tables(tables_names):
 	db_exists = os.path.isfile(db_filename)
 	if db_exists:
 		conn = sqlite3.connect(db_filename)
-		dblrconn= "offline [database files]"
+		dblrconn= "offline [database file]"
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
@@ -1093,7 +1102,7 @@ def check_tables(tables_names):
 
 		if missing_tables:
 			print_statusline(f"")
-			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   Please update from github via addr {github_file_url}\n   I cannot execute properly. Exiting.\n"
+			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   Please update from github via addr {website['github']}{_title_.lower()}\n   I cannot execute properly. Exiting.\n"
 			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 			return False
 		else:
@@ -1360,6 +1369,8 @@ def make_intextdb():
 
 		core["element symbol"] = [key.lower() for key in periodic_elements.keys()]
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
+
+		core["oceanography"] = fetch_fromdbfile("cybele.db", "oceanography", "term")
 		
 		generationdb = zip(
 			fetch_fromdbfile("cybele.db", "generations", "gen_name"),
@@ -1399,7 +1410,7 @@ def make_intextdb():
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_short'])}! {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}")
 		sys.exit(1)
-
+		
 #---------------------------------------------------------------------
 def get_brain_status(midbcounter):
 	MULTIPLICADOR_RAM = 3.5
@@ -1470,7 +1481,9 @@ questions = [
 	"Unforgettable Humanity",
 	"Adelino book",
 	"Meteorological instruments",
-	"Meteo instruments"
+	"Meteo instruments",
+	"Adelino website",
+	"Author website"
 ]
 #------------------------------------------------
 answers = [
@@ -1521,7 +1534,8 @@ answers = [
 	"Yes, Adelino has written a compelling book titled 'Unforgettable Humanity'. It’s a great way to dive deeper into the themes he values. Here is the link: https://www.amazon.es/dp/B0G6SVN4XX",
 	"The essential instruments include: Anemometer (wind speed), Wind sock (wind direction), Barometer (atmospheric pressure), Thermometer (temperature), Rain gauge (precipitation), Hygrometer (air humidity), and Heliograph (sun brightness).",
 	"Main instruments: Anemometer (wind speed), Wind sock (wind direction), Barometer (atmospheric pressure), Thermometer (temperature), Rain gauge (precipitation), Hygrometer (air humidity), and Heliograph (sun brightness).",
-
+	"My author: "+_author_+" website address is <"+website['home']+">. I hope you find it interesting.",
+	"My author: "+_author_+" website address is <"+website['home']+">. I hope you enjoy'it.",
 ]
 #-------------------------------------------------
 others = [
@@ -2408,8 +2422,6 @@ def get_question():
 			return qt.lower()
 	except ValueError:
 		return qt.lower()
-	except KeyboardInterrupt:
-		return False
 	return qt.lower()
 
 def find_answer(question,whatlist):
@@ -2427,8 +2439,8 @@ def find_answer(question,whatlist):
 	dict_astro = [item for key in dict_astro_keys if key in core for item in core[key]]
 	help_comands = [key.replace("help ", "") for key in help.keys()]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
-					"time_query","season_query","asking for country details","asking for talking","python art","sayconvert",
-					"show_me_your_topics","executing_mc"]
+					"oceanography","time_query","season_query","asking for country details","asking for talking","python art",
+					"sayconvert","show_me_your_topics","executing_mc"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + help_comands + user_utterances
 	alldict[:] = list(set(alldict))
@@ -2604,291 +2616,325 @@ def find_word_in_dicts(word, core):
 	pontuation = [".",",","!","?"]
 	for p in range(len(pontuation)):
 		word = word.replace(pontuation[p],"")
-	for list_name, list_items in core.items():
-		if word in list_items:
-			if list_name == "greatings":
-				seetime = datetime.now().strftime('%H:%M')
-				salutation_first = random.choice(["","Greatings. ","Hey! ","Greatings! ","Hello ","Hi! ","Hello! ","Hi "])
-				salutation_end = random.choice([""," to you to!"," to you to."," too!"," too."])
-				seetime = datetime.now().strftime('%H:%M')
-				hour = datetime.now().hour
-				if 0 <= hour < 12:
-					salutation_time = "Good morning"
-				elif 12 <= hour < 18:
-					salutation_time = "Good afternoon"
-				else:
-					salutation_time = random.choice(["Good evening","Good night"])
-				daypart = salutation_time.split()[1]
-				salutation_phrase = "Actualy is " + str(seetime) + " so it's considered " + salutation_time.split()[1] + " so i'll say:"
-				if daypart.lower() in word.lower():
-					if salutation_end != "":
-						print (salutation_first + salutation_time + salutation_end + "\n")
-					else:
-						print (salutation_first + salutation_time + ".\n")
-				else:
-					print (salutation_phrase)
-					print (salutation_first + salutation_time + salutation_end + "\n")
-
-			elif list_name == 'seasons':
-				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
-				allyearseasons = '' + ', '.join(core[list_name]) + ''
-				current_season = word
-				current_season_index = core['seasons'].index(current_season.lower())
-				next_season_index = (current_season_index + 1) % len(core['seasons'])
-				next_season = core['seasons'][next_season_index]
-				print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {next_season.title()} approach's.")
-				print(f"(Based on current month ({datetime.now().strftime('%B')}) and {hemisphere}, the current season is {get_the_season()[0].title()})\n")
-
-			elif list_name == 'spring' or list_name == 'summer' or list_name == 'autumn' or list_name == 'winter':
-				month_number = core['months'].index(word) + 1
-				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
-				leap_year = leapyear()
-				print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
-				
-			elif list_name == 'word meaning':
-				db_file ='cybele.db';table = 'meanings';search_val = word
-				search_col = 'term';fetch_col = 'designation'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				print('%s\n' % (dbsearch))
-				
-			elif list_name == 'view_the_topics':
-				print (random.choice(core['cthemes']) + ": \n")
-				random.shuffle(topics)
-				last_topic = len(topics)-1
-				for i in range(last_topic):
-					print ( "   - " + topics[i].title())
-				print ("  and: ")
-				print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
-
-			elif list_name == 'meteo':
-				mq = random.choice(messages['pre_terms'])
-				random.shuffle(messages['pre_terms'])
-				print (f"{mq} a {list_name.title()}rology term.")
-				db_file ='cybele.db';table = 'meteo';search_val = word
-				search_col = 'term';fetch_col = 'definition'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				print(f"{symb_prompt()}{dbsearch}\n")
-
-			elif list_name == 'display_commands':
-				print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
-
-			elif list_name == 'generation':
-				#word.replace("generation", "").replace("gen", "").strip()
-				current_year = date.today().year
-				for gen_name, (start_year, end_year) in core['generation'].items():
-					if gen_name.strip() == word.lower():
-						calculated_max_age = current_year - start_year
-						calculated_min_age = current_year - end_year
-						template = "People who were born between {min_year} and {max_year}, actually having now between {min_age} and {max_age} years old."
-						final_answer = template.format(min_year=start_year,max_year=end_year,min_age=calculated_min_age,max_age=calculated_max_age)
-						print('%s\n' % (final_answer))
+	found_in = [list_name for list_name, list_items in core.items() if word in [item.lower() for item in list_items]]
+	if not found_in:
+		return
+	target_list = found_in[0]
+	selected_match = True
+	if len(found_in) > 1 and any(cat in friendly_names for cat in found_in):
+		# 2. Se entrou aqui, houve ambiguidade, então assumimos False até que o user escolha bem
+		selected_match = False
+		printable_cats = [friendly_names.get(cat, cat) for cat in found_in]
+		print(f"{_spchar_[28:29]} I found '{word}' in: {', '.join(printable_cats)}.")
+		choice = input(f"{kolor['YELLOW']}In which context do you prefer?{kolor['OFF']} {symb_prompt()}").lower().strip()
+		if choice: # Só valida se não for Enter vazio
+			for technical, friendly in friendly_names.items():
+				if technical in found_in:
+					if choice in technical.lower() or choice in friendly.lower():
+						target_list = technical
+						selected_match = True
+						print("")
 						break
+	if not selected_match:
+		print(f"{random.choice(messages['trouble_short'])} Invalid context, therefore I am cancelling the possible selection.\n")
+		return True
 
-			elif list_name == 'qa-astro':
-				db_file ='cybele.db';table = 'qa_astro';search_val = word
-				search_col = 'question';fetch_col = 'awnser'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				print( '%s\n' % (dbsearch))
-
-			elif list_name == 'linuxcmd':		
-				print ("<"+word.lower()+">" + " is a console " + _spchar_[16:17] + " linux command. Here some help about'it:\n")
-				print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
-				print ("Explanation: " + str(linux_commands[word]['explanation']))
-				print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
-				print ("")
-
-			elif list_name == "asking the uptime":
-				print(get_uptime_sentence())
-				
-			elif list_name == 'display_options':
-				what2tell = random.choice(core['display_commands'])
-				iniwhat2tell = random.choice(messages['helpassist'])
-				print(f"{iniwhat2tell}, type <{what2tell} {word}> or <help {what2tell}>\n")
-
-			elif list_name == 'questioning_about':
-				print(f"{random.choice(core['working_hard'])}\n{random.choice(messages['enjoying'])}\n")
-
-			elif list_name == 'python art':
-				print ("Python is a programmer language wich i was builted (coded).")
-				for i in range(len(art_py)):
-					print (art_py[i])
-
-			elif list_name == "primary moon phase":
-				print ("That is a %s." % (list_name))
-				print ("Astronomers have broken down this cycle into four Moon phases: \nNew Moon, First Quarter, Full Moon, and Last Quarter.\n")
-			elif list_name == "secondary moon phase":
-				print ("That is a %s.\n" % (list_name))
-				print ("Astronomers have broken down this cycle into four Moon phases: \nWaxing Crescent, Waxing Gibbous, Waning Gibbous, and Waning Crescent.\n")
-
-			elif list_name == 'orbital regime':
-				regime = orbit_regime[word]
-				regime_desc = " ".join(regime[0:28].split())
-				print ("%s is the acronym of %s witch is a %s having the category of: \n%s.\n" %( word.upper(), regime_desc, list_name.capitalize(), regime[31:]))
-
-			elif list_name == 'planet':
-				order = get_ordinal_position(core['planet'].index(word)+1)
-				if word == "earth":
-					message = "%s is our %s, Our home.\nIs the %s planet from the Sun in our Solar System.\n" % (word.capitalize(), list_name, order)
-				else:
-					message = "%s is a %s. Is the %s planet from the Sun in our Solar System.\n" % (word.capitalize(), list_name, order)
-				print ( message )
-				print ( " " + word.capitalize() + " Overview:\n")
-				print ( "  Orbital Period: " + str(planet_data[word]['orbital_period']) + " Earth years")
-				print ( "  Semi-major Axis: " + str(planet_data[word]['semi_major_axis']) + " AU")
-				print ( "  Orbital Eccentricity: " + str(planet_data[word]['orbital_eccentricity']) )
-				print ( "  Orbital Inclination: " + str(planet_data[word]['orbital_inclination']) )
-				print ( "  Rotation Period: " + str(planet_data[word]['rotation_period']) + " Earth days")
-				print ( "  Axial Tilt: " + str(planet_data[word]['axial_tilt']) + " degrees")
-				print ( "  Mass: " +  str(planet_data[word]['mass']))
-				print ( "  Atmosphere: " + str(planet_data[word]['atmosphere']))
-				print ( "  Moons: " + str(planet_data[word]['moons']))
-				print ( "  Rings: " + str(planet_data[word]['rings']))
-				print ( "  Temperature: " + str(planet_data[word]['temperature']))
-				print ("")
-
-			elif list_name == 'next_neos':
-				get_next_asteroid()
-
-			elif list_name == 'capital':
-				index = core[list_name].index(word)
-				print ("%s is a %s, and is from %s.\n" % (word.capitalize(), list_name, core['country'][index].capitalize()))
-			elif list_name == 'country':
-				index = core[list_name].index(word)
-				print ("%s is a %s, and its capital is %s.\n" % (word.capitalize(), list_name, core['capital'][index].capitalize()))
-
-			elif list_name == 'old_tech_term':
-				db_file ='cybele.db';table = 'oldtech';search_val = word
-				search_col = 'oldterm';fetch_col = 'designation'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				
-				random.shuffle(messages['creative matter'])
-				canswers = random.choice(messages['creative matter'])
-				creative_random_anwser = canswers
-				print(str(creative_random_anwser + "\n%s \n") % (word.capitalize(), list_name.replace("_"," ").title(), dbsearch))
-
-			elif list_name == "climate dictionary term":
-				climate_anwser = climate_dictionary[word]
-				print(f"The term {word.capitalize()} belongs to the {list_name.title()[0:18].replace("Climate ", "Climate Change ")} :\n {climate_anwser}\n")
-
-			elif list_name == 'astronomy glossary':
-				db_file ='cybele.db';table = 'astronomy_glossary';search_val = word
-				search_col = 'glossary';fetch_col = 'designation'
-				dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
-				
-				astro_anwser = dbsearch
-				random.shuffle(messages['creative matter'])
-				canswers = random.choice(messages['creative matter'])
-				creative_random_anwser = canswers
-				print( creative_random_anwser % (word.capitalize(), list_name.capitalize() ))
-				print (astro_anwser + '\n')
-
-			elif list_name == "asteroid":
-				asteroid_info = asteroids_list[word]
-				if asteroid_info['type'].lower() == "dangerous asteroid":
-					dangerast = f"{kolor['BOLD_RED']}{asteroid_info['type'].upper()}{kolor['OFF']}"
-				else:
-					dangerast = f"{kolor['BOLD_WHITE']}{asteroid_info['type']}{kolor['OFF']}"
-				print (f"\n [ {kolor['YELLOW']}{list_name.upper()} {word}{kolor['OFF']} | {dangerast} {kolor['OFF']}]")
-				print(f"   Diameter: {asteroid_info['mean_diameter'].replace('.', ',')} km")
-				print(f" Rot.Period: {asteroid_info['rotation_period']} hours")
-				print(f"     Albedo: {asteroid_info['albedo']}")
-				print(f"    Details: {asteroid_info['description']}\n")
-			
-			elif list_name == "cneos":
-				object_key = word
-				object_details = cneos_list[object_key]
-				print (f"\n [ {kolor['BOLD_RED']}{object_key.upper()}{kolor['OFF']} | {kolor['YELLOW']}Dangerous Objects{kolor['OFF']}, data by NASA JPL CNEOS ]")
-				val = len(object_key.upper())
-				print (f"{' '*val:>{val+6}}{_spchar_[10:11]} https://cneos.jpl.nasa.gov/ca/ \n")
-				diameter_value = object_details.get('diameter')
-				print(f"{'Diameter:':>15} {get_display_value(diameter_value, ' Km')}")
-				impact_value = object_details.get('impact')
-				impact_display = "N/A"
-				if impact_value is not None and (isinstance(impact_value, (float, int)) or (isinstance(impact_value, str) and impact_value.strip())):
-					try:
-						impact_display = f"{float(impact_value) * 100:.4f} %"
-					except ValueError: # In case 'impact' is a non-numeric string
-						impact_display = "N/A"
-				print(f"{'Impact Prob:':>15} {impact_display}")
-				year_value = object_details.get('year')
-				print(f"{'Year range:':>15} {get_display_value(year_value, replace_hyphen=True)}")
-				kms_value = object_details.get('kms')
-				print(f"{'V infinity:':>15} {get_display_value(kms_value, ' Km/s', precision=2)}\n")
-
-			elif list_name == "constelattion":
-				constellation_anwser = constellations_dict[word]
-				random.shuffle(messages['creative matter'])
-				creative_random_anwser = random.choice(messages['creative matter'])
-				print( creative_random_anwser % (word.title(), list_name.capitalize()))
-				print (word.capitalize() + " have the designation of '" + constellation_anwser[0] + "' and the abreviation '" + constellation_anwser[1] + "'.\n")
-
-			elif list_name == "element symbol":
-				periodic_show(word)
-
-			elif list_name == "element abbr":
-				periodic_show(word)
-
-			elif list_name == "star name":
-				star_info = stars_dict[word.title()]
-				lower_case_abbr = {key.lower(): value for key, value in constellations_abbr.items()}
-				star_constellation = lower_case_abbr.get(star_info[1].lower())
-				random.shuffle(messages['creative matter'])
-				creative_random_anwser = random.choice(messages['creative matter'])
-				print( creative_random_anwser % (word.title(), list_name.capitalize()))
-				print ("Belongs to '" + star_constellation + "' constellation and have the designation of '" + star_info[0] + "'.\n")
-
-			elif list_name == "year event":
-				random.shuffle(messages['year_event_msg'])
-				print ( random.choice(messages['year_event_msg']) % (word.capitalize()))
-
-			elif list_name == "help":
-				print (help[word])
-				
-			elif list_name == "time_query":
-				ctime = datetime.now().strftime("%H:%M")
-				msgtime = random.choice(messages["clocktime"])
-				timeoutput = msgtime.format(time=ctime)
-				print (f"{timeoutput}\n")
-
-			elif list_name == "season_query":
-				show_season()
-
-			elif list_name == "holidays_query":
-				country_holidays()
-			
-			elif list_name == "asking for country details":
-				list_country_details()
-
-			elif list_name == "withonlyaL":
-				print (f"{random.choice(messages['withonlyaL'])}\n")
-
-			elif list_name == "asking for a phrase":
-				if "say something" in word:
-					gt = make_text(rw, random.randint(1, 2), random.randint(1, 1))
-					print (f"{gt} \n")
-				else:
-					gt = make_text(rw, num_sentences=1, num_paragraphs=1)
-					print (f"{gt} \n")
-			
-			elif list_name == 'share':
-				if internet_onoff() == True:
-					netchk = True
-				else:
-					netchk = False
-					print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
-				for tvshow, link in webshare.items():
-					print(" > " + str(tvshow.upper()))
-					print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
-					if netchk == True:
-						print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
-				print ("")
-			
-			elif list_name == 'executing_mc':
-				run_midnight_commander()
-
+	list_name = target_list
+	if list_name == "greatings":
+		seetime = datetime.now().strftime('%H:%M')
+		salutation_first = random.choice(["","Greatings. ","Hey! ","Greatings! ","Hello ","Hi! ","Hello! ","Hi "])
+		salutation_end = random.choice([""," to you to!"," to you to."," too!"," too."])
+		seetime = datetime.now().strftime('%H:%M')
+		hour = datetime.now().hour
+		if 0 <= hour < 12:
+			salutation_time = "Good morning"
+		elif 12 <= hour < 18:
+			salutation_time = "Good afternoon"
+		else:
+			salutation_time = random.choice(["Good evening","Good night"])
+		daypart = salutation_time.split()[1]
+		salutation_phrase = "Actualy is " + str(seetime) + " so it's considered " + salutation_time.split()[1] + " so i'll say:"
+		if daypart.lower() in word.lower():
+			if salutation_end != "":
+				print (salutation_first + salutation_time + salutation_end + "\n")
 			else:
-				print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\nPerhaps you'd like to type the command: help \n")
-			return True
+				print (salutation_first + salutation_time + ".\n")
+		else:
+			print (salutation_phrase)
+			print (salutation_first + salutation_time + salutation_end + "\n")
+
+	elif list_name == 'seasons':
+		hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+		allyearseasons = '' + ', '.join(core[list_name]) + ''
+		current_season = word
+		current_season_index = core['seasons'].index(current_season.lower())
+		next_season_index = (current_season_index + 1) % len(core['seasons'])
+		next_season = core['seasons'][next_season_index]
+		print(f"Is one of the four seasons ({allyearseasons.title()}) of the year while the {next_season.title()} approach's.")
+		print(f"(Based on current month ({datetime.now().strftime('%B')}) and {hemisphere}, the current season is {get_the_season()[0].title()})\n")
+
+	elif list_name == 'spring' or list_name == 'summer' or list_name == 'autumn' or list_name == 'winter':
+		month_number = core['months'].index(word) + 1
+		hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
+		leap_year = leapyear()
+		print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
+				
+	elif list_name == 'word meaning':
+		columns, lines = shutil.get_terminal_size()
+		db_file ='cybele.db';table = 'meanings';search_val = word
+		search_col = 'term';fetch_col = 'designation'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+		#print('%s\n' % (dbsearch))
+		print(f"{textwrap.fill(dbsearch, columns - 3)}")
+				
+	elif list_name == 'view_the_topics':
+		print (random.choice(core['cthemes']) + ": \n")
+		random.shuffle(topics)
+		last_topic = len(topics)-1
+		for i in range(last_topic):
+			print ( "   - " + topics[i].title())
+		print ("  and: ")
+		print ("   " + topics[last_topic].title() + ", " + random.choice(messages['endterm']).lower() + ".\n")
+
+	elif list_name == 'meteo':
+		columns, lines = shutil.get_terminal_size()
+		mq = random.choice(messages['pre_terms'])
+		random.shuffle(messages['pre_terms'])
+		print(f"{mq} a \U0001F321\uFE0F {list_name.title()}rology term.")
+		db_file ='cybele.db';table = 'meteo';search_val = word
+		search_col = 'term';fetch_col = 'definition'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+		print(f"{symb_prompt()}{textwrap.fill(dbsearch, columns - 3)}\n")
+
+	elif list_name == 'oceanography':
+		columns, lines = shutil.get_terminal_size()
+		mq = random.choice(messages['pre_terms'])
+		random.shuffle(messages['pre_terms'])
+		print (f"{mq} a {_spchar_[27:28]} {list_name.title()} term.")
+		db_file ='cybele.db';table = 'oceanography';search_val = word
+		search_col = 'term';fetch_col = 'designation'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+		print(f"{symb_prompt()}{textwrap.fill(dbsearch, columns - 3) }\n")
+
+	elif list_name == 'display_commands':
+		print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
+
+	elif list_name == 'generation':
+		#word.replace("generation", "").replace("gen", "").strip()
+		current_year = date.today().year
+		for gen_name, (start_year, end_year) in core['generation'].items():
+			if gen_name.strip() == word.lower():
+				calculated_max_age = current_year - start_year
+				calculated_min_age = current_year - end_year
+				template = "People who were born between {min_year} and {max_year}, actually having now between {min_age} and {max_age} years old."
+				final_answer = template.format(min_year=start_year,max_year=end_year,min_age=calculated_min_age,max_age=calculated_max_age)
+				print('%s\n' % (final_answer))
+				break
+
+	elif list_name == 'qa-astro':
+		db_file ='cybele.db';table = 'qa_astro';search_val = word
+		search_col = 'question';fetch_col = 'awnser'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+		print( '%s\n' % (dbsearch))
+
+	elif list_name == 'linuxcmd':
+		print ("<"+word.lower()+">" + " is a console " + _spchar_[16:17] + " linux command. Here some help about'it:\n")
+		print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
+		print ("Explanation: " + str(linux_commands[word]['explanation']))
+		print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
+		print ("")
+
+	elif list_name == "asking the uptime":
+		print(get_uptime_sentence())
+				
+	elif list_name == 'display_options':
+		what2tell = random.choice(core['display_commands'])
+		iniwhat2tell = random.choice(messages['helpassist'])
+		print(f"{iniwhat2tell}, type <{what2tell} {word}> or <help {what2tell}>\n")
+
+	elif list_name == 'questioning_about':
+		print(f"{random.choice(core['working_hard'])}\n{random.choice(messages['enjoying'])}\n")
+	elif list_name == 'python art':
+		print ("Python is a programmer language wich i was builted (coded).")
+		for i in range(len(art_py)):
+			print (art_py[i])
+
+	elif list_name == "primary moon phase":
+		print ("That is a %s." % (list_name))
+		print ("Astronomers have broken down this cycle into four Moon phases: \nNew Moon, First Quarter, Full Moon, and Last Quarter.\n")
+	elif list_name == "secondary moon phase":
+		print ("That is a %s.\n" % (list_name))
+		print ("Astronomers have broken down this cycle into four Moon phases: \nWaxing Crescent, Waxing Gibbous, Waning Gibbous, and Waning Crescent.\n")
+
+	elif list_name == 'orbital regime':
+		regime = orbit_regime[word]
+		regime_desc = " ".join(regime[0:28].split())
+		print ("%s is the acronym of %s witch is a %s having the category of: \n%s.\n" %( word.upper(), regime_desc, list_name.capitalize(), regime[31:]))
+
+	elif list_name == 'planet':
+		order = get_ordinal_position(core['planet'].index(word)+1)
+		if word == "earth":
+			message = "%s is our %s, Our home.\nIs the %s planet from the Sun in our Solar System.\n" % (word.capitalize(), list_name, order)
+		else:
+			message = "%s is a %s. Is the %s planet from the Sun in our Solar System.\n" % (word.capitalize(), list_name, order)
+		print ( message )
+		print ( " " + word.capitalize() + " Overview:\n")
+		print ( "  Orbital Period: " + str(planet_data[word]['orbital_period']) + " Earth years")
+		print ( "  Semi-major Axis: " + str(planet_data[word]['semi_major_axis']) + " AU")
+		print ( "  Orbital Eccentricity: " + str(planet_data[word]['orbital_eccentricity']) )
+		print ( "  Orbital Inclination: " + str(planet_data[word]['orbital_inclination']) )
+		print ( "  Rotation Period: " + str(planet_data[word]['rotation_period']) + " Earth days")
+		print ( "  Axial Tilt: " + str(planet_data[word]['axial_tilt']) + " degrees")
+		print ( "  Mass: " +  str(planet_data[word]['mass']))
+		print ( "  Atmosphere: " + str(planet_data[word]['atmosphere']))
+		print ( "  Moons: " + str(planet_data[word]['moons']))
+		print ( "  Rings: " + str(planet_data[word]['rings']))
+		print ( "  Temperature: " + str(planet_data[word]['temperature']))
+		print ("")
+
+	elif list_name == 'next_neos':
+		get_next_asteroid()
+
+	elif list_name == 'capital':
+		index = core[list_name].index(word)
+		print ("%s is a %s, and is from %s.\n" % (word.capitalize(), list_name, core['country'][index].capitalize()))
+	elif list_name == 'country':
+		index = core[list_name].index(word)
+		print ("%s is a %s, and its capital is %s.\n" % (word.capitalize(), list_name, core['capital'][index].capitalize()))
+
+	elif list_name == 'old_tech_term':
+		db_file ='cybele.db';table = 'oldtech';search_val = word
+		search_col = 'oldterm';fetch_col = 'designation'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+
+		random.shuffle(messages['creative matter'])
+		canswers = random.choice(messages['creative matter'])
+		creative_random_anwser = canswers
+		print(str(creative_random_anwser + "\n%s \n") % (word.capitalize(), f"\U0001F5B3\uFE0F {list_name.replace("_"," ").title()}", dbsearch))
+
+	elif list_name == "climate dictionary term":
+		climate_anwser = climate_dictionary[word]
+		print(f"The term {word.capitalize()} belongs to the {list_name.title()[0:18].replace("Climate ", "Climate Change ")} :\n {climate_anwser}\n")
+
+	elif list_name == 'astronomy glossary':
+		columns, lines = shutil.get_terminal_size()
+		db_file ='cybele.db';table = 'astronomy_glossary';search_val = word
+		search_col = 'glossary';fetch_col = 'designation'
+		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
+		astro_anwser = dbsearch
+		random.shuffle(messages['creative matter'])
+		canswers = random.choice(messages['creative matter'])
+		creative_random_anwser = canswers
+		print( creative_random_anwser % (word.capitalize(), f"\U0001FA90\uFE0F {list_name.capitalize()}"))
+		print (f"{textwrap.fill(astro_anwser, columns - 3)}\n")
+
+	elif list_name == "asteroid":
+		asteroid_info = asteroids_list[word]
+		if asteroid_info['type'].lower() == "dangerous asteroid":
+			dangerast = f"{kolor['BOLD_RED']}{asteroid_info['type'].upper()}{kolor['OFF']}"
+		else:
+			dangerast = f"{kolor['BOLD_WHITE']}{asteroid_info['type']}{kolor['OFF']}"
+		print (f"\n [ {kolor['YELLOW']}{list_name.upper()} {word}{kolor['OFF']} | {dangerast} {kolor['OFF']}]")
+		print(f"   Diameter: {asteroid_info['mean_diameter'].replace('.', ',')} km")
+		print(f" Rot.Period: {asteroid_info['rotation_period']} hours")
+		print(f"     Albedo: {asteroid_info['albedo']}")
+		print(f"    Details: {asteroid_info['description']}\n")
+			
+	elif list_name == "cneos":
+		object_key = word
+		object_details = cneos_list[object_key]
+		print (f"\n [ {kolor['BOLD_RED']}{object_key.upper()}{kolor['OFF']} | {kolor['YELLOW']}Dangerous Objects{kolor['OFF']}, data by NASA JPL CNEOS ]")
+		val = len(object_key.upper())
+		print (f"{' '*val:>{val+6}}{_spchar_[10:11]} https://cneos.jpl.nasa.gov/ca/ \n")
+		diameter_value = object_details.get('diameter')
+		print(f"{'Diameter:':>15} {get_display_value(diameter_value, ' Km')}")
+		impact_value = object_details.get('impact')
+		impact_display = "N/A"
+		if impact_value is not None and (isinstance(impact_value, (float, int)) or (isinstance(impact_value, str) and impact_value.strip())):
+			try:
+				impact_display = f"{float(impact_value) * 100:.4f} %"
+			except ValueError: # In case 'impact' is a non-numeric string
+				impact_display = "N/A"
+		print(f"{'Impact Prob:':>15} {impact_display}")
+		year_value = object_details.get('year')
+		print(f"{'Year range:':>15} {get_display_value(year_value, replace_hyphen=True)}")
+		kms_value = object_details.get('kms')
+		print(f"{'V infinity:':>15} {get_display_value(kms_value, ' Km/s', precision=2)}\n")
+
+	elif list_name == "constelattion":
+		constellation_anwser = constellations_dict[word]
+		random.shuffle(messages['creative matter'])
+		creative_random_anwser = random.choice(messages['creative matter'])
+		print( creative_random_anwser % (word.title(), list_name.capitalize()))
+		print (word.capitalize() + " have the designation of '" + constellation_anwser[0] + "' and the abreviation '" + constellation_anwser[1] + "'.\n")
+
+	elif list_name == "element symbol":
+		periodic_show(word)
+
+	elif list_name == "element abbr":
+		periodic_show(word)
+
+	elif list_name == "star name":
+		star_info = stars_dict[word.title()]
+		lower_case_abbr = {key.lower(): value for key, value in constellations_abbr.items()}
+		star_constellation = lower_case_abbr.get(star_info[1].lower())
+		random.shuffle(messages['creative matter'])
+		creative_random_anwser = random.choice(messages['creative matter'])
+		print( creative_random_anwser % (word.title(), list_name.capitalize()))
+		print ("Belongs to '" + star_constellation + "' constellation and have the designation of '" + star_info[0] + "'.\n")
+
+	elif list_name == "year event":
+		random.shuffle(messages['year_event_msg'])
+		print ( random.choice(messages['year_event_msg']) % (word.capitalize()))
+
+	elif list_name == "help":
+		print (help[word])
+
+	elif list_name == "time_query":
+		ctime = datetime.now().strftime("%H:%M")
+		msgtime = random.choice(messages["clocktime"])
+		timeoutput = msgtime.format(time=ctime)
+		print (f"{timeoutput}\n")
+
+	elif list_name == "season_query":
+		show_season()
+
+	elif list_name == "holidays_query":
+		country_holidays()
+
+	elif list_name == "asking for country details":
+		list_country_details()
+
+	elif list_name == "withonlyaL":
+		print (f"{random.choice(messages['withonlyaL'])}\n")
+
+	elif list_name == "asking for a phrase":
+		if "say something" in word:
+			gt = make_text(rw, random.randint(1, 2), random.randint(1, 1))
+			print (f"{gt} \n")
+		else:
+			gt = make_text(rw, num_sentences=1, num_paragraphs=1)
+			print (f"{gt} \n")
+
+	elif list_name == 'share':
+		if internet_onoff() == True:
+			netchk = True
+		else:
+			netchk = False
+			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
+			for tvshow, link in webshare.items():
+				print(" > " + str(tvshow.upper()))
+				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
+				if netchk == True:
+					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
+			print ("")
+
+	elif list_name == 'executing_mc':
+		run_midnight_commander()
+
+	else:
+		print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\nPerhaps you'd like to type the command: help \n")
+	return True
 
 #--------------------------------------------
 def convert_units(question: str):
@@ -3728,7 +3774,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 	db_filename = dbname + ".db"
 	if os.path.isfile (db_filename) == True :
 		conn = sqlite3.connect(db_filename)
-		dblrconn="offline [database files]"
+		dblrconn="offline [database file]"
 	else:
 		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
 		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -3747,19 +3793,20 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			dbname = 'astronomy glossary'
 		elif dbname == 'cybele'and dbtable == 'oldtech':
 			filter = "SELECT oldterm, designation FROM oldtech WHERE designation LIKE '%"+str(dbend)+"%'"
-			#nchar = _spchar_[7:8]
 			nchar = "↺"
 			dbname = 'old tech'
 		elif dbname == 'cybele'and dbtable == 'meteo':
 			filter = "SELECT term, definition FROM meteo WHERE definition LIKE '%"+str(dbend)+"%'"
-			#nchar = _spchar_[7:8]
 			nchar = "↺"
 			dbname = 'meteorology terms'
 		elif dbname == 'cybele'and dbtable == 'climate_dict':
 			filter = "SELECT climate_term, designation FROM climate_dict WHERE designation LIKE '%"+str(dbend)+"%'"
-			#nchar = _spchar_[7:8]
 			nchar = "↺"
 			dbname = 'climate change terms'
+		elif dbname == 'cybele'and dbtable == 'oceanography':
+			filter = "SELECT term, designation FROM oceanography WHERE designation LIKE '%"+str(dbend)+"%'"
+			nchar = "↺"
+			dbname = 'oceanography terms'
 		else:
 			print ('Well done ' + _author_.split()[0] +'!. The code has a error. Fix it, you morone!')
 		
@@ -3873,6 +3920,9 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		elif dbname == 'cybele' and dbtable == 'amoc_data':
 			filter = "SELECT min(doy) , max(doy) FROM amoc_data"
 			titvar = "DOY AMOC data"
+		elif dbname == 'cybele' and dbtable == 'oceanography':
+			filter = "SELECT min(term) , max(term) FROM oceanography"
+			titvar = "oceanography terms"
 		else:
 			print ("Option limits none of dbtables with conditions... Fix'it\n")
 			conn.close()
@@ -5732,6 +5782,9 @@ def main():
 
 			elif 'generations' in question or 'gens' in question:
 				list_generations()
+
+			elif 'oceanography' in question:
+				print (f"{showlisttell(core["oceanography"], num_terms=5, category="oceanography terms")}.\n")
 			
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
@@ -6172,20 +6225,20 @@ def main():
 				else:
 					_pydr3_ = _pydr3_
 									
-				print(f"    Device : {display_node_name} on {sysos}")
+				print(f"    Device : {display_node_name} on {sysos}")
 				print(f"      Name : {_title_}")
-				print(f"   Version : {version}")
-				print(f"   Revised : {_revise_}")
+				print(f"   Version : {version} from {_revise_}")
 				print(f"    Python : {py_version_str}")
 				print(f"   Country : {core_system_country}")
 				print(f"    Memory : {q_len}|{a_len}|DC{current_midbcounter}|{round(memory)}MB")
 				print(f"      Data : {total_core_sum}|O{len(core.get('old_tech_term', []))}|M{len(core.get('word meaning', []))}|V{total_knowledge_sum}")
 				print(f"     Linux : {len(core.get('linuxcmd', []))}")
-				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
-				print(f"     World : {len(core.get('country', []))}")
+				print(f"     Astro : G{len(core.get('astronomy glossary', []))}|A{len(core.get('asteroid', []))}|C{len(core.get('constelattion', []))}|S{len(core.get('star name', []))}|CNEOS:{len(core.get('cneos', []))}")
+				print(f"     World : {len(core.get('country', []))}")
+				print(f"     Ocean : {len(core['oceanography'])}")
 				print(f"      AMOC : R{amoclen}|D{round(amoclen/2)}")
 				print(f"   Storage : {dblrconn}")
-				print(f"   Running : {days_running_str}\n")
+				print(f"   Running : {days_running_str.replace(".","")}\n")
 
 			except Exception as e:
 				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
@@ -6482,6 +6535,8 @@ def main():
 					mandb('cybele','climate_dict','limits',0,0)
 				elif getparam[1] == "amoc":
 					mandb('cybele','amoc_data','limits',0,0)
+				elif getparam[1] == "oceanography":
+					mandb('cybele','oceanography','limits',0,0)
 			else:
 				print ('The correct usage is <limits <askard|astronomy|oldtech>> to show the first and last record in the database.\n')
 			
@@ -6544,8 +6599,10 @@ def main():
 			parts = question.lower().split(" in ")
 			search_term = parts[0].strip()
 			search_term = search_term.replace("what are", "").replace("is", "").strip()
+
 			if search_term:
 				results = [item for item in tvshows_cache if search_term in item.lower()]
+        
 				if results:
 					print(f"\nI found {len(results):02d} match(es) for '{search_term.upper()}' in your library 🧠:")
 					for i, match in enumerate(results, 1):
