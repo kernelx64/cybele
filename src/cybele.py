@@ -690,7 +690,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help generation": "Usage: <generation> \nShow the generation, years and the people age based on the current year.\nex: gen x \n    age 53\n    list me generations\n",
-	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 85       -> Syncs day 85 of the current year\nget ifremer data 85 2025  -> Syncs day 124 of year 2025\n",
+	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 45       -> Syncs day 45 of the current year\nget ifremer data 124 2025 -> Syncs day 124 of year 2025\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps) \nex: gps to distance \n    harvesine formula \n    harvesine \n",
 	"help gridflow": "Usage: gridflow <hour:minute slots slot duration> \nA creative way to bring a dash of algorithmic mystery to your leisure time.\nTakes my own website TVshow list and make your TV watching plan/time. No algorythms selection based. \nex: griflow \n    gridflow 22:00 6 30\n",
 	"help harvesine": "Usage: harvesine|<formula> \nCalculate distance between two GPS given points, or between one given point if the default. (eg. set default gps) \nex: harvesine \n    harvesine formula \n    gps to distance \n",
@@ -5370,11 +5370,10 @@ def download_ifremer_pro(day_number, year):
 	os.makedirs(local_dir, exist_ok=True)
 	spinner = ["|", "/", "-", "\\"]
 	idx = 0
-
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0'}
 		print(f"Checking: {base_url}")
-		response = requests.get(base_url, timeout=20, headers=headers)
+		response = requests.get(base_url, timeout=60, headers=headers)
 		response.raise_for_status()
 		soup = BeautifulSoup(response.text, 'html.parser')
 		links = [urljoin(base_url, n.get('href')) for n in soup.find_all('a')
@@ -5402,9 +5401,14 @@ def download_ifremer_pro(day_number, year):
 			sys.stdout.write('\r' + ' ' * getattr(print_statusline, 'last_len', 80) + '\r')
 			print(f"Completed: {display_name}")
 		print(f"\nSuccess: Day {day_str} synchronized.\n")
+	except requests.exceptions.HTTPError as e:
+		if e.response.status_code == 500:
+			print(f"\n{kolor['RED']}Erro 500:{kolor['OFF']} Internal Server Error - Try again later ...")
+		else:
+			print(f"Other HTTP error was ocurred: {e}")
 	except Exception as e:
-		print(f"\nError: {str(e)}")
-
+		print(f"\n{kolor['RED']}Error{kolor['OFF']}: {str(e)}\n")
+	
 #-------------------------------------------------
 def validar_e_converter_data(data_str):
 	if not data_str:
