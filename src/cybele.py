@@ -2623,19 +2623,22 @@ def find_word_in_dicts(word, core):
 	target_list = found_in[0]
 	selected_match = True
 	if len(found_in) > 1 and any(cat in friendly_names for cat in found_in):
-		# Houve ambiguidade
-		selected_match = False
 		printable_cats = [friendly_names.get(cat, cat) for cat in found_in]
-		print(f"{_spchar_[28:29]} I found '{word}' in: {', '.join(printable_cats)}.")
-		choice = input(f"{kolor['YELLOW']}In which context do you prefer?{kolor['OFF']} {symb_prompt()}").lower().strip()
-		if choice:
-			for technical, friendly in friendly_names.items():
-				if technical in found_in:
-					if choice in technical.lower() or choice in friendly.lower():
-						target_list = technical
-						selected_match = True
-						print("")
-						break
+		printable_cats.sort()
+	if len(printable_cats) > 1:
+		formatted_list = ", ".join(printable_cats[:-1]) + f" and {printable_cats[-1]}"
+	else:
+		formatted_list = printable_cats[0]
+	print(f"{_spchar_[28:29]} I found '{kolor['BLUE']}{word.upper()}{kolor['OFF']}' in {formatted_list}.")
+	prompt_msg = f"{kolor['YELLOW']}Which context did you mean?{kolor['OFF']} {symb_prompt()}"
+	choice = input(prompt_msg).lower().strip()
+	for technical, friendly in friendly_names.items():
+		if technical in found_in:
+			if choice in technical.lower() or choice in friendly.lower():
+				target_list = technical
+				selected_match = True
+				print("")
+				break
 	if not selected_match:
 		print(f"{random.choice(messages['trouble_short'])} Invalid context, therefore I am cancelling the possible selection.\n")
 		return True
@@ -2721,7 +2724,6 @@ def find_word_in_dicts(word, core):
 		print(f"{random.choice(messages['trouble_short'])} You need to specify what... type: <help {word.split()[0]} me>\n")
 
 	elif list_name == 'generation':
-		#word.replace("generation", "").replace("gen", "").strip()
 		current_year = date.today().year
 		for gen_name, (start_year, end_year) in core['generation'].items():
 			if gen_name.strip() == word.lower():
@@ -6701,9 +6703,10 @@ def main():
 				print(f"{oracle.predictbase()}\n")
 
 		elif question[-9:] == 'about you':
+			columns, lines = shutil.get_terminal_size()
 			random.shuffle(core['interjections'])
-			intj = random.choice(core['interjections'])
-			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
+			fullaboutyou = f"{random.choice(core['interjections'])}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}"
+			print (f"{textwrap.fill(fullaboutyou, columns - 3)}\n")
 
 		elif question.startswith('presence'):
 			source_icon = f"{_spchar_[22:23]}"
