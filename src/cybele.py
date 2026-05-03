@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '02.05.2026'
+_revise_ = '03.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -148,13 +148,13 @@ shifl = int(round(math.sqrt(math.log(math.cosh(10)) * 400 - math.degrees(math.ac
 datemd = str(datetime.today().strftime("%d.%m")); _poigps_=[]; tables=[]; system_country=None; dblrconn = ""; idcode=""
 days_till_today = date.today() - date(year=int(_active_[6:]), month=int(_active_[3:5]), day=int(_active_[0:2]))
 month_name = date.today().strftime('%B');next_year = str(date.today().year + 1);weekdaydate = date.today().weekday()
-stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = "";
+stars_dict = {}; constellations_dict = {}; constellations_abbr = {}; linux_commands = {}; midbcounter=0; dbmsgbl = ""
 cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; ncountries = {}; climate_dictionary = {}
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
-BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; _h_key_64 = "QXV0aG9yaXphdGlvbg=="
-_h_val_64 = "VG9rZW4g"; amoclen = 0
+BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; amoclen = 0
+_h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
 
 #-----------------------------------------------------------
 etables = ['Y29uZmln','YWRqZWN0aXZlZGI=','YXNrYXJkX2Ri','YWR2ZXJiZGI=','YXN0cm9ub215X2dsb3NzYXJ5','Y2xpbWF0ZV9kaWN0',
@@ -291,7 +291,7 @@ core = {
 	"request":	["Perhaps you meant: ","It looks like you meant: ","Is this what you had in mind: ","Oops! Did you mean: ",
 				"Looking for: ","Checking if you meant: ","Maybe you were looking for: ","Just to clarify, did you mean: ",
 				"Let’s see—were you looking for... ","Is this what you had in mind? ","Are you looking for one of these? "],
-	"discovery_verb":	["I found","I spotted","I discovered","I identified","I tracked down","I came across","I pinpointed"],
+	"discovery_verb":	["I found","I spotted","I have knowledge of","I identified","I tracked down","I came across","I pinpointed"],
 	"preference_inquiry":	["Which one do you prefer?","Which do you like better?","Which is your favorite?","Which would you choose?",
 						"Which appeals to you more?","Which one suits you best?"],
 	"view_the_topics":	["show topics","show me your topics","show topic's","show me your topic's","topics","topic's"],
@@ -310,7 +310,7 @@ core = {
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
 	"share":	["sharing links","sharing"],
-	"sayconvert":	["in full","longhand"],
+	"sayconvert":	["longhand","say"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time","what is the time"],
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
@@ -690,7 +690,7 @@ help = {
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help generation": "Usage: <generation> \nShow the generation, years and the people age based on the current year.\nex: gen x \n    age 53\n    list me generations\n",
-	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 45       -> Syncs day 45 of the current year\nget ifremer data 124 2025 -> Syncs day 124 of year 2025\n",
+	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 85       -> Syncs day 85 of the current year\nget ifremer data 85 2025  -> Syncs day 124 of year 2025\n",
 	"help gps to distance": "Usage: gps to distance \nCalculate distance between two given points, or between one given point if the default. (eg. set default gps) \nex: gps to distance \n    harvesine formula \n    harvesine \n",
 	"help gridflow": "Usage: gridflow <hour:minute slots slot duration> \nA creative way to bring a dash of algorithmic mystery to your leisure time.\nTakes my own website TVshow list and make your TV watching plan/time. No algorythms selection based. \nex: griflow \n    gridflow 22:00 6 30\n",
 	"help harvesine": "Usage: harvesine|<formula> \nCalculate distance between two GPS given points, or between one given point if the default. (eg. set default gps) \nex: harvesine \n    harvesine formula \n    gps to distance \n",
@@ -712,7 +712,7 @@ help = {
 	"help list askard": "Usage: list askard|<begin substring> <ending substring> \nReturn the entire list of askard's or for the required range.\nex: list askard \n    list askard 4005 4010\n",
 	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
 	"help longest day": "Usage: longest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: longest day \n    longest day 2032",
-	"help longhand": "Usage: in full|longhand <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: in full 47593\n",
+	"help longhand": "Usage: longhand|say <number> \n.Show how to spell the number in full the \nex: longhand 47593 \nex: say 47593\n",
 	"help make a phrase": "Usage: <make a phrase> \nEngages Cybele to make a random sentence. While Cybele doesn't have direct voice output or external neural network access, she can invent with her small imagination. \nex: make a phrase \n",
 	"help merry christmas": f"Usage: merry christmas \nDisplay in the Christmas season a Message with 'some grifts' . \nex: merry christmas \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
@@ -748,7 +748,7 @@ help = {
 	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n    spring\n",
 	"help set default country": "Usage: Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
-	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change> \nSearch a substring in specific database. \nex: search askard time \n    search astronomy radio \n    search oldtech disk\n",
+	"help search": "Usage: search <askard|astronomy|oldtech|meteorology|climate change|oceanography> <substring>\nSearch a substring in specific given database. \nex: search askard time \n    search astronomy radio \n    search oceanography atlantic\n",
 	"help seek": "Usage: seek|find <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: seek help \n    find astronomy questions\n",
 	"help reset my score": "Usage: reset my score \nReset the score to (0) of the played game. \nex: reset my score\n",
 	"help search askard": "Usage: search askard <word> \nPerforms a substring search across the phrase database. Returns all entries and unique IDs containing the specified string. Use <view askard <id>> to retrieve the complete detail. \nex: search askard time\n    view askard 4005\n",
@@ -2453,14 +2453,18 @@ def find_answer(question,whatlist):
 	is_correct, suggestions = spell_check(question, alldict)
 	if suggestions:
 		output_string = random.choice(outoptions)
+		lista_para_exibir = suggestions[:3]
+		formatadas = [f"{kolor[sugestion_color]}{s.capitalize()}{kolor['OFF']}" for s in lista_para_exibir]
+		if len(formatadas) > 1:
+			output_string += ", ".join(formatadas[:-1]) + " or " + formatadas[-1]
+		else:
+			output_string += formatadas[0]
+		for s in lista_para_exibir:
+			csugestions.insert(0, s)
+
+			return output_string + "\n"
 	else:
-		output_string = ""
-	for i, suggestion in enumerate(suggestions):
-		if i < 3:
-			output_bycyid = ""+kolor[sugestion_color]+suggestion.capitalize() + kolor['OFF'] + " or "
-			output_string += output_bycyid
-			csugestions.insert( 0, suggestion)
-	return output_string[:-4] + "\n"
+		return ""
 
 #----------------------------------------------------------------
 #----------------------------------------------------------------
@@ -2635,7 +2639,7 @@ def find_word_in_dicts(word, core):
 		formatted_list = ", ".join(printable_cats[:-1]) + f" and {printable_cats[-1]}"
 		random.shuffle(core['discovery_verb'])
 		print(f"{_spchar_[28:29]} {random.choice(core['discovery_verb'])} '{kolor['BLUE']}{word.upper()}{kolor['OFF']}' in {formatted_list}.")
-		choice = input(f"{kolor['YELLOW']}{random.choice(core['preference_inquiry'])} {kolor['OFF']}{symb_prompt()}").lower().strip()
+		choice = input(f"{kolor['YELLOW']}In which context do you prefer?{kolor['OFF']} {symb_prompt()}").lower().strip()
 		if choice:
 			for technical, friendly in friendly_names.items():
 				if technical in found_in:
@@ -5370,10 +5374,11 @@ def download_ifremer_pro(day_number, year):
 	os.makedirs(local_dir, exist_ok=True)
 	spinner = ["|", "/", "-", "\\"]
 	idx = 0
+
 	try:
 		headers = {'User-Agent': 'Mozilla/5.0'}
 		print(f"Checking: {base_url}")
-		response = requests.get(base_url, timeout=60, headers=headers)
+		response = requests.get(base_url, timeout=20, headers=headers)
 		response.raise_for_status()
 		soup = BeautifulSoup(response.text, 'html.parser')
 		links = [urljoin(base_url, n.get('href')) for n in soup.find_all('a')
@@ -5401,14 +5406,9 @@ def download_ifremer_pro(day_number, year):
 			sys.stdout.write('\r' + ' ' * getattr(print_statusline, 'last_len', 80) + '\r')
 			print(f"Completed: {display_name}")
 		print(f"\nSuccess: Day {day_str} synchronized.\n")
-	except requests.exceptions.HTTPError as e:
-		if e.response.status_code == 500:
-			print(f"\n{kolor['RED']}Erro 500:{kolor['OFF']} Internal Server Error - Try again later ...")
-		else:
-			print(f"Other HTTP error was ocurred: {e}")
 	except Exception as e:
-		print(f"\n{kolor['RED']}Error{kolor['OFF']}: {str(e)}\n")
-	
+		print(f"\nError: {str(e)}")
+
 #-------------------------------------------------
 def validar_e_converter_data(data_str):
 	if not data_str:
@@ -5675,8 +5675,9 @@ def main():
 			random.shuffle(core['information state awnsers'])
 			print (f"{random.choice(core['information state awnsers'])}\n")
 		
-		elif any(word in question for word in core['sayconvert']):
-			conteudo_depois = question.partition("longhand")[2].strip()
+		elif any(word in question for word in core['sayconvert']) and question != 'say something':
+			sayconvert = question.split()[0]
+			conteudo_depois = question.partition(sayconvert)[2].strip()
 			if not conteudo_depois:
 				msg = random.choice(messages["empty_number"])
 				print(f"{random.choice(messages['trouble_msg'])} {msg}\n")
@@ -6398,7 +6399,7 @@ def main():
 					mandb('cybele','askard_db','search',0,getparam[2])
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 		
 		elif question[0:11] == 'view askard':
 			getparam = question.split()
@@ -6409,7 +6410,7 @@ def main():
 					mandb('cybele','askard_db','view',getparam[2],0)
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 		
 		elif question == 'fun fact' or question == 'fast fact':
 			if ffctl >= 3:
@@ -6419,7 +6420,7 @@ def main():
 					mandb('cybele','funfacts','view',0,0)
 					ffctl = ffctl + 1
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 				
 		elif question[0:10] == 'nice thing':
 			if ncctl >= 3:
@@ -6429,7 +6430,7 @@ def main():
 					mandb('cybele','nicethings','view',0,0)
 					ncctl = ncctl + 1
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 				
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
@@ -6437,58 +6438,69 @@ def main():
 				try:
 					mandb('cybele','askard_db','list',0,0)
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			elif len(getparam) == 4 and getparam[2].isnumeric() == True and getparam[3].isnumeric() == True :
 				try:
 					mandb('cybele','askard_db','list',getparam[2], getparam[3] )
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
 				
 		elif question[0:16] == 'search astronomy':
 			getparam = question.split()
 			if len(getparam) != 3:
-				print ('The correct usage is: search astronomy <word>\n')
+				print ('The correct usage is: search astronomy <substring>\n')
 			else:
 				try:
 					mandb('cybele','astronomy_glossary','search',0,getparam[2])
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 
 		elif question[0:14] == 'search oldtech':
 			getparam = question.split()
 			if len(getparam) != 3:
-				print ('The correct usage is: search oldtech <word>\n')
+				print ('The correct usage is: search oldtech <substring>\n')
 			else:
 				try:
 					mandb('cybele','oldtech','search',0,getparam[2])
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 
 		elif question[0:18] == 'search meteorology' or question[0:12] == 'search meteo':
 			getparam = question.split()
 			if len(getparam) != 3:
-				print ('The correct usage is: search meteo|meteorology <word>\n')
+				print ('The correct usage is: search meteo|meteorology <substring>\n')
 			else:
 				try:
 					mandb('cybele','meteo','search',0,getparam[2])
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 
 		elif question[0:21] == 'search climate change' or question[0:22] == 'search climate changes':
 			getparam = question.split()
 			if len(getparam) != 4:
-				print ('The correct usage is: search climate change <word>\n')
+				print ('The correct usage is: search climate change <substring>\n')
 			else:
 				try:
 					mandb('cybele','climate_dict','search',0,getparam[3])
 					print ("")
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
+
+		elif question[0:19] == 'search oceanography':
+			getparam = question.split()
+			if len(getparam) != 3:
+				print ('The correct usage is: search oceanography <substring>\n')
+			else:
+				try:
+					mandb('cybele','oceanography','search',0,getparam[2])
+					print ("")
+				except ValueError as e:
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 
 		elif question[0:12] == 'list oldtech':
 			getparam = question.split()
@@ -6496,12 +6508,12 @@ def main():
 				try:
 					mandb('cybele','oldtech','list',0,0)
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			elif len(getparam) == 4:
 				try:
 					mandb('cybele','oldtech','list',getparam[2], getparam[3] )
 				except ValueError as e:
-					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with your SQLite database.\n")
+					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
 		
