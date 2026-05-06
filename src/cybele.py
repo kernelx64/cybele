@@ -1032,7 +1032,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
+		modname = "The database file is missing and i cannot execute properly without'it. 1 \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
 		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
 		exit(0)
 
@@ -1064,7 +1064,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
+		modname = "The database file is missing and i cannot execute properly without'it. 2 \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
 		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
 		exit(0)
 
@@ -1099,10 +1099,18 @@ def check_tables(tables_names):
 		dblrconn= "offline [database file]"
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
-		print_statusline(f"")
-		modname = "The database file is missing and i cannot execute properly without'it. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
-		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
-		exit(0)
+		print_statusline("")
+		print(f"Downloading my dabatase from {website['github']}{_title_.lower()}...")
+		download_database_update()
+		if os.path.isfile(db_filename):
+			conn = sqlite3.connect(db_filename)
+			dblrconn= "offline [database file]"
+			dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
+		else:
+			print_statusline(f"")
+			modname = "The database file is missing and i cannot execute properly without'it. \n   Exiting."
+			print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+			exit(0)
 
 	try:
 		cur = conn.cursor()
@@ -1204,8 +1212,8 @@ def download_database_update():
 		if dbrd:
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
-			print(f"\n🔄 Sync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime("%d.%m.%Y %H:%M:%S")} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime("%d.%m.%Y %H:%M:%S")}")
-		print(f"{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
+			print(f"\nSync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime("%d.%m.%Y %H:%M:%S")} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime("%d.%m.%Y %H:%M:%S")}")
+		print(f"\n{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
 	except Exception as e:
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
