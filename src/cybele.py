@@ -7133,12 +7133,9 @@ def main():
 				if netchk == True:
 					print(" : " + kolor['GREEN'] + str(link_status(kdecode(str(link),shift))) + kolor['OFF'])
 			print ("")
-			#print(f"{random.choice(messages['trouble_short'])} I need a internet connection to perform this task.\n")
 				
 		elif question == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
-			#histamoc = _get_amoc_history(2026, 1, 124)
-			#histamoc_ordered = dict(sorted(histamoc.items()))
 
 		elif question != '':
 			answer = find_answer(question,questions)
