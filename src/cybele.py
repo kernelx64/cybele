@@ -7121,19 +7121,6 @@ def main():
 				color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
 				print(f"   {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
 			
-		elif question == 'links':
-			if internet_onoff():
-				netchk = True
-			else:
-				netchk = False	
-			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
-			for tvshow, link in webshare.items():
-				print(" > " + str(tvshow.upper()))
-				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
-				if netchk == True:
-					print(" : " + kolor['GREEN'] + str(link_status(kdecode(str(link),shift))) + kolor['OFF'])
-			print ("")
-				
 		elif question == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
 
