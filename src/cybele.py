@@ -1100,8 +1100,8 @@ def check_tables(tables_names):
 		dbmsgbl = f"Connected via local database {_spchar_[7:8]}"
 	else:
 		print_statusline("")
-		print(f"Downloading my dabatase from {website['github']}{_title_.lower()}...")
-		download_database_update()
+		print(f"{kolor['BOLD_BLUE']}{symb_prompt()}First-time setup: \n{kolor['CYAN']}Downloading dabatase from {website['github']}{_title_.lower()}...{kolor['OFF']}\n")
+		download_database_update(nupdate=False)
 		if os.path.isfile(db_filename):
 			conn = sqlite3.connect(db_filename)
 			dblrconn= "offline [database file]"
@@ -1174,7 +1174,7 @@ def check_database_version():
 		update_available = False
 
 #------------------------------------------------------------
-def download_database_update():
+def download_database_update(nupdate=True):
 	global dbrd, dbld
 	nome_base = _title_.lower()
 	local_db_filename = f"{nome_base}.db"
@@ -1213,7 +1213,10 @@ def download_database_update():
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
 			print(f"\nSync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime("%d.%m.%Y %H:%M:%S")} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime("%d.%m.%Y %H:%M:%S")}")
-		print(f"\n{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
+		if nupdate:
+			print(f"\n{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
+		else:
+			print(f"\n{c_green}Completed.{c_off}")
 	except Exception as e:
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
