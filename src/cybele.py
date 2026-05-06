@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '03.05.2026'
+_revise_ = '06.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -66,6 +66,7 @@ try:
 	import shutil
 	import zlib
 	import textwrap
+	import numpy as np
 	from urllib.parse import urljoin
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -309,7 +310,7 @@ core = {
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
-	"share":	["sharing links","sharing"],
+	"share":	["sharing links","sharing"],			
 	"sayconvert":	["longhand","say"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time","what is the time"],
@@ -660,6 +661,7 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 help = {
 	"help about you":"Usage: ...about you \nTriggers my biography. You can ask naturally or use the direct phrase to hear about my origins and my creator. \nex: tell me about you \n    what are you\n    who are you\n",
 	"help amoc audit": "Usage: amoc audit <month|date|between dates> \nDisplays the Ground Truth Audit for AMOC data from Ifremer. You can view a single day, the current month, or a specific date range within the same year. \nex: amoc audit               (Current day)\n    amoc audit month         (Full data for the current month)\n    amoc audit 15.04.2026    (Specific date)\n    amoc audit 01.04 15.04   (Range between two dates)\n",
+	"help amoc resume": "Usage: amoc resume \nRetrieves and calculates the daily average of AMOC delta values for the last 15 days from the system date. \nex: amoc resume \n",
 	"help ascii table": "Usage: ascii table \nThis table is styled after the legendary Norton Commander and Turbo Pascal interfaces. These were the 'Text User Interfaces' (TUIs) that ruled the DOS era. \nex: ascii table\n",
 	"help art python": "Usage: <art python|python art> \nDisplays a stylized ASCII art representation of the Python logo. This command serves as a visual nod to the foundational programming language used to build and power the core logic of this system. \nex: art python\n    python art\n",
 	"help askard": "Usage: <view/list> askard | search askard <word> \nDisplays the chosen askard or list all askards in the database. You can also search for a word in existing askards. \nex: view askard 4005\n    list askard\n    search askard time\n",
@@ -1398,7 +1400,7 @@ def make_intextdb():
 			"releases": fetch_fromdbfile("cybele.db", "webshare", "releases")[0],
 			"tvshow": fetch_fromdbfile("cybele.db", "webshare", "tvshow")[0],
 			"myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
-			"music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
+			#"music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
 		}
 		
 		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
@@ -1559,7 +1561,7 @@ others = [
 	"week","outdated words","what number is this week","show core","what century are we in","century","view askard <id>",
 	"show askard <id>","list askard <id start> to <id end>","achk askard <id>","leap year","make a sentence","make a phrase",
 	"people in space","do you speak","tvshows is he watching","your fav tvshows","seek <topic>","find <topic>","infostar <star name>",
-	"sharing about","sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
+	"sharing links","is this year a leap year","show me asteroids names","show me constellations","show me all constellations",
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
 	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
@@ -2929,21 +2931,21 @@ def find_word_in_dicts(word, core):
 			gt = make_text(rw, num_sentences=1, num_paragraphs=1)
 			print (f"{gt} \n")
 
+	elif list_name == 'executing_mc':
+		run_midnight_commander()
+
 	elif list_name == 'share':
-		if internet_onoff() == True:
+		if internet_onoff():
 			netchk = True
 		else:
 			netchk = False
-			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
-			for tvshow, link in webshare.items():
-				print(" > " + str(tvshow.upper()))
-				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
-				if netchk == True:
-					print(" : " + kolor['GREEN'] + str(link_status(kdecode(link,shift))) + kolor['OFF'])
-			print ("")
-
-	elif list_name == 'executing_mc':
-		run_midnight_commander()
+		print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
+		for tvshow, link in webshare.items():
+			print(" > " + str(tvshow.upper()))
+			print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
+			if netchk == True:
+				print(" : " + kolor['GREEN'] + str(link_status(kdecode(str(link),shift))) + kolor['OFF'])
+		print ("")
 
 	else:
 		print(f"{random.choice(messages['pre_terms'])} {list_name.replace('_', ' ')}.\nPerhaps you'd like to type the command: help \n")
@@ -5597,6 +5599,47 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 		print(f"❗{random.choice(messages['trouble_short'])} error processing data: {e}\n")
 
 #-------------------------------------------------
+
+#-------------------------------------------------
+def interpret_amoc_pro(histamoc_ordered):
+	if not histamoc_ordered:
+		return None
+
+	days = list(histamoc_ordered.keys())
+	values = list(histamoc_ordered.values())
+    
+	mean_val = np.mean(values)
+	max_v = max(values)
+	min_v = min(values)
+    
+	# Classification logic
+	def classify_flow(v):
+		if v > 7: return "Intense Flow (Strong Thermal Transport)"
+		if v > 4: return "Stable Flow (Normal Circulation)"
+		return "Reduced Flow (Temporary Weakening)"
+
+	# Technical Diagnostic
+	if min_v < 2.5:
+		diagnostic = "Sharp circulation drops detected (possible interference or local anomaly)."
+	else:
+		diagnostic = "Circulation remains within expected historical patterns."
+
+	return {
+		"Summary": {
+			"Status": f"{classify_flow(mean_val)}",
+			"Average": f"{round(mean_val, 2)} Sv",
+			"Peak": f"{max_v} Sv (DOY {days[values.index(max_v)]})",
+			"Lowest": f"{min_v} Sv (DOY {days[values.index(min_v)]})",
+			"Highest": f"{max_v} Sv (DOY {days[values.index(max_v)]})",
+			"Coverage": f"{round((len(days)/(days[-1]-days[0]+1))*100, 1)}%"
+		},
+		"Context": {
+			"Technical Analysis": diagnostic
+		},
+		"Trend": "System is recovering vigor" if values[-1] > mean_val else "System shows slight slowdown"
+	}
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
@@ -7049,9 +7092,46 @@ def main():
 						print(f"You have a {kolor['BOLD_BLUE']}SUPERIOR{kolor['OFF']} version. Last available: {remote_f}.")
 						print(f"Ahead by: {diff_str}\n")
 
+		elif question == 'amoc resume':
+			doy_actual = int(datetime.now().strftime('%j'))
+			doy_inicio = int((datetime.now() - timedelta(days=15)).strftime('%j'))
+			histamoc = _get_amoc_history(2026, doy_inicio, doy_actual)
+			histamoc_ordered = dict(sorted(histamoc.items()))
+			analysis = interpret_amoc_pro(histamoc_ordered)
+			if analysis:
+				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} SUMMARY:{kolor['OFF']}")
+				summary = analysis['Summary']
+				print(f"   {kolor['WHITE']}Highest Peak.........: {kolor['SABER_BLUE']}{summary['Peak']}{kolor['OFF']}")
+				print(f"   {kolor['WHITE']}Lowest Point.........: {kolor['VIVID_RED']}{summary['Lowest']}{kolor['OFF']}")
+				print(f"   {kolor['WHITE']}Data Coverage........: {kolor['DIM_WHITE']}{summary['Coverage']}{kolor['OFF']}")
+				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CONTEXT ANALYSIS{kolor['OFF']}")
+				context = analysis['Context']
+				print(f"   {kolor['WHITE']}Technical Analysis...: {kolor['CYAN']}{context['Technical Analysis']}{kolor['OFF']}")
+				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CURRENT TREND{kolor['OFF']}")
+				trend = analysis['Trend']
+				pulse = "▲" if "recovering" in trend else "▼"
+				color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
+				print(f"   {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
+			
+		elif question == 'links':
+			if internet_onoff():
+				netchk = True
+			else:
+				netchk = False	
+			print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
+			for tvshow, link in webshare.items():
+				print(" > " + str(tvshow.upper()))
+				print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
+				if netchk == True:
+					print(" : " + kolor['GREEN'] + str(link_status(kdecode(str(link),shift))) + kolor['OFF'])
+			print ("")
+			#print(f"{random.choice(messages['trouble_short'])} I need a internet connection to perform this task.\n")
+				
 		elif question == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
-			
+			#histamoc = _get_amoc_history(2026, 1, 124)
+			#histamoc_ordered = dict(sorted(histamoc.items()))
+
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
