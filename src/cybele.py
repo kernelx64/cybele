@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '06.05.2026'
+_revise_ = '12.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -178,7 +178,8 @@ website = {
 	"simlk": "https://simkl.com/4378279/tv/watching/",
 	"askard": "https://www.adelinosaldanha.site/askards",
 	"book": "https://www.adelinosaldanha.site/unforgettable-humanity",
-	"github": "https://github.com/kernelx64/"
+	"github": "https://github.com/kernelx64/",
+	"amoc_db": "https://baserow.io/public/grid/qo5AByxLIe2Ny53BsIfuyogo5vrJb4AzaPESGP8llPs"
 }
 #-----------------------------------------------------------
 kolor = {
@@ -1506,7 +1507,10 @@ questions = [
 	"Meteorological instruments",
 	"Meteo instruments",
 	"Adelino website",
-	"Author website"
+	"Author website",
+	"It looks so human",
+	"You look almost human",
+	"Are you human"
 ]
 #------------------------------------------------
 answers = [
@@ -1559,6 +1563,9 @@ answers = [
 	"Main instruments: Anemometer (wind speed), Wind sock (wind direction), Barometer (atmospheric pressure), Thermometer (temperature), Rain gauge (precipitation), Hygrometer (air humidity), and Heliograph (sun brightness).",
 	"My author: "+_author_+" website address is <"+website['home']+">. I hope you find it interesting.",
 	"My author: "+_author_+" website address is <"+website['home']+">. I hope you enjoy'it.",
+	"Hey! No need to name calling...",
+	"Hey! No need to name calling...",
+	"Hey! No need to name calling..."
 ]
 #-------------------------------------------------
 others = [
@@ -2017,7 +2024,42 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 		except: continue
 
 	return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
-	
+
+#---------------------------------------------------
+import requests # Se não tiveres, precisas de instalar
+
+def get_wind_data(self, code):
+    # Coordenadas aproximadas para o modelo não ser genérico demais
+    # Se code for PT, usamos uma central (ex: Lisboa/Santarém)
+    coords = {"PT": (39.5, -8.5), "ES": (40.4, -3.7), "DEFAULT": (0, 0)}
+    lat, lon = coords.get(code, coords["DEFAULT"])
+    
+    try:
+        # API gratuita e sem registo (Open-Meteo)
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&timeout=3"
+        response = requests.get(url, timeout=3)
+        
+        if response.status_code == 200:
+            data = response.json()["current"]
+            deg = data["wind_direction_10m"]
+            
+            # Converter graus em Quadrantes
+            if 22.5 <= deg < 67.5: dir_txt = "NE"
+            elif 67.5 <= deg < 112.5: dir_txt = "E"
+            elif 112.5 <= deg < 157.5: dir_txt = "SE"
+            elif 157.5 <= deg < 202.5: dir_txt = "S"
+            elif 202.5 <= deg < 247.5: dir_txt = "SW"
+            elif 247.5 <= deg < 292.5: dir_txt = "W"
+            elif 292.5 <= deg < 337.5: dir_txt = "NW"
+            else: dir_txt = "N"
+            
+            return {"dir": dir_txt, "speed": data["wind_speed_10m"], "online": True}
+    except:
+        pass
+    
+    # FALLBACK: Se der erro ou não houver net, retorna valores neutros
+    return {"dir": "N/A", "speed": 0, "online": False}
+
 #---------------------------------------------------
 class aetherNeuralbase:
 	def __init__(self):
@@ -2101,19 +2143,42 @@ class aetherNeural:
 			"JP": [[5,6,9,15,20,23,27,28,24,19,13,8], 10, 0.5, 0.026],
 			"MX": [[15,16,19,21,23,23,22,22,22,20,18,16], 12, 0.3, 0.025],
 			"NO": [[-3,-3,0,5,11,14,17,16,11,7,2,-1], 10, 0.5, 0.048],
-			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.45, 0.031], # Humidade base subiu para 0.45
+			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.45, 0.031],
 			"RU": [[-10,-9,-2,7,15,19,22,19,13,6,-2,-7], 15, 0.4, 0.040],
 			"US": [[2,4,8,14,19,24,27,26,22,15,9,4], 13, 0.4, 0.028],
 			"ZA": [[21,21,20,17,15,12,12,14,16,18,19,21], 11, 0.3, 0.024],
 			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
 			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
-		self.amoc_sensitivity = { "PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, # Sensibilidade de PT reforçada
-								"NO": 1.5, "FI": 1.3, "DE": 1.2, "US": 1.1,
-								"CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4,
-								"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3,
-								"ZA": 0.2, "AU": 0.1, "TH": 0.05, "EG": 0.6
-								}
+		self.amoc_sensitivity = { 
+			"PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, "NO": 1.5, "FI": 1.3, 
+			"DE": 1.2, "US": 1.1, "CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4,
+			"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3, "ZA": 0.2, "AU": 0.1, 
+			"TH": 0.05, "EG": 0.6
+        }
+		self._geo_ref = {
+			"PT": (39.5, -8.5), "ES": (40.4, -3.7), "BR": (-15.7, -47.8),
+			"US": (38.9, -77.0), "FR": (48.8, 2.3), "GB": (51.5, -0.1)
+		}
+
+	def get_wind_data(self, code):
+		lat, lon = self._geo_ref.get(code, (39.5, -8.5))
+		try:
+			url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m"
+			r = requests.get(url, timeout=3)
+			if r.status_code == 200:
+				d = r.json()["current"]["wind_direction_10m"]
+				if 22.5 <= d < 67.5: dir_txt = "NE"
+				elif 67.5 <= d < 112.5: dir_txt = "E"
+				elif 112.5 <= d < 157.5: dir_txt = "SE"
+				elif 157.5 <= d < 202.5: dir_txt = "S"
+				elif 202.5 <= d < 247.5: dir_txt = "SW"
+				elif 247.5 <= d < 292.5: dir_txt = "W"
+				elif 292.5 <= d < 337.5: dir_txt = "NW"
+				else: dir_txt = "N"
+				return {"dir": dir_txt, "active": True}
+		except: pass
+		return {"dir": "N/A", "active": False}
 
 	def _get_amoc_history(self, ano, doy_ini, doy_fim):
 		global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
@@ -2166,60 +2231,66 @@ class aetherNeural:
 	
 		now = datetime.now()
 		doy_atual = now.timetuple().tm_yday
-	
 		day_progress = (now.day - 1) / 30.0
+        
 		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 		years_diff = now.year - 2020
 		gw_increment = max(0, years_diff * gw_rate)
 		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
 
 		amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
-		# procura historico para detecção de ciclo
-		history = self._get_amoc_history(now.year, doy_atual - 7, doy_atual)
+		history = self._get_amoc_history(now.year, doy_atual - 4, doy_atual)
+		wind = self.get_wind_data(code)
+		
+		amoc_adj, hum_mod, amoc_tag = 0, 1.0, f" {kolor['DIM_WHITE']}[AMOC <?>]{kolor['OFF']}"
 
 		if history:
 			sorted_days = sorted(history.keys())
 			current_delta = history[sorted_days[-1]]
-			baseline = 6.05 # Referência estável
+			baseline = 6.05 
 			diff = current_delta - baseline
 
-			# Logica Ciclo (Notas do Utilizador)
 			anomaly_day = 0
-			for i in range(1, 5):
+			for i in range(1, 5): # Verifica apenas nos últimos 4 dias
 				check_day = doy_atual - i
 				if check_day in history and history[check_day] < (baseline - 0.5):
 					anomaly_day = i
 					break
 
 			if anomaly_day in [1, 2]:
-				amoc_adj = 5.0 * sensitivity
-				hum_mod = 0.4 # Calor acumulado, mas com viés de nuvens baixas se PT
+				amoc_adj = (math.atan(5.0 / 2) * 2) * sensitivity
+				hum_mod = 0.45 # Seca o ar pela pressão do calor acumulado
 				amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥]{kolor['OFF']}"
-				#amoc_tag = f" {kolor['ORANGE']}[PHASE: HEAT]{kolor['OFF']}"
+				
 			elif anomaly_day in [3, 4]:
-				amoc_adj = -6.5 * sensitivity
-				hum_mod = 2.8 # Chuva pesada
+				# FASE 2: O excesso de calor acumulado gera instabilidade/tempestade
+				amoc_adj = (math.atan(-4.5 / 2) * 2) * sensitivity # Arrefecimento pela chuva
+				hum_mod = 2.8 # Humidade extrema (entrada do Atlântico)
 				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️]{kolor['OFF']}"
-				#amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: STORM]{kolor['OFF']}"
+				
 			elif diff > 1.5:
-				# Pico de Delta (Instabilidade por excesso de fluxo, ex: 8.77)
-				amoc_adj = diff * 0.4 * sensitivity
-				hum_mod = 2.2 # Força nuvens/chuva por instabilidade térmica
+				# Fluxo excessivo: O calor é "empurrado" para Norte mais rápido que o normal
+				amoc_adj = (math.atan(diff / 2) * 2) * sensitivity * 0.4
+				hum_mod = 1.6
 				amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
-				#amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC HIGH Δ]{kolor['OFF']}"
-			elif diff < 0:
-				amoc_adj = abs(diff) * 2.2 * sensitivity
-				hum_mod = max(0.5, 1.0 + (abs(diff) * 0.3 * sensitivity))
-				amoc_tag = f" {kolor['BOLD_YELLOW']}[AMOC Δ{current_delta}]{kolor['OFF']}"
+				
 			else:
+				# AMOC dentro da normalidade (transporte estável)
+				amoc_adj = (math.atan(diff / 2) * 2) * sensitivity
 				amoc_tag = f" {kolor['BLUE']}[AMOC OK]{kolor['OFF']}"
 
-		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
+		if wind["active"] and code == "PT":
+			if wind["dir"] in ["NE", "E", "N"]:
+				hum_mod *= 0.65
+				amoc_adj -= 2.0
+			elif wind["dir"] in ["SW", "W", "NW"]:
+				hum_mod *= 1.3
+				amoc_adj -= 0.6
 
-		# Cálculo de Estado focado em Portugal (maior sensibilidade a nuvens)
+		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
 		state_seed = (doy_atual * 13) % 100
 		rain_threshold = humidity * hum_mod * 100
-		
+				
 		if state_seed < rain_threshold:
 			status = "Rainy and Overcast" if rain_threshold > 55 else "Cloudy with a chance of rain"
 		elif state_seed < (rain_threshold + 15):
@@ -2233,7 +2304,7 @@ class aetherNeural:
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
 				f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
-
+				
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
 	for i, item in enumerate(items):
@@ -5567,7 +5638,8 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 				dy = int(r['doy'])
 				fby = int(r['flyby'])
 				temps_keys = ['n40', 'n45', 'n50', 'n55', 'n60', 'n65']
-				db_hash = int(r.get('n99', 0))
+				#db_hash = int(r.get('n99', 0))
+				db_hash = int(r.get('n99') or 0)
 				delta = r.get('delta', '')
 
 				data_str = datetime.strptime(f"{ano} {dy}", "%Y %j").strftime("%d.%m")
@@ -5584,8 +5656,16 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 					except ValueError:
 						res_vals.append(f"{kolor['BOLD_GREEN']} -----  {kolor['OFF']}")
 
-				calc_hash = int((_psi + dy) * (fby + 124))
-				st = f"{kolor['DIM_WHITE']} {kolor['OFF']}" if db_hash == calc_hash else f"{kolor['BOLD_RED']}X{kolor['OFF']}"
+				try:
+					calc_hash = int((_psi + dy) * (fby + 124))
+					if db_hash == 0:
+						st = f"{kolor['VIVID_YELLOW']}\u25cb{kolor['OFF']}"
+					elif db_hash == calc_hash:
+						st = f"{kolor['DIM_WHITE']} {kolor['OFF']}"
+					else:
+						st = f"{kolor['BOLD_RED']}X{kolor['OFF']}"
+				except (TypeError, ValueError):
+					st = f"{kolor['RED']}!{kolor['OFF']}"
 
 				try:
 					vd = float(delta)
@@ -5691,7 +5771,7 @@ def main():
 		#-------------------------
 		if globals()['update_available']:
 			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime("%d.%m.%Y %H:%M:%S")} is available.{kolor['OFF']}")
-			print("Type 'offline mode' to sync.\n")
+			print("Type 'database update' to sync.\n")
 			globals()['update_available'] = False
 		if globals().get('nextneo'):
 			print(nextneo); globals()['nextneo'] = False
