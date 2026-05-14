@@ -322,7 +322,9 @@ core = {
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
 	"python art":	["py","python","python art","art python"],
-	"executing_mc": ["run mc","mc_","_mc","midnight commander"]
+	"executing_mc": ["run mc","mc_","_mc","midnight commander"],
+	"thank_you":	["thank you", "thanks", "thx", "much appreciated", "cheers"],
+	"to_thank":	["You're welcome!","No problem.","Anytime!","Happy to help.","My pleasure.","Don't mention it.","No worries.","Glad I could be of assistance.","Sure thing!","The pleasure is all mine.","It was nothing.","Much obliged."]
 }
 #-------------------------------------------------------------
 user_utterances = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
@@ -2759,6 +2761,9 @@ def find_word_in_dicts(word, core):
 		else:
 			print (salutation_phrase)
 			print (salutation_first + salutation_time + salutation_end + "\n")
+
+	elif list_name == 'thank_you':
+		print(f"{random.choice(core['to_thank'])}\n")
 
 	elif list_name == 'seasons':
 		hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
