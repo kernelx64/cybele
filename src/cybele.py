@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '12.05.2026'
+_revise_ = '17.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -1585,7 +1585,7 @@ others = [
 	"show me old tech words","show me old tech terms","show me star names","show me meaning terms","show me meaning words","show me linux commands",
 	"math game","reset my score","show my score","morse <word/phrase>","demorse <word/phrase>","when was elysia created",
 	"play game constelattions","play game capitals","when did elysia went online","difference from <date>","cybele uptime",
-	"current system uptime","display uptime","database info"
+	"current system uptime","display uptime","database info","restart","reset","boot","restart cybele"
 ]
 #----------------------------------------------------------
 periodic_elements = {
@@ -2028,39 +2028,36 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 	return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
 
 #---------------------------------------------------
-import requests # Se não tiveres, precisas de instalar
-
 def get_wind_data(self, code):
-    # Coordenadas aproximadas para o modelo não ser genérico demais
-    # Se code for PT, usamos uma central (ex: Lisboa/Santarém)
-    coords = {"PT": (39.5, -8.5), "ES": (40.4, -3.7), "DEFAULT": (0, 0)}
-    lat, lon = coords.get(code, coords["DEFAULT"])
+	# Coordenadas aproximadas para o modelo não ser genérico demais
+	# Se code for PT, usa uma central (ex: Lisboa/Santarém)
+	coords = {"PT": (39.5, -8.5), "ES": (40.4, -3.7), "DEFAULT": (0, 0)}
+	lat, lon = coords.get(code, coords["DEFAULT"])
     
-    try:
-        # API gratuita e sem registo (Open-Meteo)
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&timeout=3"
-        response = requests.get(url, timeout=3)
+	try:
+		# API gratuita e sem registo (Open-Meteo)
+		url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&timeout=3"
+		response = requests.get(url, timeout=3)
         
-        if response.status_code == 200:
-            data = response.json()["current"]
-            deg = data["wind_direction_10m"]
+		if response.status_code == 200:
+			data = response.json()["current"]
+			deg = data["wind_direction_10m"]
             
-            # Converter graus em Quadrantes
-            if 22.5 <= deg < 67.5: dir_txt = "NE"
-            elif 67.5 <= deg < 112.5: dir_txt = "E"
-            elif 112.5 <= deg < 157.5: dir_txt = "SE"
-            elif 157.5 <= deg < 202.5: dir_txt = "S"
-            elif 202.5 <= deg < 247.5: dir_txt = "SW"
-            elif 247.5 <= deg < 292.5: dir_txt = "W"
-            elif 292.5 <= deg < 337.5: dir_txt = "NW"
-            else: dir_txt = "N"
+			# Graus em Quadrantes
+			if 22.5 <= deg < 67.5: dir_txt = "NE"
+			elif 67.5 <= deg < 112.5: dir_txt = "E"
+			elif 112.5 <= deg < 157.5: dir_txt = "SE"
+			elif 157.5 <= deg < 202.5: dir_txt = "S"
+			elif 202.5 <= deg < 247.5: dir_txt = "SW"
+			elif 247.5 <= deg < 292.5: dir_txt = "W"
+			elif 292.5 <= deg < 337.5: dir_txt = "NW"
+			else: dir_txt = "N"
             
-            return {"dir": dir_txt, "speed": data["wind_speed_10m"], "online": True}
-    except:
-        pass
+			return {"dir": dir_txt, "speed": data["wind_speed_10m"], "online": True}
+	except:
+		pass
     
-    # FALLBACK: Se der erro ou não houver net, retorna valores neutros
-    return {"dir": "N/A", "speed": 0, "online": False}
+	return {"dir": "N/A", "speed": 0, "online": False}
 
 #---------------------------------------------------
 class aetherNeuralbase:
@@ -2253,7 +2250,7 @@ class aetherNeural:
 			diff = current_delta - baseline
 
 			anomaly_day = 0
-			for i in range(1, 5): # Verifica apenas nos últimos 4 dias
+			for i in range(1, 5): # Verifica apenas nos ultimos 4 dias
 				check_day = doy_atual - i
 				if check_day in history and history[check_day] < (baseline - 0.5):
 					anomaly_day = i
@@ -2261,13 +2258,13 @@ class aetherNeural:
 
 			if anomaly_day in [1, 2]:
 				amoc_adj = (math.atan(5.0 / 2) * 2) * sensitivity
-				hum_mod = 0.45 # Seca o ar pela pressão do calor acumulado
+				hum_mod = 0.45 # Seca o ar pela pressao do calor acumulado
 				amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥]{kolor['OFF']}"
 				
 			elif anomaly_day in [3, 4]:
 				# FASE 2: O excesso de calor acumulado gera instabilidade/tempestade
 				amoc_adj = (math.atan(-4.5 / 2) * 2) * sensitivity # Arrefecimento pela chuva
-				hum_mod = 2.8 # Humidade extrema (entrada do Atlântico)
+				hum_mod = 2.8 # Humidade extrema (entrada do Atlantico)
 				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️]{kolor['OFF']}"
 				
 			elif diff > 1.5:
@@ -2279,7 +2276,7 @@ class aetherNeural:
 			else:
 				# AMOC dentro da normalidade (transporte estável)
 				amoc_adj = (math.atan(diff / 2) * 2) * sensitivity
-				amoc_tag = f" {kolor['BLUE']}[AMOC OK]{kolor['OFF']}"
+				amoc_tag = f" {kolor['BLUE']}[AMOC 🌊]{kolor['OFF']}"
 
 		if wind["active"] and code == "PT":
 			if wind["dir"] in ["NE", "E", "N"]:
@@ -5677,7 +5674,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 					cor_d = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
 					delta_str = f"{cor_d}{vd:>5.2f}{kolor['OFF']}"
 				except:
-					delta_str = f"{kolor['BOLD_RED']}  N/A{kolor['OFF']}"
+					delta_str = f"{kolor['BOLD_RED']} N/A{kolor['OFF']}"
 					contagem_na += 1
 
 				print(f"{kolor['BOLD_WHITE']}{dy:03}{kolor['OFF']} | "
@@ -6411,14 +6408,34 @@ def main():
 			else:
 				random_season_activity()
 				tdctl = tdctl + 1
-
-		elif re.compile(r'\b(weather\s+(?:for\s+)?today|today\s+weather|weather\s+now)\b', re.IGNORECASE).search(question):
-			oracle = aetherNeural()
-			print(f"{oracle.predict()}\n")
 		
+		# == "weather now":
+		elif question.startswith('weather'):
+			sub_command = question[7:].strip().lstrip('-')
+			if sub_command == 'now':
+				oracle = aetherNeural()
+				#print(f"{kolor['DIM_YELLOW']}[{kolor['YELLOW']}Beta Release - AMOC Algorithmic Model{kolor['DIM_YELLOW']}]{kolor['OFF']}")
+				print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
+				print(f"{oracle.predict()}\n")
+
+			else:
+				dayseason = get_the_season()[0]
+				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'Southern Hemisphere'
+				weather_starters = [
+					f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.",
+					f"It looks like we're having {weather_like_season()} based on being in the {hemisphere} {dayseason.capitalize()}."
+				]
+				print(random.choice(weather_starters))
+				oracle = aetherNeuralbase()
+				print(f"{oracle.predictbase()}\n")
+
+		elif question[-9:] == 'about you':
+			random.shuffle(core['interjections'])
+			intj = random.choice(core['interjections'])
+			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
+
 		# == "today"
-		#elif re.compile(r'\b(today(?:\s+date)?|now|what\s+day\s+it\s+is)\b', re.IGNORECASE).search(question):
-		elif re.compile(r'\b(?!.*weather)(date|now|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
+		elif re.compile(r'\b(?!.*weather)(date|(?<!weather-)now|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
 			now = datetime.now()
 			iniyeardays = datetime.now().timetuple().tm_yday
 			current_time = now.strftime("%H:%M")
@@ -6850,26 +6867,6 @@ def main():
 							print (response[i])
 					else:
 						print( random.choice(messages['nostar_message']) + "cybele.star #" + star_name + " have empty data!\n")
-
-		elif question == 'weather':
-			dayseason = get_the_season()[0]
-			hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
-			weather_starters = [
-				f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.",
-				f"It's look like we're having {weather_like_season()} based in we're in the {hemisphere} {dayseason.capitalize()}."
-			]
-			print(random.choice(weather_starters))
-			if 'weather now' in question:
-				oracle = aetherNeural()
-				print(f"{oracle.predict()}\n")
-			else:
-				oracle = aetherNeuralbase()
-				print(f"{oracle.predictbase()}\n")
-
-		elif question[-9:] == 'about you':
-			random.shuffle(core['interjections'])
-			intj = random.choice(core['interjections'])
-			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
 
 		elif question.startswith('presence'):
 			source_icon = f"{_spchar_[22:23]}"
