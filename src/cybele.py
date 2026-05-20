@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '17.05.2026'
+_revise_ = '20.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -67,6 +67,8 @@ try:
 	import zlib
 	import textwrap
 	import numpy as np
+	import skyfield
+	import pandas
 	from urllib.parse import urljoin
 	from packaging.version import parse as parse_version
 	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -79,6 +81,8 @@ try:
 	from datetime import datetime, date, time, timedelta, timezone, UTC
 	from zoneinfo import ZoneInfo
 	from itertools import product
+	from skyfield.api import load, wgs84, Star
+	from skyfield.data import hipparcos
 
 	import serial
 
@@ -117,8 +121,8 @@ except ImportError as err:
 start_time = datetime.now()
 node_name = platform.node()
 sysos = platform.system()
-
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
+
 if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10:
 	modname = f"Python {pyver[0]}.{pyver[1]} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
@@ -766,6 +770,7 @@ help = {
 	"help say a word": "Usage: say a word|share a word \nDisplay a word will interest you (Rich vocabulary).\nex: say a word\n    share a word\n",
 	"help say something": "Usage: say something \nAsk Cybele to simulate a thought.\nPlease be patient; with a 325KB 'brain,' she’s doing a lot of heavy lifting just to string two words together.\nIt’s a miracle she can even find her own 7MB database in the dark.\nex: say something\n    make a sentence\n    talk\n",
 	"help shortest day": "Usage: shortest day <year> \nDisplays the date of the Summer and Winter solstices. \nex: shortest day \n    shortest day 2032\n",
+	"help sky tonight": f"Usage: sky <tonight|date hour> \nDisplays all celestial bodies present in the sky for the current day or a specific date and time. \nex: sky tonight\n    sky 04.05.{next_year} {random.randrange(0,24)}:45\n",
 	"help star": "Usage: <star name> \nDisplays basic information about the star. \nex: Polaris (knowed by north star)\n",
 	"help stars from": "Usage: stars from <constelation>\nShow the stars from the inputed constelation. \nex: stars from Taurus \n    stars from andromeda\n",
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
@@ -2149,12 +2154,12 @@ class aetherNeural:
 			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
 			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
-		self.amoc_sensitivity = { 
-			"PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, "NO": 1.5, "FI": 1.3, 
+		self.amoc_sensitivity = {
+			"PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, "NO": 1.5, "FI": 1.3,
 			"DE": 1.2, "US": 1.1, "CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4,
-			"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3, "ZA": 0.2, "AU": 0.1, 
+			"BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3, "ZA": 0.2, "AU": 0.1,
 			"TH": 0.05, "EG": 0.6
-        }
+		}
 		self._geo_ref = {
 			"PT": (39.5, -8.5), "ES": (40.4, -3.7), "BR": (-15.7, -47.8),
 			"US": (38.9, -77.0), "FR": (48.8, 2.3), "GB": (51.5, -0.1)
@@ -2227,69 +2232,85 @@ class aetherNeural:
 		profile = self.zones.get(code, self.zones["DEFAULT"])
 		sensitivity = self.amoc_sensitivity.get(code, 0.1)
 		monthly_avgs, swing, humidity, gw_rate = profile
-	
+
 		now = datetime.now()
 		doy_atual = now.timetuple().tm_yday
 		day_progress = (now.day - 1) / 30.0
-        
+
 		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 		years_diff = now.year - 2020
 		gw_increment = max(0, years_diff * gw_rate)
-		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
 
-		amoc_adj, hum_mod, amoc_tag = 0, 1.0, ""
-		history = self._get_amoc_history(now.year, doy_atual - 4, doy_atual)
-		wind = self.get_wind_data(code)
-		
+		# Ajuste de fase no ciclo diário (pico de calor atrasado para as 15h30)
+		hour_effect = math.cos(2 * math.pi * ((now.hour - 15.5) / 24.0)) * (swing / 2)
+
 		amoc_adj, hum_mod, amoc_tag = 0, 1.0, f" {kolor['DIM_WHITE']}[AMOC <?>]{kolor['OFF']}"
+		history = self._get_amoc_history(now.year, doy_atual - 6, doy_atual) # Alargado para 6 dias devido aos N/A
+		wind = self.get_wind_data(code)
 
 		if history:
-			sorted_days = sorted(history.keys())
-			current_delta = history[sorted_days[-1]]
-			baseline = 6.05 
-			diff = current_delta - baseline
+			# Extrair apenas os dias que contêm dados reais
+			valid_days = sorted([d for d, v in history.items() if v is not None], reverse=True)
 
-			anomaly_day = 0
-			for i in range(1, 5): # Verifica apenas nos ultimos 4 dias
-				check_day = doy_atual - i
-				if check_day in history and history[check_day] < (baseline - 0.5):
-					anomaly_day = i
-					break
+			if valid_days:
+				baseline = 6.05
 
-			if anomaly_day in [1, 2]:
-				amoc_adj = (math.atan(5.0 / 2) * 2) * sensitivity
-				hum_mod = 0.45 # Seca o ar pela pressao do calor acumulado
-				amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥]{kolor['OFF']}"
-				
-			elif anomaly_day in [3, 4]:
-				# FASE 2: O excesso de calor acumulado gera instabilidade/tempestade
-				amoc_adj = (math.atan(-4.5 / 2) * 2) * sensitivity # Arrefecimento pela chuva
-				hum_mod = 2.8 # Humidade extrema (entrada do Atlantico)
-				amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️]{kolor['OFF']}"
-				
-			elif diff > 1.5:
-				# Fluxo excessivo: O calor é "empurrado" para Norte mais rápido que o normal
-				amoc_adj = (math.atan(diff / 2) * 2) * sensitivity * 0.4
-				hum_mod = 1.6
-				amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
-				
-			else:
-				# AMOC dentro da normalidade (transporte estável)
-				amoc_adj = (math.atan(diff / 2) * 2) * sensitivity
-				amoc_tag = f" {kolor['BLUE']}[AMOC 🌊]{kolor['OFF']}"
+				# Encontrar o DOY que registou a maior média de delta recente (O Valor Alto)
+				doy_do_pico = max(valid_days, key=lambda d: history[d])
+				max_delta = history[doy_do_pico]
 
+				# Calcular a distância de dias reais a partir do pico de dados
+				days_since_pico = doy_atual - doy_do_pico
+
+				# MODELAÇÃO CRONOLÓGICA DE 4 DIAS (Gatilhada pelo Valor Alto)
+				if max_delta > (baseline + 0.4) and days_since_pico <= 2:
+					# JANELA 1 (Primeiras 48h): Sol e Calor (Padrão SN).
+					# O calor acumulado limpa o céu. Sobe a temperatura.
+					amoc_adj = 4.5 * sensitivity
+					hum_mod = 0.35 # Seca o ar (evita a chuva no cálculo do seed)
+					amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥 Acumulação]{kolor['OFF']}"
+
+				elif max_delta > (baseline + 0.4) and 3 <= days_since_pico <= 4:
+					# JANELA 2 (Segundas 48h): Rutura Atmosférica (Padrão SCN).
+					# A mola parte: frentes instáveis violentas e queda de temperatura.
+					amoc_adj = -3.5 * sensitivity
+					hum_mod = 2.6 # Humidade extrema
+					amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️ Rutura]{kolor['OFF']}"
+
+				elif history[valid_days[0]] < (baseline - 0.5):
+					# Quebra linear detetada sem pico recente associado
+					amoc_adj = (math.atan(-4.0 / 2) * 2) * sensitivity
+					hum_mod = 1.8
+					amoc_tag = f" {kolor['BLUE']}[AMOC 📉]{kolor['OFF']}"
+
+				elif max_delta - baseline > 1.5:
+					# Fluxo excessivo persistente
+					amoc_adj = (math.atan((max_delta - baseline) / 2) * 2) * sensitivity * 0.4
+					hum_mod = 1.4
+					amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
+
+				else:
+					# Condições estáveis normais
+					current_delta = history[valid_days[0]]
+					amoc_adj = (math.atan((current_delta - baseline) / 2) * 2) * sensitivity
+					amoc_tag = f" {kolor['BLUE']}[AMOC 🌊]{kolor['OFF']}"
+
+		# Modulação dinâmica do vento adaptada à estação (Norte/Leste traz calor continental no Verão)
 		if wind["active"] and code == "PT":
+			is_summer_half = 5 <= now.month <= 9
 			if wind["dir"] in ["NE", "E", "N"]:
 				hum_mod *= 0.65
-				amoc_adj -= 2.0
+				amoc_adj += 2.5 if is_summer_half else -2.0
 			elif wind["dir"] in ["SW", "W", "NW"]:
 				hum_mod *= 1.3
 				amoc_adj -= 0.6
 
 		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
-		state_seed = (doy_atual * 13) % 100
+
+		# Dinâmica intradiária baseada na hora para atualizar o seed da chuva
+		state_seed = (doy_atual * 13 + now.hour * 7) % 100
 		rain_threshold = humidity * hum_mod * 100
-				
+
 		if state_seed < rain_threshold:
 			status = "Rainy and Overcast" if rain_threshold > 55 else "Cloudy with a chance of rain"
 		elif state_seed < (rain_threshold + 15):
@@ -2303,7 +2324,7 @@ class aetherNeural:
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
 				f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
-				
+
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
 	for i, item in enumerate(items):
@@ -3629,7 +3650,7 @@ def extract_from_elysia(content_type):
 					text = title_element.get_text().strip()
 					if text:
 						raw_items.append(" ".join(text.split()))
-			tvshows_cache = raw_items[14:]
+			tvshows_cache = raw_items[9:]
 	except Exception as e:
 		print(f"Unexpected error: {e}\n")
 
@@ -5674,7 +5695,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 					cor_d = kolor['BOLD_GREEN'] if vd >= 0 else kolor['BOLD_RED']
 					delta_str = f"{cor_d}{vd:>5.2f}{kolor['OFF']}"
 				except:
-					delta_str = f"{kolor['BOLD_RED']} N/A{kolor['OFF']}"
+					delta_str = f"{kolor['BOLD_RED']} N/A {kolor['OFF']}"
 					contagem_na += 1
 
 				print(f"{kolor['BOLD_WHITE']}{dy:03}{kolor['OFF']} | "
@@ -5690,8 +5711,6 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 
 	except Exception as e:
 		print(f"❗{random.choice(messages['trouble_short'])} error processing data: {e}\n")
-
-#-------------------------------------------------
 
 #-------------------------------------------------
 def interpret_amoc_pro(histamoc_ordered):
@@ -5731,6 +5750,81 @@ def interpret_amoc_pro(histamoc_ordered):
 		},
 		"Trend": "System is recovering vigor" if values[-1] > mean_val else "System shows slight slowdown"
 	}
+
+#------------------------------
+def obter_ponto_cardeal(graus):
+	#Converte azimute em direção cardeal
+	direcoes = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO']
+	idx = int((graus + 22.5) / 45) % 8
+	return direcoes[idx]
+
+#-------------------------------------------------
+#-------------------------------------------------
+def imprimir_todo_o_ceu_visivel(data_str=None):
+	global lat, lon
+
+	required_files = ["de421.bsp", "hip_main.dat"]
+	missing_files = [f for f in required_files if not os.path.exists(f)]
+
+	if missing_files:
+		print(f"{kolor['BLUE']}\nInitializing...{kolor['OFF']}")
+
+	ts = load.timescale()
+	eph = load('de421.bsp') # Para Planetas, Sol e Lua
+
+	with load.open(hipparcos.URL) as f:
+		estrelas_completo_df = hipparcos.load_dataframe(f)
+
+	estrelas_df = estrelas_completo_df[estrelas_completo_df['magnitude'] <= 5.0]
+
+	if data_str:
+		try:
+			dt = datetime.strptime(data_str, "%d.%m.%Y %H:%M")
+			dt = dt.replace(tzinfo=UTC)
+			tempo_alvo = ts.from_datetime(dt)
+			print(f"\n{kolor['BOLD_BLUE']}{symb_prompt()}COMPLETE CATALOG OF 🌌 THE VISIBLE SKY IN {kolor['YELLOW']}({lat}, {lon}){kolor['OFF']}")
+			print(f"{kolor['BOLD_BLUE']}  Date/Hour: {kolor['BOLD_WHITE']}{data_str} UTC {kolor['OFF']}\n")
+		except ValueError:
+			print(f"{random.choice(messages['trouble_short'])} Invalid date format. Use 'DD.MM.YYYY HH:MM'.\n")
+			return
+	else:
+		tempo_alvo = ts.now()
+		print(f"\n{kolor['BOLD_BLUE']}{symb_prompt()}COMPLETE CATALOG OF 🌌 THE VISIBLE SKY IN {kolor['YELLOW']}({lat}, {lon}) {kolor['OFF']}")
+		print(f"{kolor['BOLD_BLUE']}  Date/Hour: {kolor['BOLD_WHITE']}Now UTC {kolor['OFF']}\n")
+
+	observador = eph['earth'] + wgs84.latlon(lat, lon)
+
+	print(f"{'Type':<10} | {'Identifier / Name':<25} | {'Altitude':<10} | {'Direction (Azimuth)':<18}")
+	print("-" * 75)
+
+	corpos_visiveis = 0
+
+	planetas_map = {
+		'Sun': eph['sun'], 'Moon': eph['moon'], 'Mercury': eph['mercury'],
+		'Venus': eph['venus'], 'Mars': eph['mars'], 'Jupiter': eph['jupiter barycenter'],
+		'Saturn': eph['saturn barycenter'], 'Úranus': eph['uranus barycenter'], 'Neptune': eph['neptune barycenter']
+	}
+
+	for nome, objeto in planetas_map.items():
+		alt, az, _ = observador.at(tempo_alvo).observe(objeto).apparent().altaz()
+		if alt.degrees > 0:
+			direcao = obter_ponto_cardeal(az.degrees)
+			print(f"{'Planet*':<10} | {nome:<25} | {alt.degrees:>6.2f}° | {az.degrees:>6.2f}° ({direcao})")
+			corpos_visiveis += 1
+
+	estrelas_objeto = Star.from_dataframe(estrelas_df)
+	posicoes_estrelas = observador.at(tempo_alvo).observe(estrelas_objeto).apparent(deflectors=[])
+	altitudes, azimutes, _ = posicoes_estrelas.altaz()
+
+	for hip_id, magnitude, alt, az in zip(estrelas_df.index, estrelas_df['magnitude'], altitudes.degrees, azimutes.degrees):
+		if alt > 0:
+			direcao = obter_ponto_cardeal(az)
+			identificador = f"Star HIP {hip_id} (Mag: {magnitude:.1f})"
+			print(f"{'Star':<10} | {identificador:<25} | {alt:>6.2f}° | {az:>6.2f}° ({direcao})")
+			corpos_visiveis += 1
+
+	print("-" * 75)
+	print(f"Total number of major objects detected above the horizon.: {corpos_visiveis} \n")
 
 #-------------------------------------------------
 #-------------------------------------------------
@@ -6414,8 +6508,8 @@ def main():
 			sub_command = question[7:].strip().lstrip('-')
 			if sub_command == 'now':
 				oracle = aetherNeural()
-				#print(f"{kolor['DIM_YELLOW']}[{kolor['YELLOW']}Beta Release - AMOC Algorithmic Model{kolor['DIM_YELLOW']}]{kolor['OFF']}")
-				print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
+				#print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
+				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with ♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
 				print(f"{oracle.predict()}\n")
 
 			else:
@@ -7206,6 +7300,16 @@ def main():
 				color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
 				print(f"   {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
 			
+		elif question.startswith('sky'):
+			sub_command = question[4:].strip()
+			if len(sub_command) == 0:
+				print(f"{random.choice(messages['trouble_short'])} Something is missing... Type: <help sky tonight>\n")
+			else:
+				if sub_command == 'tonight':
+					imprimir_todo_o_ceu_visivel()
+				else:
+					imprimir_todo_o_ceu_visivel(sub_command)
+
 		elif question == 'test':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
 
