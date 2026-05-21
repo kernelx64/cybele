@@ -2236,112 +2236,94 @@ class aetherNeural:
 		doy_atual = now.timetuple().tm_yday
 		day_progress = (now.day - 1) / 30.0
 
+		# Temperatura base sazonal + Aquecimento Global
 		base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 		years_diff = now.year - 2020
 		gw_increment = max(0, years_diff * gw_rate)
 
-		# Ciclo diário (pico às 15h30)
+		# Ciclo diário
 		hour_effect = math.cos(2 * math.pi * ((now.hour - 15.5) / 24.0)) * (swing / 2)
 
-		amoc_adj, hum_mod, amoc_tag = 0, 1.0, f" {kolor['DIM_WHITE']}[AMOC <?>]{kolor['OFF']}"
-
-		# Alargamos para 8 dias para garantir que apanhamos dados mesmo com nuvens
+		# Dados AMOC e Vento
 		history = self._get_amoc_history(now.year, doy_atual - 8, doy_atual)
 		wind = self.get_wind_data(code)
+        
+		# --- Lógica de Influência AMOC (Aura v2) ---
+		amoc_adj = 0
+		hum_mod = 1.0
+		amoc_tag = f" {kolor['DIM_WHITE']}[AMOC Neutral]{kolor['OFF']}"
 
 		if history:
-			# Filtrar apenas dias com dados válidos e ordenar cronologicamente (antigo -> recente)
 			valid_doys = sorted([d for d, v in history.items() if v is not None])
-
 			if valid_doys:
-				baseline = 6.05
+				current_smooth_delta = sum([history[d] for d in valid_doys[-3:]]) / len(valid_doys[-3:])
+				desvio = current_smooth_delta - 6.05 # Baseline
 
-				# 1. Calcular a Média Ponderada (Dando muito mais peso aos dias mais próximos de hoje)
-				# Isto resolve o problema dos N/A: se o dado mais recente for de há 3 dias, ele ainda conta, mas com o peso correto.
-				total_weight = 0
-				weighted_delta = 0
+				# SE AMOC CAI: Bloqueio atmosférico -> Retenção de calor
+				if desvio < -0.2:
+					amoc_adj = abs(desvio) * sensitivity * 4.0 # Retenção de calor (Sinal invertido!)
+					hum_mod = 0.7 # Ar mais seco devido ao bloqueio
+					amoc_tag = f" {kolor['ORANGE']}[AMOC 📉 Blocking]{kolor['OFF']}"
+                
+				# SE AMOC SOBE: Fluxo normal -> Estabilidade marítima
+				elif desvio > 0.2:
+					amoc_adj = desvio * sensitivity * 1.5
+					hum_mod = 1.1
+					amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC 📈 Flow]{kolor['OFF']}"
 
-				for doy in valid_doys:
-					distancia = doy_atual - doy
-					if distancia > 7: continue # Ignorar dados demasiado antigos
+		tendencia = (history[valid_doys[-1]] - history[valid_doys[-2]]) if len(valid_doys) >= 2 else 0
+		trend_icon = "▲" if tendencia > 0.01 else ("▼" if tendencia < -0.01 else "▬")
 
-					# Peso inercial: dias recentes pesam muito mais. Ex: hoje peso 8, ontem 7...
-					weight = max(1, 8 - distancia)
-					weighted_delta += history[doy] * weight
-					total_weight += weight
-
-				current_smooth_delta = weighted_delta / total_weight if total_weight > 0 else baseline
-
-				# 2. Calcular a Tendência (O delta está a subir ou a descer nos últimos dias disponíveis?)
-				# Se tivermos pelo menos 2 pontos de dados, vemos a direção da linha
-				tendencia = 0
-				if len(valid_doys) >= 2:
-					ultimo_doy = valid_doys[-1]
-					penultimo_doy = valid_doys[-2]
-					tendencia = (history[ultimo_doy] - history[penultimo_doy]) / (ultimo_doy - penultimo_doy)
-
-				# 3. AGENTE DE INFLUÊNCIA: Classificação dos Estados Meteorológicos
-				desvio_acumulado = current_smooth_delta - baseline
-
-				# Cenário A: Grande acumulação de energia (Delta alto e estável ou a subir) -> Calor/Seco
-				if desvio_acumulado > 0.4 and tendencia >= -0.05:
-					amoc_adj = 4.5 * sensitivity
-					hum_mod = 0.35
-					amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥 Acumulação]{kolor['OFF']}"
-
-				# Cenário B: O pico passou e está em queda rápida (Rutura Atmosférica) -> Tempestade/Instabilidade
-				elif desvio_acumulado > 0.1 and tendencia < -0.1:
-					amoc_adj = -3.5 * sensitivity
-					hum_mod = 2.6
-					amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️ Rutura]{kolor['OFF']}"
-
-				# Cenário C: Queda drástica abaixo da média -> Arrefecimento e Humidade
-				elif desvio_acumulado < -0.5:
-					# Garante que o ajuste negativo nunca é um abismo intransponível
-					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity * 0.5
-					hum_mod = 1.3  # 1.8 é demasiado, satura qualquer seed para chuva certa
-					amoc_tag = f" {kolor['BLUE']}[AMOC 📉]{kolor['OFF']}"
-
-				# Cenário D: Fluxo excessivo persistente mas estável
-				elif desvio_acumulado > 1.5:
-					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity * 0.4
-					hum_mod = 1.4
-					amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
-
-				# Cenário E: Condições normais/padrão oceanográfico
-				else:
-					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity
-					amoc_tag = f" {kolor['BLUE']}[AMOC 🌊]{kolor['OFF']}"
-
-		# Modulação do vento (Mantém a tua lógica excelente para PT)
+		# Correção de Vento local (PT)
 		if wind["active"] and code == "PT":
-			is_summer_half = 5 <= now.month <= 9
 			if wind["dir"] in ["NE", "E", "N"]:
-				hum_mod *= 0.65
-				amoc_adj += 2.5 if is_summer_half else -2.0
+				hum_mod *= 0.5 # Seca o ar (calor de radiação)
+				amoc_adj += 1.5 # Efeito térmico continental
 			elif wind["dir"] in ["SW", "W", "NW"]:
-				hum_mod *= 1.3
-				amoc_adj -= 0.6
+				hum_mod *= 1.4
 
 		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
 
-		# Determinação do estado do tempo (Mantém o teu sistema de sementes dinâmicas)
-		state_seed = (doy_atual * 13 + now.hour * 7) % 100
+		# --- Determinação do estado ---
 		rain_threshold = humidity * hum_mod * 100
+		state_seed = (doy_atual * 13 + now.hour * 7) % 100
 
-		if state_seed < rain_threshold:
-			status = "Rainy and Overcast" if rain_threshold > 55 else "Cloudy with a chance of rain"
-		elif state_seed < (rain_threshold + 15):
-			status = "Very Cloudy / Heavy Overcast"
+		# Proteção: Se está muito quente, o status de chuva é bloqueado
+		if final_temp > 27.5:
+			status = "Clear Skies (Heat Accumulation)"
+			icon = "🔥"
+		elif state_seed < rain_threshold:
+			status = "Rainy and Overcast"
+			icon = "🌧️"
 		else:
 			status = "Partly Cloudy" if state_seed > 85 else "Clear Skies"
-
-		icon = "🌧️" if "rain" in status.lower() else ("☁️" if "Cloudy" in status else ("🔥" if final_temp > 28 else "☀️"))
-
+			icon = "☀️"
+        
 		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
-				f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}.")
+				f"{kolor['DIM_WHITE']}{status} {trend_icon}{kolor['OFF']}.")
+
+#---------------------------------------------------
+def log_previsao(self, temp_prev, status_prev, tag):
+	db_filename = f"{_title_.lower()}.db"
+	if not os.path.isfile(db_filename):
+		print(f"❌ {random.choice(messages['trouble_short'])} I couldn't find the file [{db_filename}] that contains my database.\n")
+		return
+	conn = sqlite3.connect(db_filename)
+	cursor = conn.cursor()
+	sql_insert = """
+		INSERT INTO aetherneural_valid (timestamp, previsao_temp, status_prev, amoc_tag) 
+		VALUES (?, ?, ?, ?)
+	"""
+	data = (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), temp_prev, status_prev, tag)
+	try:
+		cursor.execute(sql_insert, data)
+		conn.commit()
+	except sqlite3.Error as e:
+		print(f"Erro ao escrever no histórico: {e}")
+	finally:
+		conn.close()
 
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
