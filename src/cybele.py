@@ -28,7 +28,7 @@ version = '1.1.3'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '20.05.2026'
+_revise_ = '21.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -315,8 +315,7 @@ core = {
 	"withonlyaL":	["constelation","constelations","wetaher","whether","wether","wheather","waether","wather"],
 	"yodaw":	["Hmm. Nothing to transform, there is.","Empty, the input is.","Words, there are none.","Silence, I hear.",
 				"Lost, the input is.","A void, it seems.","Speak, nothing does.","Unspoken, it remains.","Gone, all the words are."],
-	"share":	["sharing links","sharing"],			
-	"sayconvert":	["longhand","say"],
+	"share":	["sharing links","sharing"],
 	"features":	["Here's what I have:", "This is my current functionality:", "My current features are as follows:"],
 	"time_query": ["what time is it", "current time", "time now", "clock", "clock time", "what's the time","what is the time"],
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
@@ -2241,61 +2240,80 @@ class aetherNeural:
 		years_diff = now.year - 2020
 		gw_increment = max(0, years_diff * gw_rate)
 
-		# Ajuste de fase no ciclo diário (pico de calor atrasado para as 15h30)
+		# Ciclo diário (pico às 15h30)
 		hour_effect = math.cos(2 * math.pi * ((now.hour - 15.5) / 24.0)) * (swing / 2)
 
 		amoc_adj, hum_mod, amoc_tag = 0, 1.0, f" {kolor['DIM_WHITE']}[AMOC <?>]{kolor['OFF']}"
-		history = self._get_amoc_history(now.year, doy_atual - 6, doy_atual) # Alargado para 6 dias devido aos N/A
+
+		# Alargamos para 8 dias para garantir que apanhamos dados mesmo com nuvens
+		history = self._get_amoc_history(now.year, doy_atual - 8, doy_atual)
 		wind = self.get_wind_data(code)
 
 		if history:
-			# Extrair apenas os dias que contêm dados reais
-			valid_days = sorted([d for d, v in history.items() if v is not None], reverse=True)
+			# Filtrar apenas dias com dados válidos e ordenar cronologicamente (antigo -> recente)
+			valid_doys = sorted([d for d, v in history.items() if v is not None])
 
-			if valid_days:
+			if valid_doys:
 				baseline = 6.05
 
-				# Encontrar o DOY que registou a maior média de delta recente (O Valor Alto)
-				doy_do_pico = max(valid_days, key=lambda d: history[d])
-				max_delta = history[doy_do_pico]
+				# 1. Calcular a Média Ponderada (Dando muito mais peso aos dias mais próximos de hoje)
+				# Isto resolve o problema dos N/A: se o dado mais recente for de há 3 dias, ele ainda conta, mas com o peso correto.
+				total_weight = 0
+				weighted_delta = 0
 
-				# Calcular a distância de dias reais a partir do pico de dados
-				days_since_pico = doy_atual - doy_do_pico
+				for doy in valid_doys:
+					distancia = doy_atual - doy
+					if distancia > 7: continue # Ignorar dados demasiado antigos
 
-				# MODELAÇÃO CRONOLÓGICA DE 4 DIAS (Gatilhada pelo Valor Alto)
-				if max_delta > (baseline + 0.4) and days_since_pico <= 2:
-					# JANELA 1 (Primeiras 48h): Sol e Calor (Padrão SN).
-					# O calor acumulado limpa o céu. Sobe a temperatura.
+					# Peso inercial: dias recentes pesam muito mais. Ex: hoje peso 8, ontem 7...
+					weight = max(1, 8 - distancia)
+					weighted_delta += history[doy] * weight
+					total_weight += weight
+
+				current_smooth_delta = weighted_delta / total_weight if total_weight > 0 else baseline
+
+				# 2. Calcular a Tendência (O delta está a subir ou a descer nos últimos dias disponíveis?)
+				# Se tivermos pelo menos 2 pontos de dados, vemos a direção da linha
+				tendencia = 0
+				if len(valid_doys) >= 2:
+					ultimo_doy = valid_doys[-1]
+					penultimo_doy = valid_doys[-2]
+					tendencia = (history[ultimo_doy] - history[penultimo_doy]) / (ultimo_doy - penultimo_doy)
+
+				# 3. AGENTE DE INFLUÊNCIA: Classificação dos Estados Meteorológicos
+				desvio_acumulado = current_smooth_delta - baseline
+
+				# Cenário A: Grande acumulação de energia (Delta alto e estável ou a subir) -> Calor/Seco
+				if desvio_acumulado > 0.4 and tendencia >= -0.05:
 					amoc_adj = 4.5 * sensitivity
-					hum_mod = 0.35 # Seca o ar (evita a chuva no cálculo do seed)
+					hum_mod = 0.35
 					amoc_tag = f" {kolor['ORANGE']}[PHASE: 🔥 Acumulação]{kolor['OFF']}"
 
-				elif max_delta > (baseline + 0.4) and 3 <= days_since_pico <= 4:
-					# JANELA 2 (Segundas 48h): Rutura Atmosférica (Padrão SCN).
-					# A mola parte: frentes instáveis violentas e queda de temperatura.
+				# Cenário B: O pico passou e está em queda rápida (Rutura Atmosférica) -> Tempestade/Instabilidade
+				elif desvio_acumulado > 0.1 and tendencia < -0.1:
 					amoc_adj = -3.5 * sensitivity
-					hum_mod = 2.6 # Humidade extrema
+					hum_mod = 2.6
 					amoc_tag = f" {kolor['VIVID_CYAN']}[PHASE: ⛈️ Rutura]{kolor['OFF']}"
 
-				elif history[valid_days[0]] < (baseline - 0.5):
-					# Quebra linear detetada sem pico recente associado
-					amoc_adj = (math.atan(-4.0 / 2) * 2) * sensitivity
-					hum_mod = 1.8
+				# Cenário C: Queda drástica abaixo da média -> Arrefecimento e Humidade
+				elif desvio_acumulado < -0.5:
+					# Garante que o ajuste negativo nunca é um abismo intransponível
+					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity * 0.5
+					hum_mod = 1.3  # 1.8 é demasiado, satura qualquer seed para chuva certa
 					amoc_tag = f" {kolor['BLUE']}[AMOC 📉]{kolor['OFF']}"
 
-				elif max_delta - baseline > 1.5:
-					# Fluxo excessivo persistente
-					amoc_adj = (math.atan((max_delta - baseline) / 2) * 2) * sensitivity * 0.4
+				# Cenário D: Fluxo excessivo persistente mas estável
+				elif desvio_acumulado > 1.5:
+					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity * 0.4
 					hum_mod = 1.4
 					amoc_tag = f" {kolor['VIVID_WHITE']}[AMOC 📈Δ]{kolor['OFF']}"
 
+				# Cenário E: Condições normais/padrão oceanográfico
 				else:
-					# Condições estáveis normais
-					current_delta = history[valid_days[0]]
-					amoc_adj = (math.atan((current_delta - baseline) / 2) * 2) * sensitivity
+					amoc_adj = (math.atan(desvio_acumulado / 2) * 2) * sensitivity
 					amoc_tag = f" {kolor['BLUE']}[AMOC 🌊]{kolor['OFF']}"
 
-		# Modulação dinâmica do vento adaptada à estação (Norte/Leste traz calor continental no Verão)
+		# Modulação do vento (Mantém a tua lógica excelente para PT)
 		if wind["active"] and code == "PT":
 			is_summer_half = 5 <= now.month <= 9
 			if wind["dir"] in ["NE", "E", "N"]:
@@ -2307,7 +2325,7 @@ class aetherNeural:
 
 		final_temp = base_temp + gw_increment + hour_effect + amoc_adj
 
-		# Dinâmica intradiária baseada na hora para atualizar o seed da chuva
+		# Determinação do estado do tempo (Mantém o teu sistema de sementes dinâmicas)
 		state_seed = (doy_atual * 13 + now.hour * 7) % 100
 		rain_threshold = humidity * hum_mod * 100
 
@@ -5905,7 +5923,8 @@ def main():
 			random.shuffle(core['information state awnsers'])
 			print (f"{random.choice(core['information state awnsers'])}\n")
 		
-		elif any(word in question for word in core['sayconvert']) and question != 'say something':
+		#elif any(word in question for word in core['sayconvert']) and question != 'say something':
+		elif question[0:3] == "say" or question[0:8] == "longhand":
 			sayconvert = question.split()[0]
 			conteudo_depois = question.partition(sayconvert)[2].strip()
 			if not conteudo_depois:
@@ -6505,11 +6524,11 @@ def main():
 		
 		# == "weather now":
 		elif question.startswith('weather'):
-			sub_command = question[7:].strip().lstrip('-')
+			sub_command = question[7:].strip().lstrip(' ')
 			if sub_command == 'now':
 				oracle = aetherNeural()
 				#print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
-				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with ♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
+				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
 				print(f"{oracle.predict()}\n")
 
 			else:
