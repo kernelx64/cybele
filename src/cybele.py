@@ -24,11 +24,11 @@ lat = 41.5454
 lon = -8.4265
 
 # some static global cybele variables
-version = '1.1.3'
+version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '21.05.2026'
+_revise_ = '25.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -36,88 +36,95 @@ _pydr3_ = False
 _serial_ = ['COM5','/dev/ttyUSB0','/dev/tty.usbserial-0001']
 
 import os
-import sys
-import re
-import inspect
+import sys,re
 import subprocess
+import importlib
+import time
 
-try:
-	import time
-	import time as sys_time
-	import string
-	import random
-	import calendar
-	import platform
-	import threading
-	import zoneinfo
-	import pytz
-	import socket
-	import math
-	import base64
-	import hashlib
-	import sqlite3
-	import requests
-	import html, urllib
-	import json
-	import holidays
-	import locale
-	import PIL
-	import tzdata
-	import shutil
-	import zlib
-	import textwrap
-	import numpy as np
-	import skyfield
-	import pandas
-	from urllib.parse import urljoin
-	from packaging.version import parse as parse_version
-	from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
-	from bs4 import BeautifulSoup
-	from random_word import RandomWords
-	from platform import python_version
-	from time import gmtime, strftime, sleep
-	from math import degrees as deg, radians as rad
-	from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-	from datetime import datetime, date, time, timedelta, timezone, UTC
-	from zoneinfo import ZoneInfo
-	from itertools import product
-	from skyfield.api import load, wgs84, Star
-	from skyfield.data import hipparcos
+kolor = {'CYAN': '\033[36m', 'GREEN': '\033[32m', 'OFF': '\033[0m', 'ORANGE': '\033[38;5;208m'}
 
-	import serial
+REQUIRED_PACKAGES = {
+	'requests': 'requests',
+	'numpy': 'numpy',
+	'pandas': 'pandas',
+	'bs4': 'beautifulsoup4',
+	'PIL': 'Pillow',
+	'serial': 'pyserial',
+	'skyfield': 'skyfield',
+	'holidays': 'holidays',
+	'random_word': 'random_word',
+	'pytz': 'pytz',
+	'tzdata': 'tzdata'
+}
 
-except ImportError as err:
-	match = re.search(r"'(.*?)'", str(err))
-	if match:
-		module_name = match.group(1)
-		is_pydroid = "android" in sys.executable.lower() or "com.pydroid3" in sys.executable
-		serial_mods = ["serial", "pyserial", "pyusb","predict"]
-		if is_pydroid and module_name in serial_mods:
-			_pydr3_ = True
-		else:
-			print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-			module_name = 'Pillow' if module_name == 'PIL' else module_name
-			while True:
-				install_choice = input(f"{' '*3}Do you want to install '{module_name}' module? (y/n): ").lower()
-				if install_choice == 'y':
-					print(f"{' '*3}Attempting to install the '{module_name}' module...\n")
-					try:
-						subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-						print(f"\n{' '*3}{_spchar_[8:9]}  '{module_name}' installed successfully. Please restart {_title_}")
-						sys.exit(0)
-					except subprocess.CalledProcessError:
-						print(f"\n{' '*3}✗ Error installing the module. Try: pip install " + module_name)
-						sys.exit(0)
-				elif install_choice == 'n':
-						print(f"{' '*3}Cannot execute properly. Exiting.")
-						sys.exit(0)
-				else:
-					print(f"{' '*3}Invalid choice. Please enter 'y' or 'n'.")
-	else:
-		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {err}")
-		print(f"{' '*3}I cannot execute properly. Exiting.")
-		sys.exit(0)
+def install_and_check():
+	needed = []
+	for module in REQUIRED_PACKAGES:
+		try:
+			importlib.import_module(module)
+		except ImportError:
+			needed.append(module)
+	if not needed:
+		return
+	print(f"\n{kolor['ORANGE']}Initializing { _title_ } {kolor['OFF']}")
+	total = len(needed)
+	for i, module in enumerate(needed):
+		pip_name = REQUIRED_PACKAGES[module]
+		progress = (i / total)
+		bar_len = 30
+		filled = int(bar_len * progress)
+		bar = '━' * filled + ' ' * (bar_len - filled)
+		print(f"\r{kolor['CYAN']}[{bar}]{kolor['OFF']} Installing {module}...\033[K", end="", flush=True)
+		with open(os.devnull, 'w') as fnull:
+			subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name], stdout=fnull, stderr=fnull)
+	print(f"\r{kolor['GREEN']}[{'━' * 30}] Ready!{kolor['OFF']}\033[K\n")
 
+install_and_check()
+#----------------------------------------------------
+import time
+import time as sys_time
+import string
+import random
+import calendar
+import platform
+import threading
+import zoneinfo
+import pytz
+import socket
+import math
+import base64
+import hashlib
+import sqlite3
+import requests
+import html, urllib
+import json
+import holidays
+import locale
+import PIL
+import tzdata
+import shutil
+import zlib
+import textwrap
+import numpy as np
+import skyfield
+import pandas
+from urllib.parse import urljoin
+from packaging.version import parse as parse_version
+from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
+from bs4 import BeautifulSoup
+from random_word import RandomWords
+from platform import python_version
+from time import gmtime, strftime, sleep
+from math import degrees as deg, radians as rad
+from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
+from datetime import datetime, date, time, timedelta, timezone, UTC
+from zoneinfo import ZoneInfo
+from itertools import product
+from skyfield.api import load, wgs84, Star
+from skyfield.data import hipparcos
+
+import serial
+#----------------------------------------------------
 start_time = datetime.now()
 node_name = platform.node()
 sysos = platform.system()
@@ -127,7 +134,6 @@ if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10:
 	modname = f"Python {pyver[0]}.{pyver[1]} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
 	sys.exit(1)
-
 #------------------------------------------------------------------
 rw = RandomWords()
 #------------------------------------------------------------------
@@ -991,6 +997,23 @@ def kdecode(emessage, shift):
 		else:
 			dek_msg += char
 	return dek_msg
+
+#----------------------------------------------------
+def kencode():
+	text = input (" > Encode: ")
+	encoded_text = ""
+	shift = 45
+	for char in text:
+		if char.isalpha():
+			if char.isupper():
+				encoded_char = chr((ord(char) + shift - 65) % 26 + 65)
+			else:
+				encoded_char = chr((ord(char) + shift - 97) % 26 + 97)
+			encoded_text += encoded_char
+		else:
+			encoded_text += char
+	print (encoded_text)
+	#return encoded_text
 
 #----------------------------------------------------
 for table in etables:
@@ -2324,6 +2347,31 @@ def log_previsao(self, temp_prev, status_prev, tag):
 		print(f"Erro ao escrever no histórico: {e}")
 	finally:
 		conn.close()
+
+#---------------------------------------------------
+def update_real_temp(self, temp_real):
+	db_filename = f"{_title_.lower()}.db"
+	if not os.path.isfile(db_filename):
+		print(f"❌ {random.choice(messages['trouble_short'])} Database [{db_filename}] missing.\n")
+		return
+	conn = sqlite3.connect(db_filename)
+	cursor = conn.cursor()
+	cursor.execute("SELECT id, previsao_temp FROM aetherneural_valid ORDER BY id DESC LIMIT 1")
+	row = cursor.fetchone()
+	if row:
+		row_id, previsao = row
+		erro = abs(previsao - temp_real)
+		# Threshold ajustável
+		is_anomaly = 1 if erro > 3.0 else 0
+		cursor.execute("""
+			UPDATE aetherneural_valid 
+			SET real_temp = ?, erro_abs = ?, is_anomaly = ? 
+			WHERE id = ?
+		""", (temp_real, erro, is_anomaly, row_id))
+		conn.commit()       
+		if is_anomaly:
+			print(f"⚠️ Alert: Anomaly detected (Error: {error:.2f}ºC). The divergent nature of the model.")
+	conn.close()
 
 #---------------------------------------------------
 def print_aligned(items, items_per_line, column_width):
@@ -7312,7 +7360,8 @@ def main():
 					imprimir_todo_o_ceu_visivel(sub_command)
 
 		elif question == 'test':
-			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
+			#print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
+			kencode()
 
 		elif question != '':
 			answer = find_answer(question,questions)
