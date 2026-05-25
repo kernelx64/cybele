@@ -41,7 +41,7 @@ import subprocess
 import importlib
 import time
 
-kolor = {'CYAN': '\033[36m', 'GREEN': '\033[32m', 'OFF': '\033[0m', 'ORANGE': '\033[38;5;208m'}
+kolor = {'CYAN':'\033[0;36m','RED':'\033[0;31m','GREEN':'\033[32m','ORANGE':'\033[38;5;208m','OFF':'\033[0m', }
 
 REQUIRED_PACKAGES = {
 	'requests': 'requests',
@@ -56,28 +56,42 @@ REQUIRED_PACKAGES = {
 	'pytz': 'pytz',
 	'tzdata': 'tzdata'
 }
-
+is_pydroid = 'pydroid' in sys.executable.lower()
 def install_and_check():
+	if is_pydroid:
+		for pkg in ['numpy', 'pandas','requests']:
+			try:
+				importlib.import_module(pkg)
+			except ImportError:
+				print(f"\n{kolor['RED']}WARNING:{kolor['OFF']} The package '{pkg}' is necessary.")
+				if pkg == 'requests':
+					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Install'.")
+				else:
+					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Quick Install'.")
+				sys.exit()
+
 	needed = []
 	for module in REQUIRED_PACKAGES:
 		try:
 			importlib.import_module(module)
 		except ImportError:
 			needed.append(module)
+	
 	if not needed:
 		return
+
 	print(f"\n{kolor['ORANGE']}Initializing { _title_ } {kolor['OFF']}")
 	total = len(needed)
 	for i, module in enumerate(needed):
 		pip_name = REQUIRED_PACKAGES[module]
 		progress = (i / total)
-		bar_len = 30
+		bar_len = 20
 		filled = int(bar_len * progress)
 		bar = '━' * filled + ' ' * (bar_len - filled)
 		print(f"\r{kolor['CYAN']}[{bar}]{kolor['OFF']} Installing {module}...\033[K", end="", flush=True)
 		with open(os.devnull, 'w') as fnull:
 			subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name], stdout=fnull, stderr=fnull)
-	print(f"\r{kolor['GREEN']}[{'━' * 30}] Ready!{kolor['OFF']}\033[K\n")
+	print(f"\r{kolor['GREEN']}[{'━' * 20}] Ready!{kolor['OFF']}\033[K\n")
 
 install_and_check()
 #----------------------------------------------------
