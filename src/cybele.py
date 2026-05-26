@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '25.05.2026'
+_revise_ = '26.05.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -56,9 +56,9 @@ REQUIRED_PACKAGES = {
 	'pytz': 'pytz',
 	'tzdata': 'tzdata'
 }
-is_pydroid = 'pydroid' in sys.executable.lower()
+_pydr3_ = 'pydroid' in sys.executable.lower()
 def install_and_check():
-	if is_pydroid:
+	if _pydr3_:
 		for pkg in ['numpy', 'pandas','requests']:
 			try:
 				importlib.import_module(pkg)
@@ -102,6 +102,7 @@ import random
 import calendar
 import platform
 import threading
+import locale
 import zoneinfo
 import pytz
 import socket
@@ -5177,12 +5178,12 @@ def verificar_dst(iso_code):
 
 #-------------------------------------------------
 def detect_country():
-	global ncountries, system_country
+	global ncountries, system_country, _pydr3_
 	raw = locale.getlocale()[0]
 	if not raw: return
 	target = raw.split('_')[-1].lower()
-	if _pydr3_: # Lógica para o pydroid3
-		if target == "C" or target == "c":
+	if _pydr3_ or 'pydroid' in sys.executable.lower():
+		if target in ("C", "c", None, ""):
 			system_country = ["PT","Portugal"]
 		else:
 			if target in ncountries:
@@ -6570,10 +6571,10 @@ def main():
 		elif question.startswith('weather'):
 			sub_command = question[7:].strip().lstrip(' ')
 			if sub_command == 'now':
-				oracle = aetherNeural()
+				oracle = aetherNeural().predict()
 				#print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
 				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
-				print(f"{oracle.predict()}\n")
+				print(f"{oracle}\n")
 
 			else:
 				dayseason = get_the_season()[0]
