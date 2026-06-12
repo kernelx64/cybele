@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '26.05.2026'
+_revise_ = '12.06.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -2120,50 +2120,126 @@ class aetherNeuralbase:
 			"JP": [[5,6,9,15,20,23,27,28,24,19,13,8], 10, 0.5, 0.026],
 			"MX": [[15,16,19,21,23,23,22,22,22,20,18,16], 12, 0.3, 0.025],
 			"NO": [[-3,-3,0,5,11,14,17,16,11,7,2,-1], 10, 0.5, 0.048],
-			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.3, 0.031],
+			"PT": [[11,12,14,16,19,23,26,26,24,19,15,12], 10, 0.45, 0.031],
 			"RU": [[-10,-9,-2,7,15,19,22,19,13,6,-2,-7], 15, 0.4, 0.040],
 			"US": [[2,4,8,14,19,24,27,26,22,15,9,4], 13, 0.4, 0.028],
 			"ZA": [[21,21,20,17,15,12,12,14,16,18,19,21], 11, 0.3, 0.024],
 			"TH": [[27,28,30,31,30,29,29,29,28,28,27,26], 7, 0.8, 0.020],
 			"DEFAULT": [[15]*12, 10, 0.4, 0.025]
 		}
+		self.amoc_sensitivity = {"PT": 1.8, "ES": 1.5, "GB": 1.6, "FR": 1.4, "NO": 1.5, "FI": 1.3, "DE": 1.2, "US": 1.1, "CA": 1.2, "RU": 1.0, "JP": 0.4, "CN": 0.4, "BR": 0.3, "MX": 0.5, "IN": 0.2, "AR": 0.3, "ZA": 0.2, "AU": 0.1, "TH": 0.05, "EG": 0.6}
+		self._geo_ref = {"PT": (39.5, -8.5), "ES": (40.4, -3.7), "BR": (-15.7, -47.8), "US": (38.9, -77.0), "FR": (48.8, 2.3), "GB": (51.5, -0.1)}
 
-	def _get_emoji(self, status, temp):
-		status_lower = status.lower()
-		if "rain" in status_lower: return "🌧️"
-		if "cloudy" in status_lower: return "⛅" if temp > 15 else "☁️"
-		if temp > 28: return "🔥"
-		if temp < 0: return "❄️"
-		return "☀️"
+	def get_wind_data(self, code):
+		lat, lon = self._geo_ref.get(code, (39.5, -8.5))
+		try:
+			url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m"
+			r = requests.get(url, timeout=3)
+			if r.status_code == 200:
+				d = r.json()["current"]["wind_direction_10m"]
+				if 22.5 <= d < 67.5: dir_txt = "NE"
+				elif 67.5 <= d < 112.5: dir_txt = "E"
+				elif 112.5 <= d < 157.5: dir_txt = "SE"
+				elif 157.5 <= d < 202.5: dir_txt = "S"
+				elif 202.5 <= d < 247.5: dir_txt = "SW"
+				elif 247.5 <= d < 292.5: dir_txt = "W"
+				elif 292.5 <= d < 337.5: dir_txt = "NW"
+				else: dir_txt = "N"
+				return {"dir": dir_txt, "active": True}
+		except: pass
+		return {"dir": "N/A", "active": False}
+
+	def _get_amoc_history(self, ano, doy_ini, doy_fim):
+		global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
+		online = internet_onoff()
+		db_filename = f"{_title_.lower()}.db"
+		rows_filtradas = []
+		daily_values = {}
+
+		if online:
+			try:
+				h_key, h_val = base64.b64decode(_h_key_64).decode(), base64.b64decode(_h_val_64).decode()
+				idur, idt = base64.b64decode(BRTID_EN).decode(), base64.b64decode(BRTK_EN).decode()
+				path_int = kdecode(BRADR_EN, shifl).format(idur)
+				response = requests.get(path_int, headers={h_key: f"{h_val}{idt}"}, timeout=10)
+				if response.status_code == 200:
+					for r in response.json().get('results', []):
+						r_ano = int(r.get('ano') or r.get('Year') or 0)
+						r_doy = int(r.get('doy') or r.get('DayOfYear') or 0)
+						if r_ano == ano and doy_ini <= r_doy <= doy_fim:
+							rows_filtradas.append(r)
+			except: pass
+		return {}
 
 	def predictbase(self):
-		code = system_country[0]
-		name = system_country[1]
+		code, name = system_country[0], system_country[1]
 		profile = self.zones.get(code, self.zones["DEFAULT"])
+		sensitivity = self.amoc_sensitivity.get(code, 0.1)
 		monthly_avgs, swing, humidity, gw_rate = profile
+
 		now = datetime.now()
-		month_idx = now.month - 1
-		next_month_idx = (month_idx + 1) % 12
-		day_progress = (now.day - 1) / 30.0
-		base_temp = monthly_avgs[month_idx] + (monthly_avgs[next_month_idx] - monthly_avgs[month_idx]) * day_progress
+		doy_atual = now.timetuple().tm_yday
 		years_diff = now.year - 2020
 		gw_increment = max(0, years_diff * gw_rate)
-		hour_effect = math.cos(2 * math.pi * ((now.hour - 15) / 24.0)) * (swing / 2)
-		final_temp = base_temp + gw_increment + hour_effect
-		state_seed = (now.timetuple().tm_yday * 7) % 100
-		if state_seed < (humidity * 100):
-			status = "Cloudy with a chance of rain"
-		elif state_seed > 85:
-			status = "Partly Cloudy"
-		else:
-			status = "Clear Skies"
-		icon = self._get_emoji(status, final_temp)
-		return (
-			f"{kolor['BOLD_CYAN']}aetherNeural {kolor['BOLD_YELLOW']}✧ "
-			f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
-			f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
-			f"{kolor['DIM_WHITE']}{status}{kolor['OFF']}."
-		)
+
+		# Obter dados externos
+		history = self._get_amoc_history(now.year, doy_atual - 8, doy_atual)
+		wind = self.get_wind_data(code)
+
+		# Lógica AMOC (cálculo único)
+		amoc_adj = 0
+		hum_mod = 1.0
+		amoc_tag = f" {kolor['DIM_WHITE']}[AMOC Neutral]{kolor['OFF']}"
+		if history:
+			valid_doys = sorted([d for d, v in history.items() if v is not None])
+			if valid_doys:
+				current_smooth_delta = sum([history[d] for d in valid_doys[-3:]]) / len(valid_doys[-3:])
+				desvio = current_smooth_delta - 6.05
+				if desvio < -0.2:
+					amoc_adj = abs(desvio) * sensitivity * 4.0
+					hum_mod = 0.7
+					amoc_tag = f" {kolor['ORANGE']}[AMOC 📉 Blocking]{kolor['OFF']}"
+				elif desvio > 0.2:
+					amoc_adj = desvio * sensitivity * 1.5
+					hum_mod = 1.1
+					amoc_tag = f" {kolor['VIVID_CYAN']}[AMOC 📈 Flow]{kolor['OFF']}"
+
+		# Correção de vento local
+		if wind["active"] and code == "PT":
+			if wind["dir"] in ["NE", "E", "N"]:
+				hum_mod *= 0.5
+				amoc_adj += 1.5
+			elif wind["dir"] in ["SW", "W", "NW"]:
+				hum_mod *= 1.4
+
+		# Construção da resposta multitemporal
+		output = f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ {kolor['WHITE']}Previsão para {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}:\n"
+
+		# Horas para os 4 períodos
+		for periodo, hora in [("Madrugada", 4), ("Manhã", 10), ("Tarde", 16), ("Noite", 22)]:
+			day_progress = (now.day - 1) / 30.0
+			base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
+			hour_effect = math.cos(2 * math.pi * ((hora - 15.5) / 24.0)) * (swing / 2)
+			final_temp = base_temp + gw_increment + hour_effect + amoc_adj
+
+			# --- Determinação do estado ---
+			rain_threshold = humidity * hum_mod * 100
+			state_seed = (doy_atual * 13 + hora * 7) % 100
+
+			# Proteção: Se está muito quente, o status de chuva é bloqueado
+			if final_temp > 27.5:
+				status = "Clear Skies (Heat Accumulation)"
+				icon = "🔥"
+			elif state_seed < rain_threshold:
+				status = "Rainy and Overcast"
+				icon = "🌧️"
+			else:
+				status = "Partly Cloudy" if state_seed > 85 else "Clear Skies"
+				icon = "☀️"
+
+			output += f"  {kolor['DIM_WHITE']}{periodo:9}: {icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C {kolor['WHITE']}| {status}\n"
+
+		return output
 
 #---------------------------------------------------
 class aetherNeural:
@@ -2285,7 +2361,7 @@ class aetherNeural:
 		# Dados AMOC e Vento
 		history = self._get_amoc_history(now.year, doy_atual - 8, doy_atual)
 		wind = self.get_wind_data(code)
-        
+
 		# --- Lógica de Influência AMOC (Aura v2) ---
 		amoc_adj = 0
 		hum_mod = 1.0
@@ -2302,7 +2378,7 @@ class aetherNeural:
 					amoc_adj = abs(desvio) * sensitivity * 4.0 # Retenção de calor (Sinal invertido!)
 					hum_mod = 0.7 # Ar mais seco devido ao bloqueio
 					amoc_tag = f" {kolor['ORANGE']}[AMOC 📉 Blocking]{kolor['OFF']}"
-                
+
 				# SE AMOC SOBE: Fluxo normal -> Estabilidade marítima
 				elif desvio > 0.2:
 					amoc_adj = desvio * sensitivity * 1.5
@@ -2336,7 +2412,7 @@ class aetherNeural:
 		else:
 			status = "Partly Cloudy" if state_seed > 85 else "Clear Skies"
 			icon = "☀️"
-        
+
 		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
@@ -6585,6 +6661,7 @@ def main():
 				]
 				print(random.choice(weather_starters))
 				oracle = aetherNeuralbase()
+				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
 				print(f"{oracle.predictbase()}\n")
 
 		elif question[-9:] == 'about you':
