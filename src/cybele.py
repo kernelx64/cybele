@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '12.06.2026'
+_revise_ = '13.06.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -2212,17 +2212,14 @@ class aetherNeuralbase:
 			elif wind["dir"] in ["SW", "W", "NW"]:
 				hum_mod *= 1.4
 
-		# Construção da resposta multitemporal
 		output = f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ {kolor['WHITE']}Previsão para {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}:\n"
 
-		# Horas para os 4 períodos
-		for periodo, hora in [("Madrugada", 4), ("Manhã", 10), ("Tarde", 16), ("Noite", 22)]:
+		for periodo, hora in [("Morning", 4), ("Afternoon", 16), ("Night", 22)]:
 			day_progress = (now.day - 1) / 30.0
 			base_temp = monthly_avgs[now.month-1] + (monthly_avgs[now.month%12] - monthly_avgs[now.month-1]) * day_progress
 			hour_effect = math.cos(2 * math.pi * ((hora - 15.5) / 24.0)) * (swing / 2)
 			final_temp = base_temp + gw_increment + hour_effect + amoc_adj
 
-			# --- Determinação do estado ---
 			rain_threshold = humidity * hum_mod * 100
 			state_seed = (doy_atual * 13 + hora * 7) % 100
 
@@ -2416,7 +2413,7 @@ class aetherNeural:
 		return (f"{kolor['BOLD_CYAN']}aetherNeural{amoc_tag} {kolor['BOLD_YELLOW']}✧ "
 				f"{kolor['WHITE']}Weather for {kolor['VIVID_CYAN']}{name}{kolor['WHITE']}: "
 				f"{icon} {kolor['VIVID_YELLOW']}{round(final_temp, 1)}°C{kolor['WHITE']}, "
-				f"{kolor['DIM_WHITE']}{status} {trend_icon}{kolor['OFF']}.")
+				f"{kolor['DIM_WHITE']}{status} {trend_icon}{kolor['OFF']}.\n")
 
 #---------------------------------------------------
 def log_previsao(self, temp_prev, status_prev, tag):
@@ -6646,12 +6643,12 @@ def main():
 		# == "weather now":
 		elif question.startswith('weather'):
 			sub_command = question[7:].strip().lstrip(' ')
+			print_statusline(f"Determining the weather forecast. Wait a moment please...")
 			if sub_command == 'now':
 				oracle = aetherNeural().predict()
-				#print(f"{kolor['YELLOW']}AMOC Algorithmic Model{kolor['DIM_YELLOW']} {kolor['DIM_CYAN']}[{kolor['CYAN']}Beta release{kolor['DIM_CYAN']}]{kolor['OFF']}")
-				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
-				print(f"{oracle}\n")
-
+				print_statusline(f"")
+				#print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
+				#print(f"{oracle}\n")
 			else:
 				dayseason = get_the_season()[0]
 				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'Southern Hemisphere'
@@ -6659,10 +6656,12 @@ def main():
 					f"It looks like we're having {weather_like_season()} here in the {dayseason.capitalize()} on the {hemisphere}.",
 					f"It looks like we're having {weather_like_season()} based on being in the {hemisphere} {dayseason.capitalize()}."
 				]
+				oracle = aetherNeuralbase().predictbase()
+				print_statusline(f"")
 				print(random.choice(weather_starters))
-				oracle = aetherNeuralbase()
-				print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
-				print(f"{oracle.predictbase()}\n")
+				
+			print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
+			print(f"{oracle}")
 
 		elif question[-9:] == 'about you':
 			random.shuffle(core['interjections'])
