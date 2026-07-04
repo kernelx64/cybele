@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '13.06.2026'
+_revise_ = '01.07.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -6647,8 +6647,6 @@ def main():
 			if sub_command == 'now':
 				oracle = aetherNeural().predict()
 				print_statusline(f"")
-				#print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
-				#print(f"{oracle}\n")
 			else:
 				dayseason = get_the_season()[0]
 				hemisphere = 'Northern Hemisphere' if lat >= 0 else 'Southern Hemisphere'
@@ -6660,7 +6658,7 @@ def main():
 				print_statusline(f"")
 				print(random.choice(weather_starters))
 				
-			print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}Beta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
+			print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}βeta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
 			print(f"{oracle}")
 
 		elif question[-9:] == 'about you':
