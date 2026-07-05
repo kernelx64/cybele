@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '01.07.2026'
+_revise_ = '05.07.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -7238,7 +7238,7 @@ def main():
 			else:
 				output_db_file = f"{_title_.lower()}.db"
 				if os.path.exists(output_db_file):
-					print(f"I am already able to be fully functional in offline mode but i but I will update.")
+					print(f"I am already able to be fully functional in offline mode but I will update.")
 					delete_cybeledb()
 					download_database_update()
 				else:
