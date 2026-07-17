@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '05.07.2026'
+_revise_ = '10.07.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -132,7 +132,8 @@ from platform import python_version
 from time import gmtime, strftime, sleep
 from math import degrees as deg, radians as rad
 from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-from datetime import datetime, date, time, timedelta, timezone, UTC
+#from datetime import datetime, date, time, timedelta, timezone, UTC
+from datetime import datetime, date, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 from itertools import product
 from skyfield.api import load, wgs84, Star
@@ -144,10 +145,11 @@ start_time = datetime.now()
 node_name = platform.node()
 sysos = platform.system()
 pyver = [sys.version_info.major, sys.version_info.minor, sys.version_info.micro]
+UTC = timezone.utc
 
 if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10:
 	modname = f"Python {pyver[0]}.{pyver[1]} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
-	print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+	print("\nkolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 	sys.exit(1)
 #------------------------------------------------------------------
 rw = RandomWords()
@@ -220,7 +222,7 @@ kolor = {
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
 	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m'
 }
-#-----------------------------------------------------------
+#----------------------------------------------------------
 art_world = [
 	[32,32,32,32,32,32,32,32,32,32,32,32,95,44,45,45,39,44,32,32,32,95,46,95,46,45,45,46,95,95,95,95,95,32],
 	[32,32,32,32,32,46,45,45,46,45,45,39,59,95,39,45,46,39,44,32,39,59,95,32,32,32,32,32,32,95,46,44,45,32],
@@ -342,7 +344,7 @@ core = {
 	"season_query": ["season","what season is it","what is the current season","what's the season","current season","actual season","which season is it","which season are we in","tell me the season","what is today's season"],
 	"holidays_query": ["list holidays","holiday calendar","public holidays","national holidays","holidays this year","next holidays","year holidays","holidays","view holidays"],
 	"asking for country details":	["list country details","show country details","list country info","countries details","country list","show all countries","display countries","countries info","get all countries"],
-	"asking for a phrase":	["say something","make a sentence","make a phrase","talk"],
+	"asking for a phrase":	["make a sentence","make a phrase","talk to me"],
 	"information state":	["how are you","how's it going","how are you doing","all good","you good","everything alright"],
 	"information state awnsers":	["I'm good/well.","I'm fine.","It's going well.","All good.","I am doing well, thank you for asking!"],
 	"python art":	["py","python","python art","art python"],
@@ -773,7 +775,6 @@ help = {
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help restart": "Usage: restart | boot \nEngages Cybele in a 'fresh start', re-reading databases and data and clearing memory. \nex: restart \n    boot \n",
 	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
-	"help say something": "Usage: <say something> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: say something \n",
 	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n    spring\n",
 	"help set default country": "Usage: Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
@@ -796,6 +797,7 @@ help = {
 	"help sunrise time": "Usage: sunrise time \nPresents the time of the morning moment the sun's upper edge becomes visible above the horizon. \nex: sunrise time \n",
 	"help sunset time": "Usage: sunset time \nPresents the time precisely when the sun's upper edge fully disappears below the horizon in the evening. \nex: sunset time \n",
 	"help system": f"Usage: system \nDisplays information about the machine's environment and the core platform powering {_title_}. \nex: system \n    operating system\n",
+	"help talk to me": "Usage: <talk to me> \nEngages Cybele in create text. While Cybele doesn't have direct voice output or external neural network access, she can be a litle creative. \nex: talk for me \n",
 	"help tell me": "Usage: tell me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: tell me verbs \n    tell me linux commands\n    tell me old tech\n",
 	"help time now": "Usage: time now \nDisplays the actual time based on the GTM system clock. \nex: time now\n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
@@ -973,7 +975,7 @@ def validate_globals():
 	if missing_vars:
 		print_statusline(f"")
 		mmodname = f"\n   My code integrity was compromised doing missing some requirements. \n   Missing components: {missing_vars}. Exiting."
-		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {mmodname}")
+		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} kolor['OFF']: {mmodname}")
 		sys.exit(0)	
 	if 'lat' in internals and 'lon' in internals:
 		global_lat = defined_globals['lat']
@@ -994,7 +996,7 @@ def validate_globals():
 		if not is_valid_coord:
 			print_statusline(f"")
 			coord_error_msg = kdecode(seecoor, shift) + "\n   I cannot execute properly. Exiting."
-			print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} \033[0;0m: {coord_error_msg}")
+			print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} kolor['OFF']: {coord_error_msg}")
 			sys.exit(0)
 		else:
 			_poigps_= [lat,lon,0,1,1]
@@ -1078,7 +1080,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 	else:
 		print_statusline(f"")
 		modname = "The database file is missing and i cannot execute properly without'it. 1 \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
-		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+		print(f"\n{kolor['BOLD_RED']} {_spchar_[1:2]}{_title_}{kolor['OFF']}: {modname}\n")
 		exit(0)
 
 	try:
@@ -1089,7 +1091,7 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 	except Exception as e:
 		print_statusline(f"")
 		modname = f"\n   An unexpected error occurred: {e}"
-		print(f"\n\033[1;31m {_spchar_[1:2]}{_title_}\033[0;0m: {modname}")
+		print(f"\nkolor['BOLD_RED'] {_spchar_[1:2]}{_title_}kolor['OFF']: {modname}")
 		exit(0)
 	except sqlite3.Error as e:
 		return []
@@ -1110,7 +1112,7 @@ def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	else:
 		print_statusline(f"")
 		modname = "The database file is missing and i cannot execute properly without'it. 2 \n   To work offline use the option <offline mode> in the main cybele prompt. \n   Exiting."
-		print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+		print(f"\n{kolor['BOLD_RED']} {_spchar_[1:2]}{_title_}{kolor['OFF']}: {modname}\n")
 		exit(0)
 
 	try:
@@ -1154,7 +1156,7 @@ def check_tables(tables_names):
 		else:
 			print_statusline(f"")
 			modname = "The database file is missing and i cannot execute properly without'it. \n   Exiting."
-			print(f"\n{'\033[1;31m'} {_spchar_[1:2]}{_title_}{'\033[0;0m'}: {modname}\n")
+			print(f"\n{kolor['BOLD_RED']} {_spchar_[1:2]}{_title_}{kolor['OFF']}: {modname}\n")
 			exit(0)
 
 	try:
@@ -1168,7 +1170,7 @@ def check_tables(tables_names):
 		if missing_tables:
 			print_statusline(f"")
 			modname = f"The database file dont satisfy all my requirements, {len(missing_tables)} missing!\n   Please update from github via addr {website['github']}{_title_.lower()}\n   I cannot execute properly. Exiting.\n"
-			print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+			print("kolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 			return False
 		else:
 			return True
@@ -1176,12 +1178,12 @@ def check_tables(tables_names):
 	except sqlite3.Error as e:
 		print_statusline(f"")
 		modname = f"Database query error {e} \n   I cannot execute properly. Exiting."
-		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("kolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 		return False
 	except Exception as e:
 		print_statusline(f"")
 		modname = f"An unexpected error occurred: {e}\n   I cannot execute properly. Exiting."
-		print("\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("kolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 		return False
 	finally:
 		if cur:
@@ -1257,7 +1259,7 @@ def download_database_update(nupdate=True):
 		if dbrd:
 			remote_ts = dbrd.timestamp()
 			os.utime(local_db_filename, (remote_ts, remote_ts))
-			print(f"\nSync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime("%d.%m.%Y %H:%M:%S")} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime("%d.%m.%Y %H:%M:%S")}")
+			print(f"\nSync concluded. {kolor['BOLD_YELLOW']}Remote:{kolor['OFF']}{dbrd.strftime('%d.%m.%Y %H:%M:%S')} | {kolor['BOLD_YELLOW']}Local:{kolor['OFF']}{dbld.strftime('%d.%m.%Y %H:%M:%S')}")
 		if nupdate:
 			print(f"\n{c_green}Update complete!{c_off} 🚀 Restart {_title_}\n")
 		else:
@@ -1924,7 +1926,7 @@ class VictronMonitor:
 		try:
 			tty.setcbreak(sys.stdin.fileno())
 			with serial.Serial(self.porta, self.baudrate, timeout=0.1) as ser:
-				print("\r\033[92m>>> ACTIVE MONITORING (press Ctrl+C to exit) <<<\033[0m")
+				print(f"\r{kolor['VIVID_GREEN']}>>> ACTIVE MONITORING (press Ctrl+C to exit) <<<{kolor['OFF']}")
 				while True:
 					dr, _, _ = select.select([sys.stdin], [], [], 0)
 					if dr:
@@ -2859,7 +2861,7 @@ def get_uptime_sentence():
 		sentence = sentence_parts[0]
 	else:
 		sentence = ", ".join(sentence_parts[:-1]) + " and " + sentence_parts[-1]
-	return f"I'm running for ⏱️ {sentence} since {start_time.strftime('%H:%M')} local time {whatgmt()[0]} on {start_time.strftime("%d.%m.%Y")}.\n"
+	return f"I'm running for ⏱️ {sentence} since {start_time.strftime('%H:%M')} local time {whatgmt()[0]} on {start_time.strftime('%d.%m.%Y')}.\n"
 
 #-------------------------------------------------------
 def find_word_in_dicts(word, core):
@@ -2889,7 +2891,7 @@ def find_word_in_dicts(word, core):
 						print("")
 						break
 	if not selected_match:
-		print(f"{random.choice(core["brain_status"])}, {random.choice(core["brain_mood"])} I am {random.choice(core["brain_action"])} {random.choice(core["brain_target"])}.\n")
+		print(f"{random.choice(core['brain_status'])}, {random.choice(core['brain_mood'])} I am {random.choice(core['brain_action'])} {random.choice(core['brain_target'])}.\n")
 		return True
 
 	list_name = target_list
@@ -3066,11 +3068,11 @@ def find_word_in_dicts(word, core):
 		random.shuffle(messages['creative matter'])
 		canswers = random.choice(messages['creative matter'])
 		creative_random_anwser = canswers
-		print(str(creative_random_anwser + "\n%s \n") % (word.capitalize(), f"\U0001F5B3\uFE0F {list_name.replace("_"," ").title()}", dbsearch))
+		print(str(creative_random_anwser + "\n%s \n") % (word.capitalize(), f"\U0001F5B3\uFE0F {list_name.replace('_',' ').title()}", dbsearch))
 
 	elif list_name == "climate dictionary term":
 		climate_anwser = climate_dictionary[word]
-		print(f"The term {word.capitalize()} belongs to the {list_name.title()[0:18].replace("Climate ", "Climate Change ")} :\n {climate_anwser}\n")
+		print(f"The term {word.capitalize()} belongs to the {list_name.title()[0:18].replace('Climate ', 'Climate Change ')} :\n {climate_anwser}\n")
 
 	elif list_name == 'astronomy glossary':
 		columns, lines = shutil.get_terminal_size()
@@ -3339,7 +3341,7 @@ def calc_well_volume():
 		volume_m3 = area_base * altura
 		litros = volume_m3 * 1000
 		return (f"\nResults for {diametro}m in diameter and {altura}m from the height:\n"
-				f"{symb_prompt()} Volume: {round(volume_m3, 1)} m{"\u00B3"}\n"
+				f"{symb_prompt()} Volume: {round(volume_m3, 1)} m\u00B3\n"
 				f"{symb_prompt()} Total Capacity: {litros:,.0f} Liters\n")
 	except ValueError:
 		return f"{random.choice(messages['trouble_short'])} Enter only numbers (use a period instead of a comma).\n"
@@ -3930,7 +3932,7 @@ def random_season_activity():
 			conn = sqlite3.connect(db_filename)
 		else:
 			modname = "The " + db_filename.upper() + " database file is missing, and with no internet the online database is inaccessible. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting."
-			print(f"\n\033[1;31m {_spchar_[1:2]} {_title_}\033[0;0m: {modname}")
+			print(f"\nkolor['BOLD_RED'] {_spchar_[1:2]} {_title_}kolor['OFF']: {modname}")
 			sys.exit(0)
 
 		cursor = conn.cursor()
@@ -4036,7 +4038,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		dblrconn="offline [database file]"
 	else:
 		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
-		print("\n\033[1;31m " + _spchar_[1:2] + _title_ + "\033[0;0m" + ": " + modname)
+		print("\nkolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 		sys.exit(0)
 	
 	zdb = []
@@ -4227,7 +4229,7 @@ def get_cmdlinux(command_name):
 def chkpy():
 	if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
-		print("\n\033[1;31m " + symb_prompt() + _title_ + "\033[0;0m" + ": " + modname)
+		print("\nkolor['BOLD_RED'] " + symb_prompt() + _title_ + "kolor['OFF']" + ": " + modname)
 		return False
 	return True	
 
@@ -5295,7 +5297,7 @@ def set_system_country():
 		if user_input_code == "?":
 			print (f"Available {len(ncountries.items())} Country's for two-letter (Alpha2 Code):")
 			for country_name, details in ncountries.items():
-				print (f"  {details.get("alpha2")} - {country_name.title()}")
+				print (f"  {details.get('alpha2')} - {country_name.title()}")
 			print ("")
 			return False
 		found_country_name = None
@@ -5477,7 +5479,7 @@ def check_for_updates():
 			elif local_version_str < remote_version_str or local_revised_dt < remote_revised_dt:
 				print (f"{kolor['RED']}Atention!{kolor['OFF']} Your current version, {local_version_str} from {_revise_}, {kolor['BOLD_YELLOW']}is outdated.{kolor['OFF']}\n")
 			elif local_version_str > remote_version_str or local_revised_dt > remote_revised_dt:
-				print (f"You have a superior version {local_version_str} of {local_revised_dt.strftime("%d.%m.%Y")} than {remote_version_str} from {remote_revised_dt.strftime("%d.%m.%Y")}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
+				print(f"You have a superior version {local_version_str} of {local_revised_dt.strftime('%d.%m.%Y')} than {remote_version_str} from {remote_revised_dt.strftime('%d.%m.%Y')}. {kolor['BOLD_RED']}{random.choice(messages['qualify_adj']).upper()}!{kolor['OFF']} \n")
 			else:
 				print(f"{random.choice(messages['trouble_short'])} Unexpected comparison state.")
 		except Exception as e:
@@ -5990,7 +5992,7 @@ def main():
 	t.start()
 	#----------------------------
 	drawart('art_cybele')
-	print(f"\n{kolor[('YELLOW')]}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}{'\u269d'}{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
+	print(f"\n{kolor['YELLOW']}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}\u269d{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
 	print_statusline(f"{kolor[('CYAN')]}I stored in memory since my boot {str('{:,}'.format(midbcounter))} records in {get_uptime()[2]} sec.{kolor[('OFF')]}")
 	sleep(3.00)
 	print_statusline(f"\n")
@@ -6002,7 +6004,7 @@ def main():
 		question = get_question()
 		#-------------------------
 		if globals()['update_available']:
-			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime("%d.%m.%Y %H:%M:%S")} is available.{kolor['OFF']}")
+			print(f"\n{kolor['BOLD_YELLOW']}[!]{kolor['YELLOW']} A new database version from {dbrd.strftime('%d.%m.%Y %H:%M:%S')} is available.{kolor['OFF']}")
 			print("Type 'database update' to sync.\n")
 			globals()['update_available'] = False
 		if globals().get('nextneo'):
@@ -6117,7 +6119,7 @@ def main():
 		#///
 		elif any(word in question for word in user_utterances):
 			if 'astronomy terms' in question or 'astronomy words' in question or 'astronomy glossary' in question:
-				print (f"{showlisttell(core["astronomy glossary"], num_terms=5, category="terms")}.\n")
+				print (f"{showlisttell(core['astronomy glossary'], num_terms=5, category='terms')}.\n")
 
 			elif 'astronomy questions' in question or 'questions of astronomy' in question:
 				all_astro = core["qa-astro"]
@@ -6135,40 +6137,40 @@ def main():
 				print ("")
 
 			elif 'stars' in question or 'star names' in question:
-				print (f"{showlisttell(core["star name"], num_terms=5, category="Stars names")}.\n")
+				print (f"{showlisttell(core['star name'], num_terms=5, category='Stars names')}.\n")
 
 			elif 'asteroids' in question:
-				print (f"{showlisttell(core["asteroid"], num_terms=5, category="asteroids")}.\n")
+				print (f"{showlisttell(core['asteroid'], num_terms=5, category='asteroids')}.\n")
 
 			elif 'dangerous objects' in question:
-				print (f"{showlisttell(core["cneos"], num_terms=5, category="Dangerous Objects")}.\n")
+				print (f"{showlisttell(core['cneos'], num_terms=5, category='Dangerous Objects')}.\n")
 
 			elif 'old' in question or 'tech' in question:
-				print (f"{showlisttell(core["old_tech_term"], num_terms=5, category="old Tech terms")}.\n")
+				print (f"{showlisttell(core['old_tech_term'], num_terms=5, category='old Tech terms')}.\n")
 
 			elif 'constellations' in question:
-				print (f"{showlisttell(core["constelattion"], num_terms=5, category="Constellations")}.\n")
+				print (f"{showlisttell(core['constelattion'], num_terms=5, category='Constellations')}.\n")
 
 			elif 'climate change' in question or 'dictionary' in question:
-				print (f"{showlisttell(core["climate dictionary term"], num_terms=5, category="Climate Change Dictionary terms")}.\n")
+				print (f"{showlisttell(core['climate dictionary term'], num_terms=5, category='Climate Change Dictionary terms')}.\n")
 
 			elif 'meaning term' in question or 'meaning words' in question or 'meaning terms' in question:
-				print (f"{showlisttell(core["word meaning"], num_terms=5, category="Meaning Terms/Words")}.\n")
+				print (f"{showlisttell(core['word meaning'], num_terms=5, category='Meaning Terms/Words')}.\n")
 
 			elif 'linux commands' in question:
-				print (f"{showlisttell(core["linuxcmd"], num_terms=5, category="Linux commands")}.\n")
+				print (f"{showlisttell(core['linuxcmd'], num_terms=5, category='Linux commands')}.\n")
 
 			elif 'verbs' in question or 'english verbs' in question:
-				print (f"{showlisttell(knowledge["verb_base"], num_terms=5, category="some English verbs")}, that you can <conjugate>.\n")
+				print (f"{showlisttell(knowledge['verb_base'], num_terms=5, category='some English verbs')}, that you can <conjugate>.\n")
 
 			elif 'meteo' in question or 'meteorology' in question:
-				print (f"{showlisttell(core["meteo"], num_terms=5, category="meteorology terms")}.\n")
+				print (f"{showlisttell(core['meteo'], num_terms=5, category='meteorology terms')}.\n")
 
 			elif 'generations' in question or 'gens' in question:
 				list_generations()
 
 			elif 'oceanography' in question:
-				print (f"{showlisttell(core["oceanography"], num_terms=5, category="oceanography terms")}.\n")
+				print (f"{showlisttell(core['oceanography'], num_terms=5, category='oceanography terms')}.\n")
 			
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
@@ -6464,7 +6466,7 @@ def main():
 				print (f"{random.choice(messages['birthday_msg'])}\n")
 			else:
 				print(f"To who?! To Me ?!")
-				print(f"{random.choice(messages['birthday_short'])} You're trying to trick me, hmm? It's {month_name} {date.today().strftime("%d")} NOT {core['months'][int(_active_[3:5])-1].title()} {_active_[0:2]}. — BAD {os.getlogin().upper()}!\n")				
+				print(f"{random.choice(messages['birthday_short'])} You're trying to trick me, hmm? It's {month_name} {date.today().strftime('%d')} NOT {core['months'][int(_active_[3:5])-1].title()} {_active_[0:2]}. — BAD {os.getlogin().upper()}!\n")
 
 		elif question == 'merry christmas':
 			dt = date.today()
@@ -6622,7 +6624,7 @@ def main():
 				print(f"     Ocean : {len(core['oceanography'])}")
 				print(f"      AMOC : R{amoclen}|D{round(amoclen/2)}")
 				print(f"   Storage : {dblrconn}")
-				print(f"   Running : {days_running_str.replace(".","")}\n")
+				print(f"   Running : {days_running_str.replace('.','')}\n")
 
 			except Exception as e:
 				print(f"{kolor['BOLD_RED']}ERROR:{kolor['OFF']}Could not display info. Data might be incomplete or an unexpected issue occurred\n")
@@ -6664,7 +6666,7 @@ def main():
 		elif question[-9:] == 'about you':
 			random.shuffle(core['interjections'])
 			intj = random.choice(core['interjections'])
-			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(", 0:00:00","")} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
+			print (f"{intj}. My name is {_title_} and I was maded by {_author_.split()[0]} {str(days_till_today).replace(', 0:00:00','')} ago.\nI was builded primary in trinket.io platform to be built-in in elysia, is website as an extention and now, I'm here behing all this. {boutyou}\n")
 
 		# == "today"
 		elif re.compile(r'\b(?!.*weather)(date|(?<!weather-)now|today(?: is)?|what is the date|what is today|what day it is)\b(?!.*holiday)', re.IGNORECASE).search(question):
@@ -7238,7 +7240,7 @@ def main():
 			else:
 				output_db_file = f"{_title_.lower()}.db"
 				if os.path.exists(output_db_file):
-					print(f"I am already able to be fully functional in offline mode but I will update.")
+					print(f"I am already able to be fully functional in offline mode but i but I will update.")
 					delete_cybeledb()
 					download_database_update()
 				else:
