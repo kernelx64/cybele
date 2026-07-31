@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '10.07.2026'
+_revise_ = '29.07.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -4318,7 +4318,7 @@ def today_holiday():
 		return
 	else:
 		try:
-			country_holidays = holidays.CountryHoliday(country_code_for_holidays)
+			country_holidays = holidays.country_holidays(country_code_for_holidays)
 			if today in country_holidays:
 				holiday_name = country_holidays.get(today)
 				#print(f"{_spchar_[18:19]} Today in {country_code_for_holidays} is {holiday_name}")
