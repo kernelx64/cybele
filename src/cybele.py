@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '29.07.2026'
+_revise_ = '01.08.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -6036,7 +6036,7 @@ def main():
 			keyword = question.replace(" in linux", "").strip()
 			commands_by_explanation(linux_commands, keyword)
 
-		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]):
+		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]) and not "password":
 			print (random.choice(messages['badword_msg']) + "\n")
 		
 		elif any(word in question for word in core['information state']):
