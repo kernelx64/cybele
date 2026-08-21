@@ -28,7 +28,7 @@ version = '1.1.4'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '01.08.2026'
+_revise_ = '21.08.2026'
 _author_ = 'Adelino Saldanha'
 _pydr3_ = False
 
@@ -181,7 +181,7 @@ cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; nc
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
-BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; amoclen = 0
+BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; amoclen = 0; dbver = ""
 _h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
 
 #-----------------------------------------------------------
@@ -701,6 +701,7 @@ help = {
 	"help age calc": "Usage: age calc <date> | [diff]erence from <date> \nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help capitals": "Usage: capital of <country> | <capital> | <country> \n\nJust type directly the <capital> to know her country, \nJust type directly the <country> to know her capital, \n<capital of <country>> to show what is that Country Capital.\n",
 	"help check update": "Usage: check|last update \nDisplay the current script version and check for newer versions available in the GitHub repository.\nex: check update \n    last update\n",
+	"help chkver": "Usage: chkver \nDisplay the SHA1 of the current script and database so the user can verify if they are using the originals from www.adelinosaldanha.site/cybele.\nex: chkver \n",
 	"help conjugate": "Usage: conjugate <verb> \nDisplays the various conjugated forms of a verb (e.g., for different tenses, persons, and numbers).\nex: conjugate walk \n    conjugate communicate\n",
 	"help constellations": "Usage: <play|show me|list|stars from> constellations\nThe most commun available options for the constellations.\nex: show me some constellations\n    taurus\n    list constellations\n    stars from taurus\n",
 	"help convert": "Usage: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \nUnits: seconds|minutes|hours|week|km|feets|miles|yards|AU|m3|gallons|celcius|fahrenheit|kelvin \nex: convert 2 weeks to days \n    convert 4 days to minutes \n    convert 5 days in hours\n    convert 4 miles to km\n    convert 49213 yards in kilometers\n    convert 4 cubic meters in liters\n    convert 5 gallons to liters\n    convert 114 fahrenheit to celcius\n    convert 1 au to kilometers\n",
@@ -708,13 +709,14 @@ help = {
 	"help check database": "Usage: check database \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: check database \n    database info\n",
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
+	"help database info": "Usage: database info \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: database info \n    check database\n",
 	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
 	"help doy": f"Usage: doy <day number>|<date> of the year {datetime.now().year}. \nConverts the day number to date or vice-versa. \nex: doy 124\n    doy 04.05\n",
 	"help exit": "Usage: <exit> <quit> <bye> \nCommand to quit Cybele if you are using cmd or terminal in your OS .\nex: bye\n    quit\n",
-	"help elysia": f"Usage: elysia <created|went online> \nCommand to display the date when Elysia ({_author_.split()[0]} website) went global.\nex: elysian created\n    elysia went online\n",
+	"help elysia": f"Usage: elysia <created|went online> \nCommand to display the date when Elysia ({_author_.split()[0]} website) went global.\nex: elysia created\n    elysia went online\n",
 	"help favorite tvshows": "Usage: favorite|fav  tvshows \nCommand to extract from elysia website the favorite list.\nex: favorite tvshows\n    fav tvshows\n    <tvshow name> in fav\n    <tvshow name> in tvshows\n",
 	"help find": "Usage: find|seek <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: find help \n    seek astronomy questions\n",
 	"help fun fact": "Usage: <fun fact|fast fact> \nReturns: A random, interesting, and often surprising fact. \nex: fun fact \n    fast fact \n",
@@ -1198,6 +1200,7 @@ def check_database_version():
 	local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{nome_base}.db")
 	api_url = f"https://api.github.com/repos/kernelx64/{nome_base}/commits?path=src/{nome_base}.db&per_page=1"
 
+	dbver = "";
 	try:
 		res = requests.get(api_url).json()
 		if not res or not os.path.exists(local_path):
@@ -1213,6 +1216,7 @@ def check_database_version():
 		dbld = datetime.fromtimestamp(local_ts, timezone.utc)
 		dbrd = remote_dt
 
+		dbver = local_ts + 2
 		if remote_ts > (local_ts + 2):
 			update_available = True
 		else:
@@ -5988,8 +5992,9 @@ def main():
 	_portac_ = get_default_port()
 	t_neo = threading.Thread(target=get_next_asteroid, args=(1,), daemon=True)
 	t_neo.start()
-	t = threading.Thread(target=check_database_version, daemon=True)
-	t.start()
+	if dbver == "":
+		t = threading.Thread(target=check_database_version, daemon=True)
+		t.start()
 	#----------------------------
 	drawart('art_cybele')
 	print(f"\n{kolor['YELLOW']}{wms}\n\n{kolor['BLUE']}I am {kolor['RED']}{_title_} {kolor['RED']}\u269d{kolor['BLUE']}  a {website['home'][8:]} extention{kolor['OFF']}")
@@ -6238,7 +6243,7 @@ def main():
 			else:
 				print ("Yes, I can! See? This is a sentence! And I'm even not using NLP. type 'speak'.\n")
 
-		elif question.find('elysia created')!=-1 or question.find('elysia was created')!=-1 or question.find('elysia went online')!=-1:
+		elif question=='elysia' or question.find('elysia created')!=-1 or question.find('elysia was created')!=-1 or question.find('elysia went online')!=-1:
 			print("The website [elysia] was created in {} doing it online for {} days until today.\n".format(str(date(2010,12,9).strftime("%d.%m.%Y")), (date.today() - date(2010,12,9)).days))
 
 		elif any(word in question for word in core['question_word']) and "you born" in question:
@@ -6507,8 +6512,8 @@ def main():
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
-			chkids = f"and this {kolor['ORANGE']}IS NOT{kolor['OFF']} my {kolor['ORANGE']}original{kolor['OFF']} source code" if idcode != _chkcid_ else f"running via my {kolor['GREEN']}original{kolor['OFF']} source code"
-			nversion = f"I am {_title_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\nMy unique ID is '{_chkcid_}' {chkids}."
+			chkids = f"This {kolor['ORANGE']}IS NOT{kolor['OFF']} my {kolor['ORANGE']}original{kolor['OFF']} source code" if idcode != _chkcid_ else f"running via my {kolor['GREEN']}original{kolor['OFF']} source code"
+			nversion = f"I am {_title_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\n{chkids}."
 			print (nversion + "\n")
 
 		#------------------------------------------------
@@ -6631,8 +6636,8 @@ def main():
 
 		elif question == 'chkver':
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
-			_chkcid_ = f"✅" if cybelecode == idcode else f"❌"
-			print (f"\n 📁: {cybelecode} \n 🛢️: {idcode} \n   {symb_prompt()}{_chkcid_}\n")
+			cybeledata = ksha([_title_.lower()+chr(46)+chr(100)+chr(98)])[0][1]
+			print (f"\n 📁: {cybelecode} \n 🛢️: {cybeledata}\n")
 
 		# == "today activity":
 		elif re.compile(r'\b(today activity)\b', re.IGNORECASE).search(question):
@@ -7309,7 +7314,11 @@ def main():
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
 		
 		elif question == '#version':
-			print (f"I'm running in the {version} from {_revise_}.\n")
+			if dbver != "":
+				_dbver_ = datetime.fromtimestamp(dbver, timezone.utc)
+				print(f"I'm running in the {version} from {_revise_} with a database from {_dbver_.strftime('%d.%m.%Y @ %H:%M:%S')}.\n")
+			else:
+				print(f"I'm running in the {version} from {_revise_}.\n")
 
 		elif "panels tilt" in question or "panels angle" in question:
 			calcular_solar_sazonal()
