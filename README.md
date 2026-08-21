@@ -1,4 +1,4 @@
-# ⚠️ PROJECT STATUS / AVISO IMPORTANTE
+# ⚠️ AVISO IMPORTANTE / PROJECT STATUS
 
 🤖 Cybele
 Cybele é um chatbot baseado em Python, focado em conhecimento curado e ferramentas funcionais. Desenvolvido com um design retro, funciona de forma offline e portátil (compatível com Android/iOS via interpretador Python 3.10+).
