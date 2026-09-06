@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '01.09.2026'
+_revise_ = '05.09.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.6-flash'
 _apikey_ = ''
@@ -61,18 +61,20 @@ REQUIRED_PACKAGES = {
 	'google.genai': 'google-genai'
 }
 _pydr3_ = 'pydroid' in sys.executable.lower()
+if _pydr3_:
+	REQUIRED_PACKAGES.pop('google.genai', None)
+
 def install_and_check():
-	if _pydr3_:
-		for pkg in ['numpy', 'pandas','requests']:
-			try:
-				importlib.import_module(pkg)
-			except ImportError:
-				print(f"\n{kolor['RED']}WARNING:{kolor['OFF']} The package '{pkg}' is necessary.")
-				if pkg == 'requests':
-					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Install'.")
-				else:
-					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Quick Install'.")
-				sys.exit()
+	for pkg in ['numpy', 'pandas','requests']:
+		try:
+			importlib.import_module(pkg)
+		except ImportError:
+			print(f"\n{kolor['RED']}WARNING:{kolor['OFF']} The package '{pkg}' is necessary.")
+			if pkg == 'requests':
+				print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Install'.")
+			else:
+				print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Quick Install'.")
+			sys.exit()
 
 	needed = []
 	for module in REQUIRED_PACKAGES:
@@ -136,13 +138,13 @@ from platform import python_version
 from time import gmtime, strftime, sleep
 from math import degrees as deg, radians as rad
 from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-#from datetime import datetime, date, time, timedelta, timezone, UTC
 from datetime import datetime, date, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 from itertools import product
-from google import genai
 from skyfield.api import load, wgs84, Star
 from skyfield.data import hipparcos
+if not _pydr3_:
+    from google import genai
 
 import serial
 #----------------------------------------------------
