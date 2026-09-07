@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '05.09.2026'
+_revise_ = '07.09.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.6-flash'
 _apikey_ = ''
@@ -42,7 +42,6 @@ import sys,re
 import subprocess
 import importlib
 import time
-import pty
 
 kolor = {'CYAN':'\033[0;36m','RED':'\033[0;31m','GREEN':'\033[32m','ORANGE':'\033[38;5;208m','OFF':'\033[0m', }
 
@@ -129,7 +128,11 @@ import textwrap
 import numpy as np
 import skyfield
 import pandas
+if not _pydr3_:
+    from google import genai
 from urllib.parse import urljoin
+if 'linux' in sys.executable.lower():
+    import pty
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
@@ -143,8 +146,6 @@ from zoneinfo import ZoneInfo
 from itertools import product
 from skyfield.api import load, wgs84, Star
 from skyfield.data import hipparcos
-if not _pydr3_:
-    from google import genai
 
 import serial
 #----------------------------------------------------
@@ -3161,7 +3162,7 @@ def find_word_in_dicts(word, core):
 
 	elif list_name == 'linuxcmd':
 		if not platform.system() == "Linux":
-			print("This feature is only available in Linux environments.")
+			print("This feature is only available in Linux environments.\n")
 		else:
 			if runlinux == True:
 				print(f"{kolor['VIVID_WHITE']}{_spchar_[16:17]} Linux command detected. {kolor['GREEN']}Executing, {kolor['VIVID_WHITE']}disallowed parameters:{kolor['OFF']}\n")
@@ -7904,13 +7905,16 @@ def main():
 			print_linux_commands()
 
 		elif question.startswith("run linux commands"):
-			partes = question.split()
-			if len(partes) == 4 and partes[3].lower() in ("on", "off", "1", "0"):
-				global runlinux
-				runlinux = partes[3].lower() in ("on", "1")
-				print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Linux command execution {'enabled' if runlinux else 'disabled'}.\n")
+			if not platform.system() == "Linux":
+				print("This feature is only available in Linux environments.\n")
 			else:
-				print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Usage: run linux commands ON | OFF\n")
+				partes = question.split()
+				if len(partes) == 4 and partes[3].lower() in ("on", "off", "1", "0"):
+					global runlinux
+					runlinux = partes[3].lower() in ("on", "1")
+					print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Linux command execution {'enabled' if runlinux else 'disabled'}.\n")
+				else:
+					print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Usage: run linux commands ON | OFF\n")
 
 		elif question == 'test' or question == 'teste':
 			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
