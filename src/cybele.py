@@ -15,7 +15,7 @@ ETHICS_STATEMENT = """
 # This script is shared under the **GNU GPL v2** to promote learning and freedom. The license permits commercial use, but the spirit of Open Source requires integrity.
 # While some may choose to profit without contributing, the ultimate truth remains:
 # > **"Laugh at the ledger, but know this: While you charge for the fish, I still hold the deed to the sea. The credit for creation is the only currency that never depreciates."**
-# Please respect the lineage of this project. Contribute back if you can, and always preserve the original 
+# Please respect the lineage of this project. Contribute back if you can, and always preserve the original
 # **Copyright (C) 2023 Adelino Saldanha** in all distributed source code.
 """
 
@@ -24,12 +24,14 @@ lat = 41.5454
 lon = -8.4265
 
 # some static global cybele variables
-version = '1.1.4'
+version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '21.08.2026'
+_revise_ = '07.09.2026'
 _author_ = 'Adelino Saldanha'
+_gmodel_ = 'gemini-3.6-flash'
+_apikey_ = ''
 _pydr3_ = False
 
 # Change here your MPPT COM port number for all the OS system's
@@ -54,21 +56,24 @@ REQUIRED_PACKAGES = {
 	'holidays': 'holidays',
 	'random_word': 'random_word',
 	'pytz': 'pytz',
-	'tzdata': 'tzdata'
+	'tzdata': 'tzdata',
+	'google.genai': 'google-genai'
 }
 _pydr3_ = 'pydroid' in sys.executable.lower()
+if _pydr3_:
+	REQUIRED_PACKAGES.pop('google.genai', None)
+
 def install_and_check():
-	if _pydr3_:
-		for pkg in ['numpy', 'pandas','requests']:
-			try:
-				importlib.import_module(pkg)
-			except ImportError:
-				print(f"\n{kolor['RED']}WARNING:{kolor['OFF']} The package '{pkg}' is necessary.")
-				if pkg == 'requests':
-					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Install'.")
-				else:
-					print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Quick Install'.")
-				sys.exit()
+	for pkg in ['numpy', 'pandas','requests']:
+		try:
+			importlib.import_module(pkg)
+		except ImportError:
+			print(f"\n{kolor['RED']}WARNING:{kolor['OFF']} The package '{pkg}' is necessary.")
+			if pkg == 'requests':
+				print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Install'.")
+			else:
+				print("In Pydroid3, Install it manually via:\nMenu ☰ 'Pip' -> 'Quick Install'.")
+			sys.exit()
 
 	needed = []
 	for module in REQUIRED_PACKAGES:
@@ -76,7 +81,7 @@ def install_and_check():
 			importlib.import_module(module)
 		except ImportError:
 			needed.append(module)
-	
+
 	if not needed:
 		return
 
@@ -123,7 +128,11 @@ import textwrap
 import numpy as np
 import skyfield
 import pandas
+if not _pydr3_:
+    from google import genai
 from urllib.parse import urljoin
+if 'linux' in sys.executable.lower():
+    import pty
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
 from bs4 import BeautifulSoup
@@ -132,7 +141,6 @@ from platform import python_version
 from time import gmtime, strftime, sleep
 from math import degrees as deg, radians as rad
 from math import floor, ceil, pi, atan, tan, sin, asin, cos, acos
-#from datetime import datetime, date, time, timedelta, timezone, UTC
 from datetime import datetime, date, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 from itertools import product
@@ -163,8 +171,6 @@ def print_statusline(msg: str):
     sys.stdout.flush()
     setattr(print_statusline, 'last_msg', msg)
 #-----------------------------------------------------------
-print_statusline(f"\nLoading ...")
-#-----------------------------------------------------------
 iknow_pun = {"i know": "you know","you know": "i know"}
 chkcyb = "Ngtnmahkbsxw Fhwbybvtmbhg Wxmxvmxw.\n   Kxlixvmbgz max tnmahk'l vhgmkbunmbhgl bl yngwtfxgmte mh max ikbgvbiexl hy hixg-lhnkvx wxoxehifxgm.\n   Xqbmbgz."
 seecoor = "Etmbmnwx tgw ehgzbmnwx kxjnbkxw otenxl tkx ghm gnfxkbvl hk bgvhkkxvml."
@@ -181,7 +187,7 @@ cybelecode = []; special_dates_dict = {}; asteroids_list = {}; cneos_list={}; nc
 tvshows_cache = []; gamescore=[-1,0,0]; _portac_ = None; people_space = {}; webshare = {}; shift = 45; version_val = 0
 nextneo = False; as_quotes = []; presence_online = {}; csugestions = []; chkdict = []; dbrd = None; dbld = None
 BRADR_EN = "cookn://vkd.wvnzmjr.dj/vkd/yvovwvnz/mjrn/ovwgz/{0}/?pnzm_adzgy_ivhzn=ompz&nduz=200&jmyzm_wt=-yjt"
-BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; amoclen = 0; dbver = ""
+BRTID_EN="OTQ1MDM0"; BRTK_EN="a2RZalhTVnUydHRKRmlJRHZkZFF6S0R0NXRlc0NydDM="; amoclen = 0; dbver = ""; runlinux = False
 _h_key_64 = "QXV0aG9yaXphdGlvbg=="; _h_val_64 = "VG9rZW4g"
 
 #-----------------------------------------------------------
@@ -215,12 +221,17 @@ kolor = {
 	'WHITE':'\033[0;37m','YELLOW':'\033[0;33m','GREEN':'\033[0;32m','BLUE':'\033[0;34m','CYAN':'\033[0;36m',
 	'RED':'\033[0;31m','MAGENTA':'\033[0;35m','BLACK':'\033[0;30m',
 	'VIVID_RED':'\033[91m','VIVID_GREEN':'\033[92m','VIVID_YELLOW':'\033[93m','VIVID_BLUE':'\033[94m',
-	'VIVID_MAGENTA':'\033[95m','VIVID_CYAN':'\033[96m','VIVID_WHITE':'\033[97m',
+	'VIVID_MAGENTA':'\033[95m','VIVID_CYAN':'\033[96m','VIVID_WHITE':'\033[97m','GRAY': '\033[90m',
 	'DARK_BLACK':'\033[30m','DARK_RED':'\033[31m','DARK_GREEN':'\033[32m','DARK_YELLOW':'\033[33m',
 	'DARK_BLUE':'\033[34m','DARK_MAGENTA':'\033[35m','DARK_CYAN':'\033[36m','DARK_WHITE':'\033[37m',
 	'DIM_BLACK':'\033[2;30m','DIM_RED':'\033[2;31m','DIM_GREEN':'\033[2;32m','DIM_YELLOW':'\033[2;33m',
 	'DIM_BLUE':'\033[2;34m','DIM_MAGENTA':'\033[2;35m','DIM_CYAN':'\033[2;36m','DIM_WHITE':'\033[2;37m',
-	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m'
+	'ORANGE': '\033[38;5;208m','OFF':'\033[0m','RESET':'\033[0m','SW_CRAWL': '\033[93m','SABER_BLUE': '\033[96m',
+	 #Cores Google oficiais para o autómato do prompt
+    'G_BLUE': '\033[38;5;33m',
+    'G_RED': '\033[38;5;196m',
+    'G_YELLOW': '\033[38;5;220m',
+    'G_GREEN': '\033[38;5;46m'
 }
 #----------------------------------------------------------
 art_world = [
@@ -237,7 +248,17 @@ art_cybele = [
 	[95,47,32,95,95,95,92,60,32,32,32,124,32,32,124,32,124,32,95,95,32,92,32,95,47,32,95,95,32,92,32,124,32,32,124,32,32,95,47,32,95,95,32,92],
 	[92,32,32,92,95,95,95,32,92,95,95,95,32,32,124,32,124,32,92,95,92,32,92,92,32,32,95,95,95,47,32,124,32,32,124,95,95,92,32,32,95,95,95,47],
 	[32,92,95,95,95,32,32,62,47,32,95,95,95,95,124,32,124,95,95,95,32,32,47,32,92,95,95,95,32,32,62,124,95,95,95,95,47,32,92,95,95,95,32,62],
-	[32,32,32,32,32,92,47,32,92,47,32,32,32,32,32,32,32,32,32,32,92,47,32,32,32,32,32,32,92,47,32,32,32,32,32,32,32]
+#	[32,32,32,32,32,92,47,32,92,47,32,32,32,32,32,32,32,32,32,32,92,47,32,32,32,32,32,32,92,47,32,32,32,32,32,32,32]
+	[32,32,32,32,32,92,47,32,92,47,32,32,32,32,32,32,32,32,32,32,92,47,32,32,32,32,32,32,92,47,32,32,32]
+]
+art_gem = [
+	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,46,95,95,32,32,32,32,32,32,32,46,95,95],
+	[32,32,32,95,95,95,95,32,32,32,95,95,95,95,32,32,32,95,95,95,95,95,32,124,95,95,124,32,95,95,95,95,32,124,95,95,124,32],
+	[32,32,47,32,95,95,95,92,95,47,32,95,95,32,92,32,47,32,32,32,32,32,92,124,32,32,124,47,32,32,32,32,92,124,32,32,124],
+	[32,47,32,47,95,47,32,32,62,32,32,95,95,95,47,124,32,32,89,32,89,32,32,92,32,32,124,32,32,32,124,32,32,92,32,32,124],
+	[32,92,95,95,95,32,32,47,32,92,95,95,95,32,32,62,95,95,124,95,124,32,32,47,95,95,124,95,95,95,124,32,32,47,95,95,124],
+	[32,92,95,95,95,32,32,47,32,92,95,95,95,32,32,62,95,95,124,95,124,32,32,47,95,95,124,95,95,95,124,32,32,47,95,95,124],
+	[47,95,95,95,95,95,47,32,32,32,32,32,32,92,47,32,32,32,32,32,32,92,47,32,32,32,32,32,32,32,32,92,47]
 ]
 art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX XXXXXX\033[m        ",
 	"         \033[1;34m''""XXXXX\033[m        ","   \033[1;34m.XXXXXXXXXXXXXX\033[m \033[1;33mXXXX.\033[m  ",
@@ -246,6 +267,7 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [129150,32,98,121,32,65,83]
+art_with_ai = [32, 119, 105, 116, 104, 32, 65, 73]
 #------------------------------------------------------------
 star_wars_quotes = [
 	"Do or do not. There is no try. — Yoda",
@@ -352,6 +374,78 @@ core = {
 	"thank_you":	["thank you", "thanks", "thx", "much appreciated", "cheers"],
 	"to_thank":	["You're welcome!","No problem.","Anytime!","Happy to help.","My pleasure.","Don't mention it.","No worries.","Glad I could be of assistance.","Sure thing!","The pleasure is all mine.","It was nothing.","Much obliged."]
 }
+core_gem = {
+	"intromsg": {
+		"en": [
+			"Welcome.", "Greetings.", "Entertain.", "Glad you're here!", "Delighted to have you!",
+			"Fantastic to see you!", "Awesome you're here!", "Stoked you're here!", "Pleasure to have you!",
+			"Delighted to welcome you!", "Is a privilege to host you!", "Honored to have you join us.",
+			"A warm welcome to you.", "Truly a pleasure to meet you.", "So glad you could make it!",
+			"Great to see you in the mix!", "Look who decided to drop by!", "Hi! Let’s get started.",
+			"Make yourself at home!", "Step right in!", "The legend has arrived!",
+			"Your presence makes this better.", "Welcome to the party."
+		],
+		"pt": [
+			"Bem-vindo.", "Saudações.", "Entra e diverte-te.", "Ainda bem que estás aqui!",
+			"É um gosto ter-te cá!", "Fantástico ver-te!", "Excelente ter-te por cá!",
+			"Que bom ver-te!", "É um prazer receber-te!", "É um privilégio hospedar-te!",
+			"Honrado por te juntares a nós.", "Uma calorosa boas-vindas.", "Verdadeiramente um prazer conhecer-te.",
+			"Ainda bem que conseguiste vir!", "Bom ver-te no ativo!", "Olha quem decidiu aparecer!",
+			"Olá! Vamos começar.", "Sente-te em casa!", "Sente-te à vontade!",
+			"A lenda acabou de chegar!", "A tua presença torna isto melhor.", "Bem-vindo à festa."
+		]
+	},
+	"exitmsg": {
+		"en": [
+			'It was a pleasure.', 'Until next time!', 'Until we meet again!', 'Looking forward.',
+			'Have a good one.', 'Take care.', 'Catch you later!', 'Peace Out.', 'Farewell.'
+		],
+		"pt": [
+			'Foi um prazer.', 'Até à próxima!', 'Até nos voltarmos a ver!', 'Fico a aguardar.',
+			'Passa um bom dia.', 'Toma cuidado.', 'Ate logo!', 'Força e paz.', 'Adeus.'
+		]
+	},
+	"loading_ai": {
+		"en": [
+			'Calibrating artificial neurons... Almost ready for your command.',
+			'Establishing a neural link with the matrix. Hold on a sec...',
+			'Compiling wisdom and shaking off the digital rust. Here I come!',
+			'Establishing a secure quantum tunnel... Grab a coffee, Ill handle the rest.',
+			'Plugging into the power... Give me a second to wake up.',
+			'Checking if I left the oven on... Just kidding! Loading the API...',
+			'Negotiating with the servers so we can be friends. Ill reply in a moment.',
+			'Gathering cosmic energy... Ready to shine in 3, 2, 1...',
+			'Waking up the intelligence... 🤖',
+			'Aligning the planets and the endpoints...',
+			'Brewing up some magic...'
+		],
+		"pt": [
+			'A calibrar os neurónios artificiais... Quase a postos para tí.',
+			'A estabelecer ligação neural com a matriz. Segura-te aí por um segundo...',
+			'A compilar sabedoria e a sacudir a ferrugem digital. Já lá vou!',
+			'A estabelecer túnel quântico seguro... Apanha um café, eu trato do resto.',
+			'A ligar os cabos à corrente... Dá-me um segundo para acordar.',
+			'A verificar se deixei o forno ligado... Brincadeira! A carregar a API...',
+			'A negociar com os servidores para sermos amigos. Já respondo.',
+			'A acumular energia cósmica... Prontinho a brilhar em 3, 2, 1...',
+			'A despertar a inteligência... 🤖',
+			'A alinhar os planetas e os endpoints...',
+			'A preparar a magia...'
+		]
+	},
+	"spinner": {
+		"en": ['Thinking', 'Consulting neural matrix', 'Processing data'],
+		"pt": ['A pensar', 'A consultar a matriz neural', 'A processar dados']
+	},
+	"deactivate": {
+		"en": 'Deactivating neural connection...',
+		"pt": 'A desativar a ligação neural...'
+	},
+	"ctrl": {
+		"en": 'Interrupted by the user by CTRL+C ...',
+		"pt": 'Interrompido pelo utilizador via Ctrl+C ...'
+	}
+}
 #-------------------------------------------------------------
 user_utterances = [f"{c} {o}" for c, o in product(core["display_commands"], core["display_options"])]
 #-------------------------------------------------------------
@@ -361,13 +455,13 @@ knowledge = {
         "noun_uncountable": ["water", "music", "sadness", "happiness", "food"],
         "noun_abstract": ["idea", "solution", "sadness", "happiness"],
 		# ... (other existing ) ...
-		
+
 		"pronoun_singular_third":	["he", "she", "it", "him", "her", "his", "hers", "its", "himself", "herself", "itself"],
 		"pronoun_first_second_plural":	["we", "us", "our", "ours", "ourselves", "you", "your", "yours", "yourselves"],
 		# ... (other existing ) ...
 
         "subject": [], # Failsafe key
-        "determiner": ["the", "some", "a", "an"], 
+        "determiner": ["the", "some", "a", "an"],
         "aux_be_present_I": ["am"],
         "aux_be_present_singular_third": ["is"],
         "aux_be_present_plural": ["are"],
@@ -412,7 +506,7 @@ messages = {
 				"As long as your keys aren't playing a game of Twister, we won't have any communication breakdowns.",
 				"My processing is sharp, but I don't have the 'Spilled Coffee on the Layout' plugin yet.",
 				"Unless your 'Enter' key has developed a mind of its own, I’ve got exactly what you’re saying."],
-	
+
 	"clocktime":	["It's {time}, though I suspect that clock three inches above my window is slightly more aesthetically pleasing.",
 					"The time is {time}, but since we're both staring at a screen that displays it in two different corners, this feels a bit redundant, doesn't it?",
 					"I could tell you it's {time}, or you could save us both the processing power by glancing at the taskbar.",
@@ -455,7 +549,7 @@ messages = {
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression.",
 						"I would characterize '%s' as a %s idea." , "The word '%s' is a %s concept." , "I find '%s' to be a very %s term.",
 						"The word '%s' is full of %s possibilities." , "I perceive '%s' as a %s phenomenon." , "The word '%s' is a %s expression."],
-	
+
 	"earlier_nyear":	["You're a little early, but thanks for the optimism!", "New Year's cheer eariler!? I like your style!",
 					"Hold that thought! We've got a few time to go.", "Woah there, partner! Let's not get ahead of ourselves.",
 					"Is it December already? Time flies when you're having fun! You think...", "You're officially the most prepared person I know.",
@@ -500,13 +594,13 @@ messages = {
 					"I'm ready to hit the reset button and start fresh. Happy New Year!", "I'm not sure what's ahead, but I'm bringing snacks. Happy New Year!",
 					"New year, new you. Let's make it count!", "Believe in yourself and great things will happen. Happy New Year!",
 					"Let's turn our dreams into reality. Happy New Year!", "It's a new chapter. Write a good one.","Here's to a brighter future!"],
-	
+
 	"nicefun_msg":	["You've reached your daily limit! Please check back tomorrow for more.","That's all for today! Your daily allowance will reset at midnight.",
 					"Looks like you've enjoyed your fill for today. Come back tomorrow for fresh content!","Daily limit reached. New content will be available after your local midnight.",
 					"You've hit your daily quota! We'll have more for you tomorrow.","All out for today! We're saving some good stuff for you for tomorrow.",
 					"Thanks for engaging! You've reached your daily maximum. See you tomorrow!","Oops, you've exhausted your daily supply! More will be ready for you soon.",
 					"Time for a break! Your daily limit has been met. Enjoy the rest of your day and return tomorrow.","Your daily dose is complete! Look forward to more when the clock strikes midnight."],
-		
+
 	"notchristmas":	["Wow, you're really getting a head start on the holiday season!","I'm still recovering... Maybe you can lend me your time machine?",
 					"Merry Christmas to you too! Just kidding, it's "+month_name+"!.","Thanks for the early holiday cheer.",
 					"I'll try to save it for later.","Is this a new kind of time travel?","I'm definitely not ready for snow and eggnog yet.",
@@ -522,7 +616,7 @@ messages = {
 					"I've got 99 problems, but a **holiday** ain't one... mainly because I'm already on one.",
 					"My bank account on **holiday** feels like a public service announcement",
 					"Warning: May cause extreme joy, followed by mild panic."],
-					
+
 	"no_internet":	["To perform this task, an active internet connection is required.","Please ensure you have an internet connection to complete this operation.",
 					"This feature necessitates an active internet connection.","An internet connection is essential for this action.",
 					"You'll need an active internet connection to proceed.","Internet connectivity is required for this function.",
@@ -574,7 +668,7 @@ messages = {
 				"e,m or h, not e=mc2 and allready is a problem? Use magic, coffee or nap!","Life's tough? Choose chill, grill or spill!",
 				"Need a vacation allready? Visit Mars, Jupiter or Venus!","Feeling overwhelmed by e,m or h? Try yoga, nap or laugh!",
 				"Stressed about e,m or h choice? Blame aliens, cats or dreams!"],
-				
+
 	"math_trouble":	["Oh dear, my digital abacus just declared bankruptcy trying to count that high. Perhaps a smaller number?",
 					"My circuits are threatening to go on strike if I try to compute that! Let's keep it reasonable, shall we?",
 					"That number is so big, it just broke my virtual calculator. Could we try a little less... epic?",
@@ -599,10 +693,10 @@ messages = {
 	"loadings":	["Loading core data structures...","Loading essential data core...","Initializing core components...",
 				"Allocating memory resources...","Activating primary functions...","Preparing user components...",
 				"Optimizing runtime environment..."],
-				
+
 	"preambles":	["Here's a word for you:","How about this one:","My word for you is:","Consider this word:",
 					"A random word:","Perhaps this word will interest you:"],
-					
+
 	"qualify_adj":	["amazing", "epic", "stunning", "unbelievable", "incredible","breathtaking", "spectacular",
 					"mind-blowing", "phenomenal", "awe-inspiring","unforgettable", "magnificent", "glorious", "powerful",
 					"impressive", "stupendous"],
@@ -683,13 +777,15 @@ topics = ["astronomy glossary","planets","planet orbit","orbits acronyms","types
 		"linux command","multiplication table","phonetic alphabet","morse code encoding/decoding","how many days till","moon phases","yoda say","today activity",
 		"art python","favorite tvshows","favorite movies","astronomy questions","difference from <date>","age calc <from date>","show you the meaning of some words or terms",
 		"generate passwords (genpwd)","recently added tvshows","protect image","fast fact","nice thing","gps to distance","dangerous celestial objects","mppt","solar",
-		"longest day","shortest day","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit",
+		"longest day","shortest day","process amoc","offline mode","meteorology terms","gridflow","ifremer data","amoc data","amoc audit","amoc deltas",
 		"list and calculate person generation","oceanography terms"]
 
 #------------------------------------------------------------
 help = {
+	"help ai":"Usage: ai|gemini ai \nA sleek, lightweight client console tool to direct interaction with the Google Gemini AI. \nex: ai \n    gemini ai\n",
 	"help about you":"Usage: ...about you \nTriggers my biography. You can ask naturally or use the direct phrase to hear about my origins and my creator. \nex: tell me about you \n    what are you\n    who are you\n",
 	"help amoc audit": "Usage: amoc audit <month|date|between dates> \nDisplays the Ground Truth Audit for AMOC data from Ifremer. You can view a single day, the current month, or a specific date range within the same year. \nex: amoc audit               (Current day)\n    amoc audit month         (Full data for the current month)\n    amoc audit 15.04.2026    (Specific date)\n    amoc audit 01.04 15.04   (Range between two dates)\n",
+	"help amoc delta": "Usage: [min|max] amoc delta [month|year]\nDisplays the AMOC delta history, dates, and analytics (MAX, MIN, AVG).\nex: amoc delta \n    amoc delta may \n    amoc delta year\n    max amoc delta month may\n    min amoc delta year\n    max amoc delta month 1\n",
 	"help amoc resume": "Usage: amoc resume \nRetrieves and calculates the daily average of AMOC delta values for the last 15 days from the system date. \nex: amoc resume \n",
 	"help ascii table": "Usage: ascii table \nThis table is styled after the legendary Norton Commander and Turbo Pascal interfaces. These were the 'Text User Interfaces' (TUIs) that ruled the DOS era. \nex: ascii table\n",
 	"help art python": "Usage: <art python|python art> \nDisplays a stylized ASCII art representation of the Python logo. This command serves as a visual nod to the foundational programming language used to build and power the core logic of this system. \nex: art python\n    python art\n",
@@ -710,7 +806,7 @@ help = {
 	"help days for": "Usage: days for <Christmas/New year/Birthday> \nReturns the number of days left to the event questioned.\n",
 	"help dangerous objects": "Usage: <dangerous objects> \nDisplays information about the Celestial Dangerous Objects, the CNEOS List \nex: 29075 (1950 da)\n",
 	"help database info": "Usage: database info \nCompare the local database file from Cybele matches with the available in the GitHub repository or needs update.\nex: database info \n    check database\n",
-	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",	
+	"help default country off": "Usage: default country off \nDeactivate the manual country override to revert to the system's automatic country detection.\n",
 	"help days till": "Usage: days till/to <Christmas/New year/Birthday/User Date> \nReturns the number of days left to the event questioned or the user date entered.\nex: days till new year \n    days till 31.12.2030\n",
 	"help difference from": "Usage: [diff]erence from <date> | age calc <date>\nReturns the difference between the digited date to the actual instante in years, months, days, hours, minutes, seconds.\n",
 	"help distance from": "Usage: distance from <planet/moon> to <planet/moon> \nex: distance from venus to moon, distance from earth to moon, distance from earth to neptune\n",
@@ -721,6 +817,7 @@ help = {
 	"help find": "Usage: find|seek <topic> \nReturns the 'help from' if there is any information or topic about the questioned command.\nex: find help \n    seek astronomy questions\n",
 	"help fun fact": "Usage: <fun fact|fast fact> \nReturns: A random, interesting, and often surprising fact. \nex: fun fact \n    fast fact \n",
 	"help games": "Usage: play <game> \nPlay the game you digited. \nex: play capitals \n    play constelations\n    play elements \n    play math\n",
+	"help gemini ai":"Usage: gemini ai|ai \nA sleek, lightweight client console tool to direct interaction with the Google Gemini AI. \nex: gemini ai \n    ai\n",
 	"help genpwd": "Usage: genpwd <number of passwords> <lenght of the passwords> \nGenerate the number of passwords with the lenght you ask. \nex: genpwd 1 8\n    genpwd 20 64\n",
 	"help generation": "Usage: <generation> \nShow the generation, years and the people age based on the current year.\nex: gen x \n    age 53\n    list me generations\n",
 	"help get ifremer data":"Usage get ifremer data [day] [year] \nDownloads North Atlantic SST data from Ifremer (OSI SAF). If no arguments are provided, it defaults to the current day and year. \nget ifremer data          -> Syncs today's data\nget ifremer data 85       -> Syncs day 85 of the current year\nget ifremer data 85 2025  -> Syncs day 124 of year 2025\n",
@@ -731,6 +828,7 @@ help = {
 	"help happy valentines": f"Usage: happy valentines \nDisplay a Valentines message for you. \nex: happy valentines \n",
 	"help hashfile": "Usage: hashfile <filename> or [<path and filename> ...] \nCreate the unique SHA-1 id for the typed file. \nex: hashfile cybele.py \n    hashfile /home/cybele.py \n",
 	"help help": "Usage: help | help <starting letter> or help <command>\nDisplays the help commands list filtered or full or the specific help structure for the related command.\nex: help s\n    help conjugate\n    help orbit\n    help nice thing\n    help today activity\n",
+	"help help linux command": "Usage: help <linux command> \nShow the linux command help in a short explanation and examples. Can be used mixed with 'show me linux commands' or 'view linux commands' commands.\nex: help uname \n    show me linux commands \n    view linux commands \n",
 	"help how many": "Usage: how many <astronomy terms|asteroids|dangerous objects|star names|capitals|countries|linux commands|verbs> \nResponds to the question made by the user with the respective data. (eg. how many <capitals> do you know)\n",
 	"help holidays": "Usage: <holidays <Two-letters country code>> \nDisplay the current year Holidays for the country given by the two-letters country code. \nex: holidays \n",
 	"help infostar": "Usage: infostar <name of the star> \nQueries the SIMBAD database to retrieve physical data,coordinates, and identifiers for a specific celestial object. \nex: infostar polaris \n    infostar alpha centauri\n",
@@ -738,9 +836,8 @@ help = {
 	"help license": "Usage: license \nDisplays the legal terms and author’s philosophy regarding the use, modification, and distribution of the software. \nex: license \n",
 	"help list askard": "Usage: <list askard> | list askard <start> <end>. \nDo a complete List of the askards in the database or from a <start> to a <end>.\nex: list askard\n    list askard 4005 4010\n",
 	"help list constellations": "Usage: <list constellations> | list constellations <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the constellations in the database or from a <start> to a <end>.\nex: list constellations\n    list constellations t u\n",
-	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",	
+	"help list oldtech": "Usage: <list oldtech> | list oldtech <alphabetically word begin> <alphabetically word end>. \nDo a complete List of the oldtech terms in the database or from a <start> to a <end>.\nex: list oldtech\n    list oldtech web www\n",
 	"help list stars": "Usage: <list stars <alphabetically word begin> <alphabetically word end>. \nList constellations in the database from a <start> to a <end>.\nex: list stars t u\n",
-	"help linux command": "Usage: <linux command> \nTyped directly the linux command shows a short explanation and examples. Can be used mixed with 'show me linux commands' command.\nex: uname -a \n    show me linux commands \n",
 	"help limits": "Usage: usage <limits <askard|astronomy|oldtech|<meteo|meteorology>|climate|amoc|oceanography> \nShow the first and last record in the selected database.\nex: limits oldtech\n",
 	"help list askard": "Usage: list askard|<begin substring> <ending substring> \nReturn the entire list of askard's or for the required range.\nex: list askard \n    list askard 4005 4010\n",
 	"help list me": "Usage: list me star names|constellations|<asteroids|dangerous> objects|astronomy questions|verbs| \n"+(" "*15)+"old tech words|linux commands|climate change terms|<meteo|meteorology>|generations \nReturn the values or the data for the required subject.\nex: list me verbs \n    list me linux commands\n    list me old tech\n",
@@ -750,8 +847,8 @@ help = {
 	"help merry christmas": f"Usage: merry christmas \nDisplay in the Christmas season a Message with 'some grifts' . \nex: merry christmas \n",
 	"help morse": "Usage: morse <word/phrase> \nTranslate to morse code the digited word or phrase. \nex: morse cybele\n",
 	"help morse code": "Usage: morse <word/phrase> | demorse <word/phrase> \nEncode to morse code | Decode from morse code : the digited <word/phrase> \nex: morse cybele\n    demorse -.-. -.-- -... . .-.. .\n",
-	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",	
-	"help month": "Usage: month [name] \nProvides detailed information for a specific or current month, including its numerical order, leap year status for the current year, and its corresponding season based on your hemisphere. \nex: may \n",	
+	"help moon phase": "Usage: moon phase \nProvides comprehensive information about the current or specified moon phase. \nex: moon phase \n",
+	"help month": "Usage: month [name] \nProvides detailed information for a specific or current month, including its numerical order, leap year status for the current year, and its corresponding season based on your hemisphere. \nex: may \n",
 	"help mppt": "Usage: mppt|solar <monitor|history|last30> \nDisplay the data for the COMx port connect Victron MPPT. \nex: mppt monitor \n    mppt history\n    mppt last30 \n    solar monitor\n",
 	"help multiplication table": "Usage: multiplication table | x table <number> \nShow the multiplication table for the inputed number \nex: x table 5\n    multiplication table 5\n",
 	"help next neo": "Usage: next neo(s)|asteroid(s) \nDisplays basic information about the upcoming Near Earth Object (NEO) flybys. \nex: next asteroid\n    next neo\n",
@@ -773,10 +870,11 @@ help = {
 	"help process amoc": "Usage: process amoc|process amoc files\nStarts the Multi-Source Data Analysis engine (IFREMER/NASA/COPERNICUS).\nThe system scans for .nc files, validates SHA1 integrity, and extracts SST values for AMOC monitoring latitudes. \n    ex: process amoc\n",
 	"help protect image": "Usage: protect image|mark <filename>.<jpg|jpeg|png> \nAdd watermaked or not some basic Artificial Inteligence, Lens image recognition protections to the refered image. \nex: protect image IMG_20250718.png \n    protect image my_image.jpg \n",
 	"help quote": f"Usage: quote \nWords from the my creator {_author_.split()[0]}. Displays a rotating selection of personal quotes and reflections on life, heritage, and the soul of our world. \nex: quote \n",
-	"help query in linux": "Usage: <query <in linux>> \nDisplay all linux commands who contain the query words. \nex: rename in linux \n    cp in linux\n",	
+	"help query in linux": "Usage: <query <in linux>> \nDisplay all linux commands who contain the query words. \nex: rename in linux \n    cp in linux\n",
 	"help recent tvshows": "Usage: recently added tvshows \nCommand to extract from elysia website the recently added from the tvshows list.\nex: recently added tvshows\n    recent tvshows\n",
 	"help restart": "Usage: restart | boot \nEngages Cybele in a 'fresh start', re-reading databases and data and clearing memory. \nex: restart \n    boot \n",
 	"help run mc": "Usage: run mc \nAttempts to locate and launch Midnight Commander (mc) on your system by scanning Registry, PATH and detecting your Linux distro. \nex: run mc \n",
+	"help run linux commands": "Usage: run linux commands [ON | OFF | 1 | 0] \nToggles the global execution state of native Linux commands inside Cybele.\nex: run linux commands ON\n",
 	"help season": "Usage: season \nDisplays the current astronomical season based on your detected location (Country and Hemisphere). \nex: season \n    spring\n",
 	"help set default country": "Usage: Manually override automatic detection by entering a two-letter country code. \nTo restore automatic detection, simply leave the field blank and press [⏎].\n",
 	"help set default gps": "Usage: set default gps\nSet the default GPS coordinates defined to user input or not and once typed will be used by cybele till you quit/exit. \nex: set default gps off\n    view|show default gps \n    set default gps\n",
@@ -804,12 +902,13 @@ help = {
 	"help time now": "Usage: time now \nDisplays the actual time based on the GTM system clock. \nex: time now\n",
 	"help today": "Usage: <today> \nDisplays all available data for the current day, based on the system date.\n",
 	"help today activity": "Usage: <today activity> \nDisplays a activity for you based in the actual year season.\n",
-	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",	
+	"help today holiday": "Usage: today holiday \nDisplay the current Day Holiday for the default country like special dates if any. \nex: holiday \n",
 	"help topics": "Usage: <topics> \nDisplays all the topics i can provide even if some basic information.\n",
 	"help trails": f"Usage: trails \nDisplays a map of all trails completed by {_author_.split()[0]}. Available for download as GPX files for use on compatible GPS devices.\nex: trails \n",
 	"help types of orbits": "Usage: <types of orbits> \nDisplays the orbital regime for each orbit acronym .\n",
 	"help update database": "Usage: update database \nAllows me to work with or without an internet connection. \nex: update database \n    offline mode\n",
 	"help view askard": "Usage: view askard <id> \nView the refered askard by the id selected.\nex: view askard 4005\n",
+	"help view linux commands": "Usage: view linux commands \nView all the linux commands i have knowledge about.\nex: view all linux commands\n    <word> in linux\n    help <linux command>\n",
 	"help view solar system": "Usage: view solar system \nView a horizontal representation of the solar system.\nex: view solar system\n",
 	"help weather today": "Usage: weather <today|for today>\nProvides a local forecast using my aetherNeural ✧ algorithm.\nex: weather for today\n",
 	"help weather now": "Usage: weather now\nIt provides a local weather forecast using the aether Neural algorithm ✧ which analyzes AMOC data as an influential factor in the forecast. (Beta testing)\nex: weather now\n",
@@ -930,6 +1029,37 @@ friendly_names = {
     "climate_dict": "Climate change",
 	"word meaning": "Meanings",
 }
+class Spinner:
+    def __init__(self, message="A pensar"):
+        self.message = message
+        self.anim_frames = ["⏳", "⌛", "🪐", "💡", "✨", "🌊", "🐧"]
+        self.spinner_chars = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+        self.is_running = False
+        self.thread = None
+
+    def _spin(self):
+        i = 0
+        while self.is_running:
+            frame = self.anim_frames[i % len(self.anim_frames)]
+            spin_char = self.spinner_chars[i % len(self.spinner_chars)]
+            text = f"\r{kolor['VIVID_CYAN']}{frame} {spin_char} {self.message}...{kolor['RESET']}"
+            print_statusline(text)
+            sleep(0.12)
+            i += 1
+
+    def start(self):
+        self.is_running = True
+        self.thread = threading.Thread(target=self._spin)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def stop(self):
+        self.is_running = False
+        if self.thread:
+            self.thread.join()
+        print_statusline("")
+        sys.stdout.write("\033[K")
+
 #----------------------------------------------------
 def lista_defs():
 	contexto_atual = globals()
@@ -968,7 +1098,7 @@ def chkcoor(lat, lon):
 
 #-------------------------------------------------
 def validate_globals():
-	global _poigps_, lat, lon, internals	
+	global _poigps_, lat, lon, internals
 	defined_globals = globals()
 	missing_vars = []
 	for var_name in internals:
@@ -978,7 +1108,7 @@ def validate_globals():
 		print_statusline(f"")
 		mmodname = f"\n   My code integrity was compromised doing missing some requirements. \n   Missing components: {missing_vars}. Exiting."
 		print(f"\n{kolor['RED']} {_spchar_[1:2]}{_title_} kolor['OFF']: {mmodname}")
-		sys.exit(0)	
+		sys.exit(0)
 	if 'lat' in internals and 'lon' in internals:
 		global_lat = defined_globals['lat']
 		global_lon = defined_globals['lon']
@@ -1002,7 +1132,7 @@ def validate_globals():
 			sys.exit(0)
 		else:
 			_poigps_= [lat,lon,0,1,1]
-				
+
 #-------------------------------------------------
 def kdecode(emessage, shift):
 	dek_msg = ""
@@ -1066,8 +1196,19 @@ def get_default_port():
         'windows': _serial_[0],
         'linux': _serial_[1],
         'darwin': _serial_[2]
-    }  
+    }
     return mapping.get(system, None)
+
+#-----------------------------------------------------------
+def get_google_styled_gemini():
+    return (
+        f"{kolor['G_RED']}g{kolor['RESET']}"
+        f"{kolor['G_YELLOW']}e{kolor['RESET']}"
+        f"{kolor['G_BLUE']}m{kolor['RESET']}"
+        f"{kolor['G_GREEN']}i{kolor['RESET']}"
+        f"{kolor['G_RED']}n{kolor['RESET']}"
+        f"{kolor['G_YELLOW']}i{kolor['RESET']}"
+    )
 
 #--------------------------------------------------------
 def fetch_fromdbfile(db_filename, table_name, column_name):
@@ -1100,9 +1241,9 @@ def fetch_fromdbfile(db_filename, table_name, column_name):
 	finally:
 		if conn:
 			conn.close()
-			
+
 #------------------------------------------------------------
-def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):	
+def dbfetch(db_filename, record, table_name, search_column, column_to_fetch):
 	global dbmsgbl,dblrconn
 	conn = None
 
@@ -1141,7 +1282,7 @@ def check_tables(tables_names):
 	max_attempts = 0
 	conn = None
 	cur = None
-	
+
 	db_exists = os.path.isfile(db_filename)
 	if db_exists:
 		conn = sqlite3.connect(db_filename)
@@ -1176,7 +1317,7 @@ def check_tables(tables_names):
 			return False
 		else:
 			return True
-		
+
 	except sqlite3.Error as e:
 		print_statusline(f"")
 		modname = f"Database query error {e} \n   I cannot execute properly. Exiting."
@@ -1212,7 +1353,7 @@ def check_database_version():
 		remote_ts = remote_dt.timestamp()
 
 		local_ts = os.path.getmtime(local_path)
-    
+
 		dbld = datetime.fromtimestamp(local_ts, timezone.utc)
 		dbrd = remote_dt
 
@@ -1235,7 +1376,7 @@ def download_database_update(nupdate=True):
 		response.raise_for_status()
 		total_size = int(response.headers.get('content-length', 0))
 		downloaded = 0
-		start_time = sys_time.time()    
+		start_time = sys_time.time()
 		print(f"Downloading {local_db_filename}...")
 		with open(local_db_filename, 'wb') as f:
 			for data in response.iter_content(chunk_size=8192):
@@ -1272,7 +1413,7 @@ def download_database_update(nupdate=True):
 		print(f"\n❌ Download error: {e}", file=sys.stderr)
 		if os.path.exists(local_db_filename):
 			os.remove(local_db_filename)
-			
+
 #------------------------------------------------------------
 def delete_cybeledb():
 	file_name = f"{_title_.lower()}.db"
@@ -1308,7 +1449,7 @@ def make_intextdb():
 	message = random.choice(messages['loadings'])
 	print_statusline(f"{message} {_spchar_[7:8]}")
 
-	try:	
+	try:
 		db_name = f"{_title_.lower()}.db"
 		db_exists = os.path.isfile(db_name)
 		conn = None
@@ -1317,10 +1458,10 @@ def make_intextdb():
 		else:
 			print(f"{random.choice(messages['trouble_short'])} ❌ I cannot processed. The local database file dont exist.")
 			return
-		
+
 		cursor = conn.execute("SELECT * FROM config LIMIT 1")
 		row = cursor.fetchone()
-		idcode = row[2] 
+		idcode = row[2]
 
 		if conn:
 			conn.close()
@@ -1385,12 +1526,16 @@ def make_intextdb():
 			fetch_fromdbfile("cybele.db", "countries", "country"),
 			fetch_fromdbfile("cybele.db", "countries", "capital"),
 			fetch_fromdbfile("cybele.db", "countries", "population"),
-			fetch_fromdbfile("cybele.db", "countries", "alpha_2")
+			fetch_fromdbfile("cybele.db", "countries", "alpha_2"),
+			fetch_fromdbfile("cybele.db", "countries", "language_map")
 		)
-		for country, capital, population, alpha_2 in country_data:
-			ncountries[country.lower()] = {"capital": capital, "population": population, "alpha2": alpha_2}
-		core['country'] = list(ncountries.keys())
-		core['capital'] = [country["capital"] for country in ncountries.values()]
+
+		for country, capital, population, alpha_2, language_map in country_data:
+			ncountries[country.lower()] = {"capital": capital,"population": population,"alpha2": alpha_2,
+				"language_map": (
+					language_map if language_map else ""),}
+		core["country"] = list(ncountries.keys())
+		core["capital"] = [country["capital"] for country in ncountries.values()]
 
 		climate_terms = fetch_fromdbfile("cybele.db", "climate_dict", "climate_term")
 		climate_designations = fetch_fromdbfile("cybele.db", "climate_dict", "designation")
@@ -1420,6 +1565,7 @@ def make_intextdb():
 				}
 		core["linuxcmd"] = list(linux_commands.keys())
 		core['help'] = list(help.keys())
+		core['linux_help'] = [f"help {cmd}" for cmd in linux_commands.keys()]
 
 		core["old_tech_term"] = fetch_fromdbfile("cybele.db", "oldtech", "oldterm")
 
@@ -1445,7 +1591,7 @@ def make_intextdb():
 		core["element abbr"] = [key.lower() for key in periodic_abbr.keys()]
 
 		core["oceanography"] = fetch_fromdbfile("cybele.db", "oceanography", "term")
-		
+
 		generationdb = zip(
 			fetch_fromdbfile("cybele.db", "generations", "gen_name"),
 			fetch_fromdbfile("cybele.db", "generations", "start_year"),
@@ -1464,27 +1610,27 @@ def make_intextdb():
 			"myMixs": fetch_fromdbfile("cybele.db", "webshare", "myMixs")[0],
 			#"music weekly episodes": fetch_fromdbfile("cybele.db", "webshare", "`music weekly episodes`")[0]
 		}
-		
+
 		as_quotes = list(fetch_fromdbfile("cybele.db", "as_quotes", "quote"))
 		amoclen = len(fetch_fromdbfile("cybele.db", "amoc_data", "doy"))
 
-		midbcounter = 0 
+		containers_to_count = [
+			stars_dict, constellations_dict, constellations_abbr,
+			asteroids_list, cneos_list, ncountries, climate_dictionary,
+			linux_commands, help, special_dates_dict, webshare,
+			as_quotes, questions, answers, amoclen
+		]
+		midbcounter = sum(len(item) if not isinstance(item, int) else item for item in containers_to_count)
 		for category_list in knowledge.values():
 			midbcounter += len(category_list)
-		midbcounter += len(questions) + len(answers)
-		midbcounter += amoclen
-		midbcounter += len(as_quotes)
-		midbcounter += len(webshare)
-		for key in core:
-			if isinstance(core[key], list):
-				midbcounter += len(core[key])
-			elif isinstance(core[key], dict):
-				midbcounter += len(core[key])
+		for val in core.values():
+			if isinstance(val, (list, dict)):
+				midbcounter += len(val)
 
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_short'])}! {kolor['RED']}FATAL ERROR{kolor['OFF']} during database loading: {e}")
 		sys.exit(1)
-		
+
 #---------------------------------------------------------------------
 def get_brain_status(midbcounter):
 	MULTIPLICADOR_RAM = 3.5
@@ -1507,7 +1653,7 @@ def swmsg():
 		print(f"💬 \"{quote}\"\n")
 	if today.month == int(_active_[3:5]) and today.day == int(_active_[0:2]):
 		print(f"✨ {kolor['SABER_BLUE']}[{_title_.upper()}]{kolor['OFF']} {kolor['SW_CRAWL']}Special Algorithm Activated: Happy Birthday!{kolor['OFF']}\n")
-	
+
 #---------------------------------------------------------------------
 questions = [
 	"Ola",
@@ -1937,7 +2083,7 @@ class VictronMonitor:
 						sys.stdin.read(1)
 						print(f"\n{kolor['CYAN']}Stopped instantly!{kolor['OFF']}")
 						break
-					
+
 					linha = ser.readline().decode('utf-8', errors='ignore').strip()
 
 					if not linha:
@@ -1980,7 +2126,7 @@ class VictronMonitor:
 		payload = comando[1:]
 		for i in range(0, len(payload), 2):
 			soma += int(payload[i:i+2], 16)
-        
+
 		# O checksum é o valor que, somado à 'soma', resulta em 0x55 (modulo 256)
 		check = (0x55 - soma) & 0xFF
 		return f"{check:02X}"
@@ -1995,18 +2141,18 @@ class VictronMonitor:
 			with serial.Serial(_portac_, 19200, timeout=1.5) as ser:
 				ser.reset_input_buffer()
 				ser.reset_output_buffer()
-				ser.setDTR(True) 
-				
+				ser.setDTR(True)
+
 				sleep(0.5)
 				ser.write(comando_final.encode())
-                
+
 				for _ in range(15):
 					linha = ser.readline().decode('ascii', errors='ignore').strip()
 					if linha.startswith(":7"):
 						return f"{kolor['BOLD_GREEN']}HISTÓRICO ENCONTRADO:{kolor['OFF']} {linha}\n"
 					elif linha.startswith(":4"):
 						return f"{kolor['BOLD_RED']}AVISO:{kolor['OFF']} O MPPT rejeitou o registo {registo_invertido}.\n"
-                
+
 			return f"{kolor['BOLD_YELLOW']}TIMEOUT:{kolor['OFF']} Sem resposta HEX.\n"
 		except Exception as e:
 			error_msg = str(e).split(':')[0]
@@ -2019,7 +2165,7 @@ class VictronMonitor:
 			dados = self.get_historico_dia(d)
 			print(dados)
 			sleep(0.1) # Pausa control saturação do bus
-			
+
 	def _salvar_db(self):
 		# Aqui lógica de base de dados
 		pass
@@ -2063,7 +2209,7 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 	for row in rows_filtradas:
 		# Tenta 'delta' e a versão com o simbolo grego 'deltΔ'
 		d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
-        
+
 		if d_raw is None or str(d_raw).upper() == "N/A":
 			continue
 		try:
@@ -2081,16 +2227,16 @@ def get_wind_data(self, code):
 	# Se code for PT, usa uma central (ex: Lisboa/Santarém)
 	coords = {"PT": (39.5, -8.5), "ES": (40.4, -3.7), "DEFAULT": (0, 0)}
 	lat, lon = coords.get(code, coords["DEFAULT"])
-    
+
 	try:
 		# API gratuita e sem registo (Open-Meteo)
 		url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=wind_speed_10m,wind_direction_10m&timeout=3"
 		response = requests.get(url, timeout=3)
-        
+
 		if response.status_code == 200:
 			data = response.json()["current"]
 			deg = data["wind_direction_10m"]
-            
+
 			# Graus em Quadrantes
 			if 22.5 <= deg < 67.5: dir_txt = "NE"
 			elif 67.5 <= deg < 112.5: dir_txt = "E"
@@ -2100,11 +2246,11 @@ def get_wind_data(self, code):
 			elif 247.5 <= deg < 292.5: dir_txt = "W"
 			elif 292.5 <= deg < 337.5: dir_txt = "NW"
 			else: dir_txt = "N"
-            
+
 			return {"dir": dir_txt, "speed": data["wind_speed_10m"], "online": True}
 	except:
 		pass
-    
+
 	return {"dir": "N/A", "speed": 0, "online": False}
 
 #---------------------------------------------------
@@ -2430,7 +2576,7 @@ def log_previsao(self, temp_prev, status_prev, tag):
 	conn = sqlite3.connect(db_filename)
 	cursor = conn.cursor()
 	sql_insert = """
-		INSERT INTO aetherneural_valid (timestamp, previsao_temp, status_prev, amoc_tag) 
+		INSERT INTO aetherneural_valid (timestamp, previsao_temp, status_prev, amoc_tag)
 		VALUES (?, ?, ?, ?)
 	"""
 	data = (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), temp_prev, status_prev, tag)
@@ -2458,11 +2604,11 @@ def update_real_temp(self, temp_real):
 		# Threshold ajustável
 		is_anomaly = 1 if erro > 3.0 else 0
 		cursor.execute("""
-			UPDATE aetherneural_valid 
-			SET real_temp = ?, erro_abs = ?, is_anomaly = ? 
+			UPDATE aetherneural_valid
+			SET real_temp = ?, erro_abs = ?, is_anomaly = ?
 			WHERE id = ?
 		""", (temp_real, erro, is_anomaly, row_id))
-		conn.commit()       
+		conn.commit()
 		if is_anomaly:
 			print(f"⚠️ Alert: Anomaly detected (Error: {error:.2f}ºC). The divergent nature of the model.")
 	conn.close()
@@ -2517,7 +2663,7 @@ def pregpsconvert():
 			break
 
 		distancekm = distance_gps(latgps, longps, lat2gps, lon2gps) / 1000
-		if int(distancekm) > 0 or int(distancekm) < 1000000:	
+		if int(distancekm) > 0 or int(distancekm) < 1000000:
 			print("")
 			print(f"{kolor['RED']}{_spchar_[1:2]} {kolor['BOLD_WHITE']} The distance between the two points provided is {str('{:,.1f}'.format(distancekm))} kilometers.{kolor['OFF']}")
 			print(f"  ( approximately ≈ {str( convert_to_words(int(distancekm) + 1) )} kilometers )\n")
@@ -2607,14 +2753,22 @@ def drawart(artname):
 		res = ''.join(map(chr, line_bytes))
 		if artname == 'art_cybele' and i == config['special_line']:
 			suffix_res =''.join(map(chr, config['special_suffix']))
+			with_space_res = ''.join(map(chr, art_with_ai[:-2]))
+			letter_a = chr(art_with_ai[-2])
+			letter_i = chr(art_with_ai[-1])
 			start_of_line = res[:11]
 			new_content = kolor['DIM_YELLOW'] + dblrconn[0:7] + kolor['OFF']
-			new_content_len = len(new_content) 
 			final_line = art_color + start_of_line + new_content + art_color + res[18:-2]
-			print(final_line + kolor[config['special_suffix_color']] + suffix_res)
+			print(
+				final_line +
+				kolor[config['special_suffix_color']] + suffix_res +
+				art_color + with_space_res +
+				kolor['VIVID_RED'] + letter_a +
+				kolor['VIVID_YELLOW'] + letter_i +
+				kolor['OFF']
+			)
 		else:
 			print(art_color + res)
-	print(kolor['OFF'])
 
 #---------------------------------------------------
 def daysweeks_year():
@@ -2692,7 +2846,7 @@ def find_answer(question,whatlist):
 	help_comands = [key.replace("help ", "") for key in help.keys()]
 	others_keys = ["country", "capital", "months", "seasons", "old_tech_term", "word meaning", "help", "share", "linuxcmd",
 					"oceanography","time_query","season_query","asking for country details","asking for talking","python art",
-					"sayconvert","show_me_your_topics","executing_mc"]
+					"sayconvert","show_me_your_topics","executing_mc","linux_help"]
 	others = [item for key in others_keys if key in core for item in core[key]]
 	alldict = others + questions + sayhi + dict_climate + dict_astro + help_comands + user_utterances
 	alldict[:] = list(set(alldict))
@@ -2767,7 +2921,7 @@ def generate_random_questions(question_sources: list, num_questions: int) -> lis
     for _ in range(questions_to_return):
         selected_questions.append(unique_questions.pop().capitalize())
     return selected_questions
-	
+
 #------------------------------------------------------------
 def days_until(what_date):
 	today = date.today()
@@ -2780,7 +2934,7 @@ def days_until(what_date):
 #------------------------------------------------------------
 def get_uptime():
 	current_time = datetime.now()
-	time_difference: timedelta = current_time - start_time 
+	time_difference: timedelta = current_time - start_time
 	total_seconds = time_difference.total_seconds()
 	hours = int(total_seconds // 3600)
 	minutes = int((total_seconds % 3600) // 60)
@@ -2940,7 +3094,7 @@ def find_word_in_dicts(word, core):
 		hemisphere = 'Northern Hemisphere' if lat >= 0 else 'South Hemisphere'
 		leap_year = leapyear()
 		print (f"{word.capitalize()} is the {get_ordinal_position(month_number)} month of the year ({leap_year} {date.today().year}) and {list_name.capitalize()} season in the {hemisphere}.\n")
-				
+
 	elif list_name == 'word meaning':
 		columns, lines = shutil.get_terminal_size()
 		db_file ='cybele.db';table = 'meanings';search_val = word
@@ -2948,7 +3102,7 @@ def find_word_in_dicts(word, core):
 		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 		#print('%s\n' % (dbsearch))
 		print(f"{textwrap.fill(dbsearch, columns - 3)}\n")
-				
+
 	elif list_name == 'view_the_topics':
 		print (random.choice(core['cthemes']) + ": \n")
 		random.shuffle(topics)
@@ -2999,16 +3153,27 @@ def find_word_in_dicts(word, core):
 		dbsearch = dbfetch(db_file, search_val, table, search_col, fetch_col)
 		print( '%s\n' % (dbsearch))
 
+	elif list_name == 'linux_help':
+		word = word.split()[1].lower()
+		print(f"<{word.lower()}> is a console {_spchar_[16:17]} linux command. Here some help about it:\n")
+		print(" "*5 + "Syntax: " + str(linux_commands[word]['syntax']))
+		print("Explanation: " + str(linux_commands[word]['explanation']))
+		print(" "*3 + "Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'\n")
+
 	elif list_name == 'linuxcmd':
-		print ("<"+word.lower()+">" + " is a console " + _spchar_[16:17] + " linux command. Here some help about'it:\n")
-		print (" "*5+"Syntax: " + str(linux_commands[word]['syntax']))
-		print ("Explanation: " + str(linux_commands[word]['explanation']))
-		print (" "*3+"Examples: " + "'" + "', '".join(linux_commands[word]['examples']) + "'")
-		print ("")
+		if not platform.system() == "Linux":
+			print(f"Detected environment:{platform.system().capitalize()}. The Linux subsystem is required to run this command.\n")
+		else:
+			if runlinux == True:
+				print(f"{kolor['VIVID_WHITE']}{_spchar_[16:17]} Linux command detected. {kolor['GREEN']}Executing, {kolor['VIVID_WHITE']}disallowed parameters:{kolor['OFF']}\n")
+				pty.spawn(['/bin/bash', '-i', '-c', word.lower()])
+				print("")
+			else:
+				print(f"{kolor['VIVID_WHITE']}{_spchar_[16:17]} Linux command detected.{kolor['RED']} Executing, is disallowed. {kolor['VIVID_WHITE']}Type: run linux commands ON{kolor['OFF']}\n")
 
 	elif list_name == "asking the uptime":
 		print(get_uptime_sentence())
-				
+
 	elif list_name == 'display_options':
 		what2tell = random.choice(core['display_commands'])
 		iniwhat2tell = random.choice(messages['helpassist'])
@@ -3101,7 +3266,7 @@ def find_word_in_dicts(word, core):
 		print(f" Rot.Period: {asteroid_info['rotation_period']} hours")
 		print(f"     Albedo: {asteroid_info['albedo']}")
 		print(f"    Details: {asteroid_info['description']}\n")
-			
+
 	elif list_name == "cneos":
 		object_key = word
 		object_details = cneos_list[object_key]
@@ -3188,6 +3353,8 @@ def find_word_in_dicts(word, core):
 			netchk = False
 		print ("The "+str(len(webshare))+" sharing informations i have are about the following subjects:\n")
 		for tvshow, link in webshare.items():
+			if tvshow == 'releases':
+				tvshow = tvshow + chr(32) + str(datetime.now().year)
 			print(" > " + str(tvshow.upper()))
 			print(f" {_spchar_[10:11]} {kdecode(str(link),shift)}")
 			if netchk == True:
@@ -3248,15 +3415,15 @@ def convert_units(question: str):
 	}
 
 	match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
-    
+
 	if not match:
 		match = re.search(r'convert\s+(\d+\.?\d*)\s*([a-zA-Z\s]+?)$', question.lower().strip())
 		if not match:
 			return None, "Use: convert <VALUE> <UNIT FROM> to|in <UNIT TO> \n"
-        
+
 		value_str, unit_from_raw = match.groups()
 		unit_to_raw = None # No explicit 'to' unit
-        
+
 	else:
 		value_str, unit_from_raw, unit_to_raw = match.groups()
 
@@ -3288,7 +3455,7 @@ def convert_units(question: str):
 			unit_to = 'seconds'
 		elif from_category == 'temperature':
 			return None, f"Please specify the target temperature unit (celsius|fahrenheit|kelvin')\n."
-        
+
 	to_category = None
 	to_factor = None
 	for category, units in CONVERSION_FACTORS.items():
@@ -3416,7 +3583,7 @@ def list_generations():
 def people_in_space(data_source=None, status=""):
     global people_space
     result = data_source if data_source else people_space
-	
+
     if not result:
         print(f"{random.choice(messages['trouble_short'])} No data available.\n")
         return
@@ -3427,13 +3594,13 @@ def people_in_space(data_source=None, status=""):
         person_name = p['name']
         if craft_name not in crafts: crafts[craft_name] = []
         crafts[craft_name].append(person_name)
-    
+
     for craft, members in crafts.items():
         print(f"\n🚀 {craft} ({len(members)})")
         for name in members:
             print(f"  - {name}")
     print("")
-	
+
 #-----------------------------------------------
 def update_people_data():
 	global people_space
@@ -3467,7 +3634,7 @@ def where_is_iss():
 #--------------------------------------------------
 def get_star_info(star_name):
 	safe_name = requests.utils.quote(star_name)
-	url = f"https://simbad.cds.unistra.fr/simbad/sim-id?output.format=ASCII&Ident={safe_name}" 
+	url = f"https://simbad.cds.unistra.fr/simbad/sim-id?output.format=ASCII&Ident={safe_name}"
 	try:
 		response = requests.get(url)
 		response.raise_for_status() # Checks for HTTP errors
@@ -3525,7 +3692,7 @@ def get_next_asteroid(limit=5):
 	finally:
 		if 'conn' in locals() and conn:
 			conn.close()
-	
+
 #------------------------------------------------
 def add_days(n, d = datetime.today()):
   return d + timedelta(n)
@@ -3570,7 +3737,7 @@ def days_to_event(event):
 			days_left = 0
 
 	return days_left
-	
+
 #-------------------------------------------------
 def daysweeks_from_date(start_date):
 	import datetime
@@ -3687,7 +3854,7 @@ def get_planet_orbit_type(planet_name):
 		return f"{planet.capitalize()} has a {planets_data[planet]} orbit around the Sun."
 	else:
 		return f"{random.choice(messages['notplanet']) % planet_name}"
-		
+
 #-------------------------------------------------
 def get_thepopulation(country_name):
 	country_slug = "us" if country_name.lower() == "united states" else country_name.lower().replace(" ", "-")
@@ -3750,7 +3917,7 @@ def mystory_from_elysia():
 		print(f"{random.choice(messages['trouble_msg'])} A internet connection is required to perfeform this operation. You are currently offline.")
 		return
 	global presence_online
-    
+
 	try:
 		response = urllib.request.urlopen(url)
 		soup = BeautifulSoup(response.read().decode("utf-8"), 'html.parser')
@@ -3762,7 +3929,7 @@ def mystory_from_elysia():
 				if len(parts) == 2:
 					name = parts[0].strip().lower()
 					link = parts[1].strip()
-				presence_online[name] = link    
+				presence_online[name] = link
 		return presence_online
 	except Exception as e:
 		print(f"Erro ao atualizar presença: {e}")
@@ -3772,7 +3939,7 @@ def mystory_from_elysia():
 def extract_from_elysia(content_type):
 	global tvshows_cache
 	url = website.get(content_type)
-	
+
 	if content_type == 'tvshow' and len(tvshows_cache) > 0:
 		return
 	if not internet_onoff() or not url:
@@ -3801,7 +3968,7 @@ def _print_tv_list(items):
     for i, item in enumerate(items, 1):
         print(f"[{i:03d}] {item}")
     print(f"\nTotal: {len(items)} favorites in memory.\n")
-		
+
 #-------------------------------------------------
 def get_the_season():
 	global system_country
@@ -3809,9 +3976,9 @@ def get_the_season():
 	today = datetime.now()
 	doy = today.timetuple().tm_yday
 
-	h_sul = ['AO', 'AR', 'AU', 'BO', 'BR', 'BW', 'CL', 'CK', 'KM', 'CG', 'CD', 'FK', 'FJ', 
-    'GF', 'PF', 'TF', 'GA', 'ID', 'KE', 'LS', 'MG', 'MW', 'MY', 'MU', 'YT', 'MZ', 
-    'NA', 'NR', 'NC', 'NZ', 'NU', 'PG', 'PY', 'PE', 'PN', 'RW', 'WS', 'ST', 'SC', 
+	h_sul = ['AO', 'AR', 'AU', 'BO', 'BR', 'BW', 'CL', 'CK', 'KM', 'CG', 'CD', 'FK', 'FJ',
+    'GF', 'PF', 'TF', 'GA', 'ID', 'KE', 'LS', 'MG', 'MW', 'MY', 'MU', 'YT', 'MZ',
+    'NA', 'NR', 'NC', 'NZ', 'NU', 'PG', 'PY', 'PE', 'PN', 'RW', 'WS', 'ST', 'SC',
     'SB', 'ZA', 'GS', 'TL', 'TG', 'TK', 'TO', 'TV', 'UG', 'UY', 'VU', 'WF', 'ZM', 'ZW']
 	norte = True
 	if system_country[0] in h_sul:
@@ -3828,7 +3995,7 @@ def get_the_season():
 		else:                  s = 1 # Verão
 
 	season_emoji = ["🌻", "☀️", "🍁", "❄️"]
-	seasons_names = list(core['seasons']) 
+	seasons_names = list(core['seasons'])
 	current_season = f"{seasons_names[s]} {season_emoji[s]}"
 	next_season_index = (s + 1) % 4
 	other_seasons = seasons_names[next_season_index:] + seasons_names[:next_season_index]
@@ -3838,7 +4005,7 @@ def get_the_season():
 #--------------------------------------------------
 def special_dates(date_to_check):
 	global lat,special_dates_dict
-	
+
 	seasons = ("🌻 Spring", "☀️ Summer", "🍁 Autumn", "❄️ Winter")
 	month_day_key = (date_to_check.month, date_to_check.day)
 
@@ -3851,10 +4018,10 @@ def special_dates(date_to_check):
 		}
 	else: # Southern Hemisphere
 		seasonal_start_dates = {
-			(9, 22): 0, 
+			(9, 22): 0,
 			(12, 21): 1,
 			(3, 20): 2,
-			(6, 21): 3 
+			(6, 21): 3
 		}
 
 	if month_day_key in special_dates_dict:
@@ -3927,7 +4094,7 @@ def cybele_play_quiz(quizdata,game):
 def random_season_activity():
 	now = date.today()
 	month = now.month
-	
+
 	season = get_the_season()[0].lower()
 	conn = None
 	try:
@@ -3946,7 +4113,7 @@ def random_season_activity():
 		if result:
 			activities_str = result[0]
 			if activities_str is not None:
-				activities = [activity.strip() for activity in activities_str.split(',')]				
+				activities = [activity.strip() for activity in activities_str.split(',')]
 				activitie = "\n " + _spchar_[17:18] + " It's " + season.capitalize() + ", " + random.choice(activities) + ".\n"
 				print(activitie)
 			else:
@@ -4044,7 +4211,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		modname = "The " + db_filename.upper() + " I couldn't find my database file, which should be in my directory.. \n   To work offline use the option <offline mode> in the main cybele prompt. \n   I cannot execute properly. Exiting.\n"
 		print("\nkolor['BOLD_RED'] " + _spchar_[1:2] + _title_ + "kolor['OFF']" + ": " + modname)
 		sys.exit(0)
-	
+
 	zdb = []
 	filter = ""
 
@@ -4074,7 +4241,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			dbname = 'oceanography terms'
 		else:
 			print ('Well done ' + _author_.split()[0] +'!. The code has a error. Fix it, you morone!')
-		
+
 		cursor = conn.execute(filter)
 		results = cursor.fetchall()
 		if results:
@@ -4089,7 +4256,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				print(", ".join(output_line))
 		else:
 			print (f'No {nchar} {dbname} that contain the substring {_spchar_[2:3]}{dbend}{_spchar_[3:4]}.')
-				
+
 	if dbtask == 'view':
 		cursor = None
 		if dbname == 'cybele' and dbtable == 'askard_db':
@@ -4115,7 +4282,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 					print(f"\n {nchar} {str(row[0])}\n")
 				else:
 					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} The database query results return empty!!")
-		elif dbtable == 'nicethings':	
+		elif dbtable == 'nicethings':
 			filter = "SELECT * FROM nicethings ORDER BY RANDOM() LIMIT 1;"
 			cursor = conn.execute(filter)
 			nchar = _spchar_[14:15]
@@ -4129,13 +4296,13 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 				print ("option view none of dbtables with conditions... Fix'it\n")
 		else:
 			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for view task for {dbname} dabatase...\n")
-		
+
 	if dbtask == 'list':
 		if dbname == 'cybele' and dbtable == 'askard_db':
 			if dbbegin == 0 and dbend == 0:
 				nfilter = "SELECT * from askard_db"
 			else:
-				nfilter = "SELECT ask_id, askard FROM askard_db WHERE ask_id BETWEEN " + str(dbbegin) + " and "+ str(dbend) + " ORDER BY ask_id;"	
+				nfilter = "SELECT ask_id, askard FROM askard_db WHERE ask_id BETWEEN " + str(dbbegin) + " and "+ str(dbend) + " ORDER BY ask_id;"
 		elif dbname == 'cybele' and dbtable == 'oldtech':
 			if dbbegin == 0 and dbend == 0:
 				nfilter = "SELECT * from oldtech"
@@ -4145,7 +4312,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			if dbbegin != 0 and dbend == 0:
 				nfilter = "SELECT star_name,hr_number FROM stars WHERE constelation = '" + str(dbbegin) + "';"
 			else:
-				nfilter = "SELECT star_name,hr_number FROM stars WHERE star_name BETWEEN '" + str(dbbegin).title() + "' and '"+ str(dbend).title() + "' ORDER BY star_name;"		
+				nfilter = "SELECT star_name,hr_number FROM stars WHERE star_name BETWEEN '" + str(dbbegin).title() + "' and '"+ str(dbend).title() + "' ORDER BY star_name;"
 		elif dbname == 'cybele' and dbtable == 'constelations':
 			if dbbegin == 0 and dbend == 0:
 				nfilter = "SELECT * from constelations"
@@ -4154,7 +4321,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 		else:
 			print (f"{random.choice(messages['trouble_short'])} Invalid conditions for List task for {dbname} dabatase...\n")
 			return
-		
+
 		filter = nfilter
 		cursor = conn.execute(filter)
 		rows_found = False
@@ -4165,8 +4332,8 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 			print (f"{random.choice(messages['trouble_short'])} No results found! Redefine your search criteria.\n")
 		else:
 			print("")
-		
-	if dbtask == 'limits':	
+
+	if dbtask == 'limits':
 		if dbname == 'cybele' and dbtable == 'askard_db':
 			filter = "SELECT min(ask_id) , max(ask_id) FROM askard_db"
 			titvar = "askard ID"
@@ -4199,7 +4366,7 @@ def mandb(dbname,dbtable,dbtask,dbbegin,dbend):
 
 #-------------------------------------------------
 def get_cmdlinux(command_name):
-    
+
 	conn = None
 	try:
 		conn = sqlite3.connect(f"{_title_.lower}.db")
@@ -4228,20 +4395,20 @@ def get_cmdlinux(command_name):
 	finally:
 		if conn:
 			conn.close()
-			
+
 #-------------------------------------------------
 def chkpy():
 	if pyver[0] < 3 or pyver[0] == 3 and pyver[1] < 10 or pyver[1] > 13 :
 		modname = f"Python {major}.{minor} is too old. Required version 3.10 or higher.\n   I cannot execute properly. Exiting."
 		print("\nkolor['BOLD_RED'] " + symb_prompt() + _title_ + "kolor['OFF']" + ": " + modname)
 		return False
-	return True	
+	return True
 
 #-------------------------------------------------
 def ksha(files, chunk_size=4096):
 	results = []
 	if not isinstance(files, list):
-		print(f"{random.choice(messages['trouble_msg'])} Internal error. The data is not a tuple! -'{type(files)}'\n")	
+		print(f"{random.choice(messages['trouble_msg'])} Internal error. The data is not a tuple! -'{type(files)}'\n")
 	for file_path in files:
 		sha1_hash = None
 		if not os.path.exists(file_path):
@@ -4264,7 +4431,7 @@ def ksha(files, chunk_size=4096):
 				print(f"{random.choice(messages['trouble_msg'])} An unexpected error occurred: {e}\n")
 		results.append((file_path, sha1_hash))
 	return tuple(results)
-	
+
 #-------------------------------------------------
 def yoda_speak(sentence):
 
@@ -4372,7 +4539,7 @@ def set_cursor_pos(row, col):
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 #----------------------------------------------------------------
-def findme(input_string, item_list):	
+def findme(input_string, item_list):
 	input_words = input_string
 	matches = []
 	for item in item_list:
@@ -4406,7 +4573,7 @@ def create_firework_explosion(x, y, max_radius, characters):
 
 		for row_idx, row_chars in enumerate(frame_canvas):
 			print(f"{set_cursor_pos(row_idx + 1, 1)}{kolor[explosion_color]}{''.join(row_chars)}{kolor['OFF']}", end="")
-        
+
 		#import sys
 		sys.stdout.flush()
 		sleep(0.08)
@@ -4420,7 +4587,7 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 	SHOW_CURSOR = "\033[?25h"
 
 	explosion_chars = ['*', '+', 'o', '.', '@', '#', '!', '^']
-    
+
 	try:
 		term_width, term_height = os.get_terminal_size()
 	except OSError:
@@ -4437,7 +4604,7 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 			start_y = term_height - 2 # Start 2 rows from the bottom
 
 			explosion_y = random.randint(int(term_height * 0.2), int(term_height * 0.6)) # Explode in upper-middle
-            
+
 			random_color = random.choice([k for k in kolor.keys() if k != 'OFF'])
 			rocket_char = '↟'
 
@@ -4453,12 +4620,12 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 			# Explosion!
 			max_explosion_radius = random.randint(min(8, term_height // 4), min(15, term_height // 2))
 			create_firework_explosion(start_x, explosion_y, max_explosion_radius, explosion_chars)
-			print(kolor['OFF'], end="") 
+			print(kolor['OFF'], end="")
 			sleep(delay_between_fireworks)
 			clear_screen()
 
 	except KeyboardInterrupt:
-		pass 
+		pass
 
 	finally:
 		print(kolor['OFF'])
@@ -4468,7 +4635,7 @@ def main_fireworks(num_fireworks=5, delay_between_fireworks=1.5):
 #----------------------------------------------------------------
 #----------------------------------------------------------------
 def draw_christmas_tree():
-	
+
 	tree = [
 	[32,32,32,32,32,32,42,32,32,32,32,32,32,32,32,32,32,32,32,32,44,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],
 	[32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,95,47,94,92,95,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32],
@@ -4520,7 +4687,7 @@ def draw_christmas_tree():
 #-------------------------------------------------------------------
 #---------------------------------------------------------------------------
 def cybele_conjugator(verb):
-    
+
     if not isinstance(verb, str):
         if isinstance(verb, (int, float)):
             print(f"{kolor['BOLD_RED']}Oh no, my friend!{kolor['OFF']} I need a proper verb ({kolor['BOLD_CYAN']}a string{kolor['OFF']}) to work my magic. It looks like you gave me a {kolor['BOLD_YELLOW']}number{kolor['OFF']}: {kolor['VIVID_RED']}{verb}{kolor['OFF']}")
@@ -4529,7 +4696,7 @@ def cybele_conjugator(verb):
         return
 
     verb = verb.lower()
-	
+
     PERSON_COL_WIDTH = 18
     TENSE_COL_WIDTH = 25
 
@@ -4750,7 +4917,7 @@ def cybele_conjugator(verb):
     print(f"Present Participle (the '-ing' form): {kolor['YELLOW']}{conjugated_forms['present_participle']}{kolor['OFF']}")
     print(f"Past Participle (often the '-ed' or irregular form): {kolor['YELLOW']}{conjugated_forms['past_participle']}{kolor['OFF']}")
     print(f"\n{kolor['BOLD_GREEN']}That's all for '{kolor['BOLD_YELLOW']}{verb}{kolor['OFF']}' now! Hope it helped!{kolor['OFF']}\n")
-	
+
 #---------------------------------------------------------------------------
 #-------------------------------------------------------------------
 # cybele sentence, text, verb sub-cores
@@ -4787,18 +4954,18 @@ def conjugate_verb(verb_type, subject_pronoun, knowledge):
             return random.choice(knowledge["aux_have_present_singular_third"])
         else:
             return random.choice(knowledge["aux_have_present_I_plural"])
-            
+
     return "[CONJUGATION_ERROR]"
 
 #-------------------------------------------------------------------
 def make_sentence(rw_instance):
 
 	sentence_structures = [
-		["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],  
-		["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],  
-		["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],  
-		["subject", "verb_present_conjugated"],  
-		["subject", "verb_present_conjugated", "adverb"],  
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_singular"],
+		["subject", "verb_present_conjugated", "determiner", "noun_uncountable"],
+		["subject", "verb_present_conjugated", "determiner", "noun_countable_plural"],
+		["subject", "verb_present_conjugated"],
+		["subject", "verb_present_conjugated", "adverb"],
 
 		["subject", "aux_be_present_conjugated", "adjective"],
 		["subject", "aux_be_present_conjugated", "determiner", "noun_countable_singular"],
@@ -4819,7 +4986,7 @@ def make_sentence(rw_instance):
 		["subject", "aux_have_present_conjugated", "verb_past_participle", "determiner", "noun_uncountable"],
 		["subject", "aux_have_present_conjugated", "verb_past_participle"],
 		["subject", "aux_have_present_conjugated", "verb_past_participle_be", "adjective"],
-		
+
 		["subject", "modal_verb", "negation", "verb_base_be", "adjective"],
 		["subject", "modal_verb", "negation", "verb_base_be", "determiner", "noun_countable_singular"],
 	]
@@ -4839,24 +5006,24 @@ def make_sentence(rw_instance):
 				else:
 					chosen_subject = random.choice(knowledge["pronoun_first_second_plural"])
 				word_to_add = chosen_subject
-                
+
 			elif part_type in ["verb_present_conjugated", "aux_be_present_conjugated", "aux_have_present_conjugated"]:
 				if chosen_subject is None:
 					raise ValueError("Subject must be chosen before verb conjugation.")
 				word_to_add = conjugate_verb(part_type, chosen_subject, knowledge)
-                
+
 			elif part_type == "aux_do_present_neg_conjugated":
 				if chosen_subject in knowledge["pronoun_singular_third"]:
 					word_to_add = knowledge["aux_do_s_form"][0] + " " + knowledge["negation"][0]
 				else:
 					word_to_add = knowledge["aux_do_base"][0] + " " + knowledge["negation"][0]
-                    
+
 			elif part_type == "verb_base_be":
 				word_to_add = random.choice(knowledge["verb_base_be"])
-                
+
 			elif part_type == "verb_past_participle_be":
 				word_to_add = random.choice(knowledge["verb_past_participle_be"])
-            
+
 			elif part_type.startswith("noun"):
 				if part_type == "noun_countable_singular":
 					word_to_add = random.choice(knowledge["noun_countable_singular"])
@@ -4868,7 +5035,7 @@ def make_sentence(rw_instance):
 					word_to_add = random.choice(knowledge["noun_abstract"])
 				else:
 					word_to_add = random.choice(knowledge["noun"])
-                
+
 				if temp_word.lower() in knowledge["noun"] or \
 					temp_word.lower() in knowledge["noun_countable_singular"] or \
 					temp_word.lower() in knowledge["noun_countable_plural"] or \
@@ -4885,27 +5052,27 @@ def make_sentence(rw_instance):
 						word_to_add = random.choice(knowledge["noun_uncountable"])
 					elif part_type == "noun_abstract":
 						word_to_add = random.choice(knowledge["noun_abstract"])
-					else: 
+					else:
 						word_to_add = random.choice(knowledge["noun"])
 
 				if part_type == "noun_countable_plural" and not word_to_add.endswith('s'):
 					word_to_add += 's'
-			
+
 			elif part_type == "adjective":
 				word_to_add = random.choice(knowledge["adjective"])
-			              
+
 				if temp_word.lower() in knowledge["adjective"] or \
 					temp_word.lower().endswith(('ful', 'ous', 'able', 'ible', 'ish', 'ive', 'less', 'ly', 'al')) or \
-					random.random() < 0.3: 
+					random.random() < 0.3:
 					word_to_add = temp_word.lower()
 				else:
 					word_to_add = random.choice(knowledge["adjective"])
 
 			elif part_type == "adverb":
 				word_to_add = random.choice(knowledge["adverb"])
-               
+
 				if temp_word.lower() in knowledge["adverb"] or temp_word.lower().endswith('ly') or \
-					random.random() < 0.3: 
+					random.random() < 0.3:
 					word_to_add = temp_word.lower()
 				else:
 					word_to_add = random.choice(knowledge["adverb"])
@@ -4916,24 +5083,24 @@ def make_sentence(rw_instance):
 					next_noun_category_in_structure = chosen_structure[i+1]
 
 				if next_noun_category_in_structure == "noun_uncountable":
-					word_to_add = random.choice(["some", "the"]) 
+					word_to_add = random.choice(["some", "the"])
 				elif next_noun_category_in_structure == "noun_countable_singular":
-					temp_word_for_vowel_check = rw_instance.get_random_word() 
+					temp_word_for_vowel_check = rw_instance.get_random_word()
 					while not temp_word_for_vowel_check or len(temp_word_for_vowel_check) < 2:
 						temp_word_for_vowel_check = rw_instance.get_random_word()
-                    
+
 					if temp_word_for_vowel_check.lower().startswith(('a', 'e', 'i', 'o', 'u')):
 						word_to_add = "an"
 					else:
 						word_to_add = "a"
-				elif next_noun_category_in_structure == "noun_countable_plural": 
-					word_to_add = random.choice(["the", "some"]) 
-				elif next_noun_category_in_structure == "noun": 
-					word_to_add = random.choice(["the", "some", "a", "an"]) 
-            
+				elif next_noun_category_in_structure == "noun_countable_plural":
+					word_to_add = random.choice(["the", "some"])
+				elif next_noun_category_in_structure == "noun":
+					word_to_add = random.choice(["the", "some", "a", "an"])
+
 			elif part_type in knowledge:
 				word_to_add = random.choice(knowledge[part_type])
-                
+
 			else:
 				if part_type in knowledge:
 					word_to_add = random.choice(knowledge[part_type])
@@ -4975,7 +5142,7 @@ def preamble_random_word():
 def ascii_horiz_solar_system(width):
 	if width < 60:
 		print (f"{random.choice(messages['trouble_short'])} Width is very small. Output might be distorted.\n")
-		width = 60 
+		width = 60
 
 	COLOR_RESET = "\033[0m"
 	COLOR_YELLOW = "\033[33m"  # Sun
@@ -4990,7 +5157,7 @@ def ascii_horiz_solar_system(width):
 
 	solar_line_chars = [' ' for _ in range(width)]
 	solar_line_colors = ['' for _ in range(width)]
-	
+
 	sun_pos_frac = 0.02
 	mercury_pos_frac = 0.10
 	venus_pos_frac = 0.18
@@ -5056,7 +5223,7 @@ def ascii_horiz_solar_system(width):
 			current_color = COLOR_RESET
 
 		colored_output.append(solar_line_chars[i])
-	
+
 	print("\n")
 	colored_output.append(COLOR_RESET)
 	print("".join(colored_output))
@@ -5115,7 +5282,7 @@ def calcular_solar_sazonal():
 def protect_image(input_filepath, output_directory="protected_images",
 					noise_intensity=10, pixel_shift_amount=1,
 					color_jitter_factor=0.05, jpeg_quality=90, add_symbol=False):
-	
+
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 
@@ -5134,7 +5301,7 @@ def protect_image(input_filepath, output_directory="protected_images",
 	output_filepath = os.path.join(output_directory, output_filename)
 
 	print(f"Processing image: {original_filename.upper()}{' with ▧ watermark' if add_symbol else ''}")
-	
+
 	width, height = img.size
 	noise = Image.effect_noise((width, height), sigma=noise_intensity)
 	noise_rgb = noise.convert("RGB")
@@ -5166,10 +5333,10 @@ def protect_image(input_filepath, output_directory="protected_images",
 	if add_symbol:
 		draw = ImageDraw.Draw(img)
 		symbol_text = "▧"
-		
+
 		# --- MODIFICATION: INCREASED FONT SIZE ---
 		# Adjusted multiplier from 0.025/0.03 to 0.045 for a noticeable increase
-		font_size = int(min(width, height) * 0.045) 
+		font_size = int(min(width, height) * 0.045)
 
 		font = None
 		try:
@@ -5221,7 +5388,7 @@ def protect_image(input_filepath, output_directory="protected_images",
 		print(f"Protected image saved to: {output_filepath.upper()}\n")
 	except Exception as e:
 		print (f"{random.choice(messages['trouble_short'])} Error saving image {output_filepath}: {e}\n")
-		
+
 #-------------------------------------------------
 def verificar_dst(iso_code):
 	if not iso_code:
@@ -5261,21 +5428,25 @@ def detect_country():
 	raw = locale.getlocale()[0]
 	if not raw: return
 	target = raw.split('_')[-1].lower()
+
 	if _pydr3_ or 'pydroid' in sys.executable.lower():
 		if target in ("C", "c", None, ""):
-			system_country = ["PT","Portugal"]
+			lang_map = ncountries.get("portugal", {}).get("language_map", "en")
+			system_country = ["PT", "Portugal", lang_map]
 		else:
 			if target in ncountries:
-				system_country = [ncountries[target].get('alpha2'), target.title()]
-	if len(target) == 2: # Lógica para o Linux
+				data = ncountries[target]
+				system_country = [data.get('alpha2'), target.title(), data.get('language_map', 'en')]
+
+	elif len(target) == 2: # Lógica para o Linux
 		for name, data in ncountries.items():
-			# Usamos str(... or '') para evitar o erro de 'NoneType'
 			if str(data.get('alpha2') or '').lower() == target:
-				system_country = [data.get('alpha2'), name.title()]
+				system_country = [data.get('alpha2'), name.title(), data.get('language_map', 'en')]
 				break
 	else: # Lógica para o Windows
 		if target in ncountries:
-			system_country = [ncountries[target].get('alpha2'), target.title()]
+			data = ncountries[target]
+			system_country = [data.get('alpha2'), target.title(), data.get('language_map', 'en')]
 
 #-------------------------------------------------
 def get_flag(country_code):
@@ -5373,13 +5544,13 @@ def commands_by_explanation(linux_commands, keyword):
 		print(f"{random.choice(messages['trouble_short'])} I did not find nothing for '{keyword}'...\n")
 	else:
 		print(f"Based on my {_spchar_[16:17]} {len(linux_commands)} commands knowledge:\n")
-		max_len = max(len(name) for name, _ in results) + 2 
+		max_len = max(len(name) for name, _ in results) + 2
 		for name, expl in results:
 			cmd_explanation = expl if expl else "Without data"
 			formatted_name = f"'{name}'"
 			print(f"{formatted_name:<{max_len}} - {cmd_explanation}")
-		print(f"\nFor detailed information on each command, type the command it and press enter.\n")
-	
+		print(f"\nFor detailed information on each command, type 'help <command>' it and press enter.\n")
+
 #-------------------------------------------------
 def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_duration_minutes=30):
 
@@ -5433,7 +5604,7 @@ def generate_console_schedule(start_hour=21, start_minute=30, num_slots=5, slot_
 			print(row_format)
 		print("-" * total_line_width)
 		print("")
-		
+
 		return schedule
 
 	except Exception as e:
@@ -5445,8 +5616,8 @@ def get_remote_version_and_revision_from_file():
 	github_file_url = kdecode(GITHUB, shift)
 	try:
 		response = requests.get(github_file_url)
-		response.raise_for_status()      
-		content = response.text        
+		response.raise_for_status()
+		content = response.text
 		version_match = re.search(r"version\s*=\s*['\"]([^'\"]+)['\"]", content)
 		revised_match = re.search(r"_revise_\s*=\s*['\"]([^'\"]+)['\"]", content)
 		remote_version = version_match.group(1) if version_match else None
@@ -5468,14 +5639,14 @@ def get_remote_version_and_revision_from_file():
 #-------------------------------------------------
 def check_for_updates():
 	if internet_onoff() == True:
-		local_version_str = version    
+		local_version_str = version
 		local_revised_dt = datetime.strptime(_revise_, '%d.%m.%Y')
 		remote_version_raw, remote_revised_raw = get_remote_version_and_revision_from_file()
 		remote_version_str = remote_version_raw.strip() if remote_version_raw else None
 		remote_revised_str_raw = remote_revised_raw.strip() if remote_revised_raw else None
 		if remote_version_str is None or remote_revised_str_raw is None:
 			print (f"{random.choice(messages['trouble_short'])} Could not check for updates. Skipping version comparison.\n")
-			return    
+			return
 		try:
 			remote_revised_dt = datetime.strptime(remote_revised_str_raw, '%d.%m.%Y')
 			if local_version_str == remote_version_str and local_revised_dt == remote_revised_dt:
@@ -5552,7 +5723,7 @@ def run_midnight_commander():
 				print(f"Try installing it with <{kolor['BOLD_BLUE']}sudo pacman -S mc{kolor['OFF']}> \n")
 			else:
 				print(f"Check your package manager for 'mc' or visit {kolor['BOLD_BLUE']}https://midnight-commander.org/{kolor['OFF']} \n")
-        
+
 		else:
 			print("Please visit https://midnight-commander.org/ for installation instructions. \n")
 		return
@@ -5567,7 +5738,7 @@ def run_midnight_commander():
 		pass
 	except Exception as e:
 		print(f"{random.choice(messages['trouble_short'])} An error occurred while starting Midnight Commander.\n")
-		
+
 #-------------------------------------------------
 def validate_connection(port):
 	# Lista de todas as portas serie ativas
@@ -5676,7 +5847,7 @@ def get_all_rows(api_url, token):
 	all_data = []
 	vistos = set()
 	url = api_url
-    
+
 	print_statusline("📦 Synchronizing with Baserow cloud database...")
 	while url:
 		response = requests.get(url, headers=headers).json()
@@ -5692,12 +5863,12 @@ def get_all_rows(api_url, token):
 				novos_encontrados += 1
 		if novos_encontrados == 0:
 			print("🔍 Loop deteted (Repeated data). Stoping the task.")
-			break        
+			break
 		url = response.get('next')
 		#if url:
 		#	print(f"DEBUG: Actual accumulated: {len(all_data)} lines.")
 	return all_data
-	
+
 #-------------------------------------------------
 def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 	global BRADR_EN, BRTID_EN, BRTK_EN, _h_key_64, _h_val_64
@@ -5747,7 +5918,7 @@ def mostrar_valores_amoc(data_input=None, data_fim_input=None):
 			idt  = base64.b64decode(BRTK_EN).decode()
 			path_int = kdecode(BRADR_EN, shifl).format(idur)
 			wtitle = {h_key: f"{h_val}{idt}"}
-			
+
 			response = requests.get(path_int, headers=wtitle, timeout=10)
 			if response.status_code != 200:
 				print(f"❌ {random.choice(messages['trouble_short'])} Baserow error: {response.status_code}\n")
@@ -5861,11 +6032,11 @@ def interpret_amoc_pro(histamoc_ordered):
 
 	days = list(histamoc_ordered.keys())
 	values = list(histamoc_ordered.values())
-    
+
 	mean_val = np.mean(values)
 	max_v = max(values)
 	min_v = min(values)
-    
+
 	# Classification logic
 	def classify_flow(v):
 		if v > 7: return "Intense Flow (Strong Thermal Transport)"
@@ -5969,10 +6140,133 @@ def imprimir_todo_o_ceu_visivel(data_str=None):
 	print(f"Total number of major objects detected above the horizon.: {corpos_visiveis} \n")
 
 #-------------------------------------------------
+def print_linux_commands():
+	terminal_width = shutil.get_terminal_size((80, 24)).columns
+	cmds = core['linuxcmd']
+	if not cmds:
+		return
+	total_cmds = len(cmds)
+	num_width = len(str(total_cmds))  # ex: "90" ocupa 2 carateres
+	max_cmd_len = max(len(cmd) for cmd in cmds)
+	cell_content_len = num_width + 2 + max_cmd_len
+	spacing = 4
+	total_cell_width = cell_content_len + spacing
+	num_cols = max(1, terminal_width // total_cell_width)
+
+	for i in range(0, total_cmds, num_cols):
+		linha_itens = []
+		for j in range(num_cols):
+			idx = i + j
+			if idx < total_cmds:
+				cmd = cmds[idx]
+				item_str = (
+					f"{kolor['YELLOW']}{idx + 1:>{num_width}}."
+					f" {kolor['RESET']}{kolor['VIVID_CYAN']}{cmd:<{max_cmd_len}}{kolor['RESET']}"
+				)
+				linha_itens.append(f"{item_str}{' ' * spacing}")
+			else:
+				break
+		print("".join(linha_itens))
+	print("")
+
+#-------------------------------------------------
+def gemini_ai():
+	global _pydr3_
+	if _pydr3_:
+		print_statusline(f"")
+		print(f"{kolor['RED']}[ERROR]{kolor['RESET']} System not supported.")
+		print(f"The system on which you are trying to run me is not (or not yet) supported.\n")
+		return
+
+	online = internet_onoff()
+	dblrconn = "online" if online else "offline"
+	api_key = os.environ.get("GEMINI_API_KEY") or _apikey_
+
+	target_lang = (system_country[2].lower() if (system_country and len(system_country) > 2 and system_country[2]) else "en")
+	active_lang = target_lang
+
+	primeira_chave = list(core_gem.keys())[0]
+	available_languages = list(core_gem[primeira_chave].keys())
+
+	if not internet_onoff():
+		print_statusline(f"")
+		print(f"{kolor['RED']}[OFFLINE ERROR]{kolor['RESET']} No internet connection detected.")
+		print(f"The offline neural model version is not yet available. Please check your connection and try again.\n")
+		return
+
+	if not api_key or api_key.strip() == "":
+		print_statusline(f"")
+		print(f"{kolor['YELLOW']}[WARNING]{kolor['RESET']} No GEMINI_API_KEY configured.")
+		print(f"To get an API Key go to [https://aistudio.google.com/api-keys], create one and insert it in the var _apikey_ .")
+		print(f"Run in the terminal: export GEMINI_API_KEY='your api key'\n")
+		return
+
+	if target_lang in available_languages:
+		print_statusline(f"Country detected: {system_country[1]} ({target_lang.upper()}) -> Language set to: '{target_lang}' ✅")
+		sleep(0.30)
+	else:
+		print(f"{kolor['RED']}Notice:{kolor['OFF']} Language '{target_lang}' for country '{system_country[1].upper()}' is not available. Defaulting to 'en'.\n")
+		active_lang = "en"; target_lang = "en"
+		sleep(0.30)
+
+	client = genai.Client(api_key=api_key)
+	print_statusline(f"")
+
+	try:
+		chat = client.chats.create(model=_gmodel_)
+	except Exception as e:
+		print(f"{kolor['YELLOW']}Error initiating the chat: {e}{kolor['RESET']}")
+		return
+
+	while True:
+		try:
+			username = os.getlogin()
+			prompt_line = (
+				f"{kolor['BOLD_GREEN']}{username}{kolor['RESET']}"
+				f"{kolor['WHITE']}@{kolor['RESET']}"
+				f"{get_google_styled_gemini()} "
+				f"{kolor['VIVID_MAGENTA']}{symb_prompt()}{kolor['RESET']}"
+			)
+
+			user_input = input(prompt_line)
+
+			if user_input.strip().lower() in ["cybele","sair","exit","quit","out","q","x"]:
+				print(f"{kolor['GRAY']}Switching to {_title_.capitalize()} again.{kolor['OFF']}\n")
+				break
+
+			if user_input.strip().lower() == "author":
+				print(f"\n{kolor['BOLD_YELLOW']}✦ Script Author:{kolor['RESET']} {kolor['BOLD_WHITE']}{_author_}{kolor['RESET']}")
+				print(f"{kolor['CYAN']}{website['home']}{kolor['RESET']}\n")
+				continue
+
+			if user_input.strip().lower() == "model":
+				print(f"\n{kolor['BOLD_YELLOW']}Gemini Model:{kolor['RESET']} {kolor['BOLD_WHITE']}{_gmodel_}{kolor['RESET']}")
+				print(f"{kolor['CYAN']}Is Google's high-efficiency workhorse multimodal AI model released in July 2026.{kolor['RESET']}\n")
+				continue
+
+			if not user_input.strip():
+				continue
+
+			spinner_msg = random.choice(core_gem['spinner'][active_lang])
+			spinner = Spinner(message=spinner_msg)
+			spinner.start()
+
+			try:
+				response = chat.send_message(user_input)
+			finally:
+				spinner.stop()
+
+			print(f"\n{kolor['VIVID_WHITE']}{response.text}{kolor['RESET']}\n")
+
+		except (KeyboardInterrupt, EOFError):
+			print(f"\n{kolor['GRAY']}Switching to {_title_.capitalize()} again.{kolor['OFF']}\n")
+			break
+
+#-------------------------------------------------
 #-------------------------------------------------
 def main():
 	global _poigps_, lat, lon, aboutyou, days, dblrconn, dbmsgbl, _portac_, _pydr3_, sysos, presence_online
-	global system_country, people_space, ncountries, dbld, dlrd, nextneo, shift #, orbit_data
+	global system_country, people_space, ncountries, dbld, dlrd, nextneo, shift , runlinux#, orbit_data
 	#----------------------------
 	if not check_tables(tables):
 		exit()
@@ -6014,7 +6308,7 @@ def main():
 			globals()['update_available'] = False
 		if globals().get('nextneo'):
 			print(nextneo); globals()['nextneo'] = False
-		#-------------------------	
+		#-------------------------
 		if not question:
 			print ("I'm ready when you are! ask me something like:")
 			print (f" {symb_prompt()}What can you anwser?")
@@ -6027,7 +6321,7 @@ def main():
 		#-------------------------
 		if question == "bye" or question == "exit" or question == "quit":
 			return False
-		
+
 		elif question == "say a word" or question == "share a word":
 			print (preamble_random_word())
 
@@ -6036,18 +6330,18 @@ def main():
 
 		elif 'cybele idea' in question or 'cybele idea' in question:
 			   print("The word idea was me until "+ _author_.split()[0] +" started to develop me.\nAhah and just for fun!\n")
-		
+
 		elif " in linux" in question and question != 'help query in linux':
 			keyword = question.replace(" in linux", "").strip()
 			commands_by_explanation(linux_commands, keyword)
 
 		elif any(word in question for word in core['badword']) and not any(word in question for word in core["constelattion"]) and not "password":
 			print (random.choice(messages['badword_msg']) + "\n")
-		
+
 		elif any(word in question for word in core['information state']):
 			random.shuffle(core['information state awnsers'])
 			print (f"{random.choice(core['information state awnsers'])}\n")
-		
+
 		#elif any(word in question for word in core['sayconvert']) and question != 'say something':
 		elif question[0:3] == "say" or question[0:8] == "longhand":
 			sayconvert = question.split()[0]
@@ -6176,7 +6470,7 @@ def main():
 
 			elif 'oceanography' in question:
 				print (f"{showlisttell(core['oceanography'], num_terms=5, category='oceanography terms')}.\n")
-			
+
 		elif question == 'astronomy questions' or question == 'questions of astronomy':
 			all_astro = core["qa-astro"]
 			random.shuffle(all_astro)
@@ -6203,8 +6497,8 @@ def main():
 						print ('To yours i dont know, but to the ' + select_creator + ' are '+ eventdays +' days.\n')
 					elif eventdays != 0:
 						print ("%s left for %s\n" % (eventdays, subevent.title()))
-				else:				
-					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(messages['short_no']) + "\n")				
+				else:
+					print (random.choice(messages['trouble_short']) + " " + random.choice(messages['trouble_msg']) + " Till What!? '"+ subevent + "' "+ random.choice(messages['short_no']) + "\n")
 
 		elif question[0:15] == 'difference from' or question[0:9] == 'diff from' or question[0:8] == 'age calc':
 			try:
@@ -6349,12 +6643,12 @@ def main():
 				print("")
 			else:
 				print(' > the default GPS coordinates are defined to user input.\n')
-				
+
 		elif question == 'set default gps off':
 			print(' > default GPS coordinates defined to user input.\n')
 			_poigps_[3] = 0
 			_poigps_[4] = 0
-			
+
 		elif question == 'show default gps' or question == 'view default gps':
 			if _poigps_[4] == 0:
 				print (' > stored default information is empty!\n')
@@ -6369,10 +6663,10 @@ def main():
 
 		elif question == 'set default country':
 			set_system_country()
-		
+
 		elif question == 'default country' or question == 'actual country':
 			view_system_country()
-		
+
 		elif question == 'default country off':
 			if 'system_country' not in globals():
 				system_country = []
@@ -6422,47 +6716,54 @@ def main():
 
 		elif question.startswith("help"):
 			parts = question.split()
-			spacing = 2
-			results = []
-			if len(parts) > 1:
-				search_term = question.lower() 
-				filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
-				if not filtrado:
-					print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
-					nhelp = {}
-				else:
-					print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press <Enter> to get a more descriptive help.\n")
-					nhelp = dict(sorted(filtrado.items()))
+			if len(parts) > 1 and parts[1].lower() in linux_commands:
+				cmd = parts[1].lower()
+				print(f"{kolor['VIVID_BLUE']}Here some help about 🐧 linux command <{cmd}>:{kolor['OFF']}\n")
+				print(" "*5 + "Syntax: " + str(linux_commands[cmd]['syntax']))
+				print("Explanation: " + str(linux_commands[cmd]['explanation']))
+				print(" "*3 + "Examples: " + "'" + "', '".join(linux_commands[cmd]['examples']) + "'\n")
 			else:
-				print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you.\n")
-				nhelp = dict(sorted(help.items()))
-			if nhelp:
-				results = list(nhelp.keys())
-			if results:
-				try:
-					terminal_width = os.get_terminal_size().columns
-				except OSError:
-					terminal_width = 80
-
-				max_item_width = max(len(str(item)) for item in results)
-				if max_item_width + spacing < terminal_width:
-					items_per_line = terminal_width // (max_item_width + spacing)
+				spacing = 2
+				results = []
+				if len(parts) > 1:
+					search_term = question.lower()
+					filtrado = {k: v for k, v in help.items() if k.startswith(search_term)}
+					if not filtrado:
+						print(f"{random.choice(messages['trouble_short'])} I did not find any help commands starting with '{parts[1]}'.\n")
+						nhelp = {}
+					else:
+						print(f"I found {len(filtrado)} help 🙋 commands starting with '{parts[1]}'.\nJust type the <help desired command> and press <Enter> to get a more descriptive help.\n")
+						nhelp = dict(sorted(filtrado.items()))
 				else:
-					items_per_line = 1        
-				items_per_line = max(1, items_per_line)
-				column_widths = [0] * items_per_line
-        
-				for i in range(len(results)):
-					column_index = i % items_per_line
-					column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
-				for i in range(0, len(results), items_per_line):
-					line = results[i:i + items_per_line]
-					output_parts = []
-					for j, item in enumerate(line):
-						padded_item = str(item).ljust(column_widths[j])
-						output_parts.append(padded_item)
-					print((" " * spacing).join(output_parts))
-				print("")
+					print(f"Here are the {len(core['help'])} help 🙋 commands to better assist you.\n")
+					nhelp = dict(sorted(help.items()))
+				if nhelp:
+					results = list(nhelp.keys())
+				if results:
+					try:
+						terminal_width = os.get_terminal_size().columns
+					except OSError:
+						terminal_width = 80
+
+					max_item_width = max(len(str(item)) for item in results)
+					if max_item_width + spacing < terminal_width:
+						items_per_line = terminal_width // (max_item_width + spacing)
+					else:
+						items_per_line = 1
+					items_per_line = max(1, items_per_line)
+					column_widths = [0] * items_per_line
+
+					for i in range(len(results)):
+						column_index = i % items_per_line
+						column_widths[column_index] = max(column_widths[column_index], len(str(results[i])))
+					for i in range(0, len(results), items_per_line):
+						line = results[i:i + items_per_line]
+						output_parts = []
+						for j, item in enumerate(line):
+							padded_item = str(item).ljust(column_widths[j])
+							output_parts.append(padded_item)
+						print((" " * spacing).join(output_parts))
+					print("")
 
 		elif question.find('happy birthday')!=-1:
 			today = datetime.now()
@@ -6493,7 +6794,7 @@ def main():
 			else:
 				random.shuffle(messages['earlier_nyear'])
 				print( random.choice(messages['earlier_nyear']) + "\n")
-		
+
 		elif question.find('happy valentines')!=-1 or question.find('happy valentine')!=-1:
 			dt = date.today()
 			if (str(dt)[5:]) == '02-14':
@@ -6507,7 +6808,7 @@ def main():
 			else:
 				random.shuffle(messages['notvalentines'])
 				print( random.choice(messages['notvalentines']) + "\n")
-		
+
 		elif question == 'what is your version' or question == 'cybele version' or question == 'your version' or question == 'this version':
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
@@ -6545,7 +6846,7 @@ def main():
 			defgps = 'default gps'
 			_poigps_[3] = 1
 			_poigps_[4] = 1
-			
+
 			print (f"Calculations for [{str(_poigps_[0])}|{str(_poigps_[1])}] to {whatgmt()[0]}, {system_country[0]} using {defgps}")
 			drawart('art_world')
 
@@ -6555,7 +6856,7 @@ def main():
 			print(f"  {_spchar_[1:2]} Solar noon️{sun_emoji[1]} :  {str(s.solarnoon())}")
 			print(f"  {_spchar_[1:2]}     Sunset {sun_emoji[3]} :  {str(s.sunset())}")
 			print("")
-			
+
 		elif question == 'moon phase' or question == 'what is the moon phase' or question =='what is the actual moon phase':
 			if _poigps_[3] == 0:
 				try:
@@ -6615,7 +6916,7 @@ def main():
 					sysos = "Pydroid3"
 				else:
 					_pydr3_ = _pydr3_
-									
+
 				print(f"    Device : {display_node_name} on {sysos}")
 				print(f"      Name : {_title_}")
 				print(f"   Version : {version} from {_revise_}")
@@ -6646,7 +6947,7 @@ def main():
 			else:
 				random_season_activity()
 				tdctl = tdctl + 1
-		
+
 		# == "weather now":
 		elif question.startswith('weather'):
 			sub_command = question[7:].strip().lstrip(' ')
@@ -6664,7 +6965,7 @@ def main():
 				oracle = aetherNeuralbase().predictbase()
 				print_statusline(f"")
 				print(random.choice(weather_starters))
-				
+
 			print(f"{kolor['YELLOW']}AMOC Alternative modeling{kolor['DIM_WHITE']} [{kolor['CYAN']}βeta release{kolor['DIM_WHITE']}] with {kolor['BLUE']}♢ {kolor['VIVID_BLUE']}G{kolor['RED']}e{kolor['YELLOW']}m{kolor['VIVID_BLUE']}i{kolor['GREEN']}n{kolor['RED']}i{kolor['DIM_CYAN']} colab{kolor['OFF']}")
 			print(f"{oracle}")
 
@@ -6694,14 +6995,14 @@ def main():
 					mensagem = f"{_spchar_[18:19]} Today is {special_info}"
 			if is_holiday == True or special_info is not None:
 				print(f"{mensagem}")
-			
+
 			if system_country:
 				final_iso = system_country[0].upper()
 				aviso = verificar_dst(final_iso)
 				print(aviso if aviso else "")
 			else:
 				print("")
-		
+
 		elif question == 'today holiday':
 			if not system_country:
 				print(f"{random.choice(messages['trouble_short'])} Set the country, type 'set default country' and then the two-letter country code.\n")
@@ -6721,12 +7022,12 @@ def main():
 						print(f"{mensagem}")
 					else:
 						print("Today is neither a holiday nor a 'special' date.\n")
-		
+
 		elif question == 'leap year' or question == 'is this year a leap year':
 			print (f"The actual year ({int(next_year)-1}) {leapyear()}. \n")
-	
+
 		elif match := re.search(r'(longest|shortest) day', question, re.IGNORECASE):
-			type_asked = match.group(1).lower() 
+			type_asked = match.group(1).lower()
 			year_match = re.search(r'\b(\d{4})\b', question)
 			solstices_year = int(year_match.group(1)) if year_match else datetime.now().year
 			ldy = get_solstices(solstices_year)
@@ -6735,11 +7036,11 @@ def main():
 				date_value = ldy['longest_day']
 			else:
 				label = "❄️ Shortest day (Winter Solstice)"
-				date_value = ldy['shortest_day']    
+				date_value = ldy['shortest_day']
 			print(f"In {solstices_year} Solar Cycle the {label} is {date_value}.\n")
-	
+
 		#-------------------------------------- convert ----------------------------------------
-		
+
 		elif question.startswith('convert'):
 			match = re.search(r'(\d+\.?\d*)\s*([a-zA-Z\s]+?)(?:\s+(?:to|in)\s+([a-zA-Z\s]+))?$', question.lower().strip())
 			original_value_str = None
@@ -6762,7 +7063,7 @@ def main():
 				else:
 					print(f"Based on my calculations {converted_value} {target_unit}.\n")
 
-		elif question == 'well calc':	
+		elif question == 'well calc':
 			print(calc_well_volume())
 
 		#---------------------------------------------------------------------------------------
@@ -6772,7 +7073,7 @@ def main():
 
 		elif re.compile(r'\b(week|current week|week #?num(?:ber)?|what week)\b').search(question):
 			print (f"Based on the system actual date this is the {str(date.today().isocalendar()[1])} week of the year.\n")
-		
+
 		elif question.find('update') != -1 and (question.find('last') != -1 or question.find('check') != -1):
 			check_for_updates()
 
@@ -6795,7 +7096,7 @@ def main():
 					print ("")
 				except ValueError as e:
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
-		
+
 		elif question[0:11] == 'view askard':
 			getparam = question.split()
 			if len(getparam) != 3 or getparam[2].isnumeric() != True:
@@ -6806,7 +7107,7 @@ def main():
 					print ("")
 				except ValueError as e:
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
-		
+
 		elif question == 'fun fact' or question == 'fast fact':
 			if ffctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['nicefun_msg'])}\n")
@@ -6816,7 +7117,7 @@ def main():
 					ffctl = ffctl + 1
 				except ValueError as e:
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
-				
+
 		elif question[0:10] == 'nice thing':
 			if ncctl >= 3:
 				print (f"{random.choice(messages['trouble_short'])} {random.choice(messages['activity_msg'])}\n")
@@ -6826,7 +7127,7 @@ def main():
 					ncctl = ncctl + 1
 				except ValueError as e:
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
-				
+
 		elif question[0:11] == 'list askard':
 			getparam = question.split()
 			if len(getparam) == 2:
@@ -6841,7 +7142,7 @@ def main():
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			else:
 				print ('The correct usage is <list askard> to make a complete list of all database or <start> <end>.\n')
-				
+
 		elif question[0:16] == 'search astronomy':
 			getparam = question.split()
 			if len(getparam) != 3:
@@ -6911,7 +7212,7 @@ def main():
 					print(f"{random.choice(messages['trouble_short'])} There was a data corruption or a parsing issue during communication with my database.\n")
 			else:
 				print ('The correct usage is <list oldtech> to make a complete list of all database or <start> <end>.\n')
-		
+
 		elif question[0:10] == 'stars from':
 			getparam = question.split()
 			if len(getparam) == 3:
@@ -6925,7 +7226,7 @@ def main():
 					mandb('cybele','stars','list',getconstellationabbr[1].title(),0)
 			else:
 				print ('The correct usage is <list stars> from <constelattion name>.\n')
-		
+
 		elif question[0:10] == 'list stars':
 			getparam = question.split()
 			if len(getparam) == 4:
@@ -6933,7 +7234,7 @@ def main():
 				mandb('cybele','stars','list',getparam[2], getparam[3] )
 			else:
 				print ('The correct usage is <list stars> from <search letters> to <search letters>.\n')
-			
+
 		elif question[0:19] == 'list constellations':
 			getparam = question.split()
 			if len(getparam) == 2:
@@ -6942,11 +7243,11 @@ def main():
 			elif len(getparam) == 4:
 				print (f"{creative_random_anwser()} Here he is the list of constellations from '{getparam[2]}' to '{getparam[3]}' i have in knowledge.")
 				mandb('cybele','constelations','list',getparam[2], getparam[3] )
-		
+
 		elif question[0:6] == 'limits':
 			getparam = question.split()
 			if len(getparam) == 2:
-				if getparam[1] == "askard":
+				if getparam[1] == "askard" or getparam[1] == "askards":
 					mandb('cybele','askard_db','limits',0,0)
 				elif getparam[1] == "astronomy":
 					mandb('cybele','astronomy_glossary','limits',0,0)
@@ -6962,7 +7263,7 @@ def main():
 					mandb('cybele','oceanography','limits',0,0)
 			else:
 				print ('The correct usage is <limits <askard|astronomy|oldtech>> to show the first and last record in the database.\n')
-			
+
 		elif question.find('current')!=-1 and question.find('century')!=-1:
 			current_century = get_current_century()
 			print(current_century)
@@ -7003,7 +7304,7 @@ def main():
 				print ("You can know what are "+_author_.split()[0]+"'s in her public profile.\n  > "+ website['trakt'] + "\n")
 			else:
 				print ("You can follow real time what "+_author_.split()[0]+" is watching by her profile.\n  > "+ website['trakt'] + "\n")
-		
+
 		elif question[-11:] == 'fav tvshows' or question[-16:] == 'favorite tvshows':
 			if internet_onoff() == False or internet_onoff() == None:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
@@ -7015,7 +7316,7 @@ def main():
 					print(f"\nBased on Elysia here are mine/{_author_.split()[0]} favorites {_spchar_[23:24]}...\n")
 					extract_from_elysia('tvshow')
 					_print_tv_list(tvshows_cache)
-		
+
 		elif "in fav" in question or "in tvshows" in question or "in favorites" in question:
 			if len(tvshows_cache) == 0:
 				extract_from_elysia('tvshow')
@@ -7025,7 +7326,7 @@ def main():
 
 			if search_term:
 				results = [item for item in tvshows_cache if search_term in item.lower()]
-        
+
 				if results:
 					print(f"\nI found {len(results):02d} match(es) for '{search_term.upper()}' in your library 🧠:")
 					for i, match in enumerate(results, 1):
@@ -7035,7 +7336,7 @@ def main():
 					print(f"No matches for '{search_term.upper()}' in your favorites.\n")
 			else:
 				_print_tv_list(tvshows_cache)
-			
+
 		elif question[-14:] == 'recent tvshows' or question[-22:] == 'recently added tvshows':
 			if internet_onoff() == False or internet_onoff() == None:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['no_internet'])}\n")
@@ -7111,7 +7412,7 @@ def main():
 			source_icon = f"{_spchar_[22:23]}"
 			if len(presence_online) == 0:
 				presence_online = mystory_from_elysia()
-				source_icon = f"{_spchar_[23:24]}"		
+				source_icon = f"{_spchar_[23:24]}"
 			sub = question.split()[1:]
 			if len(sub) == 0:
 				digifoot = str(len(presence_online))
@@ -7119,14 +7420,14 @@ def main():
 				print("%s has a digital footprint %s in these %s services:\n" % (_author_.split()[0], source_icon, digifoot))
 				for service in presence_online_abc:
 					print(" " * 3 + _spchar_[4:5] + " " + service.title())
-				print("")        
+				print("")
 			else:
 				service = ' '.join(sub).lower().strip()
 				if service in presence_online:
 					print(f"Yes {_author_.split()[0]} has an online presence {source_icon} on that service. Direct link: \n  {_spchar_[1:2]} {presence_online[service]}\n")
 				else:
 					print(random.choice(messages['trouble_msg']) + " I don't have info for the '" + service.title() + "' service.")
-					
+
 		elif question[0:8] == 'phonetic':
 			words = question.split()[1:]
 			if len(words) != 0:
@@ -7154,7 +7455,7 @@ def main():
 				print (yoda_speak(senyoda) + "\n")
 			else:
 				print (random.choice(list(core['yodaw'])) + "\n")
-		
+
 		elif question[0:6] == 'genpwd':
 			pwdparam = question.split()[1:]
 			if len(pwdparam) != 2 or pwdparam[0].isnumeric() != True or pwdparam[1].isnumeric() != True:
@@ -7169,7 +7470,7 @@ def main():
 				for pwd in generated_pwd:
 					print(" "+ _spchar_[1:2] + " " + pwd)
 				print ("")
-		
+
 		elif question[0:20] == 'multiplication table' or question[0:7] == 'x table':
 			xtablenum = question.split()[2:]
 			if len(xtablenum) != 1 or xtablenum[0].isnumeric() != True:
@@ -7195,26 +7496,26 @@ def main():
 					print("")
 				else:
 					print(f"{random.choice(messages['trouble_msg'])} There is no sha1 data to present.\n")
-					
+
 		elif question[0:9] == 'conjugate':
 			parts = question.split()[1:]
 			if len(parts) != 1:
 					print(f"{random.choice(messages['trouble_short'])} I recognize the command but not the syntax. Use: conjugate|conjuga <verb>\n")
-			else:		
+			else:
 				if any(word in parts for word in knowledge['verb_base']):
 					what_verb = parts[-1:][0]
 					cybele_conjugator(what_verb)
 				else:
 					print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} {random.choice(['I dont recognize','I dont see'])} {kolor['BOLD_YELLOW']}{parts[-1:][0]}{kolor['OFF']} like a english verb!\n")
-		
+
 		elif question == 'trails':
 			print (f"The direct link for the map knowed via acronym 'ASCTR' is: \n{website['trails']}\n\nalso accessed via: {website['home']}/trails\n")
-		
+
 		elif question == 'view solar system':
 			terminal_width, terminal_height = os.get_terminal_size()
 			ascii_horiz_solar_system(width=terminal_width-3)
 			print ("")
-			
+
 		elif question[0:7] == 'protect':
 			piaiparam = question.split()[1:]
 			if len(piaiparam) != 2:
@@ -7238,7 +7539,7 @@ def main():
 					protect_image(input_image_path, noise_intensity=custom_noise_intensity,
 									pixel_shift_amount=custom_pixel_shift_amount,color_jitter_factor=custom_color_jitter_factor,
 									jpeg_quality=custom_jpeg_quality,add_symbol=add_symbol)
-		
+
 		elif question == "offline mode" or question == "database update" or question == "update database":
 			if internet_onoff() == False:
 				print(f"{random.choice(messages['trouble_msg'])} To perform this task i need to be able to access the internet.\n")
@@ -7279,7 +7580,7 @@ def main():
 				except (ValueError, IndexError):
 					print(f"{kolor['YELLOW']}{random.choice(messages['trouble_short'])} Invalid usage syntax! I'll use my default values. <Type: help glidflow> {kolor['OFF']}\n")
 			generate_console_schedule(**args)
-		
+
 		elif question == 'licence' or question.find(_title_.lower() + ' licence')!=-1:
 			for i, line in enumerate(__doc__.splitlines()):
 				if i >= len(__doc__.splitlines()) - 6:
@@ -7287,7 +7588,7 @@ def main():
 						line = line.replace("# This","# " + __doc__.splitlines()[1][0:6] + " this")
 					print(line)
 			print ("")
-				
+
 		elif question.startswith(('mppt', 'solar')):
 			if _pydr3_ == True:
 				print(f"I'm currently running on Pydroid, where MPPT|Solar commands are unavailable.\nI'm ready to handle these once we're back on a compatible Linux setup!\n")
@@ -7296,23 +7597,23 @@ def main():
 				print(f"Check usage with: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
 			else:
 				args = question.split()[1:]
-				
+
 				victron = VictronMonitor()
 				match args:
 					case ['history', *_]:
-						print(victron.get_historico_dia())   
+						print(victron.get_historico_dia())
 					case ['last30', *_]:
-						victron.importar_30_dias()  
+						victron.importar_30_dias()
 					case ['monitor', *_]:
 						if validate_connection(_portac_):
 							victron.monitorizacao_ativa()
 						else:
 							print(f"\r{kolor['BOLD_RED']}ERRO:{kolor['OFF']} VE.Direct cable in {_portac_} not detected!\n")
 					case []:
-						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n") 
+						print(f"\r{kolor['CYAN']}HINT:{kolor['OFF']} Command {question.upper()} It requires parameters. Try: {kolor['GREEN']}help {question.lower()}{kolor['OFF']}\n")
 					case _:
 						print(f"\r{kolor['BOLD_RED']}ERROR:{kolor['OFF']} The parameter '{args[0]}' is invalid. Try: {kolor['GREEN']}help {question.split()[0]}{kolor['OFF']}\n")
-		
+
 		elif question == '#version':
 			if dbver != "":
 				_dbver_ = datetime.fromtimestamp(dbver, timezone.utc)
@@ -7322,13 +7623,13 @@ def main():
 
 		elif "panels tilt" in question or "panels angle" in question:
 			calcular_solar_sazonal()
-		
+
 		elif question == 'process amoc files' or question == 'process amoc':
 			if _pydr3_ == True:
 				print(f"{random.choice(messages['trouble_short'])} {random.choice(messages['trouble_msg'])} ⚠️ I've detected I'm running on the Pydroid IDE.\n{kolor['BOLD_YELLOW']}While I'd love to crunch those numbers, my AMOC heavy-lift engine requires a Desktop environment.{kolor['OFF']}\n")
 			else:
 				run_amoc_engine()
-	
+
 		elif question[0:3] == 'doy':
 			partes = question.split()
 			anoleap = 366 if leapyear() != 'not a leap year' else 365
@@ -7340,7 +7641,7 @@ def main():
 						if len(entrada.split('.')) == 2:
 							data_obj = datetime.strptime(f"{entrada}.{hoje.year}", "%d.%m.%Y")
 						else:
-							data_obj = datetime.strptime(entrada, "%d.%m.%Y")    
+							data_obj = datetime.strptime(entrada, "%d.%m.%Y")
 						doy_num = data_obj.strftime('%j')
 						print(f"The Day of Year for {data_obj.strftime('%d.%m.%Y')} is {int(doy_num)}.\n")
 					except ValueError:
@@ -7357,7 +7658,7 @@ def main():
 						print(f"{random.choice(messages['not_right'])} That is not a valid number or date.\n")
 			else:
 				print(f"Usage for {datetime.now().year}: doy 124 (number to date) OR doy 04.05 (date to number)\n")
-				
+
 		elif question.startswith('amoc audit'):
 			partes = question.split()
 			if len(partes) == 2:
@@ -7376,6 +7677,132 @@ def main():
 				mostrar_valores_amoc(data_ini, data_fim)
 			else:
 				print(f"{kolor['BOLD_RED']}❓ Invalid format! Use <help amoc audit>{kolor['OFF']}")
+
+		elif question.startswith('amoc delta'):
+			valido = True
+			agora = datetime.now()
+			primeiro_dia_mes = agora.replace(day=1)
+			doy_actual = int(agora.strftime('%j'))
+			doy_inicio = int(agora.replace(day=1).strftime('%j'))
+			delta_values = _get_amoc_history(agora.year, doy_inicio, doy_actual)
+			partes = question.split()
+
+			if len(partes) == 2:
+				doy_inicio = int(agora.replace(day=1).strftime('%j'))
+				doy_actual = int(agora.strftime('%j'))
+				label_periodo = f"MONTH: {core['months'][agora.month - 1].capitalize()}, {agora.year}"
+			elif len(partes) == 3:
+				arg = partes[2].lower()
+				if arg == 'year':
+					doy_inicio = 1
+					doy_actual = int(agora.strftime('%j'))
+					label_periodo = f"YEAR: {agora.year} (Full to Date)"
+				else:
+					if arg in core['months']:
+						m_idx = core['months'].index(arg)
+						target_month = m_idx + 1
+						if target_month > agora.month:
+							valido = False
+							print(f"{kolor['RED']}Error:{kolor['RESET']} The entered month cannot be later than {core['months'][agora.month].capitalize()}!\n")
+						else:
+							primeiro_dia = datetime(agora.year, target_month, 1)
+							doy_inicio = int(primeiro_dia.strftime('%j'))
+							if target_month == agora.month:
+								doy_actual = int(agora.strftime('%j'))
+							else:
+								if target_month == 12:
+									ultimo_dia = datetime(agora.year + 1, 1, 1) - timedelta(days=1)
+								else:
+									ultimo_dia = datetime(agora.year, target_month + 1, 1) - timedelta(days=1)
+									doy_actual = int(ultimo_dia.strftime('%j'))
+								label_periodo = f"MONTH: {core['months'][target_month - 1].capitalize()}, {agora.year}"
+					else:
+						valido = False
+						print(f"{kolor['RED']}Error:{kolor['RESET']} Unknown month or argument '{arg}'.")
+						print(f"Type <help amoc deltas> for correct sintax and more information.\n")
+
+			if valido:
+				delta_values = _get_amoc_history(agora.year, doy_inicio, doy_actual)
+				print(f"\n{kolor['BOLD_BLUE']}🏛  AMOC data Ifremer [Ground Truth Audit]{kolor['RESET']}")
+				print(f"{kolor['G_GREEN']}RANGE: {doy_inicio}|{doy_actual} {kolor['G_YELLOW']}{label_periodo}{kolor['RESET']}")
+				print(f"{kolor['BOLD_CYAN']}DOY | DATE  | DELTΔ{kolor['RESET']}")
+				print("-" * 22)
+				for doy in sorted(delta_values.keys()):
+					current_date = datetime(agora.year, 1, 1) + timedelta(days=doy - 1)
+					date_str = current_date.strftime('%d.%m')
+					delta_val = delta_values[doy]
+					delta_formatted = f"{kolor['VIVID_GREEN']}{delta_val}{kolor['RESET']}"
+					print(f"{doy:>3} | {date_str} | {delta_formatted}")
+				print("")
+				if delta_values:
+					float_vals = {k: float(v) for k, v in delta_values.items()}
+					max_doy = max(float_vals, key=float_vals.get)
+					min_doy = min(float_vals, key=float_vals.get)
+					max_val = float_vals[max_doy]
+					min_val = float_vals[min_doy]
+					avg_val = sum(float_vals.values()) / len(float_vals)
+					print(f"{kolor['BOLD_YELLOW']}MAX:{kolor['RESET']} {kolor['VIVID_GREEN']}{max_val}{kolor['RESET']} (DOY {max_doy})  |  {kolor['BOLD_RED']}MIN:{kolor['RESET']} {kolor['VIVID_RED']}{min_val}{kolor['RESET']} (DOY {min_doy})")
+					print(f"{kolor['BOLD_CYAN']}AVG (Média):{kolor['RESET']} {kolor['BOLD_WHITE']}{avg_val:.2f}{kolor['RESET']}")
+				print("")
+
+		elif question.startswith("max amoc delta") or question.startswith("min amoc delta"):
+			partes = question.split()
+			tipo = partes[0].lower() # 'max' ou 'min'
+			escopo = partes[3].lower() if len(partes) > 3 else ""
+
+			ano = datetime.now().year
+			calc_func = max if tipo == 'max' else min
+			label = "maximum" if tipo == 'max' else "minimum"
+
+			if escopo == 'year':
+				dados_ano = _get_amoc_history(ano, 1, 366)
+				if not dados_ano:
+					resposta = f"{kolor['RED']}No data available for the year {kolor['BOLD_YELLOW']}{ano}{kolor['RED']}.{kolor['OFF']}"
+				else:
+					target_doy = calc_func(dados_ano, key=dados_ano.get)
+					#resposta = f"The {label} AMOC delta of {ano} was {dados_ano[target_doy]} on day (DOY) {target_doy}."
+					resposta = (
+								f"The {kolor['BOLD_GREEN']}{label}{kolor['OFF']} AMOC delta of "
+								f"{kolor['BOLD_YELLOW']}{ano}{kolor['OFF']} was "
+								f"{kolor['BOLD_CYAN']}{dados_ano[target_doy]}{kolor['OFF']} "
+								f"on (DOY) {kolor['BOLD_MAGENTA']}{target_doy}{kolor['OFF']}."
+							)
+
+			elif escopo == 'month':
+				if len(partes) < 5:
+					resposta = f"{kolor['RED']}Error:{kolor['OFF']} Missing month value (e.g., 'max amoc delta month 5' or 'max amoc delta month may')."
+				else:
+					val_str = partes[4].lower()
+					mes_val = None
+					# Suporte numeros do mes (1-12) e nomes dos meses via (core['months'])
+					if val_str.isdigit():
+						mes_val = int(val_str)
+					elif val_str in core['months']:
+						mes_val = core['months'].index(val_str) + 1
+					if mes_val and 1 <= mes_val <= 12:
+						doy_ini = datetime(ano, mes_val, 1).timetuple().tm_yday
+						ultimo_dia = calendar.monthrange(ano, mes_val)[1]
+						doy_fim = datetime(ano, mes_val, ultimo_dia).timetuple().tm_yday
+						dados_mes = _get_amoc_history(ano, doy_ini, doy_fim)
+						mes_nome = core['months'][mes_val - 1].capitalize()
+						if not dados_mes:
+							resposta = f"No data available for {mes_nome} of {ano}."
+						else:
+							target_doy = calc_func(dados_mes, key=dados_mes.get)
+							#resposta = f"The {label} AMOC delta for {mes_nome} was {dados_mes[target_doy]} on day (DOY) {target_doy}."
+							resposta = (
+								f"The {kolor['BOLD_GREEN']}{label}{kolor['OFF']} AMOC delta for "
+								f"{kolor['BOLD_YELLOW']}{mes_nome}{kolor['OFF']} was "
+								f"{kolor['BOLD_CYAN']}{dados_mes[target_doy]}{kolor['OFF']} "
+								f"on (DOY) {kolor['BOLD_MAGENTA']}{target_doy}{kolor['OFF']}."
+							)
+					else:
+						resposta = f"{kolor['RED']}Error:{kolor['OFF']} Invalid month '{partes[4]}'. Please insert a number between 1 and 12 or a valid month name."
+			else:
+				resposta = f"{kolor['RED']}Error:{kolor['OFF']} Invalid scope. Please use 'year' or 'month'."
+
+			print(f"{resposta}\n")
+
 
 		elif question.startswith('get ifremer data'):
 			if internet_onoff() == False:
@@ -7401,7 +7828,7 @@ def main():
 			sleep(0.5)
 			clear_screen()
 			return True
-		
+
 		elif question == 'database info' or question == 'check database':
 			if not internet_onoff():
 				print(f"{random.choice(messages['trouble_short'])} For this task i need an active internet connection.\n")
@@ -7448,7 +7875,7 @@ def main():
 				pulse = "▲" if "recovering" in trend else "▼"
 				color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
 				print(f"   {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
-			
+
 		elif question.startswith('sky'):
 			sub_command = question[4:].strip()
 			if len(sub_command) == 0:
@@ -7459,14 +7886,43 @@ def main():
 				else:
 					imprimir_todo_o_ceu_visivel(sub_command)
 
-		elif question == 'test':
-			#print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
-			kencode()
+		elif question == 'ai' or question == 'gemini ai':
+			primeira_chave = list(core_gem.keys())[0]
+			linguas_disponiveis = list(core_gem[primeira_chave].keys())
+			if system_country[0].lower() in linguas_disponiveis:
+				print_statusline(f"{random.choice(core_gem['loading_ai'][system_country[0].lower()])}")
+				sleep(0.30)
+			else:
+				print_statusline(f"{random.choice(core_gem['loading_ai']["en"])}")
+				sleep(0.30)
+			gemini_ai()
+
+		elif 'ai model' in question or 'gemini model' in question:
+			print(f"{kolor['VIVID_BLUE']}🤖 {_gmodel_.capitalize()}{kolor['OFF']} is a multimodal AI model from Google, optimized for high speed, efficiency, and advanced reasoning.\n")
+
+		elif question == 'view linux commands':
+			print(f"{kolor['VIVID_BLUE']}Here all 🐧 linux commands i have in my knowledge:{kolor['OFF']}\n")
+			print_linux_commands()
+
+		elif question.startswith("run linux commands"):
+			if not platform.system() == "Linux":
+				print(f"This feature requires a Linux environment and is not available on {platform.system().capitalize()}.\n")
+			else:
+				partes = question.split()
+				if len(partes) == 4 and partes[3].lower() in ("on", "off", "1", "0"):
+					global runlinux
+					runlinux = partes[3].lower() in ("on", "1")
+					print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Linux command execution {'enabled' if runlinux else 'disabled'}.\n")
+				else:
+					print(f"[🐧 is {kolor['VIVID_GREEN'] if runlinux else kolor['RED']}{'ON' if runlinux else 'OFF'}{kolor['RESET']}] Usage: run linux commands ON | OFF\n")
+
+		elif question == 'test' or question == 'teste':
+			print(f"{random.choice(messages['nicefun_msg'])}\n") #lista_defs()
 
 		elif question != '':
 			answer = find_answer(question,questions)
 			print(answer)
-			
+
 		else:
 			print (f"{random.choice(messages['trouble_knew'])}!\n")
 
@@ -7476,11 +7932,11 @@ if __name__ == "__main__":
 		while True:
 			if main() == False:
 				break
-		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
+		print(f"{random.choice(core['exitmsg'])} {random.choice(['',' Bye.'])}\n")
 		globals().clear()
 	except SystemExit as e:
 		globals().clear()
 	except KeyboardInterrupt:
-		print(random.choice(core['exitmsg']) + random.choice(['',' Bye.']))
+		print(f"\n{random.choice(core['exitmsg'])} {random.choice(['',' Bye.'])}\n")
 		globals().clear()
 	globals().clear()
