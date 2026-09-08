@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '07.09.2026'
+_revise_ = '08.09.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.6-flash'
 _apikey_ = ''
@@ -131,7 +131,7 @@ import pandas
 if not _pydr3_:
     from google import genai
 from urllib.parse import urljoin
-if 'linux' in sys.executable.lower():
+if 'linux' in platform.system().lower():
     import pty
 from packaging.version import parse as parse_version
 from PIL import Image, ImageEnhance, ImageFilter, ImageFont, ImageDraw
@@ -3162,7 +3162,7 @@ def find_word_in_dicts(word, core):
 
 	elif list_name == 'linuxcmd':
 		if not platform.system() == "Linux":
-			print("This feature is only available in Linux environments.\n")
+			print(f"Detected environment:{platform.system().capitalize()}. The Linux subsystem is required to run this command.\n")
 		else:
 			if runlinux == True:
 				print(f"{kolor['VIVID_WHITE']}{_spchar_[16:17]} Linux command detected. {kolor['GREEN']}Executing, {kolor['VIVID_WHITE']}disallowed parameters:{kolor['OFF']}\n")
@@ -7906,7 +7906,7 @@ def main():
 
 		elif question.startswith("run linux commands"):
 			if not platform.system() == "Linux":
-				print("This feature is only available in Linux environments.\n")
+				print(f"This feature requires a Linux environment and is not available on {platform.system().capitalize()}.\n")
 			else:
 				partes = question.split()
 				if len(partes) == 4 and partes[3].lower() in ("on", "off", "1", "0"):
