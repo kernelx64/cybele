@@ -7742,7 +7742,7 @@ def main():
 					min_val = float_vals[min_doy]
 					avg_val = sum(float_vals.values()) / len(float_vals)
 					print(f"{kolor['BOLD_YELLOW']}MAX:{kolor['RESET']} {kolor['VIVID_GREEN']}{max_val}{kolor['RESET']} (DOY {max_doy})  |  {kolor['BOLD_RED']}MIN:{kolor['RESET']} {kolor['VIVID_RED']}{min_val}{kolor['RESET']} (DOY {min_doy})")
-					print(f"{kolor['BOLD_CYAN']}AVG (Média):{kolor['RESET']} {kolor['BOLD_WHITE']}{avg_val:.2f}{kolor['RESET']}")
+					print(f"{kolor['BOLD_CYAN']}AVG (Average):{kolor['RESET']} {kolor['BOLD_WHITE']}{avg_val:.2f}{kolor['RESET']}")
 				print("")
 
 		elif question.startswith("max amoc delta") or question.startswith("min amoc delta"):
