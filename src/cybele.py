@@ -30,7 +30,7 @@ _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚�
 _active_ = '01.08.2024'
 _revise_ = '08.09.2026'
 _author_ = 'Adelino Saldanha'
-_gmodel_ = 'gemini-3.6-flash'
+_gmodel_ = 'gemini-3.5-flash-lite'
 _apikey_ = ''
 _pydr3_ = False
 
