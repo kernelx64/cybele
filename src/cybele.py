@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '08.09.2026'
+_revise_ = '09.10.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.5-flash-lite'
 _apikey_ = ''
@@ -6241,7 +6241,7 @@ def gemini_ai():
 
 			if user_input.strip().lower() == "model":
 				print(f"\n{kolor['BOLD_YELLOW']}Gemini Model:{kolor['RESET']} {kolor['BOLD_WHITE']}{_gmodel_}{kolor['RESET']}")
-				print(f"{kolor['CYAN']}Is Google's high-efficiency workhorse multimodal AI model released in July 2026.{kolor['RESET']}\n")
+				print(f"{kolor['CYAN']}Is Google's high-efficiency multimodal AI model released: July 2026 | knowledge cutoff: March 2026.{kolor['RESET']}\n")
 				continue
 
 			if not user_input.strip():
