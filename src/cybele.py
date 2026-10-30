@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '09.10.2026'
+_revise_ = '30.10.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.5-flash-lite'
 _apikey_ = ''
@@ -267,7 +267,7 @@ art_py = ["\n          \033[1;34m.XXXXX.\033[m         ","         \033[1;34mXX 
 	"         \033[1;33mYXXXXX XY\033[m        ","          \033[1;33m'YXXXY'\033[m         \n"]
 art_kx64 = [98,121,32,107,101,114,110,101,108,120,54,52]
 art_byas = [129150,32,98,121,32,65,83]
-art_with_ai = [32, 119, 105, 116, 104, 32, 65, 73]
+art_with_ai = [32,119,105,116,104,32,65,73]
 #------------------------------------------------------------
 star_wars_quotes = [
 	"Do or do not. There is no try. — Yoda",
@@ -2207,19 +2207,20 @@ def _get_amoc_history(ano, doy_ini, doy_fim):
 			pass
 
 	for row in rows_filtradas:
-		# Tenta 'delta' e a versão com o simbolo grego 'deltΔ'
+		# Tenta 'delta' e a versão com o símbolo grego 'deltΔ'
 		d_raw = row.get('delta') if row.get('delta') is not None else row.get('deltΔ')
 
-		if d_raw is None or str(d_raw).upper() == "N/A":
+		if d_raw is None or str(d_raw).upper() == "N/A" or str(d_raw).strip() == "":
 			continue
 		try:
 			doy = int(row.get('doy'))
 			val = float(d_raw)
-			if doy not in daily_values: daily_values[doy] = {"samples": []}
-			daily_values[doy]["samples"].append(val)
+			# Guarda diretamente o valor do delta para o dia (caso haja mais que um,
+			# este vai atualizar com o último encontrado, ou podes ajustar se preferires o primeiro)
+			daily_values[doy] = val
 		except: continue
 
-	return {d: round(sum(v["samples"])/len(v["samples"]), 2) for d, v in daily_values.items()}
+	return daily_values
 
 #---------------------------------------------------
 def get_wind_data(self, code):
@@ -6056,7 +6057,7 @@ def interpret_amoc_pro(histamoc_ordered):
 			"Peak": f"{max_v} Sv (DOY {days[values.index(max_v)]})",
 			"Lowest": f"{min_v} Sv (DOY {days[values.index(min_v)]})",
 			"Highest": f"{max_v} Sv (DOY {days[values.index(max_v)]})",
-			"Coverage": f"{round((len(days)/(days[-1]-days[0]+1))*100, 1)}%"
+			"Coverage": f"{round((len(days)/15)*100, 1)}%"
 		},
 		"Context": {
 			"Technical Analysis": diagnostic
@@ -6813,7 +6814,7 @@ def main():
 			global cybelecode, idcode
 			cybelecode = ksha([_title_.lower()+chr(46)+chr(112)+chr(121)])[0][1]
 			_chkcid_ = cybelecode if cybelecode else 'Not verified'
-			chkids = f"This {kolor['ORANGE']}IS NOT{kolor['OFF']} my {kolor['ORANGE']}original{kolor['OFF']} source code" if idcode != _chkcid_ else f"running via my {kolor['GREEN']}original{kolor['OFF']} source code"
+			chkids = f"This {kolor['ORANGE']}IS NOT{kolor['OFF']} my {kolor['ORANGE']}original{kolor['OFF']} source code" if idcode != _chkcid_ else f"running via my {kolor['GREEN']}original{kolor['OFF']} source code from my developer {kolor['RED']}{_author_[0:7]}{kolor['OFF']}"
 			nversion = f"I am {_title_} in version {version} last updated on {_revise_} running for {days_till_today.days} days.\n{chkids}."
 			print (nversion + "\n")
 
@@ -7760,7 +7761,6 @@ def main():
 					resposta = f"{kolor['RED']}No data available for the year {kolor['BOLD_YELLOW']}{ano}{kolor['RED']}.{kolor['OFF']}"
 				else:
 					target_doy = calc_func(dados_ano, key=dados_ano.get)
-					#resposta = f"The {label} AMOC delta of {ano} was {dados_ano[target_doy]} on day (DOY) {target_doy}."
 					resposta = (
 								f"The {kolor['BOLD_GREEN']}{label}{kolor['OFF']} AMOC delta of "
 								f"{kolor['BOLD_YELLOW']}{ano}{kolor['OFF']} was "
@@ -7856,25 +7856,42 @@ def main():
 						print(f"Ahead by: {diff_str}\n")
 
 		elif question == 'amoc resume':
-			doy_actual = int(datetime.now().strftime('%j'))
-			doy_inicio = int((datetime.now() - timedelta(days=15)).strftime('%j'))
-			histamoc = _get_amoc_history(2026, doy_inicio, doy_actual)
-			histamoc_ordered = dict(sorted(histamoc.items()))
-			analysis = interpret_amoc_pro(histamoc_ordered)
-			if analysis:
-				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} SUMMARY:{kolor['OFF']}")
-				summary = analysis['Summary']
-				print(f"   {kolor['WHITE']}Highest Peak.........: {kolor['SABER_BLUE']}{summary['Peak']}{kolor['OFF']}")
-				print(f"   {kolor['WHITE']}Lowest Point.........: {kolor['VIVID_RED']}{summary['Lowest']}{kolor['OFF']}")
-				print(f"   {kolor['WHITE']}Data Coverage........: {kolor['DIM_WHITE']}{summary['Coverage']}{kolor['OFF']}")
-				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CONTEXT ANALYSIS{kolor['OFF']}")
-				context = analysis['Context']
-				print(f"   {kolor['WHITE']}Technical Analysis...: {kolor['CYAN']}{context['Technical Analysis']}{kolor['OFF']}")
-				print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CURRENT TREND{kolor['OFF']}")
-				trend = analysis['Trend']
-				pulse = "▲" if "recovering" in trend else "▼"
-				color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
-				print(f"   {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
+			hoje = datetime.now()
+			dias_janela = [hoje - timedelta(days=i) for i in range(14, -1, -1)]
+
+			histamoc = {}
+			anos_necessarios = sorted(list(set(d.year for d in dias_janela)))
+
+			dados_completos = {}
+			for ano in anos_necessarios:
+				doy_min = min(int(d.strftime('%j')) for d in dias_janela if d.year == ano)
+				doy_max = max(int(d.strftime('%j')) for d in dias_janela if d.year == ano)
+
+				res_ano = _get_amoc_history(ano, doy_min, doy_max)
+				for doy, val in res_ano.items():
+					dados_completos[(ano, doy)] = val
+
+				histamoc_ordered = {}
+				for d in dias_janela:
+					chave = (d.year, int(d.strftime('%j')))
+					if chave in dados_completos:
+						histamoc_ordered[int(d.strftime('%j'))] = dados_completos[chave]
+
+				analysis = interpret_amoc_pro(histamoc_ordered)
+				if analysis:
+					print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} SUMMARY:{kolor['OFF']}")
+					summary = analysis['Summary']
+					print(f"    {kolor['WHITE']}Highest Peak.........: {kolor['SABER_BLUE']}{summary['Peak']}{kolor['OFF']}")
+					print(f"    {kolor['WHITE']}Lowest Point.........: {kolor['VIVID_RED']}{summary['Lowest']}{kolor['OFF']}")
+					print(f"    {kolor['WHITE']}Data Coverage........: {kolor['DIM_WHITE']}{summary['Coverage']}{kolor['OFF']}")
+					print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CONTEXT ANALYSIS{kolor['OFF']}")
+					context = analysis['Context']
+					print(f"    {kolor['WHITE']}Technical Analysis...: {kolor['CYAN']}{context['Technical Analysis']}{kolor['OFF']}")
+					print(f"\n{kolor['BOLD_YELLOW']}{symb_prompt()} CURRENT TREND{kolor['OFF']}")
+					trend = analysis['Trend']
+					pulse = "▲" if "recovering" in trend else "▼"
+					color_trend = kolor['VIVID_GREEN'] if "recovering" in trend else kolor['VIVID_YELLOW']
+					print(f"    {kolor['WHITE']}Current Status.......: {color_trend}{pulse} {trend}{kolor['OFF']}\n")
 
 		elif question.startswith('sky'):
 			sub_command = question[4:].strip()
