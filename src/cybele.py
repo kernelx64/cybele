@@ -1,4 +1,4 @@
-#py:python_OS_win_linux_android_shell_cmd
+#!#py:python_OS_win_linux_android_shell_cmd
 __doc__ = """
 Cybele by AS for www.adelinosaldanha.site ✦
 
