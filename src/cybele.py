@@ -28,7 +28,7 @@ version = '1.1.5'
 _title_ = 'Cybele'
 _spchar_ = '⚝〉“”—❛❜⧗✔🦖🔗𝒊️💡😊🏆🐧🎯🐚❝❞💬💾🌐🌡️🪐🌊🧬🖳'
 _active_ = '01.08.2024'
-_revise_ = '30.10.2026'
+_revise_ = '01.11.2026'
 _author_ = 'Adelino Saldanha'
 _gmodel_ = 'gemini-3.5-flash-lite'
 _apikey_ = ''
@@ -4499,7 +4499,7 @@ def today_holiday():
 				return False, None
 		except Exception as e:
 			#print(f"I don't have details about holidays for {country_code_name.title()}, {country_code_for_holidays} {get_flag(country_code_for_holidays)}")
-			return False, Non
+			return False, None
 
 #----------------------------------------------------------------
 def country_holidays():
